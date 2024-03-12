@@ -1,0 +1,83 @@
+/*
+Copyright © 2023-2024 Insoft. All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+#ifndef STDPIX_PPLIB
+#define STDPIX_PPLIB
+
+/*
+Recommended P+ Style and Coding Standards
+prefix::camelCase
+*/
+
+def ARC_P       px::arc((deprecated:"use 'arc'"));
+def BLIT_P      px::blit((deprecated:"use 'blit'"));
+def DIMGROB_P   px::grob::dim((deprecated:"use 'defGROB'"));
+def DIMGROB_P   px::defineGROB((deprecated:"use 'defGROB'"));
+def GETPIX_P    px::getPixel((deprecated:"use 'getPixel'"));
+def INVERT_P    px::invert((deprecated:"use 'invert'"));
+def LINE_P      px::line((deprecated:"use 'line'"));
+def PIXOFF_P    px::off((deprecated:"use 'pixelOff'"));
+def PIXON_P     px::on((deprecated:"use 'pixelOn'"));
+def RECT_P      px::rect((deprecated:"use 'rect'"));
+def FILLPOLY_P  px::fillPoly((deprecated:"use 'fillPoly'"));
+def SUBGROB_P   px::grobSub((deprecated:"use 'subGROB'"));
+def TEXTOUT_P   px::text::out((deprecated:"use 'textout'"));
+def TEXTOUT_P   px::textOut((deprecated:"use 'textout'"));
+
+def ARC_P       arc;
+def BLIT_P      blit;
+def DIMGROB_P   defineGROB((deprecated:"use 'dimGROB'"));
+def DIMGROB_P   defGROB((deprecated:"use 'dimGROB'"));
+def DIMGROB_P   dimGROB;
+def GETPIX_P    getPixel;
+def INVERT_P    invert;
+def LINE_P      line;
+def PIXOFF_P    pixelOff;
+def PIXON_P     pixelOn;
+def RECT_P      rect;
+def FILLPOLY_P  fillPoly;
+def SUBGROB_P   grobSub((deprecated:"use 'subGROB'"));
+def SUBGROB_P   GROBSub((deprecated:"use 'subGROB'"));
+def SUBGROB_P   subGROB;
+def TEXTOUT_P   textout;
+def TEXTSIZE    textsize;
+
+def GROBW_P(G1) G1.width;
+def GROBH_P(G1) G1.height;
+def GROBW_P(G2) G2.width;
+def GROBH_P(G2) G2.height;
+def GROBW_P(G3) G3.width;
+def GROBH_P(G3) G3.height;
+def GROBW_P(G4) G4.width;
+def GROBH_P(G4) G4.height;
+def GROBW_P(G5) G5.width;
+def GROBH_P(G5) G5.height;
+def GROBW_P(G6) G6.width;
+def GROBH_P(G6) G6.height;
+def GROBW_P(G7) G7.width;
+def GROBH_P(G7) G7.height;
+def GROBW_P(G8) G8.width;
+def GROBH_P(G8) G8.height;
+def GROBW_P(G9) G9.width;
+def GROBH_P(G9) G9.height;
+
+#endif /// STDPIX_PPLIB

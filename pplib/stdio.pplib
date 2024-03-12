@@ -1,0 +1,51 @@
+/*
+Copyright © 2023 Insoft. All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+*/
+
+#ifndef STDIO_PPLIB
+#define STDIO_PPLIB
+
+/*
+Recommended P+ Style and Coding Standards
+prefix::sufix::camelCase
+*/
+
+def CHOOSE     io::choose;
+def EDITLIST   io::edit::list((deprecated));
+def EDITLIST   io::editList;
+def EDITMAT    io::edit::matrix((deprecated:"use 'matrix::edit'"));
+def EDITMAT    io::editMatrix((deprecated:"use 'matrix::edit'"));
+def GETKEY     io::get::key((deprecated:"use 'io::getKey'"));
+def GETKEY     io::getKey;
+def INPUT      io::input;
+def ISKEYDOWN  io::isKey::down((deprecated:"use 'io::isKeyDown'"));
+def ISKEYDOWN  io::isKeyDown;
+def MOUSE      io::mouse;
+def MSGBOX     io::message::box((deprecated:"use 'io::messageBox'"));
+def MSGBOX     io::messageBox;
+def DRAWMENU   io::draw::menu((deprecated:"use 'io::drawMenu'"));
+def DRAWMENU   io::drawMenu;
+def PRINT      io::print;
+def WAIT       io::wait;
+def AFiles     io::app::files((deprecated:"use 'io::appFiles'"));
+def AFiles     io::appFiles;
+
+#endif /// STDIO_PPLIB
