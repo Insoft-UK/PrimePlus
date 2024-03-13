@@ -1,5 +1,5 @@
 # P+
- P+ is a proprietary programming language designed to mitigate the challenges associated with code maintenance and comprehensibility in the HP Programming Language (PPL). PPL does not support pre-processing or multiple files, resulting in a single large file that can be unwieldy to manage. P+ serves as an intermediary language that addresses these issues by introducing support for pre-processing and facilitating code organization.
+P+ is a proprietary programming language designed to mitigate the challenges associated with code maintenance and comprehensibility in the HP Programming Language (PPL). PPL does not support pre-processing or multiple files, resulting in a single large file that can be unwieldy to manage. P+ serves as an intermediary language that addresses these issues by introducing support for pre-processing and facilitating code organization.
 
 ### Variable & Constant
 ```
@@ -89,4 +89,4 @@ In P+ the use of **;** after end, endif, wend, loop ... is optional as the pre-p
 
 In P+ the use of **=** for := is optional as the pre-processor will automatically covert all = to := PPL style .
 
-The P+ proprietary programming language is susceptible to change, while also maintaining full compatibility with previous versions.
+_The P+ proprietary programming language is susceptible to change, while also maintaining full compatibility with previous versions._
