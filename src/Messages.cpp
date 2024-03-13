@@ -42,24 +42,30 @@ bool Messages::parse(std::string &str) {
         };
         
         if (it != std::sregex_token_iterator()) {
-            std::string object, message, parameters, s;
-            object = trim_copy(*it++);
-            message = trim_copy(*it++);
+            std::vector<std::string> groups;
+            std::string s;
             
-            message = regex_replace(message, std::regex(R"((By|With|From|Named|At)(?:[A-Z]+[a-zA-Z]*)?$)"), "");
+            groups.push_back(trim_copy(*it++));
+            groups.push_back(trim_copy(*it++));
+            
+            if (singleton->aliases.identifierExists(groups.at(0) + "::" + groups.at(1)) == false) {
+                groups.at(1) = regex_replace(groups.at(1), std::regex(R"((By|With|From|Named|At|For)(?:[A-Z]+[a-zA-Z]*)?$)"), "");
+            }
             
             if (it->matched) {
-                parameters = trim_copy(*it);
-                if (!parse(parameters)) {;
-                    parameters = regex_replace(parameters, std::regex(R"(\w+ *: *)"), ",");
+                s = trim_copy(*it);
+                
+                if (!parse(s)) {;
+                    s = regex_replace(s, std::regex(R"(\w+ *: *)"), ",");
                 }
-                if (!parameters.empty()) {
-                    parameters.insert(0, "(");
-                    parameters.append(")");
+                
+                if (!s.empty()) {
+                    s.insert(0, "(");
+                    s.append(")");
                 }
             }
             
-            s = object + "::" + message + parameters;
+            s.insert(0, groups.at(0) + "::" + groups.at(1));
             str = str.replace(m.position(), m.str().length(), s);
             return true;
         }

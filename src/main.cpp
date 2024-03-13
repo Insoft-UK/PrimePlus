@@ -45,7 +45,6 @@
 #include "build.h"
 
 #define PPLUS_TAB_WIDTH  4
-#define PPL_TAB_WIDTH    2
 
 int tabWidth = PPLUS_TAB_WIDTH;
 
@@ -92,7 +91,7 @@ void condence(std::string &str) {
         str = std::regex_replace(str, std::regex(R"(^ *LOCAL +)"), "");
     }
     
-    long indents = lwspaces(str) / tabWidth * PPL_TAB_WIDTH;
+    long indents = lwspaces(str) / tabWidth * Singleton::shared()->tabsize;
     ltrim(str);
     while (indents--) {
         str.insert(0, " ");

@@ -50,6 +50,8 @@ public:
     Switch switches;
     Comments comments;
     
+    unsigned int tabsize = 2;
+    
     static Singleton *shared();
     
     void incrementLineNumber(void);

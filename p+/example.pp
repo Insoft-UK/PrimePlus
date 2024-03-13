@@ -20,24 +20,58 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma ( minify 0 )
+#pragma ( minify 0, tabsize 1 )
 
 #include <prime>
+#include <hp>
 
-Example(auto:input)
+Example::Switch()
 begin
-    if input == -1 then return;
+    struct Event auto:event;
+    event = hp::waitEvent;
     
-    switch input
-        case 0 do
-            textout("Zero");
+    if [hp isKeyPressedForEvent:event] == true do
+        switch event.key
+            case KC_Esc do
+                return 0;
+            end
+            
+            case KC_1 do
+                return 10;
+            end
+            
+            case KC_2 do
+                return 100;
+            end
+            
+            case KC_3 do
+                return 1000;
+            end
         end
-        default
-            textout("None Zero");
-    end
+    endif
+end
+
+Example::DoLoop(auto:value)
+begin
+    do
+        if value <= 0 then return;
+        value -= 1;
+    loop
+end
+
+Example::ForNext()
+begin
+    var n:number, auto:count = 0;
     
-    var n:number;
-    for number = 0; number < input; number += 1 do
-        textout(number);
+    for number = 0; number < 100; number += 1 do
+        count += 1;
     next
+    return count;
+end
+
+Example(auto:value)
+begin
+    [Example DoLoopWithValueOf[Example Switch]];
+    textout([Example ForNext]);
+    return value;
 end

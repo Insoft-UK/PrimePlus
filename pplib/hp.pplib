@@ -42,6 +42,7 @@ def BLIT_P(G0, G9)              hp::restoreScreen;
 def RECT(g,color)               hp::clearGROB(g,color);
 def RECT(color)                 hp::clearScreen(color);
 
+def WAIT(-1)                    hp::waitEvent;
 def IFTE(SIZE(evt)==1,1,0)      hp::isKeyPressed(evt);
 def IFTE(SIZE(evt)>1,1,0)       hp::isMouseEvent(evt);
 

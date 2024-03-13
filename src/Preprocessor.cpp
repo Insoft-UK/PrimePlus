@@ -175,6 +175,12 @@ bool Preprocessor::parse(std::string &str) {
                     minify = atoi(pragma.substr(start,length).c_str());
                 }
                 
+                if (regex_search(pragma, std::regex(R"(tabsize (?:\d+))"))) {
+                    size_t start = pragma.find(" ") + 1;
+                    size_t length = pragma.length() - start;
+                    Singleton::shared()->tabsize = (unsigned int)atoi(pragma.substr(start,length).c_str());
+                }
+                
                 if (verbose) std::cout << MessageType::kVerbose << "#pragma: " << pragma << '\n';
             }
             return true;
