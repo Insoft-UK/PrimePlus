@@ -770,7 +770,7 @@ int main(int argc, char **argv) {
     preprocessor.parse(str);
     str = R"(#define __LIST_LIMIT 10000)";
     preprocessor.parse(str);
-    str = R"(#define __VERSION 1.6)";
+    str = R"(#define __VERSION 1.7)";
     preprocessor.parse(str);
     
     process( in_filename, outfile );
