@@ -57,7 +57,7 @@ while isRunning == true do
     isRunning = false
 wend
 ```
-**(*** _condition_ **?** _true_ **:** _false_**)**
+**(** _condition_ **?** _true_ **:** _false_**)**
 ```
 var a:myValue = 0
 a = (X>Y ? 1 : 0);
