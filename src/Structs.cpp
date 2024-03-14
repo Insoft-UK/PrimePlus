@@ -94,7 +94,6 @@ static bool isValidVariableName(const std::string &str) {
 
 
 void Structs::createStructureVariable(std::string &str) {
-    std::string s;
     std::regex r;
     std::smatch m;
     
@@ -130,9 +129,21 @@ void Structs::createStructureVariable(std::string &str) {
         
         r = R"([A-Za-z][\w.]*)";
         for (auto member = structure->members.begin(); member != structure->members.end(); ++member) {
-            std::string structureMember = member->data();
-            identity.real = regex_replace(structureMember, r, real);
-            identity.identifier = identifier + "." + structureMember.substr(0, structureMember.find('['));
+            std::string s = member->data();
+            identity.real = regex_replace(s, r, real);
+            
+            std::regex re(R"(([A-Za-z][\w.]*) *(?:(\[[\d, [\]]*)|(\([\d, ()]*\)))?)");
+            std::sregex_token_iterator it = std::sregex_token_iterator {
+                s.begin(), s.end(), re, {1}
+            };
+            
+            if (it != std::sregex_token_iterator()) {
+                identity.identifier = identifier + "." + (std::string)*it;
+            } else {
+                if (verbose) std::cout << MessageType::kVerbose << "struct: syntax error!\n";
+                continue;
+            }
+            
             if (verbose) std::cout << MessageType::kVerbose << "struct: " << identity.identifier << " PPL: " << identity.real << "\n";
             singleton->aliases.append(identity);
         }

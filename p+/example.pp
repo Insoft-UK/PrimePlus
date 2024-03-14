@@ -71,7 +71,15 @@ end
 
 Example(auto:value)
 begin
+    struct MyStruct
+        one[1];
+        two[2];
+    end
+    
+    struct MyStruct auto:myStruct;
+    
     [Example DoLoopWithValueOf[Example Switch]];
-    textout([Example ForNext]);
-    return value;
+  
+    myStruct = {value, [Example ForNext]};
+    return myStruct.one + myStruct.two;
 end
