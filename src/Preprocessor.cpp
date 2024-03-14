@@ -44,14 +44,14 @@ bool Preprocessor::parse(std::string &str) {
     pathname = std::string("");
     
     
-    if (regex_search(str, std::regex(R"(^ *#end\b)"))) {
+    if (regex_search(str, std::regex(R"(^ *#END\b)", std::regex_constants::icase))) {
         if (std::string::npos != _nesting.back().compare("#PYTHON")) {
             python = false;
-        } // #end is for #PYTHON
+        } // #END is for #PYTHON
         
         if (std::string::npos != _nesting.back().compare("#PPL")) {
             ppl = false;
-        } // #end is for #PPL
+        } // #END is for #PPL
         
         _nesting.pop_back();
         return false;
