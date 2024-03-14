@@ -71,6 +71,8 @@ end
 
 Example(auto:value)
 begin
+    hp::storeScreen;
+    
     struct MyStruct
         one[1];
         two[2];

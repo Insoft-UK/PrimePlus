@@ -29,14 +29,14 @@ prefix::camelCase
 */
 
 /// DEPRECATED!
-def HSVtoRGB    colorSpace::convertHSVtoRGB;
-def HSLtoHSV    colorSpace::convertHSLtoHSV;
-def HSLtoRGB    colorSpace::convertHSLtoRGB;
-def HSVtoHSL    colorSpace::convertHSVtoHSL;
-def RGBtoHSV    colorSpace::convertRGBtoHSV;
-def RGBtoHSL    colorSpace::convertRGBtoHSL;
-def HSL         colorSpace::HSL;
-def HSV         colorSpace::HSV;
+def HSVtoRGB    colorSpace::convertHSVtoRGB((deprecated));
+def HSLtoHSV    colorSpace::convertHSLtoHSV((deprecated));
+def HSLtoRGB    colorSpace::convertHSLtoRGB((deprecated));
+def HSVtoHSL    colorSpace::convertHSVtoHSL((deprecated));
+def RGBtoHSV    colorSpace::convertRGBtoHSV((deprecated));
+def RGBtoHSL    colorSpace::convertRGBtoHSL((deprecated));
+def HSL         colorSpace::HSL((deprecated));
+def HSV         colorSpace::HSV((deprecated));
 
 def HSVtoRGB    color::convertHSVtoRGB;
 def HSLtoHSV    color::convertHSLtoHSV;

@@ -36,7 +36,9 @@ def L8[1,1]                     hp::mouse.x;
 def L8[1,2]                     hp::mouse.y;
 def L8[1,5]                     hp::mouse.type;
 
-def HP.StoreScr                 hp::storeScreen;
+#define __TMP__                 DIMGROB_P(G9, 320, 240, 0); BLIT_P(G9, G0)
+def eval:__TMP__                hp::storeScreen;
+#undef __TMP__
 def BLIT_P(G0, G9)              hp::restoreScreen;
 
 def RECT(g,color)               hp::clearGROB(g,color);
