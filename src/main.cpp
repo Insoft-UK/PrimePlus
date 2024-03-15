@@ -646,6 +646,7 @@ void usage(void) {
 
 // MARK: - Main
 int main(int argc, char **argv) {
+    bool pragma = false;
     std::string in_filename, out_filename;
 
     if ( argc == 1 )
@@ -673,6 +674,10 @@ int main(int argc, char **argv) {
         if ( strcmp( argv[n], "--help" ) == 0 ) {
             usage();
             exit(102);
+        }
+        
+        if ( strcmp( argv[n], "--pragma" ) == 0 ) {
+            pragma = true;
         }
         
         if ( strcmp( argv[n], "--version" ) == 0 ) {
@@ -771,6 +776,11 @@ int main(int argc, char **argv) {
     preprocessor.parse(str);
     str = R"(#define __VERSION 1.7)";
     preprocessor.parse(str);
+    
+    if (pragma) {
+        str = "#pragma mode( separator(.,;) integer(h64) )";
+        processLine(str, outfile);
+    }
     
     process( in_filename, outfile );
     
