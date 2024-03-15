@@ -32,19 +32,19 @@ begin
     
     if [hp isKeyPressedForEvent:event] == true do
         switch event.key
-            case KC_Esc do
+            case KeyCode.Esc do
                 return 0;
             end
             
-            case KC_1 do
+            case KeyCode.1 do
                 return 10;
             end
             
-            case KC_2 do
+            case KeyCode.2 do
                 return 100;
             end
             
-            case KC_3 do
+            case KeyCode.3 do
                 return 1000;
             end
         end

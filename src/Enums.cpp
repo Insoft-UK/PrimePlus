@@ -62,12 +62,11 @@ static bool parseEnum(const std::string &str) {
 }
 
 static void parseEnumItems(const std::string &str, std::vector<Aliases::TIdentity> &identities) {
-    std::regex r(R"(([a-zA-Z]\w*) *:?= *(#?[0-9A-F]*:?\d?\d?h?d?b?o?))");
+    std::regex r(R"(([a-zA-Z\d]\w*) *:?= *((?:#[\dA-F]+(?::\d+)?h)|(?:#\d+(?::\d+)?d)|(?:#[0-1]+(?::\d+)?b)|(?:#[0-7]+(?::\d+)?o)|(?:\d+(?:\.\d+)?)))");
     std::sregex_token_iterator it = std::sregex_token_iterator {
-                str.begin(), str.end(), r, {1, 2}
-            };
-    std::sregex_token_iterator end;
-    while (it != end) {
+        str.begin(), str.end(), r, {1, 2}
+    };
+    while (it != std::sregex_token_iterator()) {
         Aliases::TIdentity identity;
         std::string identifier = *it++;
         identity.type = Aliases::Type::kEenum;
