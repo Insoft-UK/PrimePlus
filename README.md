@@ -87,8 +87,11 @@ setAlpha(50.0);
 // Instead of:
 Color::ConvertToHSV(255,127,0);
 ```
+> [!TIP]
 In P+ the use of **;** after end, endif, wend, loop ... is optional as the pre-processor will automatically include them if omitted for to allow cleaner looking code to be written.
 
+> [!TIP]
 In P+ the use of **=** for := is optional as the pre-processor will automatically covert all = to := PPL style .
+
 >[!NOTE]
->The P+ proprietary programming language is susceptible to change, while also maintaining full compatibility with previous versions._
+The P+ proprietary programming language is susceptible to change, while also maintaining full compatibility with previous versions.
