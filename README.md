@@ -2,10 +2,11 @@
 P+ is a proprietary programming language designed to mitigate the challenges associated with code maintenance and comprehensibility in the HP Programming Language (PPL). P+ serves as an intermediary language that addresses these issues by introducing support for pre-processing and facilitating code organization.
 
 **Variable & Constant**
+Using longer, more meaningful variable and function names can enhance code readability and ease maintenance. However, when targeting the HP Prime's PPL (Programming Language) with UTF16-LE text-based files, employing lengthy names can lead to larger .hpprgm files, which poses a downside. This is where substitution proves beneficial in P+.
 ```
 var a:indexA
 const b:indexB:=1
-indexA += indexB // Using alias/subtitution results in more readable code, tho one wouln't want long names in PPL code.
+indexA += indexB // Using subtitution.
 a += b // PPL results in a smaller .hpprgm file.
 ```
 **for...next**
