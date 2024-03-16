@@ -5,8 +5,8 @@ P+ is a proprietary programming language designed to mitigate the challenges ass
 ```
 var a:indexA
 const b:indexB:=1
-indexA += indexB // Using alias.
-a += b // PPL
+indexA += indexB // Using alias/subtitution results in more readable code, tho one wouln't want long names in PPL code.
+a += b // PPL results in a smaller .hpprgm file.
 ```
 **for...next**
 ```
