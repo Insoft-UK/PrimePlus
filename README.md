@@ -1,5 +1,5 @@
 # P+
-P+ is a proprietary programming language designed to mitigate the challenges associated with code maintenance and comprehensibility in the HP Programming Language (PPL). PPL does not support pre-processing or multiple files, resulting in a single large file that can be unwieldy to manage. P+ serves as an intermediary language that addresses these issues by introducing support for pre-processing and facilitating code organization.
+P+ is a proprietary programming language designed to mitigate the challenges associated with code maintenance and comprehensibility in the HP Programming Language (PPL). P+ serves as an intermediary language that addresses these issues by introducing support for pre-processing and facilitating code organization.
 
 **Variable & Constant**
 ```
