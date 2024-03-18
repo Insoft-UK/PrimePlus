@@ -194,7 +194,7 @@ void processLine(const std::string& str, std::ofstream &outfile)
         if (ln.at(n) == '\r') continue;
         
         // Output as UTF-16LE
-        if (*ascii >= 0xE0) {
+        if (*ascii >= 0x80) {
             uint16_t utf16 = convertUTF8ToUTF16(&ln.at(n));
 #ifndef __LITTLE_ENDIAN__
             utf16 = utf16 >> 8 | utf16 << 8;

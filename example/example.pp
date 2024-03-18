@@ -71,6 +71,7 @@ end
 
 Example(auto:value)
 begin
+    var piTest = 2*π;
     hp::storeScreen;
     
     struct MyStruct
@@ -84,4 +85,10 @@ begin
   
     myStruct = {value, [Example ForNext]};
     return myStruct.one + myStruct.two;
+    
+    if value <= π do
+        KILL;
+    endif
+    
+    R→B(value,4)=>value;
 end
