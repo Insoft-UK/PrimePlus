@@ -1,12 +1,14 @@
 # P+
-P+ is a proprietary programming language designed to mitigate the challenges associated with code maintenance and comprehensibility in the HP Programming Language (PPL). PPL does not support pre-processing or multiple files, resulting in a single large file that can be unwieldy to manage. P+ serves as an intermediary language that addresses these issues by introducing support for pre-processing and facilitating code organization.
+P+ is a proprietary programming language designed to mitigate the challenges associated with code maintenance and comprehensibility in the HP Programming Language (PPL). P+ serves as an intermediary language that addresses these issues by introducing support for pre-processing and facilitating code organization.
 
 **Variable & Constant**
+
+Using longer, more meaningful variable and function names can enhance code readability and ease maintenance. However, when targeting the HP Prime's PPL (Programming Language) with UTF16-LE text-based files, employing lengthy names can lead to larger .hpprgm files, which poses a downside. This is where substitution proves beneficial in P+.
 ```
 var a:indexA
 const b:indexB:=1
-indexA += indexB // Using alias.
-a += b // PPL
+indexA += indexB // Using subtitution.
+a += b // PPL results in a smaller .hpprgm file.
 ```
 **for...next**
 ```
@@ -85,8 +87,14 @@ setAlpha(50.0);
 // Instead of:
 Color::ConvertToHSV(255,127,0);
 ```
+> [!TIP]
 In P+ the use of **;** after end, endif, wend, loop ... is optional as the pre-processor will automatically include them if omitted for to allow cleaner looking code to be written.
 
-In P+ the use of **=** for := is optional as the pre-processor will automatically covert all = to := PPL style .
+> [!TIP]
+In P+ the use of **=** for := is optional as the pre-processor will automatically covert all = to := PPL style.
 
-_The P+ proprietary programming language is susceptible to change, while also maintaining full compatibility with previous versions._
+> [!IMPORTANT]
+In P+ **=** is treated as := were in PPL **=** is treated as ==
+
+>[!NOTE]
+The P+ proprietary programming language is susceptible to change, while also maintaining full compatibility with previous versions.
