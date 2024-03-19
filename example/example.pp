@@ -69,9 +69,9 @@ begin
     return count;
 end
 
-Example(auto:value)
+export Example:MyLongNameExample(auto:value)
 begin
-    var piTest = 2*π;
+    var piTest = 2*pi;
     hp::storeScreen;
     
     struct MyStruct

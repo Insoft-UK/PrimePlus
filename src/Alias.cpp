@@ -83,24 +83,24 @@ bool Alias::parse(std::string &str) {
     std::smatch m;
     std::ostringstream os;
     
-    std::sregex_token_iterator it;
-    const std::sregex_token_iterator end;
     bool parsed = false;
     
-    /*
-     eg. fnName:alias(p1, p2:alias, auto:alias)
-     Group  0 fnName:alias(p1, p2:alias, auto:alias)
-            1 fnName:alias
-            2 p1, p2:alias, auto:alias
-     */
-    r = R"(^ *([a-zA-Z][\w:]*) *\(([\w:, ]*?)\))";
-    it = std::sregex_token_iterator {
-        str.begin(), str.end(), r, {1, 2}
-    };
-    if (it != end && singleton->scope == Singleton::Scope::kGlobal) {
-        parseFunctionName(*it++);
-        parseParameters(*it++);
-        parsed = true;
+    if (singleton->scope == Singleton::Scope::kGlobal) {
+        /*
+         eg. export name:alias(p1, p2:alias, auto:alias)
+         Group  0 export name:alias(p1, p2:alias, auto:alias)
+         1 name:alias
+         2 p1, p2:alias, auto:alias
+         */
+        r = R"(^ *(?:export +)?\b((?:[a-zA-Z]\w* *: *)?(?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *\((.*)\))";
+        auto it = std::sregex_token_iterator {
+            str.begin(), str.end(), r, {1, 2}
+        };
+        if (it != std::sregex_token_iterator()) {
+            parseFunctionName(*it++);
+            parseParameters(*it++);
+            parsed = true;
+        }
     }
     
     r = R"(^ *(var|const) +.*)";

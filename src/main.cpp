@@ -124,14 +124,12 @@ void minifier(std::string &str) {
     }
 }
 
-uint32_t convertUTF8ToUTF16(const char *str) {
+uint32_t utf8_to_utf16(const char *str) {
     uint8_t *utf8 = (uint8_t *)str;
     uint16_t utf16 = *utf8;
     
-    if (utf16 <= 127) return utf16;
-    
-    if (utf16 >= 0xE0) {
-        utf16 &= 0b1111;
+    if ((utf8[0] & 0b11110000) == 0b11100000) {
+        utf16 = utf8[0] & 0b11111;
         utf16 <<= 6;
         utf16 |= utf8[1] & 0b111111;
         utf16 <<= 6;
@@ -139,11 +137,18 @@ uint32_t convertUTF8ToUTF16(const char *str) {
         return utf16;
     }
     
-    utf16 &= 0b11111;
-    utf16 <<= 6;
-    utf16 |= utf8[1] & 0b111111;
+    // 110xxxxx 10xxxxxx
+    if ((utf8[0] & 0b11100000) == 0b11000000) {
+        utf16 = utf8[0] & 0b11111;
+        utf16 <<= 6;
+        utf16 |= utf8[1] & 0b111111;
+        return utf16;
+    }
+    
     return utf16;
 }
+
+
 
 // MARK: - Translation from C to PPL
 
@@ -187,20 +192,19 @@ void processLine(const std::string& str, std::ofstream &outfile)
     
     for ( int n = 0; n < ln.length(); n++) {
         uint8_t *ascii = (uint8_t *)&ln.at(n);
-        if ( *ascii == 0xc2 ) {
-            continue;
-        }
-    
         if (ln.at(n) == '\r') continue;
         
         // Output as UTF-16LE
         if (*ascii >= 0x80) {
-            uint16_t utf16 = convertUTF8ToUTF16(&ln.at(n));
+            uint16_t utf16 = utf8_to_utf16(&ln.at(n));
+            
 #ifndef __LITTLE_ENDIAN__
             utf16 = utf16 >> 8 | utf16 << 8;
 #endif
             outfile.write((const char *)&utf16, 2);
-            n+=2;
+            if ((*ascii & 0b11100000) == 0b11000000) n++;
+            if ((*ascii & 0b11110000) == 0b11100000) n+=2;
+            if ((*ascii & 0b11111000) == 0b11110000) n+=3;
         } else {
             outfile.put(ln.at(n));
             outfile.put('\0');
@@ -499,7 +503,7 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
         r = R"(\bif +(.+) +do\b *$)";
         while (regex_search(ln, m, r)) {
             std::string s = m.str();
-            s = regex_replace(s, std::regex(R"(\bdo$)"), "THEN");
+            s = regex_replace(s, std::regex(R"( +do$)"), " THEN");
             ln = ln.replace(m.position(), m.str().length(), s);
         }
         
@@ -583,6 +587,7 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     ln = regex_replace(ln, std::regex(R"(>=)"), "≥");
     ln = regex_replace(ln, std::regex(R"(<=)"), "≤");
     ln = regex_replace(ln, std::regex(R"(!=)"), "≠");
+    ln = regex_replace(ln, std::regex(R"(\bpi\b)"), "π");
     
     ln = translateCOperatorsToPPL(ln);
     ln = translateCLogicalOperatorsToPPL(ln);
@@ -590,8 +595,8 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     ln = regex_replace(ln, std::regex(R"(=>)"), "▶");
     
     /*
-     PPL uses := instead of C's = for assignment. Converting = to := in PPL turns every == into :=:= and := into ::=.
-     To fix this, we convert all :=:= to == and then all ::= to :=.
+     PPL uses := instead of C's = for assignment. Converting = to := in PPL turns every == into :=:= and := into ::=
+     To fix this, we convert all :=:= to == and then all ::= to :=
      */
     ln = regex_replace(ln, std::regex(R"(=)"), ":=");
     ln = regex_replace(ln, std::regex(R"(:=:=)"), "==");
