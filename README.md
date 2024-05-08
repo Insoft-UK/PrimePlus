@@ -91,7 +91,7 @@ Color::ConvertToHSV(255,127,0);
 In P+ the use of **;** after end, endif, wend, loop ... is optional as the pre-processor will automatically include them if omitted for to allow cleaner looking code to be written.
 
 > [!TIP]
-In P+ the use of **=** for := is optional as the pre-processor will automatically covert all = to := PPL style.
+In P+ the use of **=** for := is optional as the pre-processor will automatically covert all = to := Pascal & PPL style.
 
 > [!IMPORTANT]
 In P+ **=** is treated as := were in PPL **=** is treated as ==
