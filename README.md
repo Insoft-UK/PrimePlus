@@ -5,10 +5,10 @@ P+ is a proprietary programming language designed to mitigate the challenges ass
 
 Using longer, more meaningful variable and function names can enhance code readability and ease maintenance. However, when targeting the HP Prime's PPL (Programming Language) with UTF16-LE text-based files, employing lengthy names can lead to larger .hpprgm files, which poses a downside. This is where substitution proves beneficial in P+.
 ```
-var a:indexA
-const b:indexB:=1
-indexA += indexB // Using subtitution.
-a += b // PPL results in a smaller .hpprgm file.
+var a:indexA;
+const b:indexB:=1;
+indexA += indexB; // Using subtitution.
+a := a+b; // PPL results in a smaller .hpprgm file.
 ```
 **for...next**
 ```
@@ -25,7 +25,7 @@ loop
 ```
 **switch**
 ```
-var m:menuSelection
+var m:menuSelection;
 switch menuSelection
     case 0 do
         // statement/s
@@ -34,7 +34,7 @@ end
 ```
 **if** _condition_ **do** _statement/s_ **else** _statement/s_ **endif**
 ```
-var e:hasError = true
+var e:hasError = true;
 if hasError==true do
     // statement/s
 else
@@ -91,7 +91,7 @@ Color::ConvertToHSV(255,127,0);
 In P+ the use of **;** after end, endif, wend, loop ... is optional as the pre-processor will automatically include them if omitted for to allow cleaner looking code to be written.
 
 > [!TIP]
-In P+ the use of **=** for := is optional as the pre-processor will automatically covert all = to := PPL style.
+In P+ the use of **=** for := is optional as the pre-processor will automatically covert all = to := Pascal & PPL style.
 
 > [!IMPORTANT]
 In P+ **=** is treated as := were in PPL **=** is treated as ==
