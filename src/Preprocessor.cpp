@@ -161,12 +161,21 @@ bool Preprocessor::parse(std::string &str) {
                 if (pragma == "bitwise 0") {
                     bitwiseOperators = false;
                 }
+                
                 if (pragma == "bitwise 1") {
                     bitwiseOperators = true;
                 }
                 
                 if (pragma == "unorderedness") {
                     Singleton::shared()->aliases.descendingOrder = false;
+                }
+                
+                if (pragma == "calc 0") {
+                    calc = false;
+                }
+                
+                if (pragma == "calc 1") {
+                    calc = true;
                 }
                 
                 if (regex_search(pragma, std::regex(R"(minify (?:\d+|-1))"))) {

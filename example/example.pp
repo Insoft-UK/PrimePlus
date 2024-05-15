@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma ( minify 0, tabsize 1 )
+#pragma ( minify 0, tabsize 1, calc 1 )
 
 #include <prime>
 #include <hp>
@@ -91,4 +91,7 @@ begin
     endif
     
     R→B(value,4)=>value;
+    var x = SCREEN_WIDTH / 2;
+    test(#[SCREEN_WIDTH / (7+-2*2)]);
+    x=0[SCREEN_WIDTH / (7+-2*2)];
 end
