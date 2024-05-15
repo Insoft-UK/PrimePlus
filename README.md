@@ -89,7 +89,7 @@ setAlpha(50.0);
 // Instead of:
 Color::ConvertToHSV(255,127,0);
 ```
-**Pre-Clac**
+**Pre-Calc**
 ```
 #pragma ( calc 1 )
 #define SCREEN_WIDTH 320
