@@ -79,6 +79,8 @@ setAlpha(50.0);
 #pragma ( minify -1 )
 // Turns off the automatic descending ordering of identities/aliases, once off it can't be turned back on.
 #pragma ( unorderedness )
+// Turns on/off pre-calc for assignments, off by default.
+#pragma ( calc 1 )
 ```
 **Obj-C Style**
 ```
@@ -86,6 +88,15 @@ setAlpha(50.0);
 
 // Instead of:
 Color::ConvertToHSV(255,127,0);
+```
+**Pre-Clac**
+```
+#pragma ( calc 1 )
+#define SCREEN_WIDTH 320
+var a = SCREEN_WIDTH / (8 - 6);
+var b;
+b = #[SCREEN_WIDTH / 2]; // Pre-Calc #[]
+// PPL b:=160;
 ```
 > [!TIP]
 In P+ the use of **;** after end, endif, wend, loop ... is optional as the pre-processor will automatically include them if omitted for to allow cleaner looking code to be written.
