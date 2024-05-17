@@ -79,8 +79,6 @@ setAlpha(50.0);
 #pragma ( minify -1 )
 // Turns off the automatic descending ordering of identities/aliases, once off it can't be turned back on.
 #pragma ( unorderedness )
-// Turns on/off pre-calc for assignments, off by default.
-#pragma ( calc 1 )
 ```
 **Obj-C Style**
 ```
@@ -95,7 +93,7 @@ Color::ConvertToHSV(255,127,0);
 #define SCREEN_WIDTH 320
 var a = SCREEN_WIDTH / (8 - 6);
 var b;
-b = #[SCREEN_WIDTH / 2]; // Pre-Calc #[]
+b = #[SCREEN_WIDTH / 2]:0; // Pre-Calc #[]:presision
 // PPL b:=160;
 ```
 > [!TIP]
