@@ -41,7 +41,6 @@ public:
     bool bitwiseOperators = true;
     bool operators = true;
     bool logicalOperators = true;
-    bool calc = false;
     
     bool parse(std::string &str);
     

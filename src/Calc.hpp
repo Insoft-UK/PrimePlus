@@ -36,7 +36,7 @@ class Calc {
 private:
     
 public:
-    static float solve(std::vector<std::string>& expression);
+    static bool parse(std::string &str);
 };
 
 }

@@ -170,14 +170,6 @@ bool Preprocessor::parse(std::string &str) {
                     Singleton::shared()->aliases.descendingOrder = false;
                 }
                 
-                if (pragma == "calc 0") {
-                    calc = false;
-                }
-                
-                if (pragma == "calc 1") {
-                    calc = true;
-                }
-                
                 if (regex_search(pragma, std::regex(R"(minify (?:\d+|-1))"))) {
                     size_t start = pragma.find(" ") + 1;
                     size_t length = pragma.length() - start;

@@ -22,12 +22,14 @@
 
 #include "Calc.hpp"
 #include <regex>
+#include <sstream>
+#include <iomanip>
 
 using namespace pp;
 
 #define isdigit(str) regex_match(str, std::regex(R"(-?\d*)"))
 
-float Calc::solve(std::vector<std::string>& expression)
+static float solve(std::vector<std::string>& expression)
 {
     struct sOperator
     {
@@ -67,8 +69,7 @@ float Calc::solve(std::vector<std::string>& expression)
     //    for (auto c : expression.b)
     for (auto it = expression.begin(); it != expression.end(); ++it) {
         char c = it->c_str()[0];
-        auto s = it->data();
-        if (isdigit(it->data()))
+        if (regex_match(it->data(), std::regex(R"(-?\d+(?:\.\d)?)")))
         {
             // Push literals straight to output, they are already in order
             stkOutput.push_back({ it->data(), sSymbol::Type::Literal_Numeric });
@@ -199,4 +200,52 @@ float Calc::solve(std::vector<std::string>& expression)
     }
     
     return stkSolve[0];
+}
+
+bool Calc::parse(std::string &str)
+{
+    std::regex r;
+    std::string s;
+    std::smatch m;
+    int precision = 9;
+
+    /*
+     eg. test(#[320/(7+-2*2)]:0);
+     Group  0 #[320/(7+-2*2)]:0
+            1 320/(7+-2*2)
+     Opt!   2 0
+    */
+    r = R"(#\[([\d\/*+\-(). ]*)\](?::(\d))?)";
+    while (regex_search(str, m, r)) {
+        std::string matched = m.str();
+        
+        auto it = std::sregex_token_iterator {
+            matched.begin(), matched.end(), r, {1, 2}
+        };
+        if (it != std::sregex_token_iterator()) {
+            s = *it++;
+            if (it->matched) {
+                precision = atoi(it->str().c_str());
+            } else precision = 9;
+        }
+        
+        std::vector<std::string> expression;
+        std::regex re(R"((?:-?\d+(?:.\d+)?)|[\/*+\-()])");
+        for(auto it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); ++it ) {
+            expression.push_back(it->str());
+        }
+        
+        float number = solve(expression);
+        std::stringstream ss;
+        ss << std::fixed << std::setprecision(precision) << number;
+        s = ss.str();
+        
+        s.erase ( s.find_last_not_of('0') + 1, std::string::npos );
+        s.erase ( s.find_last_not_of('.') + 1, std::string::npos );
+        
+        str = str.replace(m.position(), m.length(), s);
+    }
+    
+    
+    return true;
 }
