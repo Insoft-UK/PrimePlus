@@ -81,6 +81,9 @@ setAlpha(50.0);
 #pragma ( unorderedness )
 ```
 **Obj-C Style**
+
+> [!WARNING]
+It may be removed in later updates, but if it is removed, you can easily reinstate if required.
 ```
 [Color ConvertToHSVFromRed:255 blue:127 green:0];
 
@@ -91,9 +94,10 @@ Color::ConvertToHSV(255,127,0);
 ```
 #pragma ( calc 1 )
 #define SCREEN_WIDTH 320
-var a = SCREEN_WIDTH / (8 - 6);
-var b;
-b = #[SCREEN_WIDTH / 2]:0; // Pre-Calc #[]:presision
+var a = SCREEN_WIDTH / #[8 - 6];
+// PPL LOCAL a:=320/2;
+var b = #[SCREEN_WIDTH / 4];
+b = #[SCREEN_WIDTH / 2]:0; // Pre-Calc #[]:scale
 // PPL b:=160;
 ```
 > [!TIP]
