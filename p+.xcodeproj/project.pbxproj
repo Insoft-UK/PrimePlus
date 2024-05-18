@@ -12,6 +12,7 @@
 		1308E8F92AC6FCC5001EEC82 /* Comments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1308E8F72AC6FCC5001EEC82 /* Comments.cpp */; };
 		1314A8B92B2A099300566D5F /* Structs.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1314A8B82B2A099200566D5F /* Structs.cpp */; };
 		1351CC532BF530CE0073FEDF /* Calc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1351CC512BF530CE0073FEDF /* Calc.cpp */; };
+		1351CC542BF9514F0073FEDF /* Messages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13DC384F2B9CDC7300A18451 /* Messages.cpp */; };
 		137FB2892A03B06500AEFDF2 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 137FB2882A03B06500AEFDF2 /* main.cpp */; };
 		1384DE7D2B6D70DE0090E24D /* Switch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1384DE7B2B6D70DE0090E24D /* Switch.cpp */; };
 		139634CA2B9A1A85005B80F0 /* IFTE.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 139634C82B9A1A85005B80F0 /* IFTE.cpp */; };
@@ -20,7 +21,6 @@
 		13C21F9A2A7829C80067CE22 /* Preprocessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13C21F982A7829C80067CE22 /* Preprocessor.cpp */; };
 		13C21F9D2A783D8D0067CE22 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13C21F9B2A783D8D0067CE22 /* common.cpp */; };
 		13C21FB42A7892540067CE22 /* Alias.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13C21FB22A7892540067CE22 /* Alias.cpp */; };
-		13DC38512B9CDC7300A18451 /* Messages.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13DC384F2B9CDC7300A18451 /* Messages.cpp */; };
 		13EBE2EA2B2124E200302F26 /* Enums.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13EBE2E92B2124E200302F26 /* Enums.cpp */; };
 		13EBE2ED2B2216E500302F26 /* Def.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13EBE2EC2B2216E500302F26 /* Def.cpp */; };
 		13F1D8832AB6185400EF623A /* Aliases.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13F1D8812AB6185400EF623A /* Aliases.cpp */; };
@@ -254,7 +254,6 @@
 				1384DE7D2B6D70DE0090E24D /* Switch.cpp in Sources */,
 				13B13C312B66C2F000F9BCBB /* Strings.cpp in Sources */,
 				13C21F9A2A7829C80067CE22 /* Preprocessor.cpp in Sources */,
-				13DC38512B9CDC7300A18451 /* Messages.cpp in Sources */,
 				137FB2892A03B06500AEFDF2 /* main.cpp in Sources */,
 				139634CD2B9A2DEA005B80F0 /* Bitwise.cpp in Sources */,
 				13C21F9D2A783D8D0067CE22 /* common.cpp in Sources */,
@@ -262,6 +261,7 @@
 				1351CC532BF530CE0073FEDF /* Calc.cpp in Sources */,
 				130342CA2A7AD8E800142B74 /* Auto.cpp in Sources */,
 				139634CA2B9A1A85005B80F0 /* IFTE.cpp in Sources */,
+				1351CC542BF9514F0073FEDF /* Messages.cpp in Sources */,
 				13F1D8832AB6185400EF623A /* Aliases.cpp in Sources */,
 				1308E8F62AC48F20001EEC82 /* Singleton.cpp in Sources */,
 				1308E8F92AC6FCC5001EEC82 /* Comments.cpp in Sources */,

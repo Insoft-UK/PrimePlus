@@ -383,7 +383,10 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     }
     
     if (Def::parse(ln)) return;
+#ifdef MESSAGES_HPP
+    // Obj-C Style
     Messages::parse(ln);
+#endif
     ln = singleton->aliases.resolveAliasesInText(ln);
     // TODO: resolve alias where an alias refers to another so no second pass is nessasery!
     if (singleton->aliases.descendingOrder) {
@@ -604,7 +607,12 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     ln = regex_replace(ln, std::regex(R"(::=)"), ":=");
     
 
+    /**
+      **NEW! 1.7.03xx
+       pre-calc
+     */
     Calc::parse(ln);
+    
     condence(ln);
     
     strings.restoreStrings(ln);
