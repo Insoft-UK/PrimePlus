@@ -91,6 +91,4 @@ begin
     endif
     
     R→B(value,4)=>value;
-    //var io = #[9 + -4 + 2 * 6 / 2]:0;
-    io = #[5.5 % 4.25];
 end

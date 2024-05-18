@@ -25,79 +25,78 @@
 #include <sstream>
 #include <iomanip>
 #include <cmath>
+#include "common.hpp"
 
 using namespace pp;
 
-#define isdigit(str) regex_match(str, std::regex(R"(-?\d*)"))
-
-
+#define isdigit(str) regex_match(str, std::regex(R"(-?\d+(?:\.\d+)?)"))
 
 static double solve(std::vector<std::string>& expression)
 {
-    struct sOperator
+    struct Operator
     {
         uint8_t precedence = 0;
         uint8_t arguments = 0;
     };
     
-    std::unordered_map<char, sOperator> mapOps;
-    mapOps['%'] = { 5, 2 };
-    mapOps['/'] = { 4, 2 };
-    mapOps['*'] = { 3, 2 };
-    mapOps['+'] = { 2, 2 };
+    std::unordered_map<char, Operator> mapOps;
+    mapOps['%'] = { 2, 2 };
+    mapOps['/'] = { 2, 2 };
+    mapOps['*'] = { 2, 2 };
+    mapOps['+'] = { 1, 2 };
     mapOps['-'] = { 1, 2 };
     
     
-    struct sSymbol
+    struct Symbol
     {
         std::string symbol = "";
         
         enum class Type : uint8_t
         {
             Unknown,
-            Literal_Numeric,
+            LiteralNumeric,
             Operator,
-            Parenthesis_Open,
-            Parenthesis_Close
+            ParenthesisOpen,
+            ParenthesisClose
         } type = Type::Unknown;
         
-        sOperator op;
+        Operator op;
     };
     
-    std::deque<sSymbol> stkHolding;
-    std::deque<sSymbol> stkOutput;
+    std::deque<Symbol> holdingStack;
+    std::deque<Symbol> RPN;
     
 
     for (auto it = expression.begin(); it != expression.end(); ++it) {
         char c = it->c_str()[0];
-        if (regex_match(it->data(), std::regex(R"(-?\d+(?:\.\d+)?)")))
+        if (isdigit(it->data()))
         {
-            stkOutput.push_back({ it->data(), sSymbol::Type::Literal_Numeric });
+            RPN.push_back({ it->data(), Symbol::Type::LiteralNumeric });
         }
         else if (c == '(')
         {
             // Push to holding stack, it acts as a stopper when we back track
-            stkHolding.push_front({ std::string(1, '('), sSymbol::Type::Parenthesis_Open });
+            holdingStack.push_front({ std::string(1, '('), Symbol::Type::ParenthesisOpen });
         }
         else if (c == ')')
         {
             // Backflush holding stack into output until open parenthesis
-            while (!stkHolding.empty() && stkHolding.front().type != sSymbol::Type::Parenthesis_Open)
+            while (!holdingStack.empty() && holdingStack.front().type != Symbol::Type::ParenthesisOpen)
             {
-                stkOutput.push_back(stkHolding.front());
-                stkHolding.pop_front();
+                RPN.push_back(holdingStack.front());
+                holdingStack.pop_front();
             }
             
-            if (stkHolding.empty())
+            if (holdingStack.empty())
             {
-                std::cout << "!!!!     ERROR! Unexpected parenthesis '" << c << "'\n";
+                std::cout << MessageType::kError << "#[]: Unexpected Parenthesis: '" << c << "'\n";
                 return 0;
             }
             
             // Remove corresponding open parenthesis from holding stack
-            if (!stkHolding.empty() && stkHolding.front().type == sSymbol::Type::Parenthesis_Open)
+            if (!holdingStack.empty() && holdingStack.front().type == Symbol::Type::ParenthesisOpen)
             {
-                stkHolding.pop_front();
+                holdingStack.pop_front();
             }
             
             
@@ -105,20 +104,20 @@ static double solve(std::vector<std::string>& expression)
         else if (mapOps.contains(c))
         {
             // Symbol is operator
-            sOperator new_op = mapOps[c];
+            Operator newOp = mapOps[c];
 
             
-            while (!stkHolding.empty() && stkHolding.front().type != sSymbol::Type::Parenthesis_Open)
+            while (!holdingStack.empty() && holdingStack.front().type != Symbol::Type::ParenthesisOpen)
             {
                 // Ensure holding stack front is an operator (it might not be later...)
-                if (stkHolding.front().type == sSymbol::Type::Operator)
+                if (holdingStack.front().type == Symbol::Type::Operator)
                 {
-                    const auto& holding_stack_op = stkHolding.front().op;
+                    const auto& holdingStackOp = holdingStack.front().op;
                     
-                    if (holding_stack_op.precedence >= new_op.precedence)
+                    if (holdingStackOp.precedence >= newOp.precedence)
                     {
-                        stkOutput.push_back(stkHolding.front());
-                        stkHolding.pop_front();
+                        RPN.push_back(holdingStack.front());
+                        holdingStack.pop_front();
                     }
                     else
                         break;
@@ -126,41 +125,40 @@ static double solve(std::vector<std::string>& expression)
             }
             
             // Push the new operator onto the holding stack
-            stkHolding.push_front({ std::string(1, c), sSymbol::Type::Operator, new_op });
+            holdingStack.push_front({ std::string(1, c), Symbol::Type::Operator, newOp });
 
         } else {
-            std::cout << "Bad Symbol: '" << c << "'\n";
+            std::cout << MessageType::kError << "#[]: Bad Symbol: '" << c << "'\n";
             return 0;
         }
     }
     
     
-    
     // Drain the holding stack
-    while (!stkHolding.empty()) {
-        stkOutput.push_back(stkHolding.front());
-        stkHolding.pop_front();
+    while (!holdingStack.empty()) {
+        RPN.push_back(holdingStack.front());
+        holdingStack.pop_front();
     }
 
     
     // Solver
-    std::deque<double> stkSolve;
+    std::deque<double> solveStack;
     
-    for (const auto& inst : stkOutput) {
+    for (const auto& inst : RPN) {
         switch (inst.type) {
                 
-            case sSymbol::Type::Literal_Numeric: {
-                stkSolve.push_front(std::stod(inst.symbol));
+            case Symbol::Type::LiteralNumeric: {
+                solveStack.push_front(std::stod(inst.symbol));
             } break;
                 
-            case sSymbol::Type::Operator: {
+            case Symbol::Type::Operator: {
                 std::vector<double> mem(inst.op.arguments);
                 for (uint8_t a = 0; a < inst.op.arguments; a++) {
-                    if (stkSolve.empty()) {
-                        std::cout << "!!!     ERROR! Bad Expression\n";
+                    if (solveStack.empty()) {
+                        std::cout << MessageType::kError << "#[]: Bad Expression\n";
                     } else {
-                        mem[a] = stkSolve[0];
-                        stkSolve.pop_front();
+                        mem[a] = solveStack[0];
+                        solveStack.pop_front();
                     }
                 }
                 
@@ -178,7 +176,7 @@ static double solve(std::vector<std::string>& expression)
                     if (inst.symbol[0] == '-') result = -mem[0];
                 }
                 
-                stkSolve.push_front(result);
+                solveStack.push_front(result);
             } break;
                 
             default:
@@ -186,7 +184,7 @@ static double solve(std::vector<std::string>& expression)
         }
     }
     
-    return stkSolve[0];
+    return solveStack[0];
 }
 
 bool Calc::parse(std::string &str)
@@ -194,7 +192,7 @@ bool Calc::parse(std::string &str)
     std::regex r;
     std::string s;
     std::smatch m;
-    int precision = 9;
+    int scale = -1;
     
     r = R"(\bMOD\b)";
     str = regex_replace(str, r, "%");
@@ -215,8 +213,8 @@ bool Calc::parse(std::string &str)
         if (it != std::sregex_token_iterator()) {
             s = *it++;
             if (it->matched) {
-                precision = atoi(it->str().c_str());
-            } else precision = 9;
+                scale = atoi(it->str().c_str());
+            } else scale = -1; // -1 means auto scale
         }
         
         std::vector<std::string> expression;
@@ -227,11 +225,13 @@ bool Calc::parse(std::string &str)
         
         double number = solve(expression);
         std::stringstream ss;
-        ss << std::fixed << std::setprecision(precision) << number;
+        ss << std::fixed << std::setprecision(scale > -1 ? scale : 9) << number;
         s = ss.str();
         
-        s.erase ( s.find_last_not_of('0') + 1, std::string::npos );
-        s.erase ( s.find_last_not_of('.') + 1, std::string::npos );
+        if (scale < 0) {
+            s.erase ( s.find_last_not_of('0') + 1, std::string::npos );
+            s.erase ( s.find_last_not_of('.') + 1, std::string::npos );
+        }
         
         str = str.replace(m.position(), m.length(), s);
     }
