@@ -91,9 +91,9 @@ Color::ConvertToHSV(255,127,0);
 ```
 #pragma ( calc 1 )
 #define SCREEN_WIDTH 320
-var a = SCREEN_WIDTH / (8 - 6);
-var b;
-b = #[SCREEN_WIDTH / 2]:0; // Pre-Calc #[]:presision
+var a = SCREEN_WIDTH / #[8 - 6];
+var b = #[SCREEN_WIDTH / 4];
+b = #[SCREEN_WIDTH / 2]:0; // Pre-Calc #[]:scale
 // PPL b:=160;
 ```
 > [!TIP]
