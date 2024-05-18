@@ -605,37 +605,7 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     
 
     Calc::parse(ln);
-    
     condence(ln);
-//    // We further condence the PPL code by solving calculations that don't involve variable.
-//    r = R"((?::=[\d\/*+\-()]*(?=;))|(?:(?:#|0)\[[\d\/*+\-()]*(?=\])))";
-//    for(std::sregex_iterator it = std::sregex_iterator(ln.begin(), ln.end(), r); it != std::sregex_iterator(); ++it) {
-//        s = it->str().substr(2,it->str().length() - 2);
-//        
-//        std::vector<std::string> expression;
-//        std::regex re(R"((-?\d+)|[\/*+\-()])");
-//        for(std::sregex_iterator i = std::sregex_iterator(s.begin(), s.end(), re); i != std::sregex_iterator(); ++i ) {
-//            std::smatch m = *i;
-//            expression.push_back(m.str());
-//        }
-//       
-//        if (preprocessor.calcInt) {
-//            s = std::to_string ((int)Calc::solve(expression));
-//        } else {
-//            s = std::to_string (Calc::solve(expression));
-//            s.erase ( s.find_last_not_of('0') + 1, std::string::npos );
-//            s.erase ( s.find_last_not_of('.') + 1, std::string::npos );
-//        }
-//        
-//        if (ln.at(it->position()) == '#') {
-//            ln = ln.replace(it->position(), it->length() + 1, s);
-//            continue;
-//        }
-//        
-//        
-//        if (!preprocessor.calc) continue;
-//        ln = ln.replace(it->position() + 2, it->length() - 2, s);
-//    }
     
     strings.restoreStrings(ln);
     singleton->comments.restoreComment(ln);

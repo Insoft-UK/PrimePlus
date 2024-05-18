@@ -24,12 +24,15 @@
 #include <regex>
 #include <sstream>
 #include <iomanip>
+#include <cmath>
 
 using namespace pp;
 
 #define isdigit(str) regex_match(str, std::regex(R"(-?\d*)"))
 
-static float solve(std::vector<std::string>& expression)
+
+
+static double solve(std::vector<std::string>& expression)
 {
     struct sOperator
     {
@@ -38,6 +41,7 @@ static float solve(std::vector<std::string>& expression)
     };
     
     std::unordered_map<char, sOperator> mapOps;
+    mapOps['%'] = { 5, 2 };
     mapOps['/'] = { 4, 2 };
     mapOps['*'] = { 3, 2 };
     mapOps['+'] = { 2, 2 };
@@ -63,23 +67,17 @@ static float solve(std::vector<std::string>& expression)
     std::deque<sSymbol> stkHolding;
     std::deque<sSymbol> stkOutput;
     
-    sSymbol symPrevious = { "0", sSymbol::Type::Literal_Numeric, 0, 0 };
-    int pass = 0;
-    
-    //    for (auto c : expression.b)
+
     for (auto it = expression.begin(); it != expression.end(); ++it) {
         char c = it->c_str()[0];
-        if (regex_match(it->data(), std::regex(R"(-?\d+(?:\.\d)?)")))
+        if (regex_match(it->data(), std::regex(R"(-?\d+(?:\.\d+)?)")))
         {
-            // Push literals straight to output, they are already in order
             stkOutput.push_back({ it->data(), sSymbol::Type::Literal_Numeric });
-            symPrevious = stkOutput.back();
         }
         else if (c == '(')
         {
             // Push to holding stack, it acts as a stopper when we back track
             stkHolding.push_front({ std::string(1, '('), sSymbol::Type::Parenthesis_Open });
-            symPrevious = stkHolding.front();
         }
         else if (c == ')')
         {
@@ -102,23 +100,13 @@ static float solve(std::vector<std::string>& expression)
                 stkHolding.pop_front();
             }
             
-            symPrevious = { std::string(1, c), sSymbol::Type::Parenthesis_Close };
             
         }
         else if (mapOps.contains(c))
         {
             // Symbol is operator
             sOperator new_op = mapOps[c];
-            
-            if (c == '-' || c == '+')
-            {
-                if ((symPrevious.type != sSymbol::Type::Literal_Numeric
-                     && symPrevious.type != sSymbol::Type::Parenthesis_Close) || pass == 0)
-                {
-                    new_op.arguments = 1;
-                    new_op.precedence = 100;
-                }
-            }
+
             
             while (!stkHolding.empty() && stkHolding.front().type != sSymbol::Type::Parenthesis_Open)
             {
@@ -139,13 +127,11 @@ static float solve(std::vector<std::string>& expression)
             
             // Push the new operator onto the holding stack
             stkHolding.push_front({ std::string(1, c), sSymbol::Type::Operator, new_op });
-            symPrevious = stkHolding.front();
+
         } else {
             std::cout << "Bad Symbol: '" << c << "'\n";
             return 0;
         }
-        
-        pass++;
     }
     
     
@@ -180,6 +166,7 @@ static float solve(std::vector<std::string>& expression)
                 
                 double result = 0.0;
                 if (inst.op.arguments == 2) {
+                    if (inst.symbol[0] == '%') result = fmod(mem[1], mem[0]);
                     if (inst.symbol[0] == '/') result = mem[1] / mem[0];
                     if (inst.symbol[0] == '*') result = mem[1] * mem[0];
                     if (inst.symbol[0] == '+') result = mem[1] + mem[0];
@@ -208,6 +195,9 @@ bool Calc::parse(std::string &str)
     std::string s;
     std::smatch m;
     int precision = 9;
+    
+    r = R"(\bMOD\b)";
+    str = regex_replace(str, r, "%");
 
     /*
      eg. test(#[320/(7+-2*2)]:0);
@@ -215,7 +205,7 @@ bool Calc::parse(std::string &str)
             1 320/(7+-2*2)
      Opt!   2 0
     */
-    r = R"(#\[([\d\/*+\-(). ]*)\](?::(\d))?)";
+    r = R"(#\[([\d\/*+\-(). %]*)\](?::(\d))?)";
     while (regex_search(str, m, r)) {
         std::string matched = m.str();
         
@@ -230,12 +220,12 @@ bool Calc::parse(std::string &str)
         }
         
         std::vector<std::string> expression;
-        std::regex re(R"((?:-?\d+(?:.\d+)?)|[\/*+\-()])");
+        std::regex re(R"((?:-?\d+(?:.\d+)?)|[\/*+\-()%])");
         for(auto it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); ++it ) {
             expression.push_back(it->str());
         }
         
-        float number = solve(expression);
+        double number = solve(expression);
         std::stringstream ss;
         ss << std::fixed << std::setprecision(precision) << number;
         s = ss.str();

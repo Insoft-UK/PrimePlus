@@ -63,7 +63,7 @@ Example::ForNext()
 begin
     var n:number, auto:count = 0;
     
-    for number = #[0]; number < 100; number += 1 do
+    for number = 0; number < 100; number += 1 do
         count += 1;
     next
     return count;
@@ -91,4 +91,6 @@ begin
     endif
     
     R→B(value,4)=>value;
+    //var io = #[9 + -4 + 2 * 6 / 2]:0;
+    io = #[5.5 % 4.25];
 end
