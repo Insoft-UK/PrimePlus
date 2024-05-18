@@ -83,7 +83,7 @@ setAlpha(50.0);
 **Obj-C Style**
 
 > [!WARNING]
-It may be removed in later updates, but if it is removed, you can easily reinstate it for your own use.
+It may be removed in later updates, but if it is removed, you can easily reinstate if required.
 ```
 [Color ConvertToHSVFromRed:255 blue:127 green:0];
 
