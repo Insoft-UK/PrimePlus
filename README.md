@@ -110,7 +110,7 @@ string S = "P+";
 list = {1,2,3};
 R = <real>(I);
 S = <string>(R);
-
+```
 
 > [!TIP]
 In P+ the use of **;** after end, endif, wend, loop ... is optional as the pre-processor will automatically include them if omitted.
