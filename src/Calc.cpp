@@ -21,181 +21,143 @@
  */
 
 #include "Calc.hpp"
-#include <regex>
-#include <sstream>
-#include <iomanip>
-#include <cmath>
 #include "common.hpp"
+
+#include <regex>
+#include <vector>
+#include <stack>
+#include <sstream>
 
 using namespace pp;
 
-#define isdigit(str) regex_match(str, std::regex(R"(-?\d+(?:\.\d+)?)"))
+// Function to check if a character is an operator
+static bool isOperator(char c) {
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';
+}
 
-static double solve(std::vector<std::string>& expression)
-{
-    struct Operator
-    {
-        uint8_t precedence = 0;
-        uint8_t arguments = 0;
-    };
-    
-    std::unordered_map<char, Operator> mapOps;
-    mapOps['%'] = { 2, 2 };
-    mapOps['/'] = { 2, 2 };
-    mapOps['*'] = { 2, 2 };
-    mapOps['+'] = { 1, 2 };
-    mapOps['-'] = { 1, 2 };
-    
-    
-    struct Symbol
-    {
-        std::string symbol = "";
-        
-        enum class Type : uint8_t
-        {
-            Unknown,
-            LiteralNumeric,
-            Operator,
-            ParenthesisOpen,
-            ParenthesisClose
-        } type = Type::Unknown;
-        
-        Operator op;
-    };
-    
-    std::deque<Symbol> holdingStack;
-    std::deque<Symbol> RPN;
-    
+// Function to get the precedence of an operator
+static int precedence(char op) {
+    if (op == '+' || op == '-') return 1;
+    if (op == '*' || op == '/' || op == '%') return 2;
+    return 0;
+}
 
-    for (auto it = expression.begin(); it != expression.end(); ++it) {
-        char c = it->c_str()[0];
-        if (isdigit(it->data()))
-        {
-            RPN.push_back({ it->data(), Symbol::Type::LiteralNumeric });
-        }
-        else if (c == '(')
-        {
-            // Push to holding stack, it acts as a stopper when we back track
-            holdingStack.push_front({ std::string(1, '('), Symbol::Type::ParenthesisOpen });
-        }
-        else if (c == ')')
-        {
-            // Backflush holding stack into output until open parenthesis
-            while (!holdingStack.empty() && holdingStack.front().type != Symbol::Type::ParenthesisOpen)
-            {
-                RPN.push_back(holdingStack.front());
-                holdingStack.pop_front();
-            }
-            
-            if (holdingStack.empty())
-            {
-                std::cout << MessageType::kError << "#[]: Unexpected Parenthesis: '" << c << "'\n";
+// Function to perform arithmetic operations
+static double applyOperator(const double a, const double b, const char op) {
+    switch (op) {
+        case '+': return a + b;
+        case '-': return a - b;
+        case '*': return a * b;
+        case '/':
+            if (b == 0) {
+                std::cout << MessageType::kError << "#[]: division by zero\n";
                 return 0;
             }
-            
-            // Remove corresponding open parenthesis from holding stack
-            if (!holdingStack.empty() && holdingStack.front().type == Symbol::Type::ParenthesisOpen)
-            {
-                holdingStack.pop_front();
-            }
-            
-            
-        }
-        else if (mapOps.contains(c))
-        {
-            // Symbol is operator
-            Operator newOp = mapOps[c];
-
-            
-            while (!holdingStack.empty() && holdingStack.front().type != Symbol::Type::ParenthesisOpen)
-            {
-                // Ensure holding stack front is an operator (it might not be later...)
-                if (holdingStack.front().type == Symbol::Type::Operator)
-                {
-                    const auto& holdingStackOp = holdingStack.front().op;
-                    
-                    if (holdingStackOp.precedence >= newOp.precedence)
-                    {
-                        RPN.push_back(holdingStack.front());
-                        holdingStack.pop_front();
-                    }
-                    else
-                        break;
-                }
-            }
-            
-            // Push the new operator onto the holding stack
-            holdingStack.push_front({ std::string(1, c), Symbol::Type::Operator, newOp });
-
-        } else {
-            std::cout << MessageType::kError << "#[]: Bad Symbol: '" << c << "'\n";
+            return a / b;
+        case '%': return fmod(a,b);
+        default: 
+            std::cout << MessageType::kError << "#[]: unknown '" << op << "' operator\n";
             return 0;
+    }
+}
+
+static std::string separateExpression(const std::string& expression) {
+    std::stringstream separated;
+    for (size_t i = 0; i < expression.length(); ++i) {
+        if (expression[i] == '(' || expression[i] == ')' || expression[i] == '+' || expression[i] == '-' || expression[i] == '*' || expression[i] == '/' || expression[i] == '%') {
+            // Handle negative numbers (only if '-' is not preceded by a digit)
+            if (expression[i] == '-' && (i == 0 || !isdigit(expression[i - 1]))) {
+                separated << " " << expression[i];
+            } else {
+                separated << " " << expression[i] << " ";
+            }
+        } else {
+            separated << expression[i];
         }
     }
+    return separated.str();
+}
+
+// Function to convert infix expression to postfix (RPN)
+static std::vector<std::string> infixToPostfix(const std::string& expression) {
+    std::vector<std::string> output;
+    std::stack<char> operators;
     
-    
-    // Drain the holding stack
-    while (!holdingStack.empty()) {
-        RPN.push_back(holdingStack.front());
-        holdingStack.pop_front();
+    std::regex r(R"([^ ]+)");
+    for(auto it = std::sregex_iterator(expression.begin(), expression.end(), r); it != std::sregex_iterator(); ++it ) {
+        std::string result = it->str();
+        
+        if (isdigit(result[0]) || (result.length() > 1 && result[0] == '-')) {
+            output.push_back(it->str());
+            continue;
+        }
+        
+        if (isOperator(result.c_str()[0])) {
+            while (!operators.empty() && precedence(operators.top()) >= precedence(result.c_str()[0])) {
+                output.push_back(std::string(1, operators.top()));
+                operators.pop();
+            }
+            operators.push(result.c_str()[0]);
+            continue;
+        }
+        
+        if (result.c_str()[0] == '(') {
+            operators.push('(');
+            continue;
+        }
+        
+        if (result.c_str()[0] == ')') {
+            while (!operators.empty() && operators.top() != '(') {
+                output.push_back(std::string(1, operators.top()));
+                operators.pop();
+            }
+            if (operators.empty()) {
+                std::cout << MessageType::kError << "#[]: missing '(' in expression '" << expression << "'\n";
+                continue;
+            }
+                
+            operators.pop();  // Remove the '(' from stack
+            continue;
+        }
+        
+        std::cout << MessageType::kError << "#[]: uknown '" << result << "' in expression '" << expression << "'\n";
     }
 
-    
-    // Solver
-    std::deque<double> solveStack;
-    
-    for (const auto& inst : RPN) {
-        switch (inst.type) {
-                
-            case Symbol::Type::LiteralNumeric: {
-                solveStack.push_front(std::stod(inst.symbol));
-            } break;
-                
-            case Symbol::Type::Operator: {
-                std::vector<double> mem(inst.op.arguments);
-                for (uint8_t a = 0; a < inst.op.arguments; a++) {
-                    if (solveStack.empty()) {
-                        std::cout << MessageType::kError << "#[]: Bad Expression\n";
-                    } else {
-                        mem[a] = solveStack[0];
-                        solveStack.pop_front();
-                    }
-                }
-                
-                double result = 0.0;
-                if (inst.op.arguments == 2) {
-                    if (inst.symbol[0] == '%') result = fmod(mem[1], mem[0]);
-                    if (inst.symbol[0] == '/') result = mem[1] / mem[0];
-                    if (inst.symbol[0] == '*') result = mem[1] * mem[0];
-                    if (inst.symbol[0] == '+') result = mem[1] + mem[0];
-                    if (inst.symbol[0] == '-') result = mem[1] - mem[0];
-                }
-                
-                if (inst.op.arguments == 1) {
-                    if (inst.symbol[0] == '+') result = +mem[0];
-                    if (inst.symbol[0] == '-') result = -mem[0];
-                }
-                
-                solveStack.push_front(result);
-            } break;
-                
-            default:
-                break;
+    while (!operators.empty()) {
+        output.push_back(std::string(1, operators.top()));
+        operators.pop();
+    }
+
+    return output;
+}
+
+// Function to evaluate a postfix expression
+static double evaluatePostfix(const std::vector<std::string>& postfix) {
+    std::stack<double> values;
+
+    for (const std::string& token : postfix) {
+        if (isdigit(token[0]) || (token.length() > 1 && token[0] == '-')) {
+            values.push(std::stod(token));
+        } else if (isOperator(token[0])) {
+            double b = values.top(); values.pop();
+            double a = values.top(); values.pop();
+            values.push(applyOperator(a, b, token[0]));
         }
     }
-    
-    return solveStack[0];
+
+    return values.top();
+}
+
+// Function to evaluate an infix expression
+static double evaluateExpression(const std::string& expression) {
+    std::vector<std::string> postfix = infixToPostfix(expression);
+    return evaluatePostfix(postfix);
 }
 
 bool Calc::parse(std::string &str)
 {
     std::regex r;
-    std::string s;
     std::smatch m;
-    int scale = -1;
-    
-    r = R"(\bMOD\b)";
-    str = regex_replace(str, r, "%");
 
     /*
      eg. test(#[320/(7+-2*2)]:0);
@@ -203,30 +165,34 @@ bool Calc::parse(std::string &str)
             1 320/(7+-2*2)
      Opt!   2 0
     */
-    r = R"(#\[([\d\/*+\-(). %]*)\](?::(\d))?)";
+    r = R"(#\[(.*)\](?::(\d))?)";
     while (regex_search(str, m, r)) {
         std::string matched = m.str();
+        std::string expression;
+        int scale = -1;
         
         auto it = std::sregex_token_iterator {
             matched.begin(), matched.end(), r, {1, 2}
         };
         if (it != std::sregex_token_iterator()) {
-            s = *it++;
+            expression = *it++;
             if (it->matched) {
                 scale = atoi(it->str().c_str());
             } else scale = -1; // -1 means auto scale
         }
         
-        std::vector<std::string> expression;
-        std::regex re(R"((?:-?\d+(?:.\d+)?)|[\/*+\-()%])");
-        for(auto it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); ++it ) {
-            expression.push_back(it->str());
-        }
+        strip(expression);
         
-        double number = solve(expression);
+        expression = regex_replace(expression, std::regex(R"(MOD)"), "%");
+        expression = regex_replace(expression, std::regex(R"(BITAND)"), "&");
+        expression = regex_replace(expression, std::regex(R"(BITOR)"), "|");
+    
+        expression = separateExpression(expression);
+        double result = evaluateExpression(expression);
+        
         std::stringstream ss;
-        ss << std::fixed << std::setprecision(scale > -1 ? scale : 9) << number;
-        s = ss.str();
+        ss << std::fixed << std::setprecision(scale > -1 ? scale : 10) << result;
+        std::string s = ss.str();
         
         if (scale < 0) {
             s.erase ( s.find_last_not_of('0') + 1, std::string::npos );
@@ -235,7 +201,10 @@ bool Calc::parse(std::string &str)
         
         str = str.replace(m.position(), m.length(), s);
     }
-    
-    
+
     return true;
 }
+
+
+
+

@@ -91,4 +91,6 @@ begin
     endif
     
     R→B(value,4)=>value;
+    
+    var t = #[320/(7%3/-2*2)--6];
 end
