@@ -43,7 +43,7 @@ endif
 ```
 **if** _condition_ **then return**
 ```
-if text=="" then return // end; is implied and optional.
+if text=="" then return; // end; is optional as the pre-processor will automatically include end; if omitted.
 ```
 **guard** _condition_ **else** _statement/s_ **end**
 ```
@@ -92,7 +92,6 @@ Color::ConvertToHSV(255,127,0);
 ```
 **Pre-Calc**
 ```
-#pragma ( calc 1 )
 #define SCREEN_WIDTH 320
 var a = SCREEN_WIDTH / #[8 - 6];
 // PPL LOCAL a:=320/2;
@@ -100,8 +99,21 @@ var b = #[SCREEN_WIDTH / 4];
 b = #[SCREEN_WIDTH / 2]:0; // Pre-Calc #[]:scale
 // PPL b:=160;
 ```
+**C Style Types & Casting**
+
+> [!NOTE]
+It may be removed in later updates or not yet implimented or even fully implimented, experimental purposes.
+```
+int I = 0;
+real R = 0.6;
+string S = "P+";
+list = {1,2,3};
+R = <real>(I);
+S = <string>(R);
+
+
 > [!TIP]
-In P+ the use of **;** after end, endif, wend, loop ... is optional as the pre-processor will automatically include them if omitted for to allow cleaner looking code to be written.
+In P+ the use of **;** after end, endif, wend, loop ... is optional as the pre-processor will automatically include them if omitted.
 
 > [!TIP]
 In P+ the use of **=** for := is optional as the pre-processor will automatically covert all = to := Pascal & PPL style.
