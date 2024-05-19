@@ -30,8 +30,8 @@ prefix::camelCase
 
 def ARC_P       px::arc((deprecated:"use 'arc'"));
 def BLIT_P      px::blit((deprecated:"use 'blit'"));
-def DIMGROB_P   px::grob::dim((deprecated:"use 'defGROB'"));
-def DIMGROB_P   px::defineGROB((deprecated:"use 'defGROB'"));
+def DIMGROB_P   px::grob::dim((deprecated:"use 'dimGROB'"));
+def DIMGROB_P   px::defineGROB((deprecated:"use 'dimGROB'"));
 def GETPIX_P    px::getPixel((deprecated:"use 'getPixel'"));
 def INVERT_P    px::invert((deprecated:"use 'invert'"));
 def LINE_P      px::line((deprecated:"use 'line'"));

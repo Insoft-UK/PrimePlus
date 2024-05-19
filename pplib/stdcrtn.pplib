@@ -1,5 +1,5 @@
 /*
-Copyright © 2023 Insoft. All rights reserved.
+Copyright © 2023-2024 Insoft. All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -30,7 +30,8 @@ prefix::sifix::camelCase
 
 def ARC       cartesian::arc;
 def BLIT      cartesian::blit;
-def DIMGROB   cartesian::GROB::dim;
+def DIMGROB   cartesian::GROB::dim((deprecated:"use 'cartesian::dimGROB'"));
+def DIMGROB   cartesian::dimGROB;
 def GETPIX    cartesian::get::pixel;
 def GROBH     cartesian::GROB::height;
 def GROBW     cartesian::GROB::width;
@@ -43,5 +44,24 @@ def FILLPOLY  cartesian::fill::poly;
 def SUBGROB   cartesian::GROB::sub;
 def TEXTOUT   cartesian::text::out;
 def TEXTSIZE  cartesian::text::size;
+
+def GROBW(G1) cartesian::G1.width;
+def GROBH(G1) cartesian::G1.height;
+def GROBW(G2) cartesian::G2.width;
+def GROBH(G2) cartesian::G2.height;
+def GROBW(G3) cartesian::G3.width;
+def GROBH(G3) cartesian::G3.height;
+def GROBW(G4) cartesian::G4.width;
+def GROBH(G4) cartesian::G4.height;
+def GROBW(G5) cartesian::G5.width;
+def GROBH(G5) cartesian::G5.height;
+def GROBW(G6) cartesian::G6.width;
+def GROBH(G6) cartesian::G6.height;
+def GROBW(G7) cartesian::G7.width;
+def GROBH(G7) cartesian::G7.height;
+def GROBW(G8) cartesian::G8.width;
+def GROBH(G8) cartesian::G8.height;
+def GROBW(G9) cartesian::G9.width;
+def GROBH(G9) cartesian::G9.height;
 
 #endif /// STDCRTN_PPLIB
