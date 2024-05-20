@@ -184,6 +184,8 @@ bool Calc::parse(std::string &str)
     while (regex_search(str, m, r)) {
         
         std::string matched = m.str();
+        
+        
         std::string expression;
         int scale = -1;
         
@@ -204,6 +206,8 @@ bool Calc::parse(std::string &str)
             } else scale = -1; // -1 means auto scale
         }
         
+        parse(expression);
+        
         if (this->verbose) std::cout << MessageType::kVerbose << "calc: expression: '" << expression << "'\n";
     
         expression = separateExpression(expression);
@@ -221,9 +225,10 @@ bool Calc::parse(std::string &str)
         if (this->verbose) std::cout << MessageType::kVerbose << "calc: '" << s << "'\n";
         
         str = str.replace(m.position(), m.length(), s);
+        return true;
     }
 
-    return true;
+    return false;
 }
 
 

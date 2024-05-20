@@ -673,7 +673,9 @@ int main(int argc, char **argv) {
     }
     
     for( int n = 1; n < argc; n++ ) {
-        if ( strcmp( argv[n], "-o" ) == 0 || strcmp( argv[n], "--out" ) == 0 )
+        std::string args(argv[n]);
+        
+        if ( args == "-o" || args == "--out" )
         {
             if ( n + 1 >= argc ) {
                 error();
@@ -688,7 +690,7 @@ int main(int argc, char **argv) {
             continue;
         }
         
-        if ( strcmp( argv[n], "--help" ) == 0 ) {
+        if ( args == "--help" ) {
             usage();
             exit(102);
         }
@@ -716,25 +718,30 @@ int main(int argc, char **argv) {
             continue;
         }
         
-        if ( strcmp( argv[n], "-v" ) == 0 || strcmp( argv[n], "--verbose" ) == 0 ) {
+        if ( args == "-v" || args == "--verbose" ) {
             if ( n + 1 >= argc ) {
                 error();
                 exit(103);
             }
-            
-            n++;
-            if (std::string(argv[n]).compare("-") == 0) {
-                Singleton::shared()->aliases.verbose = enumerators.verbose = preprocessor.verbose = structurs.verbose = true;
+            args = argv[++n];
+            if ( args == "-" ) {
+                Singleton::shared()->aliases.verbose = true;
+                Singleton::shared()->comments.verbose = true;
+                Singleton::shared()->calc.verbose = true;
+                enumerators.verbose = true;
+                structurs.verbose = true;
+                preprocessor.verbose = true;
+                Singleton::shared()->switches.verbose = true;
                 continue;
             }
             
-            if (std::regex_search(argv[n], std::regex("a"))) Singleton::shared()->aliases.verbose = true;
-            if (std::regex_search(argv[n], std::regex("c"))) Singleton::shared()->comments.verbose = true;
-            if (std::regex_search(argv[n], std::regex("l"))) Singleton::shared()->calc.verbose = true;
-            if (std::regex_search(argv[n], std::regex("e"))) enumerators.verbose = true;
-            if (std::regex_search(argv[n], std::regex("s"))) structurs.verbose = true;
-            if (std::regex_search(argv[n], std::regex("p"))) preprocessor.verbose = true;
-            if (std::regex_search(argv[n], std::regex("w"))) Singleton::shared()->switches.verbose = true;
+            if (args.find("a") != std::string::npos) Singleton::shared()->aliases.verbose = true;
+            if (args.find("c") != std::string::npos) Singleton::shared()->comments.verbose = true;
+            if (args.find("l") != std::string::npos) Singleton::shared()->calc.verbose = true;
+            if (args.find("e") != std::string::npos) enumerators.verbose = true;
+            if (args.find("s") != std::string::npos) structurs.verbose = true;
+            if (args.find("p") != std::string::npos) preprocessor.verbose = true;
+            if (args.find("w") != std::string::npos) Singleton::shared()->switches.verbose = true;
         
             continue;
         }
