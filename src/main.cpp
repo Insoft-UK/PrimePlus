@@ -611,7 +611,7 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
       **NEW! 1.7.03xx
        pre-calc
      */
-    Calc::parse(ln);
+    singleton->calc.parse(ln);
     
     condence(ln);
     
@@ -648,6 +648,8 @@ void usage(void) {
     std::cout << " -v, --verbose     display detailed processing information\n";
     std::cout << " verbose :- flags\n";
     std::cout << "            a aliases\n";
+    std::cout << "            c comments\n";
+    std::cout << "            l calc\n";
     std::cout << "            e enumerator\n";
     std::cout << "            p preprocessor\n";
     std::cout << "            w structs\n\n";
@@ -728,6 +730,7 @@ int main(int argc, char **argv) {
             
             if (std::regex_search(argv[n], std::regex("a"))) Singleton::shared()->aliases.verbose = true;
             if (std::regex_search(argv[n], std::regex("c"))) Singleton::shared()->comments.verbose = true;
+            if (std::regex_search(argv[n], std::regex("l"))) Singleton::shared()->calc.verbose = true;
             if (std::regex_search(argv[n], std::regex("e"))) enumerators.verbose = true;
             if (std::regex_search(argv[n], std::regex("s"))) structurs.verbose = true;
             if (std::regex_search(argv[n], std::regex("p"))) preprocessor.verbose = true;

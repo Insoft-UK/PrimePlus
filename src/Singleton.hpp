@@ -29,11 +29,12 @@
 #include "Auto.hpp"
 #include "Switch.hpp"
 #include "Comments.hpp"
+#include "Calc.hpp"
 #include "common.hpp"
 
 using namespace pp;
 
-class Singleton{
+class Singleton {
     
     std::vector<std::string> _pathnames;
     std::vector<long> _lines;
@@ -49,6 +50,7 @@ public:
     Auto autoname;
     Switch switches;
     Comments comments;
+    Calc calc;
     
     unsigned int tabsize = 2;
     

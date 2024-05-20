@@ -30,6 +30,8 @@
 
 using namespace pp;
 
+static bool _verbose = false;
+
 // Function to check if a character is an operator
 static bool isOperator(char c) {
     return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';
@@ -127,6 +129,17 @@ static std::vector<std::string> infixToPostfix(const std::string& expression) {
         output.push_back(std::string(1, operators.top()));
         operators.pop();
     }
+    
+    if (_verbose) {
+        std::cout << MessageType::kVerbose << "calc: RPN: ";
+        for (auto it = output.begin(); it != output.end(); ++it) {
+            std::cout << *it;
+            if (it != output.end()) {
+                std::cout << " ";
+            }
+        }
+        std::cout << "\n";
+    }
 
     return output;
 }
@@ -158,6 +171,8 @@ bool Calc::parse(std::string &str)
 {
     std::regex r;
     std::smatch m;
+    
+    _verbose = this->verbose;
 
     /*
      eg. test(#[320/(7+-2*2)]:0);
@@ -167,9 +182,17 @@ bool Calc::parse(std::string &str)
     */
     r = R"(#\[(.*)\](?::(\d))?)";
     while (regex_search(str, m, r)) {
+        
         std::string matched = m.str();
         std::string expression;
         int scale = -1;
+        
+        matched = regex_replace(matched, std::regex(R"(MOD)"), "%");
+        matched = regex_replace(matched, std::regex(R"(BITAND)"), "&");
+        matched = regex_replace(matched, std::regex(R"(BITOR)"), "|");
+        strip(matched);
+        
+        if (this->verbose) std::cout << MessageType::kVerbose << "calc: '" << matched << "'\n";
         
         auto it = std::sregex_token_iterator {
             matched.begin(), matched.end(), r, {1, 2}
@@ -181,11 +204,7 @@ bool Calc::parse(std::string &str)
             } else scale = -1; // -1 means auto scale
         }
         
-        strip(expression);
-        
-        expression = regex_replace(expression, std::regex(R"(MOD)"), "%");
-        expression = regex_replace(expression, std::regex(R"(BITAND)"), "&");
-        expression = regex_replace(expression, std::regex(R"(BITOR)"), "|");
+        if (this->verbose) std::cout << MessageType::kVerbose << "calc: expression: '" << expression << "'\n";
     
         expression = separateExpression(expression);
         double result = evaluateExpression(expression);
@@ -198,6 +217,8 @@ bool Calc::parse(std::string &str)
             s.erase ( s.find_last_not_of('0') + 1, std::string::npos );
             s.erase ( s.find_last_not_of('.') + 1, std::string::npos );
         }
+        
+        if (this->verbose) std::cout << MessageType::kVerbose << "calc: '" << s << "'\n";
         
         str = str.replace(m.position(), m.length(), s);
     }
