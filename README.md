@@ -93,11 +93,11 @@ Color::ConvertToHSV(255,127,0);
 **Pre-Calc**
 ```
 #define SCREEN_WIDTH 320
-var a = SCREEN_WIDTH / #[8 - 6];
-// PPL LOCAL a:=320/2;
+var a = #[SCREEN_WIDTH / #[8 - 6]];
+// PPL LOCAL a:=160;
 var b = #[SCREEN_WIDTH / 4];
-b = #[SCREEN_WIDTH / 2]:0; // Pre-Calc #[]:scale
-// PPL b:=160;
+b = #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
+// PPL b:=160.00;
 ```
 **C Style Types & Casting**
 
