@@ -34,7 +34,7 @@ bool Switch::parse(std::string &str) {
     std::regex r;
     std::smatch m;
     
-    if (Singleton::shared()->scope == Singleton::Scope::kGlobal) {
+    if (Singleton::shared()->scope == Singleton::Scope::Global) {
         _sw = 0;
         return false;
     }
@@ -59,7 +59,7 @@ bool Switch::parse(std::string &str) {
             oss << "sw" << _sw;
             _expressions.push_back({oss.str(), lwspaces(str)});
             if (verbose) std::cout
-                << MessageType::kVerbose
+                << MessageType::Verbose
                 << "switch"
                 << ": '" << *it << "' for expression defined\n";
                 
@@ -88,7 +88,7 @@ bool Switch::parse(std::string &str) {
     if (regex_match(str, r)) {
         if (lwspaces(str) == exp.indeted) {
             if (verbose) std::cout
-                << MessageType::kVerbose
+                << MessageType::Verbose
                 << "switch"
                 << ": '" << _expressions.front().expression << "' expression removed!\n";
             _expressions.pop_back();

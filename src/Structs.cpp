@@ -98,8 +98,8 @@ void Structs::createStructureVariable(std::string &str) {
     std::smatch m;
     
     Aliases::TIdentity identity = {
-        .type = Aliases::Type::kVariable,
-        .scope = Aliases::Scope::kAuto
+        .type = Aliases::Type::Variable,
+        .scope = Aliases::Scope::Auto
     };
     
     if (str.empty()) return;
@@ -119,11 +119,11 @@ void Structs::createStructureVariable(std::string &str) {
         if (hasAliasDeclaration(variableName)) {
             identifier = extractAliasDeclarationName(variableName);
             real = extractDeclarationName(variableName);
-            if (verbose) std::cout << MessageType::kVerbose << "struct: variable '" << identifier << "' for '" << real << "' defined\n";
+            if (verbose) std::cout << MessageType::Verbose << "struct: variable '" << identifier << "' for '" << real << "' defined\n";
         } else {
             identifier = variableName;
             real = variableName;
-            if (verbose) std::cout << MessageType::kVerbose << "struct: variable '" << real << "' defined\n";
+            if (verbose) std::cout << MessageType::Verbose << "struct: variable '" << real << "' defined\n";
         }
     
         
@@ -140,11 +140,11 @@ void Structs::createStructureVariable(std::string &str) {
             if (it != std::sregex_token_iterator()) {
                 identity.identifier = identifier + "." + (std::string)*it;
             } else {
-                if (verbose) std::cout << MessageType::kVerbose << "struct: syntax error!\n";
+                if (verbose) std::cout << MessageType::Verbose << "struct: syntax error!\n";
                 continue;
             }
             
-            if (verbose) std::cout << MessageType::kVerbose << "struct: " << identity.identifier << " PPL: " << identity.real << "\n";
+            if (verbose) std::cout << MessageType::Verbose << "struct: " << identity.identifier << " PPL: " << identity.real << "\n";
             singleton->aliases.append(identity);
         }
     
@@ -171,7 +171,7 @@ bool Structs::parse(std::string& str) {
         if (it != end) {
             // Structure Declaration
             _structure.identifier = *it++;
-            if (verbose) std::cout << MessageType::kVerbose << "struct: '" << _structure.identifier << "' defined\n";
+            if (verbose) std::cout << MessageType::Verbose << "struct: '" << _structure.identifier << "' defined\n";
             
             parsing = true;
             return true;

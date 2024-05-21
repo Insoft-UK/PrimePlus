@@ -41,20 +41,20 @@ std::ostream& operator<<(std::ostream& os, MessageType type) {
 
 
     switch (type) {
-        case MessageType::kError:
+        case MessageType::Error:
             os << " error: ";
             _failed = true;
             break;
 
-        case MessageType::kWarning:
+        case MessageType::Warning:
             os << " warning: ";
             break;
             
-        case MessageType::kVerbose:
+        case MessageType::Verbose:
             os << " : ";
             break;
             
-        case MessageType::kDeprecated:
+        case MessageType::Deprecated:
             os << " deprecated: ";
             break;
 

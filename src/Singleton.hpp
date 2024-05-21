@@ -41,10 +41,10 @@ class Singleton {
     static Singleton* _shared;
 public:
     enum class Scope {
-        kGlobal,
-        kLocal
+        Global,
+        Local
     };
-    Scope scope = Scope::kGlobal;
+    Scope scope = Scope::Global;
     
     Aliases aliases;
     Auto autoname;

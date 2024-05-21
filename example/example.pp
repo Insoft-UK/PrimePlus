@@ -20,10 +20,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma ( minify 0, tabsize 1 )
+#pragma ( minify -1, tabsize 1, newline, indents, reduce )
 
 #include <prime>
 #include <hp>
+
+Example::DoLoop(auto:value);
 
 Example::Switch()
 begin
@@ -71,7 +73,7 @@ end
 
 export Example:MyLongNameExample(auto:value)
 begin
-    var piTest = 2*pi;
+    var piTest = #[2*pi]:0;
     hp::storeScreen;
     
     struct MyStruct
@@ -93,4 +95,5 @@ begin
     R→B(value,4)=>value;
     
     var t = #[320/(7%3/#[-2*2])--6]:2;
+    t += piTest;
 end

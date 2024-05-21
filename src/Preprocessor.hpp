@@ -42,6 +42,12 @@ public:
     bool operators = true;
     bool logicalOperators = true;
     
+    // Used for when PPL code is being minifed to indicate if newline and indents should be retained.
+    bool newline = false;
+    bool indents = false;
+    
+    bool reduce = false;
+    
     bool parse(std::string &str);
     
 private:

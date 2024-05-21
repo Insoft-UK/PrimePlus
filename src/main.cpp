@@ -59,7 +59,7 @@ static Strings strings = Strings();
 
 
 void terminator() {
-  std::cout << MessageType::kError << "An internal preprocessing problem occurred. Please review the syntax before this point.\n";
+  std::cout << MessageType::Error << "An internal preprocessing problem occurred. Please review the syntax before this point.\n";
   exit(-1);
 }
  
@@ -88,14 +88,15 @@ void condence(std::string &str) {
     str = regex_replace(str, std::regex(R"(\s*≠\s*)"), "≠");
     str = regex_replace(str, std::regex(R"(\s*▶\s*)"), "▶");
     
-    if (Singleton::shared()->scope == Singleton::Scope::kGlobal) {
+    if (Singleton::shared()->scope == Singleton::Scope::Global) {
         str = std::regex_replace(str, std::regex(R"(^ *LOCAL +)"), "");
     }
     
     long indents = lwspaces(str) / tabWidth * Singleton::shared()->tabsize;
     ltrim(str);
+    
     while (indents--) {
-        str.insert(0, " ");
+        str.insert(0, "  ");
     }
 }
 
@@ -103,8 +104,14 @@ void minifier(std::string &str) {
     static size_t length = 0;
     strings.preserveStrings(str);
     
-    str = std::regex_replace(str, std::regex(R"(^ *)"), "");
-    str = std::regex_replace(str, std::regex(R"( *\n$)"), " ");
+    if (!preprocessor.indents)
+        str = std::regex_replace(str, std::regex(R"(^ *)"), "");
+    
+    if (preprocessor.newline)
+        str = std::regex_replace(str, std::regex(R"( *$)"), "");
+    else
+        str = std::regex_replace(str, std::regex(R"( *\n$)"), " ");
+    
     str = std::regex_replace(str, std::regex(R"(\/\/.*)"), "");
     str = std::regex_replace(str, std::regex(R"( *; *)"), ";");
     
@@ -112,6 +119,8 @@ void minifier(std::string &str) {
     str = std::regex_replace(str, std::regex(R"( *\[ *)"), "[");
     str = std::regex_replace(str, std::regex(R"( *\} *)"), "}");
     str = std::regex_replace(str, std::regex(R"( *\{ *)"), "{");
+    
+    
     
     str = std::regex_replace(str, std::regex(R"(; *$)"), ";");
     strings.restoreStrings(str);
@@ -122,6 +131,36 @@ void minifier(std::string &str) {
     if (length > preprocessor.minify) {
         length = 0;
         str.append("\n");
+    }
+}
+
+void reduce(std::string &str) {
+    std::regex r;
+    std::smatch m;
+    
+    str = std::regex_replace(str, std::regex(R"(==)"), "=");
+    
+    if (regex_search(str, std::regex(R"(LOCAL .*)")))
+        return;
+    
+    while (regex_search(str, m, std::regex(R"(([A-Za-z]\w*):=(.*)(?=;))"))) {
+        std::string matched = m.str();
+        
+        /*
+         eg. v1:=v2+v4;
+         Group  0 v1:=v2+v4;
+                1 v1
+                2 v2+v4
+        */
+        r = R"(([A-Za-z]\w*):=(.*))";
+        auto it = std::sregex_token_iterator {
+            matched.begin(), matched.end(), r, {2, 1}
+        };
+        if (it != std::sregex_token_iterator()) {
+            std::stringstream ss;
+            ss << *it++ << "▶" << *it;
+            str = str.replace(m.position(), m.length(), ss.str());
+        }
     }
 }
 
@@ -190,6 +229,7 @@ void processLine(const std::string& str, std::ofstream &outfile)
     if (ln.length() < 2) ln = std::string("");
 
     if (preprocessor.minify != 0) minifier(ln);
+    if (preprocessor.reduce) reduce(ln);
     
     for ( int n = 0; n < ln.length(); n++) {
         uint8_t *ascii = (uint8_t *)&ln.at(n);
@@ -416,8 +456,18 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
             if (regex_search(s, std::regex(R"(^[a-zA-Z]\w*:[a-zA-Z])"))) {
                 code.append(s);
             } else {
-                if (regex_search(s, std::regex(R"(^[a-zA-Z]\w*(::)|\.)"))) {
-                    s.insert(0, "auto:");
+                /**
+                  **NEW! 1.7.0448
+                   auto now inferred for var & const if name is also longer than 4 charactors and #pragma ( reduce ) is used.
+                 */
+                if (preprocessor.reduce) {
+                    if (regex_search(s, std::regex(R"(^(?:[a-zA-Z]\w*(?:(::)|\.))|(?:[a-zA-Z]\w{3,}))"))) {
+                        s.insert(0, "auto:");
+                    }
+                } else {
+                    if (regex_search(s, std::regex(R"(^[a-zA-Z]\w*(?:(::)|\.))"))) {
+                        s.insert(0, "auto:");
+                    }
                 }
                 code.append(s);
             }
@@ -444,15 +494,15 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     
 
     if (regex_match(ln, std::regex(R"(^begin *$)", std::regex_constants::icase))) {
-        singleton->scope = Singleton::Scope::kLocal;
+        singleton->scope = Singleton::Scope::Local;
         ln = std::string("BEGIN\n");
         return;
     }
     
-    if (Singleton::Scope::kLocal == singleton->scope) {
+    if (Singleton::Scope::Local == singleton->scope) {
         if (regex_match(ln, std::regex(R"(^end; *$)", std::regex_constants::icase))) {
             singleton->aliases.removeAllLocalAliases();
-            singleton->scope = Singleton::Scope::kGlobal;
+            singleton->scope = Singleton::Scope::Global;
             ln = std::string("END;\n");
             return;
         }
@@ -463,7 +513,7 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
       auto inferred for functions
      */
     r = R"(^ *(export +)?([a-zA-Z_]\w*((::)|\.))+[a-zA-Z_]\w* *(?=\())";
-    if (regex_search(ln, r) && singleton->scope == Singleton::Scope::kGlobal) {
+    if (regex_search(ln, r) && singleton->scope == Singleton::Scope::Global) {
         // Because this function name includes :: or . without a name: prefix, it is inferred to have an auto: prefix.
         ltrim(ln);
         ln.insert(0, "auto:");
@@ -475,7 +525,7 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     
     
     static std::vector<std::string> stack;
-    if (Singleton::Scope::kLocal == Singleton::shared()->scope) {
+    if (Singleton::Scope::Local == Singleton::shared()->scope) {
         
         singleton->switches.parse(ln);
         

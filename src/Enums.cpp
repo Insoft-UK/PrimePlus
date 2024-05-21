@@ -69,8 +69,8 @@ static void parseEnumItems(const std::string &str, std::vector<Aliases::TIdentit
     while (it != std::sregex_token_iterator()) {
         Aliases::TIdentity identity;
         std::string identifier = *it++;
-        identity.type = Aliases::Type::kEenum;
-        identity.scope = Aliases::Scope::kAuto;
+        identity.type = Aliases::Type::Eenum;
+        identity.scope = Aliases::Scope::Auto;
         identity.real = *it++;
         
         identity.identifier = name + "." + identifier;

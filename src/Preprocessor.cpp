@@ -85,7 +85,7 @@ bool Preprocessor::parse(std::string &str) {
                 pathname = *it++;
                 pathname = path + pathname;
                 if (std::string::npos == pathname.rfind('.')) pathname += ".pplib";
-                if (verbose) std::cout << MessageType::kVerbose << "#include: file named '" << pathname << "'\n";
+                if (verbose) std::cout << MessageType::Verbose << "#include: file named '" << pathname << "'\n";
                 return true;
             }
             
@@ -98,7 +98,7 @@ bool Preprocessor::parse(std::string &str) {
                 if (!file_exists(pathname)) {
                     pathname = _singleton->currentPathname().substr(0, _singleton->currentPathname().rfind("/") + 1) + pathname;
                 }
-                if (verbose) std::cout << MessageType::kVerbose << "#include: file named '" << pathname << "'\n";
+                if (verbose) std::cout << MessageType::Verbose << "#include: file named '" << pathname << "'\n";
                 return true;
             }
             return false;
@@ -121,11 +121,11 @@ bool Preprocessor::parse(std::string &str) {
             strip(identity.parameters);
             identity.real = *it++;
             
-            identity.scope = Aliases::Scope::kGlobal;
-            identity.type = Aliases::Type::kMacro;
+            identity.scope = Aliases::Scope::Global;
+            identity.type = Aliases::Type::Macro;
             
             _singleton->aliases.append(identity);
-            if (verbose) std::cout << MessageType::kVerbose << "#define: " << identity.identifier << '\n';
+            if (verbose) std::cout << MessageType::Verbose << "#define: " << identity.identifier << '\n';
             return true;
         }
  
@@ -142,7 +142,7 @@ bool Preprocessor::parse(std::string &str) {
         };
         if (it != end) {
             _singleton->aliases.remove(*it);
-            if (verbose) std::cout << MessageType::kVerbose << "#undef: " << *it << '\n';
+            if (verbose) std::cout << MessageType::Verbose << "#undef: " << *it << '\n';
             return true;
         }
         
@@ -158,16 +158,28 @@ bool Preprocessor::parse(std::string &str) {
             for(std::sregex_iterator it = std::sregex_iterator(s.begin(), s.end(), r); it != std::sregex_iterator(); ++it) {
                 std::string pragma = trim_copy(it->str());
                 
-                if (pragma == "bitwise 0") {
+                if (pragma == "bitwise 0" || pragma == "bitwise off") {
                     bitwiseOperators = false;
                 }
                 
-                if (pragma == "bitwise 1") {
+                if (pragma == "bitwise 1" || pragma == "bitwise on") {
                     bitwiseOperators = true;
                 }
                 
                 if (pragma == "unorderedness") {
                     Singleton::shared()->aliases.descendingOrder = false;
+                }
+                
+                if (pragma == "newline") {
+                    newline = true;
+                }
+                
+                if (pragma == "indents") {
+                    indents = true;
+                }
+                
+                if (pragma == "reduce") {
+                    reduce = true;
                 }
                 
                 if (regex_search(pragma, std::regex(R"(minify (?:\d+|-1))"))) {
@@ -182,7 +194,7 @@ bool Preprocessor::parse(std::string &str) {
                     Singleton::shared()->tabsize = (unsigned int)atoi(pragma.substr(start,length).c_str());
                 }
                 
-                if (verbose) std::cout << MessageType::kVerbose << "#pragma: " << pragma << '\n';
+                if (verbose) std::cout << MessageType::Verbose << "#pragma: " << pragma << '\n';
             }
             return true;
         }
@@ -199,7 +211,7 @@ bool Preprocessor::parse(std::string &str) {
         if (it != end) {
             identity.identifier = *it;
             disregard = !_singleton->aliases.exists(identity);
-            if (verbose) std::cout << MessageType::kVerbose << "#ifdef: " << identity.identifier << " is " << (!disregard ? "true" : "false") << '\n';
+            if (verbose) std::cout << MessageType::Verbose << "#ifdef: " << identity.identifier << " is " << (!disregard ? "true" : "false") << '\n';
             return true;
         }
         
@@ -216,20 +228,20 @@ bool Preprocessor::parse(std::string &str) {
             identity.identifier = *it;
             
             disregard = _singleton->aliases.exists(identity);
-            if (verbose) std::cout << MessageType::kVerbose << "#ifndef: " << identity.identifier << " is " << (!disregard ? "true" : "false") << '\n';
+            if (verbose) std::cout << MessageType::Verbose << "#ifndef: " << identity.identifier << " is " << (!disregard ? "true" : "false") << '\n';
             return true;
         }
     }
     
     if (regex_search(str, std::regex(R"(^ *#else\b *((\/\/.*)|)$)"))) {
         disregard = !disregard;
-        if (_singleton->aliases.verbose) std::cout << MessageType::kVerbose << "#else: " << disregard << '\n';
+        if (_singleton->aliases.verbose) std::cout << MessageType::Verbose << "#else: " << disregard << '\n';
         return true;
     }
     
     if (regex_search(str, std::regex(R"(^ *#endif\b *((\/\/.*)|)$)"))) {
         disregard = false;
-        if (_singleton->aliases.verbose) std::cout << MessageType::kVerbose << "#endif: " << disregard << '\n';
+        if (_singleton->aliases.verbose) std::cout << MessageType::Verbose << "#endif: " << disregard << '\n';
         return true;
     }
 

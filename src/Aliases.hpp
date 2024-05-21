@@ -33,22 +33,22 @@ namespace pp {
 class Aliases {
 public:
     enum class Type {
-        kUnknown,
-        kEenum,
-        kStruct,
-        kMember,
-        kVariable,
-        kMacro,
-        kDef,
-        kFunction,
-        kProperty,
-        kMethod
+        Unknown,
+        Eenum,
+        Struct,
+        Member,
+        Variable,
+        Macro,
+        Def,
+        Function,
+        Property,
+        Method
     };
     
     enum class Scope {
-        kAuto,
-        kGlobal,
-        kLocal
+        Auto,
+        Global,
+        Local
     };
     
     typedef struct TIdentity {

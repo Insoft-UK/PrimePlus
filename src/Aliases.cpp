@@ -49,28 +49,28 @@ bool Aliases::append(const TIdentity &idty) {
         identity.message.insert(0, ", ");
     }
     
-    if (Scope::kAuto == identity.scope) {
-        identity.scope = singleton->scope == Singleton::Scope::kGlobal ? Aliases::Scope::kGlobal : Aliases::Scope::kLocal;
+    if (Scope::Auto == identity.scope) {
+        identity.scope = singleton->scope == Singleton::Scope::Global ? Aliases::Scope::Global : Aliases::Scope::Local;
     }
     
     if ('_' == identity.identifier.at(0) && '_' != identity.identifier.at(1)) {
         identity.identifier = identity.identifier.substr(1, identity.identifier.length() - 1);
-        identity.type = Type::kProperty;
+        identity.type = Type::Property;
     }
     
     if (exists(identity) == true) {
         for (const auto &it : identities) {
             if (it.identifier == identity.identifier) {
                 std::cout
-                << MessageType::kWarning
+                << MessageType::Warning
                 << "redefinition of: "
-                << (Type::kEenum == identity.type ? "enumerator" : "")
-                << (Type::kStruct == identity.type ? "structure" : "")
-                << (Type::kMacro == identity.type ? "macro" : "")
-                << (Type::kDef == identity.type ? "def" : "")
+                << (Type::Eenum == identity.type ? "enumerator" : "")
+                << (Type::Struct == identity.type ? "structure" : "")
+                << (Type::Macro == identity.type ? "macro" : "")
+                << (Type::Def == identity.type ? "def" : "")
                 << "'" << identity.identifier << "' as "
-                << (Scope::kLocal == identity.scope && Type::kMacro != identity.type ? "local: " : "")
-                << (Scope::kGlobal == identity.scope && Type::kMacro != identity.type ? "global: " : "")
+                << (Scope::Local == identity.scope && Type::Macro != identity.type ? "local: " : "")
+                << (Scope::Global == identity.scope && Type::Macro != identity.type ? "global: " : "")
                 << "type was previous definition at " << it.pathname << ":" << it.line << '\n';
                 break;
             }
@@ -83,29 +83,29 @@ bool Aliases::append(const TIdentity &idty) {
     if (descendingOrder) std::sort(identities.begin(), identities.end(), compareInterval);
     
     if (verbose) std::cout
-        << MessageType::kVerbose
-        << (Scope::kLocal == identity.scope && Type::kMacro != identity.type ? "local:" : "")
-        << (Scope::kGlobal == identity.scope && Type::kMacro != identity.type ? "global:" : "")
-        << (Type::kEenum == identity.type ? " enumerator" : "")
-        << (Type::kStruct == identity.type ? " structure" : "")
-        << (Type::kMacro == identity.type ? "macro" : "")
-        << (Type::kDef == identity.type ? " def" : "")
-        << (Type::kUnknown == identity.type ? " identifier" : "")
+        << MessageType::Verbose
+        << (Scope::Local == identity.scope && Type::Macro != identity.type ? "local:" : "")
+        << (Scope::Global == identity.scope && Type::Macro != identity.type ? "global:" : "")
+        << (Type::Eenum == identity.type ? " enumerator" : "")
+        << (Type::Struct == identity.type ? " structure" : "")
+        << (Type::Macro == identity.type ? "macro" : "")
+        << (Type::Def == identity.type ? " def" : "")
+        << (Type::Unknown == identity.type ? " identifier" : "")
         << " '" << identity.identifier << "' for '" << identity.real << "' defined\n";
     return true;
 }
 
 void Aliases::removeAllLocalAliases() {
     for (auto it = identities.begin(); it != identities.end(); ++it) {
-        if (it->scope == Scope::kLocal) {
+        if (it->scope == Scope::Local) {
             if (verbose) std::cout
-                << MessageType::kVerbose
+                << MessageType::Verbose
                 << "local:"
-                << (Type::kEenum == it->type ? " enumerator" : "")
-                << (Type::kStruct == it->type ? " structure" : "")
-                << (Type::kDef == it->type ? "def" : "")
-                << (Type::kMember == it->type ? " identifier" : "")
-                << (Type::kUnknown == it->type ? " identifier" : "")
+                << (Type::Eenum == it->type ? " enumerator" : "")
+                << (Type::Struct == it->type ? " structure" : "")
+                << (Type::Def == it->type ? "def" : "")
+                << (Type::Member == it->type ? " identifier" : "")
+                << (Type::Unknown == it->type ? " identifier" : "")
                 << " '" << it->identifier << "' removed!\n";
             identities.erase(it);
             removeAllLocalAliases();
@@ -118,15 +118,15 @@ void Aliases::removeAllAliasesOfType(const Type type) {
     for (auto it = identities.begin(); it != identities.end(); ++it) {
         if (it->type == type) {
             if (verbose) std::cout
-                << MessageType::kVerbose
-                << (Scope::kLocal == it->scope && Type::kMacro != it->type ? "local: " : "")
-                << (Scope::kGlobal == it->scope && Type::kMacro != it->type ? "global: " : "")
-                << (Type::kMacro == it->type ? "macro" : "")
-                << (Type::kEenum == it->type ? "enumerator" : "")
-                << (Type::kStruct == it->type ? "structure" : "")
-                << (Type::kDef == it->type ? "def" : "")
-                << (Type::kMember == it->type ? "identifier" : "")
-                << (Type::kUnknown == it->type ? "identifier" : "")
+                << MessageType::Verbose
+                << (Scope::Local == it->scope && Type::Macro != it->type ? "local: " : "")
+                << (Scope::Global == it->scope && Type::Macro != it->type ? "global: " : "")
+                << (Type::Macro == it->type ? "macro" : "")
+                << (Type::Eenum == it->type ? "enumerator" : "")
+                << (Type::Struct == it->type ? "structure" : "")
+                << (Type::Def == it->type ? "def" : "")
+                << (Type::Member == it->type ? "identifier" : "")
+                << (Type::Unknown == it->type ? "identifier" : "")
                 << " '" << it->identifier << "' removed!\n";
             identities.erase(it);
             removeAllLocalAliases();
@@ -160,7 +160,7 @@ static std::string resolveMacroFunction(const std::string &str, const std::strin
         size_t argumentIndex = 0;
         for(std::sregex_iterator it = std::sregex_iterator(parameters.begin(), parameters.end(), r); it != std::sregex_iterator(); ++it) {
             if (arguments.empty()) {
-                std::cout << MessageType::kError << "macro parameters mismatched" << '\n';
+                std::cout << MessageType::Error << "macro parameters mismatched" << '\n';
                 break;
             }
             std::ostringstream os;
@@ -193,7 +193,7 @@ std::string Aliases::resolveAliasesInText(const std::string &str) {
         if (!it->parameters.empty()) {
             r = R"(\b)" + it->identifier + R"( *\(([^()]+)\))";
             while (regex_search(s, m, r)) {
-                if (it->deprecated) std::cout << MessageType::kDeprecated << it->identifier << it->message << "\n";
+                if (it->deprecated) std::cout << MessageType::Deprecated << it->identifier << it->message << "\n";
                 std::string result = resolveMacroFunction(m.str(), it->parameters, it->identifier, it->real);
                 s.replace(m.position(), m.length(), result);
             }
@@ -201,7 +201,7 @@ std::string Aliases::resolveAliasesInText(const std::string &str) {
         }
         
         if (regex_search(s, r) && it->deprecated)
-            std::cout << MessageType::kDeprecated << it->identifier << it->message << "\n";
+            std::cout << MessageType::Deprecated << it->identifier << it->message << "\n";
         s = regex_replace(s, r, it->real);
     }
     
@@ -212,15 +212,15 @@ void Aliases::remove(const std::string &identifier) {
     for (auto it = identities.begin(); it != identities.end(); ++it) {
         if (it->identifier == identifier) {
             if (verbose) std::cout
-                << MessageType::kVerbose
-                << (Scope::kLocal == it->scope && Type::kMacro != it->type ? "local: " : "")
-                << (Scope::kGlobal == it->scope && Type::kMacro != it->type ? "global: " : "")
-                << (Type::kMacro == it->type ? "macro" : "")
-                << (Type::kEenum == it->type ? "enumerator" : "")
-                << (Type::kStruct == it->type ? "structure" : "")
-                << (Type::kDef == it->type ? "def" : "")
-                << (Type::kMember == it->type ? "identifier" : "")
-                << (Type::kUnknown == it->type ? "identifier" : "")
+                << MessageType::Verbose
+                << (Scope::Local == it->scope && Type::Macro != it->type ? "local: " : "")
+                << (Scope::Global == it->scope && Type::Macro != it->type ? "global: " : "")
+                << (Type::Macro == it->type ? "macro" : "")
+                << (Type::Eenum == it->type ? "enumerator" : "")
+                << (Type::Struct == it->type ? "structure" : "")
+                << (Type::Def == it->type ? "def" : "")
+                << (Type::Member == it->type ? "identifier" : "")
+                << (Type::Unknown == it->type ? "identifier" : "")
                 << " '" << it->identifier << "' removed!\n";
             
             identities.erase(it);

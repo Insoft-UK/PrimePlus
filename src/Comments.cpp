@@ -41,7 +41,7 @@ void Comments::preserveComment(const std::string &str)
     if (pos != std::string::npos) {
         _preservedComment = str.substr(pos, str.length() - pos);
         if (verbose) std::cout
-            << MessageType::kVerbose
+            << MessageType::Verbose
             << "comment"
             << ": '" << _preservedComment << "' preserved\n";
     }
@@ -53,7 +53,7 @@ std::string& Comments::removeComment(std::string &str)
     if (pos != std::string::npos) {
         str.resize(pos);
         if (verbose) std::cout
-            << MessageType::kVerbose
+            << MessageType::Verbose
             << "comment: removed!\n";
     }
     
@@ -69,7 +69,7 @@ std::string& Comments::restoreComment(std::string &str)
         if (!str.empty()) str.append(" ");
         str.append(_preservedComment);
         if (verbose) std::cout
-            << MessageType::kVerbose
+            << MessageType::Verbose
             << "comment"
             << ": '" << _preservedComment << "' restored\n";
         _preservedComment.clear();

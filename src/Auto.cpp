@@ -37,28 +37,8 @@ bool Auto::parse(std::string &str) {
     // Functions/Subroutines
     // TODO: ^ *(export +)?\bauto *: *((?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *(?=\()
     
-    if (singleton->scope == Singleton::Scope::kGlobal) {
-//        /*
-//         eg. export auto:alias(p1, p2:alias, auto:alias)
-//         Group  0 export auto:alias
-//                1 export
-//                2 alias
-//         */
-//        r = R"(^ *(export +)?\bauto *: *((?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *(?=\())";
-//        if (regex_search(str, m, r)) {
-//            auto it = std::sregex_token_iterator {
-//                str.begin(), str.end(), r, {1, 2}
-//            };
-//            if (it != std::sregex_token_iterator()) {
-//                std::ostringstream os;
-//                
-//                if (it++->matched) {
-//                    os << "export ";
-//                }
-//                os << "fn" << ++_fnCount << ":" << *it;
-//                str.replace(m.position(), m.str().length(), "if ");
-//            }
-//        }
+    if (singleton->scope == Singleton::Scope::Global) {
+
         r = R"(\bauto *(?=: *(?:(?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *(?=\()))";
         if (regex_search(str, m, r)) {
             std::ostringstream os;
@@ -76,7 +56,7 @@ bool Auto::parse(std::string &str) {
     
     
     // Variables/Constants
-    r = R"(\b(var|const) +)";
+    r = R"(\b(var|local|const) +)";
     if (regex_search(str, m, r)) {
         while ((pos = str.find("auto:")) != std::string::npos) {
             str.erase(pos, 4);

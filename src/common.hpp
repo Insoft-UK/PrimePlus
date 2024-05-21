@@ -33,11 +33,11 @@
 #include "Singleton.hpp"
 
 enum class MessageType {
-    kWarning,
-    kError,
-    kVerbose,
-    kDeprecated,
-    kTip
+    Warning,
+    Error,
+    Verbose,
+    Deprecated,
+    Tip
 };
 
 bool hasErrors(void);

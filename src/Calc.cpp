@@ -52,13 +52,13 @@ static double applyOperator(const double a, const double b, const char op) {
         case '*': return a * b;
         case '/':
             if (b == 0) {
-                std::cout << MessageType::kError << "#[]: division by zero\n";
+                std::cout << MessageType::Error << "#[]: division by zero\n";
                 return 0;
             }
             return a / b;
         case '%': return fmod(a,b);
         default: 
-            std::cout << MessageType::kError << "#[]: unknown '" << op << "' operator\n";
+            std::cout << MessageType::Error << "#[]: unknown '" << op << "' operator\n";
             return 0;
     }
 }
@@ -114,7 +114,7 @@ static std::vector<std::string> infixToPostfix(const std::string& expression) {
                 operators.pop();
             }
             if (operators.empty()) {
-                std::cout << MessageType::kError << "#[]: missing '(' in expression '" << expression << "'\n";
+                std::cout << MessageType::Error << "#[]: missing '(' in expression '" << expression << "'\n";
                 continue;
             }
                 
@@ -122,7 +122,7 @@ static std::vector<std::string> infixToPostfix(const std::string& expression) {
             continue;
         }
         
-        std::cout << MessageType::kError << "#[]: uknown '" << result << "' in expression '" << expression << "'\n";
+        std::cout << MessageType::Error << "#[]: uknown '" << result << "' in expression '" << expression << "'\n";
     }
 
     while (!operators.empty()) {
@@ -131,7 +131,7 @@ static std::vector<std::string> infixToPostfix(const std::string& expression) {
     }
     
     if (_verbose) {
-        std::cout << MessageType::kVerbose << "calc: RPN: ";
+        std::cout << MessageType::Verbose << "calc: RPN: ";
         for (auto it = output.begin(); it != output.end(); ++it) {
             std::cout << *it;
             if (it != output.end()) {
@@ -189,12 +189,14 @@ bool Calc::parse(std::string &str)
         std::string expression;
         int scale = -1;
         
+        matched = regex_replace(matched, std::regex(R"(e)"), "2.71828182845904523536028747135266250");
+        matched = regex_replace(matched, std::regex(R"(π)"), "3.14159265358979323846264338327950288");
         matched = regex_replace(matched, std::regex(R"(MOD)"), "%");
         matched = regex_replace(matched, std::regex(R"(BITAND)"), "&");
         matched = regex_replace(matched, std::regex(R"(BITOR)"), "|");
         strip(matched);
         
-        if (this->verbose) std::cout << MessageType::kVerbose << "calc: '" << matched << "'\n";
+        if (this->verbose) std::cout << MessageType::Verbose << "calc: '" << matched << "'\n";
         
         auto it = std::sregex_token_iterator {
             matched.begin(), matched.end(), r, {1, 2}
@@ -208,7 +210,7 @@ bool Calc::parse(std::string &str)
         
         parse(expression);
         
-        if (this->verbose) std::cout << MessageType::kVerbose << "calc: expression: '" << expression << "'\n";
+        if (this->verbose) std::cout << MessageType::Verbose << "calc: expression: '" << expression << "'\n";
     
         expression = separateExpression(expression);
         double result = evaluateExpression(expression);
@@ -222,7 +224,7 @@ bool Calc::parse(std::string &str)
             s.erase ( s.find_last_not_of('.') + 1, std::string::npos );
         }
         
-        if (this->verbose) std::cout << MessageType::kVerbose << "calc: '" << s << "'\n";
+        if (this->verbose) std::cout << MessageType::Verbose << "calc: '" << s << "'\n";
         
         str = str.replace(m.position(), m.length(), s);
         return true;

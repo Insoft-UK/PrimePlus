@@ -42,7 +42,7 @@ static std::string shell(std::string &cmd) {
     
     fp = popen(cmd.c_str(),"r");
     if (fp == NULL) {
-        std::cout << MessageType::kError << "ERROR!\n" ;
+        std::cout << MessageType::Error << "ERROR!\n" ;
         exit(300);
     }
     
@@ -136,8 +136,8 @@ bool Def::parse(std::string &str) {
         }
         
         strip(identity.parameters);
-        identity.type = Aliases::Type::kDef;
-        identity.scope = Aliases::Scope::kAuto;
+        identity.type = Aliases::Type::Def;
+        identity.scope = Aliases::Scope::Auto;
         
         if ("shell:" == identity.real.substr(0, 6)) {
             identity.real = identity.real.substr(6, identity.real.length() - 6);

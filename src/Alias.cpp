@@ -58,22 +58,22 @@ static void parseAliases(const std::string &str, Aliases::TIdentity &identity) {
 
 static void parseFunctionName(const std::string &str) {
     Aliases::TIdentity identity;
-    identity.scope = Aliases::Scope::kGlobal;
-    identity.type = Aliases::Type::kFunction;
+    identity.scope = Aliases::Scope::Global;
+    identity.type = Aliases::Type::Function;
     parseAlias(str, identity);
 }
 
 static void parseParameters(const std::string &str) {
     Aliases::TIdentity identity;
-    identity.scope = Aliases::Scope::kLocal;
-    identity.type = Aliases::Type::kUnknown;
+    identity.scope = Aliases::Scope::Local;
+    identity.type = Aliases::Type::Unknown;
     parseAliases(str, identity);
 }
 
 static void parseVariables(const std::string &str) {
     Aliases::TIdentity identity;
-    identity.scope = Aliases::Scope::kAuto;
-    identity.type = Aliases::Type::kVariable;
+    identity.scope = Aliases::Scope::Auto;
+    identity.type = Aliases::Type::Variable;
     parseAliases(str, identity);
 }
 
@@ -85,7 +85,7 @@ bool Alias::parse(std::string &str) {
     
     bool parsed = false;
     
-    if (singleton->scope == Singleton::Scope::kGlobal) {
+    if (singleton->scope == Singleton::Scope::Global) {
         /*
          eg. export name:alias(p1, p2:alias, auto:alias)
          Group  0 export name:alias(p1, p2:alias, auto:alias)
