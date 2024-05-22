@@ -509,6 +509,21 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
             return;
         }
     }
+    
+    /**
+      **NEW! 1.7.0.500
+      key inferred
+     */
+    if (Singleton::Scope::Global == singleton->scope) {
+        r = R"(^ *(KS?A?_[A-Z\d][a-z]*) *$)";
+        std::sregex_token_iterator it = std::sregex_token_iterator {
+            ln.begin(), ln.end(), r, {1}
+        };
+        if (it != std::sregex_token_iterator()) {
+            std::string s = *it;
+            ln = "KEY " + s + "()";
+        }
+    }
 
     /**
       **NEW! 1.6.1
