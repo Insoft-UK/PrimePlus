@@ -100,44 +100,4 @@ begin
 end
 
 
-export HSV(h:hue, s:saturation, v:brightness)
-begin
-    hue := hue % 360 / 60;
-    saturation := MIN(MAX(saturation, 0), 100) / 100;
-    brightness := MIN(MAX(brightness, 0), 100) / 100;
-    
-    var f, p, q, t;
-    f := hue - floor(h);
-    p := brightness * (1 - saturation);
-    q := brightness * (1 - saturation * f);
-    t := brightness * (1 - saturation * (1 - f));
 
-    var r:red, g:green, b:blue;
-    switch floor(h)
-        case 0 do
-            red := brightness; green := t; blue := p;
-        end
-        
-        case 1 do
-            red := q; green := brightness; blue := p;
-        end
-  
-        case 2 do
-            red := p; green := brightness; blue := t;
-        end
-          
-        case 3 do
-            red := p; green := q; blue := brightness;
-        end
-        
-        case 4 do
-            red := t; green := p; blue := brightness;
-        end
-        
-        case 5 do
-            red := brightness; green := p; blue := q;
-        end
-    end
-    
-    return RGB(red * 255, green * 255, blue * 255);
-end
