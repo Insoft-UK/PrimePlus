@@ -20,12 +20,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma ( minify -1, tabsize 1, newline, indents, reduce )
+#pragma ( minify -1, newline, indents, reduce )
 
 #include <prime>
 #include <hp>
 
 Example::DoLoop(auto:value);
+
 
 Example::Switch()
 begin
@@ -94,6 +95,49 @@ begin
     
     R→B(value,4)=>value;
     
-    var t = #[320/(7%3/#[-2*2])--6]:2;
+    var t = #[-45%360/60]:2;
     t += piTest;
+end
+
+
+export HSV(h:hue, s:saturation, v:brightness)
+begin
+    hue := hue % 360 / 60;
+    saturation := MIN(MAX(saturation, 0), 100) / 100;
+    brightness := MIN(MAX(brightness, 0), 100) / 100;
+    
+    var f, p, q, t;
+    f := hue - floor(h);
+    p := brightness * (1 - saturation);
+    q := brightness * (1 - saturation * f);
+    t := brightness * (1 - saturation * (1 - f));
+
+    var r:red, g:green, b:blue;
+    switch floor(h)
+        case 0 do
+            red := brightness; green := t; blue := p;
+        end
+        
+        case 1 do
+            red := q; green := brightness; blue := p;
+        end
+  
+        case 2 do
+            red := p; green := brightness; blue := t;
+        end
+          
+        case 3 do
+            red := p; green := q; blue := brightness;
+        end
+        
+        case 4 do
+            red := t; green := p; blue := brightness;
+        end
+        
+        case 5 do
+            red := brightness; green := p; blue := q;
+        end
+    end
+    
+    return RGB(red * 255, green * 255, blue * 255);
 end

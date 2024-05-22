@@ -56,8 +56,8 @@ static double applyOperator(const double a, const double b, const char op) {
                 return 0;
             }
             return a / b;
-        case '%': return fmod(a,b);
-        default: 
+        case '%': return fmod(a,b) < 0 ? b + fmod(a,b) : fmod(a,b);
+        default:
             std::cout << MessageType::Error << "#[]: unknown '" << op << "' operator\n";
             return 0;
     }

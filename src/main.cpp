@@ -96,7 +96,7 @@ void condence(std::string &str) {
     ltrim(str);
     
     while (indents--) {
-        str.insert(0, "  ");
+        str.insert(0, " ");
     }
 }
 
@@ -143,7 +143,7 @@ void reduce(std::string &str) {
     if (regex_search(str, std::regex(R"(LOCAL .*)")))
         return;
     
-    while (regex_search(str, m, std::regex(R"(([A-Za-z]\w*):=(.*)(?=;))"))) {
+    while (regex_search(str, m, std::regex(R"([A-Za-z]\w*:=[^;]*)"))) {
         std::string matched = m.str();
         
         /*
@@ -228,8 +228,10 @@ void processLine(const std::string& str, std::ofstream &outfile)
     preProcess(ln, outfile);
     if (ln.length() < 2) ln = std::string("");
 
-    if (preprocessor.minify != 0) minifier(ln);
+    if (preprocessor.minify != 0) 
+        minifier(ln);
     if (preprocessor.reduce) reduce(ln);
+    
     
     for ( int n = 0; n < ln.length(); n++) {
         uint8_t *ascii = (uint8_t *)&ln.at(n);
