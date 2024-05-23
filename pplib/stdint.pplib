@@ -35,6 +35,6 @@ def R→B     integer::toBase;
 def SETBITS integer::setBits;
 def SETBASE integer::setBase;
 
-def IP      Int;
+def IP      Int((deprecated:"use '<int>(n)'"));
 
 #endif /// STDINT_PPLIB

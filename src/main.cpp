@@ -524,6 +524,15 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
             ln = "KEY " + s + "()";
         }
     }
+    
+    /**
+      **NEW! 1.7.0.505
+      <type>(value)
+     */
+    r = R"(<int>(?=\(.*\)))";
+    ln = regex_replace(ln, r, "IP");
+    r = R"(<string>(?=\(.*\)))";
+    ln = regex_replace(ln, r, "STRING");
 
     /**
       **NEW! 1.6.1

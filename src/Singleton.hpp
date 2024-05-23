@@ -41,8 +41,8 @@ class Singleton {
     static Singleton* _shared;
 public:
     enum class Scope {
-        Global,
-        Local
+        Global = 1,
+        Local  = 2
     };
     Scope scope = Scope::Global;
     

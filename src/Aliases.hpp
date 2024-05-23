@@ -46,9 +46,9 @@ public:
     };
     
     enum class Scope {
-        Auto,
-        Global,
-        Local
+        Auto   = 0,
+        Global = 1,
+        Local  = 2
     };
     
     typedef struct TIdentity {
