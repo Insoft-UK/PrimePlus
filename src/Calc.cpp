@@ -34,13 +34,14 @@ static bool _verbose = false;
 
 // Function to check if a character is an operator
 static bool isOperator(char c) {
-    return c == '+' || c == '-' || c == '*' || c == '/' || c == '%';
+    return c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '^';
 }
 
 // Function to get the precedence of an operator
 static int precedence(char op) {
     if (op == '+' || op == '-') return 1;
     if (op == '*' || op == '/' || op == '%') return 2;
+    if (op == '^') return 3;
     return 0;
 }
 
@@ -57,6 +58,7 @@ static double applyOperator(const double a, const double b, const char op) {
             }
             return a / b;
         case '%': return fmod(a,b) < 0 ? b + fmod(a,b) : fmod(a,b);
+        case '^': return pow(a, b);
         default:
             std::cout << MessageType::Error << "#[]: unknown '" << op << "' operator\n";
             return 0;
@@ -66,7 +68,7 @@ static double applyOperator(const double a, const double b, const char op) {
 static std::string separateExpression(const std::string& expression) {
     std::stringstream separated;
     for (size_t i = 0; i < expression.length(); ++i) {
-        if (expression[i] == '(' || expression[i] == ')' || expression[i] == '+' || expression[i] == '-' || expression[i] == '*' || expression[i] == '/' || expression[i] == '%') {
+        if (expression[i] == '(' || expression[i] == ')' || expression[i] == '+' || expression[i] == '-' || expression[i] == '*' || expression[i] == '/' || expression[i] == '%' || expression[i] == '^') {
             // Handle negative numbers (only if '-' is not preceded by a digit)
             if (expression[i] == '-' && (i == 0 || !isdigit(expression[i - 1]))) {
                 separated << " " << expression[i];
@@ -132,10 +134,10 @@ static std::vector<std::string> infixToPostfix(const std::string& expression) {
     
     if (_verbose) {
         std::cout << MessageType::Verbose << "calc: RPN: ";
-        for (auto it = output.begin(); it != output.end(); ++it) {
+        for (auto it = output.begin(); it != output.end(); ) {
             std::cout << *it;
-            if (it != output.end()) {
-                std::cout << " ";
+            if (++it != output.end()) {
+                std::cout << ",";
             }
         }
         std::cout << "\n";

@@ -95,8 +95,8 @@ begin
     
     R→B(value,4)=>value;
     
-    var t = #[-45%360/60]:2;
-    t += piTest;
+    var t = <calc>(2^-4:2);
+    
 end
 
 

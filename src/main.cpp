@@ -526,13 +526,23 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     }
     
     /**
-      **NEW! 1.7.0.505
+      **NEW! 1.7.0.5xx
       <type>(value)
      */
     r = R"(<int>(?=\(.*\)))";
     ln = regex_replace(ln, r, "IP");
     r = R"(<string>(?=\(.*\)))";
     ln = regex_replace(ln, r, "STRING");
+    r = R"(<calc>\(.*\))";
+    while (regex_search(ln, m, r)) {
+        s = "#[" + m.str().substr(7, m.length() - 7 - 1);
+        if (s.at(s.length() - 2) == ':') {
+            s.insert(s.length() - 2, "]");
+        } else {
+            s += "]";
+        }
+        ln = ln.replace(m.position(), m.length(), s);
+    }
 
     /**
       **NEW! 1.6.1
@@ -669,6 +679,12 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     ln = regex_replace(ln, std::regex(R"(!=)"), "≠");
     ln = regex_replace(ln, std::regex(R"(\bpi\b)"), "π");
     
+    /**
+      **NEW! 1.7.03xx
+       pre-calc
+     */
+    singleton->calc.parse(ln);
+    
     ln = translateCOperatorsToPPL(ln);
     ln = translateCLogicalOperatorsToPPL(ln);
     if (preprocessor.bitwiseOperators) Bitwise::parse(ln);
@@ -683,11 +699,7 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     ln = regex_replace(ln, std::regex(R"(::=)"), ":=");
     
 
-    /**
-      **NEW! 1.7.03xx
-       pre-calc
-     */
-    singleton->calc.parse(ln);
+    
     
     condence(ln);
     

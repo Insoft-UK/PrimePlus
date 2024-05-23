@@ -98,6 +98,7 @@ var a = #[SCREEN_WIDTH / #[8 - 6]];
 var b = #[SCREEN_WIDTH / 4];
 b = #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
 // PPL b:=160.00;
+b = <calc>(SCREEN_WIDTH / 2:2);
 ```
 **C Style Types & Casting**
 
