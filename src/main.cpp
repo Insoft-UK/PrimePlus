@@ -737,7 +737,8 @@ void error(void) {
 
 void info(void) {
     std::cout << "Copyright (c) 2023-2024 Insoft. All rights reserved\n";
-    std::cout << "P+ Pre-Processor v" << (unsigned)__BUILD_NUMBER / 100000 << "." << (unsigned)__BUILD_NUMBER / 10000 % 10 << "\n\n";
+    int rev = (unsigned)__BUILD_NUMBER / 1000 % 10;
+    std::cout << "P+ Pre-Processor v" << (unsigned)__BUILD_NUMBER / 100000 << "." << (unsigned)__BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "") << "\n\n";
 }
 
 void usage(void) {
