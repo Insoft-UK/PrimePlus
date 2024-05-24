@@ -30,14 +30,15 @@ struct Color
     b[3];
 end;
 
-ICOLOR:interpolateColor(auto:a, auto:b, f:factor)
+ICOLOR:interpolateColor(a:colorA, b:colorB, f:factor)
 begin
-#pragma ( verbose aliases )
-    struct Color auto:colorA, auto:colorB;
-    struct Color r:result;
-#pragma ( verbose aliases )
-    colorA = a; colorB = b;
-    result.r = <int>( ((1 - factor) * colorA.r + factor * colorB.r) );
+    struct Color colorA, colorB, r:result;
+
+    result.r = <int>(((1 - factor) * colorA.r + factor * colorB.r));
+    result.g = <int>(((1 - factor) * colorA.g + factor * colorB.g));
+    result.b = <int>( ((1 - factor) * colorA.b + factor * colorB.b) );
+    
+    return RGB(result.r, result.g, result.b);
 end
 
 export C(t:temperature)

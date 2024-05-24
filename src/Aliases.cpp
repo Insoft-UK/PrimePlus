@@ -247,6 +247,15 @@ bool Aliases::identifierExists(const std::string &identifier) {
     return false;
 }
 
+bool Aliases::realExists(const std::string &real) {
+    for (auto it = identities.begin(); it != identities.end(); ++it) {
+        if (it->real == real) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void Aliases::dumpIdentities() {
     for (auto it = identities.begin(); it != identities.end(); ++it) {
         if (verbose) std::cout << "identities : " << it->identifier << " = " << it->real << "\n";

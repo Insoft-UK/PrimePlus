@@ -158,31 +158,34 @@ void Structs::createStructureVariable(std::string &str) {
         std::vector<std::string> names = extractVariableDeclarationName(m.str());
         std::string PPL;
 
-        while (!names.empty()) {
-            std::string name;
-            name = names.back();
-            names.pop_back();
+        for (auto name = names.begin(); name < names.end(); ++name) {
             
-            if (!isValidVariableName(name)) {
-                name = "auto:" + name;
+            if (!isValidVariableName(*name)) {
+                *name = "auto:" + *name;
             }
             
-            if (hasAliasDeclaration(name)) {
-                identifier = extractAliasDeclarationName(name);
-                real = extractDeclarationName(name);
+            if (hasAliasDeclaration(*name)) {
+                identifier = extractAliasDeclarationName(*name);
+                real = extractDeclarationName(*name);
                 if (verbose) std::cout << MessageType::Verbose << "struct: variable '" << identifier << "' for '" << real << "' defined\n";
             } else {
-                identifier = name;
-                real = name;
+                identifier = *name;
+                real = *name;
                 if (verbose) std::cout << MessageType::Verbose << "struct: variable '" << real << "' defined\n";
             }
             
             defineStruct(*structure, real, identifier);
+            
+            
+            
+            if (singleton->aliases.realExists(real))
+                continue;
+            
             if (!PPL.empty()) PPL += ",";
             PPL += real;
             if (identifier != real) PPL += ":" + identifier;
         }
-        
+        if (PPL.empty()) return;
         str = regex_replace(str, std::regex(R"(\bstruct +.*)"), "var " + PPL + ";");
     
         return;

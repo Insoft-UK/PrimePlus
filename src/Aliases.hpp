@@ -77,6 +77,7 @@ public:
     void remove(const std::string &identifier);
     bool exists(const TIdentity &identity);
     bool identifierExists(const std::string &identifier);
+    bool realExists(const std::string &real);
     
     void dumpIdentities();
 };
