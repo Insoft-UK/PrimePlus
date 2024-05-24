@@ -661,6 +661,17 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     }
     
     /**
+      **NEW! 1.7.0.5xx
+     We turn any math keywords that are in lowercase to uppercase.
+     */
+    r = R"(\b(log|cos|sin|tan|ln|min|max)\b)";
+    for(std::sregex_iterator it = std::sregex_iterator(ln.begin(), ln.end(), r); it != std::sregex_iterator(); ++it) {
+        std::string result = it->str();
+        std::transform(result.begin(), result.end(), result.begin(), ::toupper);
+        ln = ln.replace(it->position(), it->length(), result);
+    }
+    
+    /**
       **NEW! 1.6.5
       try ... catch ... end;
      */

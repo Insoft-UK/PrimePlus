@@ -31,7 +31,7 @@ using namespace pp;
 static Singleton *singleton = Singleton::shared();
 
 static bool isStructureVariable(const std::string str) {
-    return regex_search(str, std::regex(R"(\bstruct +[A-Za-z]\w* +[A-Za-z][\w*:.]* *;)"));
+    return regex_search(str, std::regex(R"(\bstruct +[A-Za-z]\w* +[A-Za-z][\w*:.]* *(?:;|,))"));
 }
 
 static bool hasAliasDeclaration(const std::string& str) {
@@ -66,16 +66,30 @@ static std::string extractDeclarationName(const std::string &str) {
     return identifier;
 }
 
-static std::string extractVariableDeclarationName(const std::string &str) {
-    std::string name;
-    std::regex r(R"(\bstruct +[A-Za-z]\w* +([A-Za-z][\w*:.]*))");
+//static std::string extractVariableDeclarationName(const std::string &str) {
+//    std::string name;
+//    std::regex r(R"(\bstruct +[A-Za-z]\w* +([A-Za-z][\w*:.]*))");
+//
+//    
+//    std::sregex_token_iterator it = std::sregex_token_iterator {
+//        str.begin(), str.end(), r, {1}
+//    };
+//    std::sregex_token_iterator end;
+//    if (it != end) {
+//        name = *it++;
+//    }
+//    
+//    return name;
+//}
+
+static std::vector<std::string> extractVariableDeclarationName(const std::string &str) {
+    std::vector<std::string> name;
+    std::string s;
+    std::regex r(R"(([A-Za-z][\w*:.]*))");
     
-    std::sregex_token_iterator it = std::sregex_token_iterator {
-        str.begin(), str.end(), r, {1}
-    };
-    std::sregex_token_iterator end;
-    if (it != end) {
-        name = *it++;
+    s = regex_replace(str, std::regex(R"(struct +[A-Za-z]\w* +)"), "");
+    for(auto it = std::sregex_iterator(s.begin(), s.end(), r); it != std::sregex_iterator(); ++it) {
+        name.push_back(it->str());
     }
     
     return name;
@@ -92,6 +106,37 @@ static bool isValidVariableName(const std::string &str) {
     return !regex_search(str, r);
 }
 
+void Structs::defineStruct(const _Structure &structure, const std::string &real, const std::string &identifier) {
+    std::regex r;
+    
+    Aliases::TIdentity identity = {
+        .type = Aliases::Type::Variable,
+        .scope = Aliases::Scope::Auto
+    };
+
+    
+    for (auto member = structure.members.begin(); member != structure.members.end(); ++member) {
+        std::string s = member->data();
+        
+        r = R"([A-Za-z][\w.]*)";
+        identity.real = regex_replace(s, r, real);
+        
+        r = R"(([A-Za-z][\w.]*) *(?:(\[[\d, [\]]*)|(\([\d, ()]*\)))?)";
+        std::sregex_token_iterator it = std::sregex_token_iterator {
+            s.begin(), s.end(), r, {1}
+        };
+        
+        if (it != std::sregex_token_iterator()) {
+            identity.identifier = identifier + "." + (std::string)*it;
+        } else {
+            if (verbose) std::cout << MessageType::Verbose << "struct: syntax error!\n";
+            continue;
+        }
+        
+        if (verbose) std::cout << MessageType::Verbose << "struct: P+: " << identity.identifier << " PPL: " << identity.real << "\n";
+        singleton->aliases.append(identity);
+    }
+}
 
 void Structs::createStructureVariable(std::string &str) {
     std::regex r;
@@ -106,52 +151,40 @@ void Structs::createStructureVariable(std::string &str) {
     
 
     for (auto structure = _structures.begin(); structure != _structures.end(); ++structure) {
-        r = R"(\bstruct +)" + structure->identifier + R"( +[A-Za-z][\w:.]*)";
+        r = R"(\bstruct +)" + structure->identifier + R"( +(?:[A-Za-z][\w:.]*(?: *, *)?)+)";// R"( +[A-Za-z][\w:.]*)";
         if (!regex_search(str, m, r)) continue;
         
         std::string real, identifier;
-        std::string variableName = extractVariableDeclarationName(m.str());
-        
-        if (!isValidVariableName(variableName)) {
-            variableName = "auto:" + variableName;
-        }
-        
-        if (hasAliasDeclaration(variableName)) {
-            identifier = extractAliasDeclarationName(variableName);
-            real = extractDeclarationName(variableName);
-            if (verbose) std::cout << MessageType::Verbose << "struct: variable '" << identifier << "' for '" << real << "' defined\n";
-        } else {
-            identifier = variableName;
-            real = variableName;
-            if (verbose) std::cout << MessageType::Verbose << "struct: variable '" << real << "' defined\n";
-        }
-    
-        
-        r = R"([A-Za-z][\w.]*)";
-        for (auto member = structure->members.begin(); member != structure->members.end(); ++member) {
-            std::string s = member->data();
-            identity.real = regex_replace(s, r, real);
+        std::vector<std::string> names = extractVariableDeclarationName(m.str());
+        std::string PPL;
+
+        while (!names.empty()) {
+            std::string name;
+            name = names.back();
+            names.pop_back();
             
-            std::regex re(R"(([A-Za-z][\w.]*) *(?:(\[[\d, [\]]*)|(\([\d, ()]*\)))?)");
-            std::sregex_token_iterator it = std::sregex_token_iterator {
-                s.begin(), s.end(), re, {1}
-            };
-            
-            if (it != std::sregex_token_iterator()) {
-                identity.identifier = identifier + "." + (std::string)*it;
-            } else {
-                if (verbose) std::cout << MessageType::Verbose << "struct: syntax error!\n";
-                continue;
+            if (!isValidVariableName(name)) {
+                name = "auto:" + name;
             }
             
-            if (verbose) std::cout << MessageType::Verbose << "struct: " << identity.identifier << " PPL: " << identity.real << "\n";
-            singleton->aliases.append(identity);
+            if (hasAliasDeclaration(name)) {
+                identifier = extractAliasDeclarationName(name);
+                real = extractDeclarationName(name);
+                if (verbose) std::cout << MessageType::Verbose << "struct: variable '" << identifier << "' for '" << real << "' defined\n";
+            } else {
+                identifier = name;
+                real = name;
+                if (verbose) std::cout << MessageType::Verbose << "struct: variable '" << real << "' defined\n";
+            }
+            
+            defineStruct(*structure, real, identifier);
+            if (!PPL.empty()) PPL += ",";
+            PPL += real;
+            if (identifier != real) PPL += ":" + identifier;
         }
+        
+        str = regex_replace(str, std::regex(R"(\bstruct +.*)"), "var " + PPL + ";");
     
-        // Preserving any existing code indenting is achieved by utilizing 'regex_replace'.
-        if (identifier == real) {
-            str = regex_replace(str, std::regex(R"(\bstruct +.*)"), "var " + real + ";");
-        } else str = regex_replace(str, std::regex(R"(\bstruct +.*)"), "var " + real + ":" + identifier + ";");
         return;
     }
 }

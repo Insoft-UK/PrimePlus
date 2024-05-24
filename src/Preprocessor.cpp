@@ -166,6 +166,10 @@ bool Preprocessor::parse(std::string &str) {
                     bitwiseOperators = true;
                 }
                 
+                if (pragma == "verbose aliases") {
+                    Singleton::shared()->aliases.verbose = !Singleton::shared()->aliases.verbose;
+                }
+                
                 if (pragma == "unorderedness") {
                     Singleton::shared()->aliases.descendingOrder = false;
                 }

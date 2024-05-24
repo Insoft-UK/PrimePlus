@@ -95,7 +95,7 @@ begin
     
     R→B(value,4)=>value;
     
-    var t = <calc>(2^-4:2);
+    var t = <calc>(<calc>(1+1)^-4:2);
     
 end
 
