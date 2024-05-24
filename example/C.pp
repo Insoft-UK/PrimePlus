@@ -34,8 +34,8 @@ ICOLOR:interpolateColor(a:colorA, b:colorB, f:factor)
 begin
     struct Color colorA, colorB, r:result;
 
-    result.r = <int>(((1 - factor) * colorA.r + factor * colorB.r));
-    result.g = <int>(((1 - factor) * colorA.g + factor * colorB.g));
+    result.r = <int>( ((1 - factor) * colorA.r + factor * colorB.r) );
+    result.g = <int>( ((1 - factor) * colorA.g + factor * colorB.g) );
     result.b = <int>( ((1 - factor) * colorA.b + factor * colorB.b) );
     
     return RGB(result.r, result.g, result.b);
