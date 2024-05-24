@@ -100,7 +100,7 @@ b = #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
 // PPL b:=160.00;
 b = <calc>(SCREEN_WIDTH / 2:2);
 ```
-**C Style Types & Casting**
+**Types & Type Casting**
 
 > [!NOTE]
 It may be removed in later updates or not yet implimented or even fully implimented, experimental purposes.
