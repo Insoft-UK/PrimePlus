@@ -100,10 +100,10 @@ b = #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
 // PPL b:=160.00;
 b = <calc>(SCREEN_WIDTH / 2:2);
 ```
-**Types & Type Casting**
+**Type Casting**
 
 > [!NOTE]
-It may be removed in later updates or not yet implimented or even fully implimented, experimental purposes.
+It may be removed in later updates, experimental purposes.
 ```
 var R = 0.6;
 I = <int>(R);
