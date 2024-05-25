@@ -45,30 +45,27 @@ begin
     struct Color c:color;
     def min(max(value,0),255) clamp(value);
     
-    if temperature <= 0.0 do
-        color = {0, 174, 255};
-        return RGB(color.r, color.g, color.b);
-    endif
+    case
+        if temperature <= 0.0 do
+            color = {0, 174, 255};
+        endif
     
-    if temperature <= 10 do
-        color = interpolateColor({0, 174, 255}, {0, 255, 255}, t / 10);
-        return RGB(color.r, color.g, color.b);
-    endif;
+        if temperature <= 10 do
+            color = interpolateColor({0, 174, 255}, {0, 255, 255}, t / 10);
+        endif
     
-    if temperature <= 20 do
-        color = interpolateColor({0, 255, 255}, {0, 255, 128}, (t - 10) / 10);
-        return RGB(color.r, color.g, color.b);
-    endif;
+        if temperature <= 20 do
+            color = interpolateColor({0, 255, 255}, {0, 255, 128}, (t - 10) / 10);
+        endif
     
-    if temperature <= 30 do
-        color = interpolateColor({0, 255, 128}, {255, 255, 0}, (t - 20) / 10);
-        return RGB(color.r, color.g, color.b);
-    endif;
+        if temperature <= 30 do
+            color = interpolateColor({0, 255, 128}, {255, 255, 0}, (t - 20) / 10);
+        endif
     
-    if temperature <= 40 do
-        color = interpolateColor({255, 255, 0}, {255, 165, 0}, (t - 30) / 10);
-        return RGB(color.r, color.g, color.b);
-    endif;
+        if temperature <= 40 do
+            color = interpolateColor({255, 255, 0}, {255, 165, 0}, (t - 30) / 10);
+        endif
+    end
     
     color = interpolateColor({255, 165, 0}, {255, 0, 0}, (t - 40) / 10);
     return RGB(color.r, color.g, color.b);
