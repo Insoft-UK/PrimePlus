@@ -200,7 +200,7 @@ std::string translateCOperatorsToPPL(const std::string &str) {
     while (regex_search(s, m, std::regex(R"([a-zA-Z]\w* *(\[.*\] *)*[*\/+\-%&|^]=)"))) {
         char op = m.str().at(m.str().find("=") - 1);
         std::string str = trim_copy(m.str().substr(0, m.str().find("=") - 1));
-        s = s.replace(m.position(), m.str().length(), str + " := " + str + op);
+        s = s.replace(m.position(), m.length(), str + " := " + str + op);
     }
     s = regex_replace(s, std::regex(R"( *\% *)"), " MOD ");
     
@@ -453,7 +453,7 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
         std::string str = *it;
         
         r =  R"([^,;]+)";
-        for(auto it = std::sregex_iterator(str.begin(), str.end(), r);;) {
+        for (auto it = std::sregex_iterator(str.begin(), str.end(), r);;) {
             std::string s = trim_copy(it->str());
             if (regex_search(s, std::regex(R"(^[a-zA-Z]\w*:[a-zA-Z])"))) {
                 code.append(s);
@@ -495,14 +495,26 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     }
     
 
-    if (regex_match(ln, std::regex(R"(^begin *$)", std::regex_constants::icase))) {
+    /**
+      **NEW! 1.7.1
+      { for begin !DON'T USE
+     */
+//    r = R"(^begin *$)";
+    r = R"(^(?:begin|\{) *$)";
+    if (regex_match(ln, std::regex(R"(^(?:begin|\{) *$)", std::regex_constants::icase))) {
         singleton->scope = Singleton::Scope::Local;
         ln = std::string("BEGIN\n");
         return;
     }
     
+    /**
+      **NEW! 1.7.1
+      } for end !DON'T USE
+     */
     if (Singleton::Scope::Local == singleton->scope) {
-        if (regex_match(ln, std::regex(R"(^end; *$)", std::regex_constants::icase))) {
+//        r = R"(^end; *$)";
+        r = R"(^(?:end;|\}) *$)";
+        if (regex_match(ln, std::regex(R"(^(?:end;|\}) *$)", std::regex_constants::icase))) {
             singleton->aliases.removeAllLocalAliases();
             singleton->scope = Singleton::Scope::Global;
             ln = std::string("END;\n");
@@ -573,6 +585,24 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     static std::vector<std::string> stack;
     if (Singleton::Scope::Local == Singleton::shared()->scope) {
         
+        /**
+          **NEW! 1.7.1
+          {...} C/C++ Style !DON'T USE
+         */
+        r = R"(\) *\{ *$)";
+        while (regex_search(ln, m, r)) {
+            s = m.str();
+            s = regex_replace(s, std::regex(R"(\{)"), "do");
+            ln = ln.replace(m.position(), m.length(), s);
+        }
+        
+        r = R"(^ +\} *$)";
+        while (regex_search(ln, m, r)) {
+            s = m.str();
+            s = regex_replace(s, std::regex(R"(\})"), "END;");
+            ln = ln.replace(m.position(), m.length(), s);
+        }
+        
         singleton->switches.parse(ln);
         
         /**
@@ -591,7 +621,19 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
                 result += *it++;
             }
             result += ") THEN";
-            ln = ln.replace(m.position(), m.str().length(), result);
+            ln = ln.replace(m.position(), m.length(), result);
+        }
+        
+        /**
+          **NEW! 1.7.1
+          if(...)do C/C++ Style !DON'T USE
+         */
+        r = R"(\bif *\(.+\) *(?:do|then)\b)";
+        while (regex_search(ln, m, r)) {
+            std::string s = m.str();
+            s = regex_replace(s, std::regex(R"(if *\()"), "if ");
+            s = regex_replace(s, std::regex(R"(\) *(?:do|then))"), " then");
+            ln = ln.replace(m.position(), m.length(), s);
         }
         
         /**
@@ -600,25 +642,25 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
           else
           endif;
          */
-        r = R"(\bif +(.+) +do\b *$)";
+        r = R"(\bif +.+ +do\b *$)";
         while (regex_search(ln, m, r)) {
             std::string s = m.str();
-            s = regex_replace(s, std::regex(R"( +do$)"), " THEN");
-            ln = ln.replace(m.position(), m.str().length(), s);
+            s = regex_replace(s, std::regex(R"( +do\b)"), " THEN");
+            ln = ln.replace(m.position(), m.length(), s);
         }
         
         /**
           **NEW! 1.6.1
           if...then [return, break or continue];
          */
-        r = R"(\bif +.+ +then +(return|break|continue)\b; *$)";
+        r = R"(\bif +.+ +then +(?:return|break|continue)\b; *$)";
         while (regex_search(ln, m, r)) {
             std::string result = trim_copy(m.str());
             if (result.at(result.length() - 1) != ';') {
                 result = result.append(";");
             }
             result.append(" END;");
-            ln = ln.replace(m.position(), m.str().length(), result);
+            ln = ln.replace(m.position(), m.length(), result);
         }
         
         /**
@@ -642,19 +684,19 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
                 if (it->matched) statements[2] = *it++;
             }
             
-            ln = ln.replace(m.position(), m.str().length(), (statements[0].empty() ? "" : statements[0] + "; ") + "WHILE " + statements[1] + " DO");
+            ln = ln.replace(m.position(), m.length(), (statements[0].empty() ? "" : statements[0] + "; ") + "WHILE " + statements[1] + " DO");
             if (!statements[2].empty()) stack.push_back(statements[2] + "; ");
         }
         
         while (regex_search(ln, m, std::regex(R"(\bnext;)"))) {
             if (stack.empty()) {
-                ln = ln.replace(m.position(), m.str().length(), "END;");
+                ln = ln.replace(m.position(), m.length(), "END;");
                 continue;
             }
             std::string ppl = stack.back();
             stack.pop_back();
             
-            ln = ln.replace(m.position(), m.str().length(), ppl + "END;");
+            ln = ln.replace(m.position(), m.length(), ppl + "END;");
         }
     }
     

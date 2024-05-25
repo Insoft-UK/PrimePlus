@@ -20,57 +20,58 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma ( minify -1, reduce, newline )
+#pragma ( minify 0, reduce, newline )
 
+// PPL Style Used! ; & if...then end := () !ONLY
 
 struct Color
-    r[1];
-    g[2];
-    b[3];
-end
+    r(1);
+    g(2);
+    b(3);
+end;
 
 ICOLOR:interpolateColor(a:colorA, b:colorB, f:factor)
 begin
     def min(max(value,0),255) clamp(value);
     struct Color colorA, colorB, r:result;
     
-    result.r = <int>( ((1 - factor) * colorA.r + factor * colorB.r) );
-    result.g = <int>( ((1 - factor) * colorA.g + factor * colorB.g) );
-    result.b = <int>( ((1 - factor) * colorA.b + factor * colorB.b) );
+    result.r := <int>( ((1 - factor) * colorA.r + factor * colorB.r) );
+    result.g := <int>( ((1 - factor) * colorA.g + factor * colorB.g) );
+    result.b := <int>( ((1 - factor) * colorA.b + factor * colorB.b) );
     
-    result.r = clamp(result.r);
-    result.g = clamp(result.g);
-    result.b = clamp(result.b);
+    result.r := clamp(result.r);
+    result.g := clamp(result.g);
+    result.b := clamp(result.b);
     
     return result;
-end
+end;
 
 export CELSIUS(t:temperature)
 begin
     struct Color c:color;
-    
+
     case
-        if temperature <= 0.0 do
+        if temperature <= 0.0 then
             color = {0, 174, 255};
-        endif
+        end;
     
-        if temperature <= 10 do
-            color = interpolateColor({0, 174, 255}, {0, 255, 255}, t / 10);
-        endif
+        if temperature <= 10 then
+            color := interpolateColor({0, 174, 255}, {0, 255, 255}, t / 10);
+        end;
     
-        if temperature <= 20 do
-            color = interpolateColor({0, 255, 255}, {0, 255, 128}, (t - 10) / 10);
-        endif
+        if temperature <= 20 then
+            color := interpolateColor({0, 255, 255}, {0, 255, 128}, (t - 10) / 10);
+        end;
     
-        if temperature <= 30 do
-            color = interpolateColor({0, 255, 128}, {255, 255, 0}, (t - 20) / 10);
-        endif
+        if temperature <= 30 then
+            color := interpolateColor({0, 255, 128}, {255, 255, 0}, (t - 20) / 10);
+        end;
     
-        if temperature <= 40 do
-            color = interpolateColor({255, 255, 0}, {255, 165, 0}, (t - 30) / 10);
-        endif
-    end
+        if temperature <= 40 then
+            color := interpolateColor({255, 255, 0}, {255, 165, 0}, (t - 30) / 10);
+        end;
+    end;
     
-    color = interpolateColor({255, 165, 0}, {255, 0, 0}, (t - 40) / 10);
+    color := interpolateColor({255, 165, 0}, {255, 0, 0}, (t - 40) / 10);
     return RGB(color.r, color.g, color.b);
-end
+end;
