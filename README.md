@@ -83,7 +83,7 @@ setAlpha(50.0);
 **Obj-C Style**
 
 > [!WARNING]
-It may be removed in later updates, but if it is removed, you can easily reinstate if required.
+It must be enabled `#pragma ( messages )`.
 ```
 [Color ConvertToHSVFromRed:255 blue:127 green:0];
 

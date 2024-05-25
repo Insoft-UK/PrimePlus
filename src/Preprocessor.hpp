@@ -37,6 +37,7 @@ public:
     bool disregard = false;
     bool python = false;
     bool ppl = false;
+    bool messages = false;
     int minify = 0;
     bool bitwiseOperators = true;
     bool operators = true;

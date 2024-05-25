@@ -186,6 +186,10 @@ bool Preprocessor::parse(std::string &str) {
                     reduce = true;
                 }
                 
+                if (pragma == "messages") {
+                    messages = true;
+                }
+                
                 if (regex_search(pragma, std::regex(R"(minify (?:\d+|-1))"))) {
                     size_t start = pragma.find(" ") + 1;
                     size_t length = pragma.length() - start;

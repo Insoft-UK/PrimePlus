@@ -427,7 +427,7 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     if (Def::parse(ln)) return;
 #ifdef MESSAGES_HPP
     // Obj-C Style
-    Messages::parse(ln);
+    if (preprocessor.messages) Messages::parse(ln);
 #endif
     ln = singleton->aliases.resolveAliasesInText(ln);
     // TODO: resolve alias where an alias refers to another so no second pass is nessasery!
