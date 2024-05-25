@@ -184,6 +184,7 @@ void Structs::createStructureVariable(std::string &str) {
             if (!PPL.empty()) PPL += ",";
             PPL += real;
             if (identifier != real) PPL += ":" + identifier;
+            PPL += ":={}";
         }
         if (PPL.empty()) return;
         str = regex_replace(str, std::regex(R"(\bstruct +.*)"), "var " + PPL + ";");

@@ -22,7 +22,6 @@ THE SOFTWARE.
 
 #pragma ( minify -1, reduce, newline )
 
-#include <prime>
 
 struct Color
     r[1];
@@ -32,18 +31,23 @@ end
 
 ICOLOR:interpolateColor(a:colorA, b:colorB, f:factor)
 begin
+    def min(max(value,0),255) clamp(value);
     struct Color colorA, colorB, r:result;
-    r = {0,0,0};
+    
     result.r = <int>( ((1 - factor) * colorA.r + factor * colorB.r) );
     result.g = <int>( ((1 - factor) * colorA.g + factor * colorB.g) );
     result.b = <int>( ((1 - factor) * colorA.b + factor * colorB.b) );
-    return RGB(result.r, result.g, result.b);
+    
+    result.r = clamp(result.r);
+    result.g = clamp(result.g);
+    result.b = clamp(result.b);
+    
+    return result;
 end
 
 export CELSIUS(t:temperature)
 begin
     struct Color c:color;
-    def min(max(value,0),255) clamp(value);
     
     case
         if temperature <= 0.0 do
