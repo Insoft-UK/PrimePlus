@@ -105,11 +105,8 @@ b = <calc>(SCREEN_WIDTH / 2:2);
 > [!NOTE]
 It may be removed in later updates or not yet implimented or even fully implimented, experimental purposes.
 ```
-int I = 0;
-real R = 0.6;
-string S = "P+";
-list = {1,2,3};
-R = <real>(I);
+var R = 0.6;
+I = <int>(R);
 S = <string>(R);
 ```
 

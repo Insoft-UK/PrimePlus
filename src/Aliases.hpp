@@ -23,10 +23,10 @@
 #ifndef ALIASES_HPP
 #define ALIASES_HPP
 
-#include <stdint.h>
 #include <iostream>
 #include <list>
 #include <vector>
+#include <stdint.h>
 
 namespace pp {
 
