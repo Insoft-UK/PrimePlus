@@ -20,18 +20,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma ( minify -1, reduce, newline )
+#pragma ( minify 0, reduce, newline )
+
+// C Style Used!
 
 #include <prime>
 
 export KELVIN(t:temperature)
-begin
+{
     var r:red=255, g:green, b:blue=255;
     def min(max(value,0),255) clamp(value);
     
     temperature /= 100.0;
     
-    if temperature > 66 do
+    if (temperature > 66) {
         red = temperature - 60;
         red = 329.698727446 * red^-0.1332047592;
         red = clamp(red);
@@ -39,18 +41,20 @@ begin
         green = temperature - 60;
         green = 288.1221695283 * green^0.0755148492;
         green = clamp(green);
-    else
+    } else {
         green = temperature;
         green = 99.4708025861 * log(green) - 161.1195681661;
         green = clamp(green);
         
-        if temperature <= 19 then return RGB(red, green, 0); endif
+        if (temperature <= 19) {
+            return RGB(red, green, 0);
+        }
         
         blue = temperature - 10;
         blue = 138.5177312231 * log(blue) - 305.0447927307;
         blue = clamp(blue);
-    endif
+    }
     
     
     return RGB(red, green, blue);
-end
+}

@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma ( minify -1, newline, indents, reduce )
+#pragma ( minify -1, newline, indents, reduce, messages )
 
 #include <prime>
 #include <hp>

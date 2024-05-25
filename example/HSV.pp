@@ -22,6 +22,8 @@ THE SOFTWARE.
 
 #pragma ( minify -1, reduce, newline )
 
+// P+ Style Used! Recommeneded.
+
 #include <prime>
 
 export HSV(h:hue, s:saturation, v:value)

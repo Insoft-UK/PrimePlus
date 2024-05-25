@@ -589,10 +589,13 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
           **NEW! 1.7.1
           {...} C/C++ Style !DON'T USE
          */
-        r = R"(\) *\{ *$)";
+        r = R"(^ *\} *else *\{ *$)";
+        ln = regex_replace(ln, std::regex(R"(\} *else *\{ *$)"), "else");
+        
+        r = R"(\{ *$)";
         while (regex_search(ln, m, r)) {
             s = m.str();
-            s = regex_replace(s, std::regex(R"(\{)"), "do");
+            s = regex_replace(s, r, "do");
             ln = ln.replace(m.position(), m.length(), s);
         }
         
@@ -626,14 +629,20 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
         
         /**
           **NEW! 1.7.1
-          if(...)do C/C++ Style !DON'T USE
+          if(...)do, while(...)do, for(...)do, until(...) C/C++ Style !DON'T USE
          */
-        r = R"(\bif *\(.+\) *(?:do|then)\b)";
+        r = R"(\b(if|while|for|until) *\((.+)\))";
         while (regex_search(ln, m, r)) {
-            std::string s = m.str();
-            s = regex_replace(s, std::regex(R"(if *\()"), "if ");
-            s = regex_replace(s, std::regex(R"(\) *(?:do|then))"), " then");
-            ln = ln.replace(m.position(), m.length(), s);
+            s = m.str();
+            
+            auto it = std::sregex_token_iterator {
+                s.begin(), s.end(), r, {1, 2}
+            };
+            if (it != std::sregex_token_iterator()) {
+                std::ostringstream os;
+                os << *it++ << " " << *it;
+                ln = ln.replace(m.position(), m.length(), os.str());
+            }
         }
         
         /**

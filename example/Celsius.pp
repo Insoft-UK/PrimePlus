@@ -22,7 +22,7 @@ THE SOFTWARE.
 
 #pragma ( minify 0, reduce, newline )
 
-// PPL Style Used! ; & if...then end := () !ONLY
+// PPL Style Used! ; if...then end := () !ONLY
 
 struct Color
     r(1);

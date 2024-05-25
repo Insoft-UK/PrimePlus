@@ -174,12 +174,12 @@ void Structs::createStructureVariable(std::string &str) {
                 if (verbose) std::cout << MessageType::Verbose << "struct: variable '" << real << "' defined\n";
             }
             
+            bool realExists = singleton->aliases.realExists(real);
+            
             defineStruct(*structure, real, identifier);
             
+            if (realExists) continue;
             
-            
-            if (singleton->aliases.realExists(real))
-                continue;
             
             if (!PPL.empty()) PPL += ",";
             PPL += real;
