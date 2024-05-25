@@ -535,7 +535,7 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
             ln.begin(), ln.end(), r, {1}
         };
         if (it != std::sregex_token_iterator()) {
-            if (*it == "int") {
+            if (m.str().substr(0, 5) == "<int>") {
                 ln = ln.replace(m.position(), m.length(), "IP(" + trim_copy(*it) + ")");
             } else {
                 ln = ln.replace(m.position(), m.length(), "STRING(" + trim_copy(*it) + ")");

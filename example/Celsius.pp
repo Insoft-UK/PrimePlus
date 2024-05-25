@@ -28,23 +28,48 @@ struct Color
     r[1];
     g[2];
     b[3];
-end;
+end
 
 ICOLOR:interpolateColor(a:colorA, b:colorB, f:factor)
 begin
     struct Color colorA, colorB, r:result;
-
+    r = {0,0,0};
     result.r = <int>( ((1 - factor) * colorA.r + factor * colorB.r) );
     result.g = <int>( ((1 - factor) * colorA.g + factor * colorB.g) );
     result.b = <int>( ((1 - factor) * colorA.b + factor * colorB.b) );
-    
     return RGB(result.r, result.g, result.b);
 end
 
-export C(t:temperature)
+export CELSIUS(t:temperature)
 begin
-    var r:red=255, g:green, b:blue=255;
+    struct Color c:color;
     def min(max(value,0),255) clamp(value);
     
-    return RGB(red, green, blue);
+    if temperature <= 0.0 do
+        color = {0, 174, 255};
+        return RGB(color.r, color.g, color.b);
+    endif
+    
+    if temperature <= 10 do
+        color = interpolateColor({0, 174, 255}, {0, 255, 255}, t / 10);
+        return RGB(color.r, color.g, color.b);
+    endif;
+    
+    if temperature <= 20 do
+        color = interpolateColor({0, 255, 255}, {0, 255, 128}, (t - 10) / 10);
+        return RGB(color.r, color.g, color.b);
+    endif;
+    
+    if temperature <= 30 do
+        color = interpolateColor({0, 255, 128}, {255, 255, 0}, (t - 20) / 10);
+        return RGB(color.r, color.g, color.b);
+    endif;
+    
+    if temperature <= 40 do
+        color = interpolateColor({255, 255, 0}, {255, 165, 0}, (t - 30) / 10);
+        return RGB(color.r, color.g, color.b);
+    endif;
+    
+    color = interpolateColor({255, 165, 0}, {255, 0, 0}, (t - 40) / 10);
+    return RGB(color.r, color.g, color.b);
 end
