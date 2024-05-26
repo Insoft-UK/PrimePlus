@@ -123,7 +123,7 @@ enum Base
    System := 0,
    Bin    := 1,
    Oct    := 2,
-   Dec    := 3
+   Dec    := 3,
    Hex    := 4
 end;
 

@@ -37,7 +37,7 @@ static void parseAlias(const std::string &str, Aliases::TIdentity &identity) {
             1 name
             2 alias
      */
-    std::regex r(R"(([a-zA-Z_]\w*):([a-zA-Z][\w.]*((?:::)?[a-zA-Z][\w.]*)*))");
+    std::regex r(R"(((?:[^\x00-\x7F]|\w)+):([a-zA-Z][\w.]*((?:::)?[a-zA-Z][\w.]*)*))");
     std::sregex_token_iterator it = std::sregex_token_iterator {
         str.begin(), str.end(), r, {1, 2}
     };
@@ -49,7 +49,7 @@ static void parseAlias(const std::string &str, Aliases::TIdentity &identity) {
 }
 
 static void parseAliases(const std::string &str, Aliases::TIdentity &identity) {
-    std::regex r(R"([a-zA-Z_]\w*:[a-zA-Z][\w.]*((?:::)?[a-zA-Z][\w.]*)*)");
+    std::regex r(R"((?:[^\x00-\x7F]|\w)+\w*:[a-zA-Z][\w.]*((?:::)?[a-zA-Z][\w.]*)*)");
     
     for(std::sregex_iterator it = std::sregex_iterator(str.begin(), str.end(), r); it != std::sregex_iterator(); ++it) {
         parseAlias(it->str(), identity);
@@ -92,7 +92,7 @@ bool Alias::parse(std::string &str) {
          1 name:alias
          2 p1, p2:alias, auto:alias
          */
-        r = R"(^ *(?:export +)?\b((?:[a-zA-Z]\w* *: *)?(?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *\((.*)\))";
+        r = R"(^ *(?:export +)?\b((?:(?:[^\x00-\x7F]|\w)+ *: *)?(?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *\((.*)\))";
         auto it = std::sregex_token_iterator {
             str.begin(), str.end(), r, {1, 2}
         };

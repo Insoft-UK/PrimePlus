@@ -22,9 +22,6 @@ THE SOFTWARE.
 
 #pragma ( minify 0, reduce )
 
-#include <stdpix>
-#include <stdio>
-
 // PPL Style Used!
 
 struct Color
@@ -44,24 +41,11 @@ begin
     return result;
 end;
 
-export CELSIUS(t:temperature)
+export C→RGB:celsiusToRGB(t:temperature)
 begin
     struct Color c:color;
     
-    var auto:colors := {
-        {255,255,255},
-        {255,127,255},
-        {127,0,127},
-        {0,0,255},
-        {0,127,255},
-        {0,255,255},
-        {0,255,127},
-        {255,255,0},
-        {255,127,0},
-        {255,0,0},
-        {127,0,0},
-        {0,0,0}
-    };
+    var auto:colors := {{255,255,255},{255,127,255},{127,0,127},{0,0,255},{0,127,255},{0,255,255},{0,255,127},{255,255,0},{255,127,0},{255,0,0},{127,0,0},{0,0,0}};
     temperature += 40;
     var auto:index := <int>(temperature / 10) + 1;
     
@@ -79,18 +63,5 @@ begin
     end;
     
     return RGB(color.r, color.g, color.b);
-end;
-
-export TEMPC(t:temperature)
-begin
-    rect(0);
-    var k:index;
-    
-    for index := -40; index < 80; index += 1 do
-        X := (index + 40) * 3;
-        rect(X, 100, X + 3, 120, CELSIUS(index));
-    next;
-    rect(0, 130, 320, 135, CELSIUS(temperature));
-    WAIT();
 end;
 
