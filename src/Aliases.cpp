@@ -145,7 +145,7 @@ static std::string resolveMacroFunction(const std::string &str, const std::strin
      Group  0 NAME(a,b,c)
             1 a,b,c
      */
-    r = R"(\b)" + identifier + R"( *\(([^()]+)\))";
+    r = R"(\b)" + identifier + R"( *\((.+)\))";
     std::sregex_token_iterator it = std::sregex_token_iterator {
         str.begin(), str.end(), r, {1}
     };
@@ -191,7 +191,7 @@ std::string Aliases::resolveAliasesInText(const std::string &str) {
         }
 
         if (!it->parameters.empty()) {
-            r = R"(\b)" + it->identifier + R"( *\(([^()]+)\))";
+            r = R"(\b)" + it->identifier + R"( *\(.+\))";
             while (regex_search(s, m, r)) {
                 if (it->deprecated) std::cout << MessageType::Deprecated << it->identifier << it->message << "\n";
                 std::string result = resolveMacroFunction(m.str(), it->parameters, it->identifier, it->real);

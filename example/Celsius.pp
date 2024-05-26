@@ -27,7 +27,7 @@ THE SOFTWARE.
 struct Color
     r(1);
     g(2);
-    b(3);
+    b[3];
 end;
 
 ICOLOR:interpolateColor(a:colorA, b:colorB, f:factor)

@@ -60,7 +60,7 @@ public:
         long line;              // line that definition accoured;
         std::string pathname;   // path and filename that definition accoured
         bool deprecated = false;
-        std::string message;
+        std::string message;    // Used by deprecated, holds the message for deprecated.
     } TIdentity;
     std::vector<TIdentity> identities;
     
