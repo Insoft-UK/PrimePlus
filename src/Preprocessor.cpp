@@ -190,6 +190,11 @@ bool Preprocessor::parse(std::string &str) {
                     messages = true;
                 }
                 
+                if (pragma == "cstyle") {
+                    cstyle = !cstyle;
+                    std::cout << MessageType::Verbose << "c/c++ style " << (cstyle ? "enabled!" : "disabled!") << "\n";
+                }
+                
                 if (regex_search(pragma, std::regex(R"(minify (?:\d+|-1))"))) {
                     size_t start = pragma.find(" ") + 1;
                     size_t length = pragma.length() - start;

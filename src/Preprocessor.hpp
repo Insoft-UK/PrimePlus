@@ -42,6 +42,7 @@ public:
     bool bitwiseOperators = true;
     bool operators = true;
     bool logicalOperators = true;
+    bool cstyle = false;
     
     // Used for when PPL code is being minifed to indicate if newline and indents should be retained.
     bool newline = false;

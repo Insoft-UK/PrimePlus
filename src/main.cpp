@@ -162,6 +162,25 @@ void reduce(std::string &str) {
             str = str.replace(m.position(), m.length(), ss.str());
         }
     }
+    
+    while (regex_search(str, m, std::regex(R"(\bfn\d+ *\()"))) {
+        std::string matched = m.str();
+        r = R"(\bfn(\d+) *\()";
+        auto it = std::sregex_token_iterator {
+            matched.begin(), matched.end(), r, {1}
+        };
+        if (it != std::sregex_token_iterator()) {
+            std::stringstream ss;
+            ss << "f" << *it << "(";
+            str = str.replace(m.position(), m.length(), ss.str());
+        }
+    }
+    
+    while (regex_search(str, m, std::regex(R"(\b[A-Za-z]\w* *\( *\))"))) {
+        std::string matched = m.str();
+        matched = regex_replace(matched, std::regex(R"( *\( *\))"), "");
+        str = str.replace(m.position(), m.length(), matched);
+    }
 }
 
 uint32_t utf8_to_utf16(const char *str) {
@@ -480,10 +499,6 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
         ln = regex_replace(ln, std::regex(R"(\b((?:var|const) +)(.*)(?=;))"), code);
     }
     
-    
-    
-    
-    
     if (structurs.parse(ln)) {
         ln = std::string("");
         return;
@@ -499,8 +514,10 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
       **NEW! 1.7.1
       { for begin !DON'T USE
      */
-//    r = R"(^begin *$)";
-    r = R"(^(?:begin|\{) *$)";
+    if (preprocessor.cstyle)
+        r = R"(^(?:begin|\{) *$)";
+    else
+        r = R"(^begin *$)";
     if (regex_match(ln, std::regex(R"(^(?:begin|\{) *$)", std::regex_constants::icase))) {
         singleton->scope = Singleton::Scope::Local;
         ln = std::string("BEGIN\n");
@@ -512,8 +529,10 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
       } for end !DON'T USE
      */
     if (Singleton::Scope::Local == singleton->scope) {
-//        r = R"(^end; *$)";
-        r = R"(^(?:end;|\}) *$)";
+        if (preprocessor.cstyle)
+            r = R"(^(?:end;|\}) *$)";
+        else
+            r = R"(^end; *$)";
         if (regex_match(ln, std::regex(R"(^(?:end;|\}) *$)", std::regex_constants::icase))) {
             singleton->aliases.removeAllLocalAliases();
             singleton->scope = Singleton::Scope::Global;
@@ -589,23 +608,24 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
           **NEW! 1.7.1
           {...} C/C++ Style !DON'T USE
          */
-        r = R"(^ *\} *else *\{ *$)";
-        ln = regex_replace(ln, std::regex(R"(\} *else *\{ *$)"), "else");
-        
-        r = R"(\{ *$)";
-        while (regex_search(ln, m, r)) {
-            s = m.str();
-            s = regex_replace(s, r, "do");
-            ln = ln.replace(m.position(), m.length(), s);
+        if (preprocessor.cstyle) {
+            r = R"(^ *\} *else *\{ *$)";
+            ln = regex_replace(ln, std::regex(R"(\} *else *\{ *$)"), "else");
+            
+            r = R"(\{ *$)";
+            while (regex_search(ln, m, r)) {
+                s = m.str();
+                s = regex_replace(s, r, "do");
+                ln = ln.replace(m.position(), m.length(), s);
+            }
+            
+            r = R"(^ +\} *$)";
+            while (regex_search(ln, m, r)) {
+                s = m.str();
+                s = regex_replace(s, std::regex(R"(\})"), "END;");
+                ln = ln.replace(m.position(), m.length(), s);
+            }
         }
-        
-        r = R"(^ +\} *$)";
-        while (regex_search(ln, m, r)) {
-            s = m.str();
-            s = regex_replace(s, std::regex(R"(\})"), "END;");
-            ln = ln.replace(m.position(), m.length(), s);
-        }
-        
         singleton->switches.parse(ln);
         
         /**
@@ -631,17 +651,19 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
           **NEW! 1.7.1
           if(...)do, while(...)do, for(...)do, until(...) C/C++ Style !DON'T USE
          */
-        r = R"(\b(if|while|for|until) *\((.+)\))";
-        while (regex_search(ln, m, r)) {
-            s = m.str();
-            
-            auto it = std::sregex_token_iterator {
-                s.begin(), s.end(), r, {1, 2}
-            };
-            if (it != std::sregex_token_iterator()) {
-                std::ostringstream os;
-                os << *it++ << " " << *it;
-                ln = ln.replace(m.position(), m.length(), os.str());
+        if (preprocessor.cstyle) {
+            r = R"(\b(if|while|for|until) *\((.+)\))";
+            while (regex_search(ln, m, r)) {
+                s = m.str();
+                
+                auto it = std::sregex_token_iterator {
+                    s.begin(), s.end(), r, {1, 2}
+                };
+                if (it != std::sregex_token_iterator()) {
+                    std::ostringstream os;
+                    os << *it++ << " " << *it;
+                    ln = ln.replace(m.position(), m.length(), os.str());
+                }
             }
         }
         

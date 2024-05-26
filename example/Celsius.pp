@@ -20,28 +20,26 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma ( minify 0, reduce, newline )
+#pragma ( minify 0, reduce )
 
-// PPL Style Used! ; if...then end := () !ONLY
+#include <stdpix>
+#include <stdio>
+
+// PPL Style Used!
 
 struct Color
     r(1);
     g(2);
-    b[3];
+    b(3);
 end;
 
-ICOLOR:interpolateColor(a:colorA, b:colorB, f:factor)
+auto:interpolateColor(a:colorA, b:colorB, f:factor)
 begin
-    def min(max(value,0),255) clamp(value);
     struct Color colorA, colorB, r:result;
     
     result.r := <int>( ((1 - factor) * colorA.r + factor * colorB.r) );
     result.g := <int>( ((1 - factor) * colorA.g + factor * colorB.g) );
     result.b := <int>( ((1 - factor) * colorA.b + factor * colorB.b) );
-    
-    result.r := clamp(result.r);
-    result.g := clamp(result.g);
-    result.b := clamp(result.b);
     
     return result;
 end;
@@ -49,29 +47,50 @@ end;
 export CELSIUS(t:temperature)
 begin
     struct Color c:color;
-
+    
+    var auto:colors := {
+        {255,255,255},
+        {255,127,255},
+        {127,0,127},
+        {0,0,255},
+        {0,127,255},
+        {0,255,255},
+        {0,255,127},
+        {255,255,0},
+        {255,127,0},
+        {255,0,0},
+        {127,0,0},
+        {0,0,0}
+    };
+    temperature += 40;
+    var auto:index := <int>(temperature / 10) + 1;
+    
     case
         if temperature <= 0.0 then
-            color = {0, 174, 255};
+            color := colors(1);
         end;
-    
-        if temperature <= 10 then
-            color := interpolateColor({0, 174, 255}, {0, 255, 255}, t / 10);
-        end;
-    
-        if temperature <= 20 then
-            color := interpolateColor({0, 255, 255}, {0, 255, 128}, (t - 10) / 10);
-        end;
-    
-        if temperature <= 30 then
-            color := interpolateColor({0, 255, 128}, {255, 255, 0}, (t - 20) / 10);
-        end;
-    
-        if temperature <= 40 then
-            color := interpolateColor({255, 255, 0}, {255, 165, 0}, (t - 30) / 10);
-        end;
+        
+        default
+            try
+                color := interpolateColor(colors(index), colors(index + 1), temperature % 10 / 10);
+            catch
+                color := colors(12);
+            end;
     end;
     
-    color := interpolateColor({255, 165, 0}, {255, 0, 0}, (t - 40) / 10);
     return RGB(color.r, color.g, color.b);
 end;
+
+export TEMPC(t:temperature)
+begin
+    rect(0);
+    var k:index;
+    
+    for index := -40; index < 80; index += 1 do
+        X := (index + 40) * 3;
+        rect(X, 100, X + 3, 120, CELSIUS(index));
+    next;
+    rect(0, 130, 320, 135, CELSIUS(temperature));
+    WAIT();
+end;
+

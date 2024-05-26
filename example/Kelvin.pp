@@ -22,18 +22,17 @@ THE SOFTWARE.
 
 #pragma ( minify 0, reduce, newline )
 
-// C Style Used!
 
 #include <prime>
 
 export KELVIN(t:temperature)
-{
+begin
     var r:red=255, g:green, b:blue=255;
     def min(max(value,0),255) clamp(value);
     
     temperature /= 100.0;
     
-    if (temperature > 66) {
+    if temperature > 66 do
         red = temperature - 60;
         red = 329.698727446 * red^-0.1332047592;
         red = clamp(red);
@@ -41,20 +40,20 @@ export KELVIN(t:temperature)
         green = temperature - 60;
         green = 288.1221695283 * green^0.0755148492;
         green = clamp(green);
-    } else {
+    else
         green = temperature;
         green = 99.4708025861 * log(green) - 161.1195681661;
         green = clamp(green);
-        
+#pragma ( cstyle )
         if (temperature <= 19) {
             return RGB(red, green, 0);
         }
-        
+#pragma ( cstyle )
         blue = temperature - 10;
         blue = 138.5177312231 * log(blue) - 305.0447927307;
         blue = clamp(blue);
-    }
+    endif
     
     
     return RGB(red, green, blue);
-}
+end
