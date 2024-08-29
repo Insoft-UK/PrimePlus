@@ -557,22 +557,24 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     }
     
     /**
-      **NEW! 1.7.0.5xx
+      **NEW! 1.7.0.5xx, Int & String 1.7.1.2xx
       <type>(value)
      */
-    r = R"(<(?:int|string)> *\((.*)\))";
+//    r = R"(<(?:int|string)> *\((.*)\))";
+    r = R"((?:<(?:int|string)>)|(?:\bInt|\bString) *\((.*)\))";
     while (regex_search(ln, m, r)) {
         std::sregex_token_iterator it = std::sregex_token_iterator {
             ln.begin(), ln.end(), r, {1}
         };
         if (it != std::sregex_token_iterator()) {
-            if (m.str().substr(0, 5) == "<int>") {
+            if (m.str().substr(0, 5) == "<int>" || m.str().substr(0, 5) == "Int") {
                 ln = ln.replace(m.position(), m.length(), "IP(" + trim_copy(*it) + ")");
             } else {
                 ln = ln.replace(m.position(), m.length(), "STRING(" + trim_copy(*it) + ")");
             }
         }
     }
+    
     
     r = R"(<calc>\(.*\))";
     while (regex_search(ln, m, r)) {

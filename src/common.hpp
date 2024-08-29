@@ -59,4 +59,5 @@ bool file_exists(const std::string &filename);
 long lwspaces(const std::string &str);
 std::string& lpad(std::string &str, const char c, int n);
 
+
 #endif /* common_hpp */

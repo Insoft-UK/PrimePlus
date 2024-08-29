@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma ( minify -1, newline, indents, reduce, messages )
+#pragma ( minify -1, newline, reduce, messages )
 
 #include <prime>
 #include <hp>
@@ -95,7 +95,10 @@ begin
     
     R→B(value,4)=>value;
     
+    String(#[5.5/7]);
+    var t = IP(0.06);
     var t = <calc>(<calc>(1+1)^-4:2);
+    var t = Int(#[#[1+1]^-4]:2);
     
 end
 
