@@ -190,6 +190,7 @@ bool Preprocessor::parse(std::string &str) {
                     messages = true;
                 }
                 
+                // 'cstyle' Experimental use only: DO NOT USE
                 if (pragma == "cstyle") {
                     cstyle = !cstyle;
                     std::cout << MessageType::Verbose << "c/c++ style " << (cstyle ? "enabled!" : "disabled!") << "\n";

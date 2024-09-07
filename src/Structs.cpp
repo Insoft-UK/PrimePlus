@@ -66,22 +66,6 @@ static std::string extractDeclarationName(const std::string &str) {
     return identifier;
 }
 
-//static std::string extractVariableDeclarationName(const std::string &str) {
-//    std::string name;
-//    std::regex r(R"(\bstruct +[A-Za-z]\w* +([A-Za-z][\w*:.]*))");
-//
-//    
-//    std::sregex_token_iterator it = std::sregex_token_iterator {
-//        str.begin(), str.end(), r, {1}
-//    };
-//    std::sregex_token_iterator end;
-//    if (it != end) {
-//        name = *it++;
-//    }
-//    
-//    return name;
-//}
-
 static std::vector<std::string> extractVariableDeclarationName(const std::string &str) {
     std::vector<std::string> name;
     std::string s;

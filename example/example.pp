@@ -20,7 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma ( minify -1, newline, reduce, messages )
+#pragma ( minify -1, newline, indents, reduce, messages )
 
 #include <prime>
 #include <hp>
@@ -33,7 +33,7 @@ begin
     struct Event auto:event;
     event = hp::waitEvent;
     
-    if [hp isKeyPressedForEvent:event] == true do
+    if [hp isKeyPressedForEvent:event] == true then
         switch event.key
             case KeyCode.Esc do
                 return 0;
