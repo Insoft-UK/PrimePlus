@@ -23,7 +23,7 @@ indexA += indexB; // Using subtitution.
 a := a+b; // PPL results in a smaller .hpprgm file.
 ```
 > [!WARNING]
-Deprecated: The use of **:=** will be dropped in v2.0 to simplifie the language and rely on the use of **PPL Minifier**.
+Deprecated: The use of **:=** will be dropped in **v2.0** to simplifie the language and rely on the use of **PPL Minifier**.
 
 
 **for...next**
