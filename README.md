@@ -33,6 +33,8 @@ switch menuSelection
 end
 ```
 **if** _condition_ **do** _statement/s_ **else** _statement/s_ **endif**
+> [!WARNING]
+Deprecated: please revert to **then** in place of **do**.
 ```
 var e:hasError = true;
 if hasError==true do
