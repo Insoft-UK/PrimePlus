@@ -4,12 +4,28 @@ P+ is a proprietary programming language designed to mitigate the challenges ass
 **Variable & Constant**
 
 Using longer, more meaningful variable and function names can enhance code readability and ease maintenance. However, when targeting the HP Prime's PPL (Programming Language) with UTF16-LE text-based files, employing lengthy names can lead to larger .hpprgm files, which poses a downside. This is where substitution proves beneficial in P+.
+
+> [!NOTE]
+Please look at using **PPL Minifier** to handle long names in some situations.
+```
+// PPL Minifier
+var minimum;
+// P+
+var min:minimum;
+// P+ for :=
+var min:minimum := 0;
+```
+
 ```
 var a:indexA;
 const b:indexB:=1;
 indexA += indexB; // Using subtitution.
 a := a+b; // PPL results in a smaller .hpprgm file.
 ```
+> [!WARNING]
+Deprecated: The use of **:=** will be dropped in **v2.0** to simplifie the language and rely on the use of **PPL Minifier**.
+
+
 **for...next**
 ```
 var I:index
@@ -24,6 +40,8 @@ do
 loop
 ```
 **switch**
+> [!NOTE]
+Advised to use PPL style **case** instead of P+ style.
 ```
 var m:menuSelection;
 switch menuSelection
@@ -33,6 +51,8 @@ switch menuSelection
 end
 ```
 **if** _condition_ **do** _statement/s_ **else** _statement/s_ **endif**
+> [!WARNING]
+Deprecated: Please use **then** instead of **do**.
 ```
 var e:hasError = true;
 if hasError==true do
@@ -80,6 +100,10 @@ setAlpha(50.0);
 // Turns off the automatic descending ordering of identities/aliases, once off it can't be turned back on.
 #pragma ( unorderedness )
 ```
+> [!WARNING]
+Deprecated: `#pragma ( minify -1 )` Please start using **PPL Minifier**.
+
+
 **Obj-C Style**
 
 > [!WARNING]
