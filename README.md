@@ -22,6 +22,10 @@ const b:indexB:=1;
 indexA += indexB; // Using subtitution.
 a := a+b; // PPL results in a smaller .hpprgm file.
 ```
+> [!WARNING]
+Deprecated: The use of **:=** will be dropped to simplifie the language and rely on the use of **PPL Minifier**.
+
+
 **for...next**
 ```
 var I:index
