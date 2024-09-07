@@ -84,6 +84,10 @@ setAlpha(50.0);
 // Turns off the automatic descending ordering of identities/aliases, once off it can't be turned back on.
 #pragma ( unorderedness )
 ```
+> [!WARNING]
+Deprecated: `#pragma ( minify -1 )` Please start using **PPL Minifier**.
+
+
 **Obj-C Style**
 
 > [!WARNING]
