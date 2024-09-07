@@ -6,12 +6,14 @@ P+ is a proprietary programming language designed to mitigate the challenges ass
 Using longer, more meaningful variable and function names can enhance code readability and ease maintenance. However, when targeting the HP Prime's PPL (Programming Language) with UTF16-LE text-based files, employing lengthy names can lead to larger .hpprgm files, which poses a downside. This is where substitution proves beneficial in P+.
 
 > [!NOTE]
-Please look at using **PPL Minifier** to handle long names
+Please look at using **PPL Minifier** to handle long names in some situations.
 ```
 // PPL Minifier
 var minimum;
 // P+
 var min:minimum;
+// P+ for :=
+var min:minimum := 0;
 ```
 
 ```
