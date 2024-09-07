@@ -9,7 +9,7 @@ Using longer, more meaningful variable and function names can enhance code reada
 Please look at using **PPL Minifier** to handle long names
 ```
 // PPL Minifier
-var minimum;
+local minimum;
 // P+
 var min:minimum;
 ```
