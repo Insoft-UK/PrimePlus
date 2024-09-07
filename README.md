@@ -24,6 +24,8 @@ do
 loop
 ```
 **switch**
+> [!NOTE]
+Advised to use PPL style **case** instead of P+ style.
 ```
 var m:menuSelection;
 switch menuSelection
