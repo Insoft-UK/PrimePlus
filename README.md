@@ -93,7 +93,7 @@ setAlpha(50.0);
 ```
 **#pragma**
 ```
-// Turn off C style bitwise operators :- ! ^ can now be used as math operations.
+// Turn off C style bitwise operators ! ^ can now be used as math operations.
 #pragma ( bitwise 0 )
 // Minify your .hpprgrm file footprint
 #pragma ( minify -1 )
