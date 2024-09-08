@@ -31,7 +31,7 @@ Deprecated: The use of **:=** in declaring variables will be dropped in **v2.0**
 var I:index
 for index:=0; index<10; index++ do
     // statement/s
-next
+next;
 ```
 **do...loop**
 ```
@@ -47,8 +47,8 @@ var m:menuSelection;
 switch menuSelection
     case 0 do
         // statement/s
-    end
-end
+    end;
+end;
 ```
 **if** _condition_ **do** _statement/s_ **else** _statement/s_ **endif**
 > [!WARNING]
@@ -59,7 +59,7 @@ if hasError==true do
     // statement/s
 else
     // statement/s
-endif
+endif;
 ```
 **if** _condition_ **then return**
 ```
@@ -68,20 +68,20 @@ if text=="" then return; // end; is optional as the pre-processor will automatic
 **guard** _condition_ **else** _statement/s_ **end**
 ```
 guard key != KeyCode.Esc else
-    return
-end
+    return;
+end;
 ```
 **while...wend**
 ```
 var r:isRunning = true
 while isRunning == true do
     // statement/s
-    isRunning = false
-wend
+    isRunning = false;
+wend;
 ```
 **(** _condition_ **?** _true_ **:** _false_**)**
 ```
-var a:myValue = 0
+var a:myValue = 0;
 a = (X>Y ? 1 : 0);
 ```
 **def eval:... name(...);**
