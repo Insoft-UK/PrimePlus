@@ -134,9 +134,6 @@ I = <int>(R);
 S = <string>(R);
 ```
 
-> [!IMPORTANT]
-In P+ the use of **;** after end, endif, wend, loop ... is no longer optional as of v1.8 the pre-processor will no longer automatically include them if omitted.
-
 > [!TIP]
 In P+ the use of **=** for := is optional as the pre-processor will automatically covert all = to := Pascal & PPL style.
 
