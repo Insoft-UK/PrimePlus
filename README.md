@@ -61,9 +61,11 @@ else
     // statement/s
 endif;
 ```
-**if** _condition_ **then return**
+**if** _condition_ **then** _statement/s_ **endif**
 ```
-if text=="" then return; // end; is optional as the pre-processor will automatically include end; if omitted.
+if text=="" then
+    return;
+endif;
 ```
 **guard** _condition_ **else** _statement/s_ **end**
 ```
