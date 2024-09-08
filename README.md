@@ -50,21 +50,14 @@ switch menuSelection
     end;
 end;
 ```
-**if** _condition_ **do** _statement/s_ **else** _statement/s_ **endif**
-> [!WARNING]
-Deprecated: Please use **then** instead of **do**.
+**if** _condition_ **then** _statement/s_ **else** _statement/s_ **endif**
+
 ```
 var e:hasError = true;
-if hasError==true do
+if hasError==true then
     // statement/s
 else
     // statement/s
-endif;
-```
-**if** _condition_ **then** _statement/s_ **endif**
-```
-if text=="" then
-    return;
 endif;
 ```
 **guard** _condition_ **else** _statement/s_ **end**
