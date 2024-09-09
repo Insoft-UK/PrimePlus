@@ -23,21 +23,23 @@ indexA += indexB; // Using subtitution.
 a := a+b; // PPL results in a smaller .hpprgm file.
 ```
 > [!WARNING]
-Deprecated: The use of **:=** will be dropped in **v2.0** to simplifie the language and rely on the use of **PPL Minifier**.
+Deprecated: The use of **:=** in declaring variables will be dropped in **v2.0** to simplifie the language for the use of **PPL Minifier** to be able to reduce long named variables being declared.
 
 
 **for...next**
+> [!NOTE]
+While **end** can be used in place of **next**, by using **next** helps in idetifing it's the end of a for loop nest.
 ```
 var I:index
 for index:=0; index<10; index++ do
     // statement/s
-next
+next;
 ```
 **do...loop**
 ```
 do
     // statement/s
-loop
+loop;
 ```
 **switch**
 > [!NOTE]
@@ -47,41 +49,48 @@ var m:menuSelection;
 switch menuSelection
     case 0 do
         // statement/s
-    end
-end
+    end;
+end;
 ```
-**if** _condition_ **do** _statement/s_ **else** _statement/s_ **endif**
-> [!WARNING]
-Deprecated: Please use **then** instead of **do**.
+**if** _condition_ **then** _statement/s_ **else** _statement/s_ **endif**
+
 ```
 var e:hasError = true;
-if hasError==true do
+if hasError==true then
     // statement/s
 else
     // statement/s
-endif
-```
-**if** _condition_ **then return**
-```
-if text=="" then return; // end; is optional as the pre-processor will automatically include end; if omitted.
+endif;
 ```
 **guard** _condition_ **else** _statement/s_ **end**
 ```
 guard key != KeyCode.Esc else
-    return
-end
+    return;
+end;
 ```
 **while...wend**
 ```
 var r:isRunning = true
 while isRunning == true do
     // statement/s
-    isRunning = false
-wend
+    isRunning = false;
+wend;
 ```
+
+**try** _condition_ **catch** _statement/s_ [**else** _statement/s_] **end**
+```
+try
+    // statement/s
+catch
+    // statement/s
+else
+    // statement/s
+end;
+```
+
 **(** _condition_ **?** _true_ **:** _false_**)**
 ```
-var a:myValue = 0
+var a:myValue = 0;
 a = (X>Y ? 1 : 0);
 ```
 **def eval:... name(...);**
@@ -93,7 +102,7 @@ setAlpha(50.0);
 ```
 **#pragma**
 ```
-// Turn off C style bitwise operators :- ! ^ can now be used as math operations.
+// Turn off C style bitwise operators ! ^ can now be used as math operations.
 #pragma ( bitwise 0 )
 // Minify your .hpprgrm file footprint
 #pragma ( minify -1 )
@@ -133,9 +142,6 @@ var R = 0.6;
 I = <int>(R);
 S = <string>(R);
 ```
-
-> [!TIP]
-In P+ the use of **;** after end, endif, wend, loop ... is optional as the pre-processor will automatically include them if omitted.
 
 > [!TIP]
 In P+ the use of **=** for := is optional as the pre-processor will automatically covert all = to := Pascal & PPL style.
