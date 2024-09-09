@@ -27,6 +27,8 @@ Deprecated: The use of **:=** in declaring variables will be dropped in **v2.0**
 
 
 **for...next**
+> [!NOTE]
+While **end** can be used in place of **next**, by using **next** helps in idetifing it's the end of a for loop nest.
 ```
 var I:index
 for index:=0; index<10; index++ do
