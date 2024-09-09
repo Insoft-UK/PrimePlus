@@ -39,7 +39,7 @@ next;
 ```
 do
     // statement/s
-loop
+loop;
 ```
 **switch**
 > [!NOTE]
@@ -76,6 +76,18 @@ while isRunning == true do
     isRunning = false;
 wend;
 ```
+
+**try** _condition_ **catch** _statement/s_ [**else** _statement/s_] **end**
+```
+try
+    // statement/s
+catch
+    // statement/s
+else
+    // statement/s
+end;
+```
+
 **(** _condition_ **?** _true_ **:** _false_**)**
 ```
 var a:myValue = 0;
