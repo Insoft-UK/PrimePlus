@@ -351,16 +351,7 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     if (preprocessor.messages) Messages::parse(ln);
 #endif
     ln = singleton->aliases.resolveAliasesInText(ln);
-    // TODO: resolve alias where an alias refers to another so no second pass is nessasery!
-    if (singleton->aliases.descendingOrder) {
-        /*
-         To address the descending order of aliases, it's necessary to conduct two alias resolution passes.
-         This ensures proper resolution in cases where one alias refers to another. The automatic ordering 
-         process may list the second alias before the first, potentially preventing its resolution in the
-         initial pass. Conducting a second pass rectifies this issue.
-         */
-        ln = singleton->aliases.resolveAliasesInText(ln);
-    }
+
     /**
       **NEW! 1.6.3
        auto now inferred for var & const if name is not a valid PPL name
@@ -832,10 +823,7 @@ int main(int argc, char **argv) {
         remove(out_filename.c_str());
         return 0;
     }
-    
-    if (!Singleton::shared()->aliases.descendingOrder && Singleton::shared()->aliases.verbose) {
-        Singleton::shared()->aliases.dumpIdentities();
-    }
+
     
     std::cout << "UTF-16LE File '" << out_filename << "' Succefuly Created.\n";
     

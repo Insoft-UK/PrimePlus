@@ -80,7 +80,8 @@ bool Aliases::append(const TIdentity &idty) {
     
     identities.push_back(identity);
     
-    if (descendingOrder) std::sort(identities.begin(), identities.end(), compareInterval);
+    // Resort in descending order
+    std::sort(identities.begin(), identities.end(), compareInterval);
     
     if (verbose) std::cout
         << MessageType::Verbose
@@ -203,6 +204,15 @@ std::string Aliases::resolveAliasesInText(const std::string &str) {
         if (regex_search(s, r) && it->deprecated)
             std::cout << MessageType::Deprecated << it->identifier << it->message << "\n";
         s = regex_replace(s, r, it->real);
+    }
+    
+  
+    /*
+     To ensures proper resolution in cases where one alias refers to another.
+     It nessasary to perform another check, only if the first check was an alias.
+     */
+    if (s != str) {
+        s = resolveAliasesInText(s);
     }
     
     return s;

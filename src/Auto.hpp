@@ -29,10 +29,10 @@ namespace pp {
 
 class Auto {
 private:
-    unsigned _fnCount, _varCount, _paramCount;
+    unsigned _fnCount, _varCount, _paramCount, _globalCount;
 public:
     Auto(void) {
-        _fnCount = _varCount = _paramCount = 0;
+        _fnCount = _varCount = _paramCount = _globalCount = 0;
     }
     
     bool parse(std::string &str);

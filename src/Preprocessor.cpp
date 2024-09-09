@@ -170,9 +170,9 @@ bool Preprocessor::parse(std::string &str) {
                     Singleton::shared()->aliases.verbose = !Singleton::shared()->aliases.verbose;
                 }
                 
-                if (pragma == "unorderedness") {
-                    Singleton::shared()->aliases.descendingOrder = false;
-                }
+//                if (pragma == "unorderedness") {
+//                    Singleton::shared()->aliases.descendingOrder = false;
+//                }
                 
                 if (pragma == "messages") {
                     messages = true;

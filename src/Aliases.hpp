@@ -64,7 +64,6 @@ public:
     } TIdentity;
     std::vector<TIdentity> identities;
     
-    bool descendingOrder = true;
     
     bool verbose = false;
     Aliases() {

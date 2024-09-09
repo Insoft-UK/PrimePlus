@@ -38,6 +38,15 @@ bool Auto::parse(std::string &str) {
     // TODO: ^ *(export +)?\bauto *: *((?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *(?=\()
     
     if (singleton->scope == Singleton::Scope::Global) {
+        r = R"(\bglobal +)";
+        if (regex_search(str, m, r)) {
+            while ((pos = str.find("auto:")) != std::string::npos) {
+                str.erase(pos, 4);
+                std::ostringstream os;
+                os << "g" << ++_globalCount;
+                str.insert(pos, os.str());
+            }
+        }
 
         r = R"(\bauto *(?=: *(?:(?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *(?=\()))";
         if (regex_search(str, m, r)) {
@@ -56,7 +65,7 @@ bool Auto::parse(std::string &str) {
     
     
     // Variables/Constants
-    r = R"(\b(var|local|const|global) +)";
+    r = R"(\b(var|local|const) +)";
     if (regex_search(str, m, r)) {
         while ((pos = str.find("auto:")) != std::string::npos) {
             str.erase(pos, 4);

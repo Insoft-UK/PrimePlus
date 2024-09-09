@@ -25,9 +25,24 @@ THE SOFTWARE.
 #include <prime>
 #include <hp>
 
+global auto:gg;
+
+
+#define bb aa
+
+
 myFunction()
 begin
+local auto:aa;
+#define cc aa
+aa++;
+bb++;
+cc++;
+gg++;
     local longname;
+    longname = <calc>(π / 2 :2);
+    
+    
     do
         if NOT(A) then
             return;
@@ -40,10 +55,11 @@ begin
 end;
 
 Example::DoLoop(auto:value);
-
+gg++;
 
 Example::Switch()
 begin
+    gg++;
     struct Event auto:event;
     event = hp::waitEvent;
     
@@ -115,7 +131,7 @@ begin
     String(#[5.5/7]);
     local t = IP(0.06);
     local t = <calc>(<calc>(1+1)^-4:2);
-    var t = Int(#[#[1+1]^-4]:2);
+    var t = <int>(#[#[1+1]^-4]:2);
     
 end;
 
