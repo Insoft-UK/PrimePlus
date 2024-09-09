@@ -59,6 +59,7 @@ public:
     void incrementLineNumber(void);
     long currentLineNumber(void);
     
+    
     std::string currentPathname(void);
     
     // returns the pathname of

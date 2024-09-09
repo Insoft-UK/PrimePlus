@@ -20,10 +20,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-#pragma ( minify -1, newline, indents, reduce, messages )
+#pragma ( messages )
 
 #include <prime>
 #include <hp>
+
+myFunction()
+begin
+    local longname;
+    do
+        if NOT(A) then
+            return;
+        endif;
+    loop;
+    try
+    catch
+    else
+    end;
+end;
 
 Example::DoLoop(auto:value);
 
@@ -51,56 +65,59 @@ begin
                 return 1000;
             end
         end
-    endif
+    endif;
 end
 
 Example::DoLoop(auto:value)
 begin
     do
-        if value <= 0 then return;
+        if value <= 0 then
+            return;
+        endif;
+        
         value -= 1;
-    loop
-end
+    loop;
+end;
 
 Example::ForNext()
 begin
-    var n:number, auto:count = 0;
+    local n:number, auto:count = 0;
     
     for number = 0; number < 100; number += 1 do
         count += 1;
     next
     return count;
-end
+end;
 
 export Example:MyLongNameExample(auto:value)
 begin
-    var piTest = #[2*pi]:0;
+    local piTest = #[2*pi]:0;
     hp::storeScreen;
     
     struct MyStruct
         one[1];
         two[2];
-    end
+    end;
     
     struct MyStruct auto:myStruct;
     
-    [Example DoLoopWithValueOf[Example Switch]];
+    Example::DoLoop(Example::Switch);
   
     myStruct = {value, [Example ForNext]};
     return myStruct.one + myStruct.two;
     
     if value <= π do
         KILL;
-    endif
+    endif;
     
     R→B(value,4)=>value;
     
     String(#[5.5/7]);
-    var t = IP(0.06);
-    var t = <calc>(<calc>(1+1)^-4:2);
+    local t = IP(0.06);
+    local t = <calc>(<calc>(1+1)^-4:2);
     var t = Int(#[#[1+1]^-4]:2);
     
-end
+end;
 
 
 

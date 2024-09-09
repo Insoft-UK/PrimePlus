@@ -103,11 +103,13 @@ bool Alias::parse(std::string &str) {
         }
     }
     
-    r = R"(^ *(var|const) +.*)";
+    r = R"(^ *(local|var|const|global) +.*)";
     if (regex_match(str, r)) {
         parseVariables(str);
+        if (regex_match(str, std::regex(R"(^ *var +.*)")) && singleton->scope == Singleton::Scope::Local) std::cout << MessageType::Verbose << "deprecated: var, use 'local' for local variables\n";
         str = regex_replace(str, std::regex(R"(\bvar\b)"), "LOCAL");
         str = regex_replace(str, std::regex(R"(\bconst\b)"), "CONST");
+        str = regex_replace(str, std::regex(R"(\bglobal +)"), "");
         parsed = true;
     }
     

@@ -174,32 +174,8 @@ bool Preprocessor::parse(std::string &str) {
                     Singleton::shared()->aliases.descendingOrder = false;
                 }
                 
-                if (pragma == "newline") {
-                    newline = true;
-                }
-                
-                if (pragma == "indents") {
-                    indents = true;
-                }
-                
-                if (pragma == "reduce") {
-                    reduce = true;
-                }
-                
                 if (pragma == "messages") {
                     messages = true;
-                }
-                
-                // 'cstyle' Experimental use only: DO NOT USE
-                if (pragma == "cstyle") {
-                    cstyle = !cstyle;
-                    std::cout << MessageType::Verbose << "c/c++ style " << (cstyle ? "enabled!" : "disabled!") << "\n";
-                }
-                
-                if (regex_search(pragma, std::regex(R"(minify (?:\d+|-1))"))) {
-                    size_t start = pragma.find(" ") + 1;
-                    size_t length = pragma.length() - start;
-                    minify = atoi(pragma.substr(start,length).c_str());
                 }
                 
                 if (regex_search(pragma, std::regex(R"(tabsize (?:\d+))"))) {

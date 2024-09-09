@@ -38,17 +38,10 @@ public:
     bool python = false;
     bool ppl = false;
     bool messages = false;
-    int minify = 0;
     bool bitwiseOperators = true;
     bool operators = true;
     bool logicalOperators = true;
-    bool cstyle = false;
     
-    // Used for when PPL code is being minifed to indicate if newline and indents should be retained.
-    bool newline = false;
-    bool indents = false;
-    
-    bool reduce = false;
     
     bool parse(std::string &str);
     

@@ -56,7 +56,7 @@ bool Auto::parse(std::string &str) {
     
     
     // Variables/Constants
-    r = R"(\b(var|local|const) +)";
+    r = R"(\b(var|local|const|global) +)";
     if (regex_search(str, m, r)) {
         while ((pos = str.find("auto:")) != std::string::npos) {
             str.erase(pos, 4);

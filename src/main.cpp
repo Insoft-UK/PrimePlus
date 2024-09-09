@@ -40,7 +40,7 @@
 #include "Strings.hpp"
 #include "IFTE.hpp"
 #include "Bitwise.hpp"
-#include "Messages.hpp"
+//#include "Messages.hpp"
 #include "Calc.hpp"
 
 #include "build.h"
@@ -97,89 +97,6 @@ void condence(std::string &str) {
     
     while (indents--) {
         str.insert(0, " ");
-    }
-}
-
-void minifier(std::string &str) {
-    static size_t length = 0;
-    strings.preserveStrings(str);
-    
-    if (!preprocessor.indents)
-        str = std::regex_replace(str, std::regex(R"(^ *)"), "");
-    
-    if (preprocessor.newline)
-        str = std::regex_replace(str, std::regex(R"( *$)"), "");
-    else
-        str = std::regex_replace(str, std::regex(R"( *\n$)"), " ");
-    
-    str = std::regex_replace(str, std::regex(R"(\/\/.*)"), "");
-    str = std::regex_replace(str, std::regex(R"( *; *)"), ";");
-    
-    str = std::regex_replace(str, std::regex(R"( *\] *)"), "]");
-    str = std::regex_replace(str, std::regex(R"( *\[ *)"), "[");
-    str = std::regex_replace(str, std::regex(R"( *\} *)"), "}");
-    str = std::regex_replace(str, std::regex(R"( *\{ *)"), "{");
-    
-    
-    
-    str = std::regex_replace(str, std::regex(R"(; *$)"), ";");
-    strings.restoreStrings(str);
-    
-    if (preprocessor.minify <= 0) return;
-    
-    length += str.length();
-    if (length > preprocessor.minify) {
-        length = 0;
-        str.append("\n");
-    }
-}
-
-void reduce(std::string &str) {
-    std::regex r;
-    std::smatch m;
-    
-    str = std::regex_replace(str, std::regex(R"(==)"), "=");
-    
-    if (regex_search(str, std::regex(R"(LOCAL .*)")))
-        return;
-    
-    while (regex_search(str, m, std::regex(R"([A-Za-z]\w*:=[^;]*)"))) {
-        std::string matched = m.str();
-        
-        /*
-         eg. v1:=v2+v4;
-         Group  0 v1:=v2+v4;
-                1 v1
-                2 v2+v4
-        */
-        r = R"(([A-Za-z]\w*):=(.*))";
-        auto it = std::sregex_token_iterator {
-            matched.begin(), matched.end(), r, {2, 1}
-        };
-        if (it != std::sregex_token_iterator()) {
-            std::stringstream ss;
-            ss << *it++ << "▶" << *it;
-            str = str.replace(m.position(), m.length(), ss.str());
-        }
-    }
-    
-    while (regex_search(str, m, std::regex(R"(\bfn\d+ *\()"))) {
-        std::string matched = m.str();
-        r = R"(\bfn(\d+) *\()";
-        auto it = std::sregex_token_iterator {
-            matched.begin(), matched.end(), r, {1}
-        };
-        if (it != std::sregex_token_iterator()) {
-            std::stringstream ss;
-            ss << "f" << *it << "(";
-            str = str.replace(m.position(), m.length(), ss.str());
-        }
-    }
-    
-    while (regex_search(str, m, std::regex(R"(\b[A-Za-z]\w* *\( *\))"))) {
-        std::string matched = m.str();
-        matched = regex_replace(matched, std::regex(R"( *\( *\))"), "");
-        str = str.replace(m.position(), m.length(), matched);
     }
 }
 
@@ -247,9 +164,6 @@ void processLine(const std::string& str, std::ofstream &outfile)
     preProcess(ln, outfile);
     if (ln.length() < 2) ln = std::string("");
 
-    if (preprocessor.minify != 0) 
-        minifier(ln);
-    if (preprocessor.reduce) reduce(ln);
     
     
     for ( int n = 0; n < ln.length(); n++) {
@@ -380,9 +294,8 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     }
     
     // If a comment is in the line, preserve it, remove temporarily, and restore afterward.
-    if (!preprocessor.minify) {
-        singleton->comments.preserveComment(ln);
-    }
+    singleton->comments.preserveComment(ln);
+    
     singleton->comments.removeComment(ln);
     
     if (preprocessor.ppl) {
@@ -427,21 +340,10 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
         return;
     }
     
-    /**
-      **NEW! 1.6.5
-      optional for only 'end, endif, wend, loop and next'
-     */
-    /*
-     In P+ the use of ; after end, endif, wend, loop ... is optional as the pre-processor will automatically
-     include them if omitted for to allow cleaner looking code to be written.
-     */
+
+    
     rtrim(ln);
-    if (ln.length()) {
-        r = R"(\b(end(if)?|wend|loop|next)$)";
-        if (regex_search(ln, r)) {
-            ln = ln.append(";");
-        }
-    }
+    
     
     if (Def::parse(ln)) return;
 #ifdef MESSAGES_HPP
@@ -477,18 +379,8 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
             if (regex_search(s, std::regex(R"(^[a-zA-Z]\w*:[a-zA-Z])"))) {
                 code.append(s);
             } else {
-                /**
-                  **NEW! 1.7.0448
-                   auto now inferred for var & const if name is also longer than 4 charactors and #pragma ( reduce ) is used.
-                 */
-                if (preprocessor.reduce) {
-                    if (regex_search(s, std::regex(R"(^(?:[a-zA-Z]\w*(?:(::)|\.))|(?:[a-zA-Z]\w{3,}))"))) {
-                        s.insert(0, "auto:");
-                    }
-                } else {
-                    if (regex_search(s, std::regex(R"(^[a-zA-Z]\w*(?:(::)|\.))"))) {
-                        s.insert(0, "auto:");
-                    }
+                if (regex_search(s, std::regex(R"(^[a-zA-Z]\w*(?:(::)|\.))"))) {
+                    s.insert(0, "auto:");
                 }
                 code.append(s);
             }
@@ -509,31 +401,17 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
         return;
     }
     
-
-    /**
-      **NEW! 1.7.1
-      { for begin !DON'T USE
-     */
-    if (preprocessor.cstyle)
-        r = R"(^(?:begin|\{) *$)";
-    else
-        r = R"(^begin *$)";
-    if (regex_match(ln, std::regex(R"(^(?:begin|\{) *$)", std::regex_constants::icase))) {
+    
+    if (regex_match(ln, std::regex(R"(^begin *$)", std::regex_constants::icase))) {
         singleton->scope = Singleton::Scope::Local;
         ln = std::string("BEGIN\n");
         return;
     }
     
-    /**
-      **NEW! 1.7.1
-      } for end !DON'T USE
-     */
+
     if (Singleton::Scope::Local == singleton->scope) {
-        if (preprocessor.cstyle)
-            r = R"(^(?:end;|\}) *$)";
-        else
-            r = R"(^end; *$)";
-        if (regex_match(ln, std::regex(R"(^(?:end;|\}) *$)", std::regex_constants::icase))) {
+        r = R"(^end *;? *$)";
+        if (regex_match(ln, std::regex(R"(^(?:end *;?) *$)", std::regex_constants::icase))) {
             singleton->aliases.removeAllLocalAliases();
             singleton->scope = Singleton::Scope::Global;
             ln = std::string("END;\n");
@@ -541,10 +419,6 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
         }
     }
     
-    /**
-      **NEW! 1.7.0.500
-      key inferred
-     */
     if (Singleton::Scope::Global == singleton->scope) {
         r = R"(^ *(KS?A?_[A-Z\d][a-z]*) *$)";
         std::sregex_token_iterator it = std::sregex_token_iterator {
@@ -555,13 +429,8 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
             ln = "KEY " + s + "()";
         }
     }
-    
-    /**
-      **NEW! 1.7.0.5xx, Int & String 1.7.1.2xx
-      <type>(value)
-     */
-//    r = R"(<(?:int|string)> *\((.*)\))";
-    r = R"((?:<(?:int|string)>)|(?:\bInt|\bString) *\((.*)\))";
+
+    r = R"(<(?:int|string)> *\((.*)\))";
     while (regex_search(ln, m, r)) {
         std::sregex_token_iterator it = std::sregex_token_iterator {
             ln.begin(), ln.end(), r, {1}
@@ -587,13 +456,11 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
         ln = ln.replace(m.position(), m.length(), s);
     }
 
-    /**
-      **NEW! 1.6.1
-      auto inferred for functions
+    /****
+      auto inferred for function names containing :: or . without a name: prefix, it is inferred to have an auto: prefix.
      */
     r = R"(^ *(export +)?([a-zA-Z_]\w*((::)|\.))+[a-zA-Z_]\w* *(?=\())";
     if (regex_search(ln, r) && singleton->scope == Singleton::Scope::Global) {
-        // Because this function name includes :: or . without a name: prefix, it is inferred to have an auto: prefix.
         ltrim(ln);
         ln.insert(0, "auto:");
     }
@@ -606,28 +473,7 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     static std::vector<std::string> stack;
     if (Singleton::Scope::Local == Singleton::shared()->scope) {
         
-        /**
-          **NEW! 1.7.1
-          {...} C/C++ Style !DON'T USE
-         */
-        if (preprocessor.cstyle) {
-            r = R"(^ *\} *else *\{ *$)";
-            ln = regex_replace(ln, std::regex(R"(\} *else *\{ *$)"), "else");
-            
-            r = R"(\{ *$)";
-            while (regex_search(ln, m, r)) {
-                s = m.str();
-                s = regex_replace(s, r, "do");
-                ln = ln.replace(m.position(), m.length(), s);
-            }
-            
-            r = R"(^ +\} *$)";
-            while (regex_search(ln, m, r)) {
-                s = m.str();
-                s = regex_replace(s, std::regex(R"(\})"), "END;");
-                ln = ln.replace(m.position(), m.length(), s);
-            }
-        }
+        
         singleton->switches.parse(ln);
         
         /**
@@ -647,27 +493,10 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
             }
             result += ") THEN";
             ln = ln.replace(m.position(), m.length(), result);
+            std::cout << MessageType::Verbose << "deprecated: guard, recomended to use 'if...then...endif;'\n";
         }
         
-        /**
-          **NEW! 1.7.1
-          if(...)do, while(...)do, for(...)do, until(...) C/C++ Style !DON'T USE
-         */
-        if (preprocessor.cstyle) {
-            r = R"(\b(if|while|for|until) *\((.+)\))";
-            while (regex_search(ln, m, r)) {
-                s = m.str();
-                
-                auto it = std::sregex_token_iterator {
-                    s.begin(), s.end(), r, {1, 2}
-                };
-                if (it != std::sregex_token_iterator()) {
-                    std::ostringstream os;
-                    os << *it++ << " " << *it;
-                    ln = ln.replace(m.position(), m.length(), os.str());
-                }
-            }
-        }
+        
         
         /**
           **NEW! 1.6.0
@@ -721,7 +550,7 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
             if (!statements[2].empty()) stack.push_back(statements[2] + "; ");
         }
         
-        while (regex_search(ln, m, std::regex(R"(\bnext;)"))) {
+        while (regex_search(ln, m, std::regex(R"(\bnext( *)?;?)", std::regex_constants::icase))) {
             if (stack.empty()) {
                 ln = ln.replace(m.position(), m.length(), "END;");
                 continue;
@@ -763,7 +592,7 @@ void preProcess(std::string &ln, std::ofstream &outfile) {
     ln = regex_replace(ln, std::regex(R"(\btry\b)"), "IFERR");
     ln = regex_replace(ln, std::regex(R"(\bcatch\b)"), "THEN");
     
-    ln = regex_replace(ln, std::regex(R"(\b(end(if)?|wend|next|loop)( *)?;?)"), "END;");
+    ln = regex_replace(ln, std::regex(R"(\b(end(if)?|wend|next|loop)( *)?;?)", std::regex_constants::icase), "END;");
     ln = regex_replace(ln, std::regex(R"( *\.{3} *)"), " TO ");
     
     
@@ -823,7 +652,7 @@ void error(void) {
 void info(void) {
     std::cout << "Copyright (c) 2023-2024 Insoft. All rights reserved\n";
     int rev = (unsigned)__BUILD_NUMBER / 1000 % 10;
-    std::cout << "P+ Pre-Processor v" << (unsigned)__BUILD_NUMBER / 100000 << "." << (unsigned)__BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "") << "\n\n";
+    std::cout << "P+ Pre-Processor v" << (unsigned)__BUILD_NUMBER / 100000 << "." << (unsigned)__BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "") << " BUILD " << std::setfill('0') << std::setw(3) << __BUILD_NUMBER % 1000 << "\n\n";
 }
 
 void usage(void) {
@@ -889,10 +718,7 @@ int main(int argc, char **argv) {
             return 0;
         }
         
-        if ( strcmp( argv[n], "-m" ) == 0 || strcmp( argv[n], "--min" ) == 0 ) {
-            preprocessor.minify = -1;
-            continue;
-        }
+        
         
         if ( strcmp( argv[n], "-t" ) == 0 || strcmp( argv[n], "--tab" ) == 0 ) {
             if ( n + 1 >= argc ) {
@@ -968,8 +794,6 @@ int main(int argc, char **argv) {
     }
     
     // The "hpprgm" file format requires UTF-16LE.
-    if (preprocessor.minify == true) std::cout << "Minifier Compressor ENABLED!\n";
-    
     outfile.put(0xFF);
     outfile.put(0xFE);
     
