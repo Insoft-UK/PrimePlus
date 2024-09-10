@@ -34,9 +34,7 @@ static bool _verbose = false;
 
 // Function to check if a character is an operator
 static bool isOperator(char c) {
-    if (c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '^') return true;
-//    if (c == 's' || c == 'c' || c == 't' || c == 'S' || c == 'C' || c == 'T') return true;
-    return false;
+    return (c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '^');
 }
 
 // Function to get the precedence of an operator
@@ -44,7 +42,6 @@ static int precedence(char op) {
     if (op == '+' || op == '-') return 1;
     if (op == '*' || op == '/' || op == '%') return 2;
     if (op == '^') return 3;
-//    if (op == 's' || op == 'c' || op == 't' ||op == 'S' || op == 'C' || op == 'T') return 3;
     return 0;
 }
 
@@ -62,14 +59,6 @@ static double applyOperator(const double a, const double b, const char op) {
             return a / b;
         case '%': return fmod(a,b) < 0 ? b + fmod(a,b) : fmod(a,b);
         case '^': return pow(a, b);
-            
-//        case 's': return sin(a);
-//        case 'c': return cos(a);
-//        case 't': return tan(a);
-//            
-//        case 'S': return asin(a);
-//        case 'C': return acos(a);
-//        case 'T': return atan(a);
             
         default:
             std::cout << MessageType::Error << "#[]: unknown '" << op << "' operator\n";
@@ -165,7 +154,9 @@ static double evaluatePostfix(const std::vector<std::string>& postfix) {
     for (const std::string& token : postfix) {
         if (isdigit(token[0]) || (token.length() > 1 && token[0] == '-')) {
             values.push(std::stod(token));
-        } else if (isOperator(token[0])) {
+            continue;
+        }
+        if (isOperator(token[0])) {
             double b = values.top(); values.pop();
             double a = values.top(); values.pop();
             values.push(applyOperator(a, b, token[0]));
@@ -208,13 +199,6 @@ bool Calc::parse(std::string &str)
         matched = regex_replace(matched, std::regex(R"(MOD)"), "%");
         matched = regex_replace(matched, std::regex(R"(BITAND)"), "&");
         matched = regex_replace(matched, std::regex(R"(BITOR)"), "|");
-        
-//        matched = regex_replace(matched, std::regex(R"(sin)", std::regex_constants::icase), "s");
-//        matched = regex_replace(matched, std::regex(R"(cos)", std::regex_constants::icase), "c");
-//        matched = regex_replace(matched, std::regex(R"(tan)", std::regex_constants::icase), "t");
-//        matched = regex_replace(matched, std::regex(R"(asin)", std::regex_constants::icase), "S");
-//        matched = regex_replace(matched, std::regex(R"(acos)", std::regex_constants::icase), "C");
-//        matched = regex_replace(matched, std::regex(R"(atan)", std::regex_constants::icase), "T");
         
         strip(matched);
         
