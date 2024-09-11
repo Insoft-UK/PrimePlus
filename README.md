@@ -9,15 +9,15 @@ Using longer, more meaningful variable and function names can enhance code reada
 Please look at using **PPL Minifier** to handle long names in some situations.
 ```
 // PPL Minifier
-var minimum;
+local minimum;
 // P+
-var min:minimum;
+local min:minimum;
 // P+ for :=
-var min:minimum := 0;
+local min:minimum := 0;
 ```
 
 ```
-var a:indexA;
+local a:indexA;
 const b:indexB:=1;
 indexA += indexB; // Using subtitution.
 a := a+b; // PPL results in a smaller .hpprgm file.
@@ -30,7 +30,7 @@ Deprecated: The use of **:=** in declaring variables will be dropped in **v2.0**
 > [!NOTE]
 While **end** can be used in place of **next**, by using **next** helps in idetifing it's the end of a for loop nest.
 ```
-var I:index
+local I:index
 for index:=0; index<10; index++ do
     // statement/s
 next;
@@ -45,7 +45,7 @@ loop;
 > [!NOTE]
 Advised to use PPL style **case** instead of P+ style.
 ```
-var m:menuSelection;
+local m:menuSelection;
 switch menuSelection
     case 0 do
         // statement/s
@@ -55,7 +55,7 @@ end;
 **if** _condition_ **then** _statement/s_ **else** _statement/s_ **endif**
 
 ```
-var e:hasError = true;
+local e:hasError = true;
 if hasError==true then
     // statement/s
 else
@@ -70,7 +70,7 @@ end;
 ```
 **while...wend**
 ```
-var r:isRunning = true
+local r:isRunning = true
 while isRunning == true do
     // statement/s
     isRunning = false;
@@ -90,12 +90,12 @@ end;
 
 **(** _condition_ **?** _true_ **:** _false_**)**
 ```
-var a:myValue = 0;
+local a:myValue = 0;
 a = (X>Y ? 1 : 0);
 ```
 **def eval:... name(...);**
 ```
-var auto:alpha;
+local auto:alpha;
 /// It is necessary to evaluate, as we are referencing a defined alias 'alpha' in the definition.
 def eval:alpha := a setAlpha(a);
 setAlpha(50.0);
@@ -126,9 +126,9 @@ Color::ConvertToHSV(255,127,0);
 **Pre-Calc**
 ```
 #define SCREEN_WIDTH 320
-var a = #[SCREEN_WIDTH / #[8 - 6]];
+local a = #[SCREEN_WIDTH / #[8 - 6]];
 // PPL LOCAL a:=160;
-var b = #[SCREEN_WIDTH / 4];
+local b = #[SCREEN_WIDTH / 4];
 b = #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
 // PPL b:=160.00;
 b = <calc>(SCREEN_WIDTH / 2:2);
@@ -138,7 +138,7 @@ b = <calc>(SCREEN_WIDTH / 2:2);
 > [!NOTE]
 It may be removed in later updates, experimental purposes.
 ```
-var R = 0.6;
+local R = 0.6;
 I = <int>(R);
 S = <string>(R);
 ```
