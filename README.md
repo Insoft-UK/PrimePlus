@@ -11,8 +11,6 @@ Please look at using **PPL Minifier** to handle long names in some situations.
 // PPL Minifier
 local minimum;
 // P+
-local min:minimum;
-// P+ for :=
 local min:minimum := 0;
 ```
 
