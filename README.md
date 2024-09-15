@@ -60,7 +60,7 @@ else
 endif;
 ```
 > [!TIP]
->Also in P+ the use of **<=  >=** for ≤ and ≥ is also optional as the pre-processor will automatically covert any <= or >= to ≤ and ≥ PPL style.
+>Also in P+ the use of **<= <>  >=** for ≤ ≠ ≥ is also optional as the pre-processor will automatically covert any `<=`, `<>` or `>=` to `≤`, `≠` and `≥` PPL style.
 > [!NOTE]
 While **end** can be used in place of **endif**, by using **endif** helps in idetifing it's the end of a if statement.
 
