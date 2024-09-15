@@ -33,12 +33,14 @@ for index:=0; index<10; index++ do
     // statement/s
 next;
 ```
+
 **do...loop**
 ```
 do
     // statement/s
 loop;
 ```
+
 **switch**
 > [!NOTE]
 Advised to use PPL style **case** instead of P+ style.
@@ -51,7 +53,6 @@ switch menuSelection
 end;
 ```
 **if** _condition_ **then** _statement/s_ **else** _statement/s_ **endif**
-
 ```
 local e:hasError = true;
 if hasError==true then
@@ -60,12 +61,14 @@ else
     // statement/s
 endif;
 ```
+
 **guard** _condition_ **else** _statement/s_ **end**
 ```
 guard key != KeyCode.Esc else
     return;
 end;
 ```
+
 **while...wend**
 ```
 local r:isRunning = true
@@ -91,6 +94,7 @@ end;
 local a:myValue = 0;
 a = (X>Y ? 1 : 0);
 ```
+
 **def eval:... name(...);**
 ```
 local auto:alpha;
@@ -98,16 +102,13 @@ local auto:alpha;
 def eval:alpha := a setAlpha(a);
 setAlpha(50.0);
 ```
+
 **#pragma**
 ```
 // Turn off C style bitwise operators ! ^ can now be used as math operations.
 #pragma ( bitwise 0 )
-
 ```
-> [!WARNING]
-Deprecated: `#pragma ( minify -1 )` Please start using **PPL Minifier**.
 
-```
 **Pre-Calc**
 ```
 #define SCREEN_WIDTH 320
@@ -117,15 +118,6 @@ local b = #[SCREEN_WIDTH / 4];
 b = #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
 // PPL b:=160.00;
 b = <calc>(SCREEN_WIDTH / 2:2);
-```
-**Type Casting**
-
-> [!NOTE]
-It may be removed in later updates, experimental purposes.
-```
-local R = 0.6;
-I = <int>(R);
-S = <string>(R);
 ```
 
 > [!TIP]
