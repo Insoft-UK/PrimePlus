@@ -130,7 +130,6 @@ local a = #[SCREEN_WIDTH / #[8 - 6]];
 local b = #[SCREEN_WIDTH / 4];
 b = #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
 // PPL b:=160.00;
-b = <calc>(SCREEN_WIDTH / 2:2);
 ```
 
 
