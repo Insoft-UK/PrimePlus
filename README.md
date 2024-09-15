@@ -7,13 +7,7 @@ Using longer, more meaningful variable and function names can enhance code reada
 
 > [!NOTE]
 Please look at using **PPL Minifier** to handle long names in some situations.
-```
-// PPL Minifier
-local minimum;
-// P+
-local min:minimum := 0;
-```
-
+>
 ```
 local a:indexA;
 const b:indexB:=1;
@@ -26,15 +20,14 @@ Deprecated: The use of **:=** in declaring variables will be dropped in **v2.0**
 
 
 **for...next**
-> [!NOTE]
-While **end** can be used in place of **next**, by using **next** helps in idetifing it's the end of a for loop.
 ```
 local I:index
 for index:=0; index<10; index++ do
     // statement/s
 next;
 ```
-
+> [!NOTE]
+While **end** can be used in place of **next**, by using **next** helps in idetifing it's the end of a for loop.
 
 **do...loop**
 ```
@@ -45,8 +38,6 @@ loop;
 
 
 **switch**
-> [!NOTE]
-Advised to use PPL style **case** instead of P+ style.
 ```
 local m:menuSelection;
 switch menuSelection
@@ -55,7 +46,8 @@ switch menuSelection
     end;
 end;
 ```
-
+> [!NOTE]
+Advised to use PPL style **case** instead of P+ style.
 
 
 **if** _condition_ **then** _statement/s_ **else** _statement/s_ **endif**
@@ -67,7 +59,10 @@ else
     // statement/s
 endif;
 ```
-
+> [!TIP]
+>Also in P+ the use of **<=  >=** for ≤ and ≥ is also optional as the pre-processor will automatically covert any <= or >= to ≤ and ≥ PPL style.
+> [!NOTE]
+While **end** can be used in place of **endif**, by using **endif** helps in idetifing it's the end of a if statement.
 
 **guard** _condition_ **else** _statement/s_ **end**
 ```
@@ -132,13 +127,6 @@ b = #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
 // PPL b:=160.00;
 ```
 
-
-
-> [!TIP]
-In P+ the use of **=** for := is optional as the pre-processor will automatically covert all = to := Pascal & PPL style.
-
-> [!TIP]
->Also in P+ the use of **<=  >=** for ≤ and ≥ is also optional as the pre-processor will automatically covert any <= or >= to ≤ and ≥ PPL style.
 
 > [!IMPORTANT]
 In P+ **=** is treated as := were in PPL **=** is treated as ==
