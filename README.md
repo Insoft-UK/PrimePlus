@@ -138,7 +138,7 @@ b = #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
 In P+ the use of **=** for := is optional as the pre-processor will automatically covert all = to := Pascal & PPL style.
 
 > [!TIP]
->Also in P+ the use of **<= >=** for ≤ and ≥ is also optional as the pre-processor will automatically covert any <= or => to ≤ and ≥ PPL style.
+>Also in P+ the use of **<=  >=** for ≤ and ≥ is also optional as the pre-processor will automatically covert any <= or >= to ≤ and ≥ PPL style.
 
 > [!IMPORTANT]
 In P+ **=** is treated as := were in PPL **=** is treated as ==
