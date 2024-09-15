@@ -102,24 +102,11 @@ setAlpha(50.0);
 ```
 // Turn off C style bitwise operators ! ^ can now be used as math operations.
 #pragma ( bitwise 0 )
-// Minify your .hpprgrm file footprint
-#pragma ( minify -1 )
-// Turns off the automatic descending ordering of identities/aliases, once off it can't be turned back on.
-#pragma ( unorderedness )
+
 ```
 > [!WARNING]
 Deprecated: `#pragma ( minify -1 )` Please start using **PPL Minifier**.
 
-
-**Obj-C Style**
-
-> [!WARNING]
-Deprecated: It must now be enabled `#pragma ( messages )`.
-```
-[Color ConvertToHSVFromRed:255 blue:127 green:0];
-
-// Instead of:
-Color::ConvertToHSV(255,127,0);
 ```
 **Pre-Calc**
 ```
