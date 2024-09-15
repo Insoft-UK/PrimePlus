@@ -24,9 +24,10 @@ a := a+b; // PPL results in a smaller .hpprgm file.
 Deprecated: The use of **:=** in declaring variables will be dropped in **v2.0** to simplifie the language for the use of **PPL Minifier** to be able to reduce long named variables being declared.
 
 
+
 **for...next**
 > [!NOTE]
-While **end** can be used in place of **next**, by using **next** helps in idetifing it's the end of a for loop nest.
+While **end** can be used in place of **next**, by using **next** helps in idetifing it's the end of a for loop.
 ```
 local I:index
 for index:=0; index<10; index++ do
@@ -34,12 +35,14 @@ for index:=0; index<10; index++ do
 next;
 ```
 
+
 **do...loop**
 ```
 do
     // statement/s
 loop;
 ```
+
 
 **switch**
 > [!NOTE]
@@ -52,6 +55,9 @@ switch menuSelection
     end;
 end;
 ```
+
+
+
 **if** _condition_ **then** _statement/s_ **else** _statement/s_ **endif**
 ```
 local e:hasError = true;
@@ -62,12 +68,14 @@ else
 endif;
 ```
 
+
 **guard** _condition_ **else** _statement/s_ **end**
 ```
 guard key != KeyCode.Esc else
     return;
 end;
 ```
+
 
 **while...wend**
 ```
@@ -77,6 +85,7 @@ while isRunning == true do
     isRunning = false;
 wend;
 ```
+
 
 **try** _condition_ **catch** _statement/s_ [**else** _statement/s_] **end**
 ```
@@ -89,11 +98,13 @@ else
 end;
 ```
 
+
 **(** _condition_ **?** _true_ **:** _false_**)**
 ```
 local a:myValue = 0;
 a = (X>Y ? 1 : 0);
 ```
+
 
 **def eval:... name(...);**
 ```
@@ -103,11 +114,13 @@ def eval:alpha := a setAlpha(a);
 setAlpha(50.0);
 ```
 
+
 **#pragma**
 ```
 // Turn off C style bitwise operators ! ^ can now be used as math operations.
 #pragma ( bitwise 0 )
 ```
+
 
 **Pre-Calc**
 ```
@@ -119,6 +132,8 @@ b = #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
 // PPL b:=160.00;
 b = <calc>(SCREEN_WIDTH / 2:2);
 ```
+
+
 
 > [!TIP]
 In P+ the use of **=** for := is optional as the pre-processor will automatically covert all = to := Pascal & PPL style.
