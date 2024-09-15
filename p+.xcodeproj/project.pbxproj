@@ -60,6 +60,7 @@
 		137FB2942A046E8E00AEFDF2 /* p+.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "p+.entitlements"; sourceTree = "<group>"; };
 		1384DE7B2B6D70DE0090E24D /* Switch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Switch.cpp; sourceTree = "<group>"; };
 		1384DE7C2B6D70DE0090E24D /* Switch.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = Switch.hpp; sourceTree = "<group>"; };
+		138F54D22C976F10009357F9 /* LICENCE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENCE.txt; sourceTree = "<group>"; };
 		139634C82B9A1A85005B80F0 /* IFTE.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = IFTE.cpp; sourceTree = "<group>"; };
 		139634C92B9A1A85005B80F0 /* IFTE.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = IFTE.hpp; sourceTree = "<group>"; };
 		139634CB2B9A2DEA005B80F0 /* Bitwise.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Bitwise.cpp; sourceTree = "<group>"; };
@@ -96,6 +97,7 @@
 		137FB27C2A03B06500AEFDF2 = {
 			isa = PBXGroup;
 			children = (
+				138F54D22C976F10009357F9 /* LICENCE.txt */,
 				1351CC552BFC0E180073FEDF /* README.md */,
 				137FB2942A046E8E00AEFDF2 /* p+.entitlements */,
 				13166E852BA12E5E00D1E6F0 /* example */,
