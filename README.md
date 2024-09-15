@@ -10,9 +10,9 @@ Please look at using **PPL Minifier** to handle long names in some situations.
 >
 ```
 local a:indexA;
-const b:indexB:=1;
+const b:indexB=1;
 indexA += indexB; // Using subtitution.
-a := a+b; // PPL results in a smaller .hpprgm file.
+a = a+b; // PPL results in a smaller .hpprgm file.
 ```
 > [!WARNING]
 Deprecated: The use of **:=** in declaring variables will be dropped in **v2.0** to simplifie the language for the use of **PPL Minifier** to be able to reduce long named variables being declared.
