@@ -126,11 +126,14 @@ local a = #[SCREEN_WIDTH / #[8 - 6]];
 local b = #[SCREEN_WIDTH / 4];
 b = #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
 // PPL b:=160.00;
+
+// 2.0
+local a = ±SCREEN_WIDTH / ±8 - 6
 ```
 
 
 > [!IMPORTANT]
-In P+ **=** is treated as := were in PPL **=** is treated as ==
+In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
 
 >[!NOTE]
 The P+ proprietary programming language is susceptible to change, while also maintaining full compatibility with previous versions.
