@@ -130,7 +130,7 @@ b = #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
 // PPL b:=160.00;
 
 // 2.0
-local a = ±SCREEN_WIDTH / ±8 - 6
+local a = ±SCREEN_WIDTH / ±8 - 6;
 ```
 
 
