@@ -12,19 +12,16 @@ Please look at using **PPL Minifier** to handle long names in some situations.
 >
 ```
 local a:indexA;
-const b:indexB=1;
+const b:indexB := 1;
 indexA += indexB; // Using subtitution.
-a = a+b; // PPL results in a smaller .hpprgm file.
+a := a+b; // PPL results in a smaller .hpprgm file.
 ```
-> [!WARNING]
-Deprecated: The use of **:=** in declaring variables will be dropped in **v2.0** to simplifie the language for the use of **PPL Minifier** to be able to reduce long named variables being declared.
-
 
 
 **for...next**
 ```
 local I:index
-for index:=0; index<10; index++ do
+for index := 0; index<10; index++ do
     // statement/s
 next;
 ```
@@ -55,7 +52,7 @@ Advised to use PPL style **case** instead of P+ style.
 **if** _condition_ **then** _statement/s_ **else** _statement/s_ **endif**
 ```
 local e:hasError = true;
-if hasError==true then
+if hasError == true then
     // statement/s
 else
     // statement/s
@@ -69,7 +66,7 @@ While **end** can be used in place of **endif**, by using **endif** helps in ide
 
 **guard** _condition_ **else** _statement/s_ **end**
 ```
-guard key != KeyCode.Esc else
+guard key ≠ KeyCode.Esc else
     return;
 end;
 ```
@@ -77,10 +74,10 @@ end;
 
 **while...wend**
 ```
-local r:isRunning = true
+local r:isRunning := true
 while isRunning == true do
     // statement/s
-    isRunning = false;
+    isRunning := false;
 wend;
 ```
 
@@ -99,8 +96,8 @@ end;
 
 **(** _condition_ **?** _true_ **:** _false_**)**
 ```
-local a:myValue = 0;
-a = (X>Y ? 1 : 0);
+local a:myValue := 0;
+a := (X>Y ? 1 : 0);
 ```
 
 
@@ -123,14 +120,14 @@ setAlpha(50.0);
 **Pre-Calc**
 ```
 #define SCREEN_WIDTH 320
-local a = #[SCREEN_WIDTH / #[8 - 6]];
+local a := #[SCREEN_WIDTH / #[8 - 6]];
 // PPL LOCAL a:=160;
-local b = #[SCREEN_WIDTH / 4];
-b = #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
-// PPL b:=160.00;
+local b := #[SCREEN_WIDTH / 4];
+b := #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
+// PPL b := 160.00;
 
 // 2.0
-local a = ±SCREEN_WIDTH / ±8 - 6;
+local a := ± SCREEN_WIDTH / ± 8 - 6;
 ```
 
 
