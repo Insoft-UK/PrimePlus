@@ -29,6 +29,7 @@ next;
 While **end** can be used in place of **next**, by using **next** helps in idetifing it's the end of a for loop.
 
 **do...loop**
+The **do...loop** is simply a form of subtitution for PPL code of `WHILE 1 DO ... END;`
 ```
 do
     // statement/s
