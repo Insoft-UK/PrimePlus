@@ -29,6 +29,7 @@ next;
 While **end** can be used in place of **next**, by using **next** helps in idetifing it's the end of a for loop.
 
 **do...loop**
+The **do...loop** is simply a form of subtitution for PPL code of `WHILE 1 DO ... END;`
 ```
 do
     // statement/s
@@ -80,6 +81,8 @@ while isRunning == true do
     isRunning := false;
 wend;
 ```
+> [!NOTE]
+While **end** can be used in place of **wend**, by using **wend** helps in idetifing it's the end of a while loop.
 
 
 **try** _condition_ **catch** _statement/s_ [**else** _statement/s_] **end**
