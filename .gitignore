@@ -2,5 +2,4 @@
 xcuserdata/
 .DS_Store
 *.sh
-build
 bin/*

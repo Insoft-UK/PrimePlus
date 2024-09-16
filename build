@@ -1,0 +1,52 @@
+!/bin/bash
+DIR=$(dirname "$0")
+printf '\e[1;40;92m'
+clear
+
+cd $DIR
+
+# Use find to locate the .xcodeproj file
+xcodeproj_file=$(find . -name "*.xcodeproj" -print -quit)
+
+# Check if a .xcodeproj file was found
+if [ -n "$xcodeproj_file" ]; then
+    xcodeproj_name=$(basename "$xcodeproj_file" .xcodeproj)
+else
+    echo "No .xcodeproj file found."
+    # Close the Terminal window
+    osascript -e 'tell application "Terminal" to close window 1' & exit
+fi
+
+# Compiling Code...
+
+if [ ! -d "bin" ]; then
+    mkdir bin
+fi
+if [ ! -d "bin/arm" ]; then
+    mkdir bin/arm
+fi
+
+echo "Compiling Code... Please wait!"
+echo "macOS AppleSilicon"
+g++ -std=c++20 src/*.cpp -o bin/arm/$xcodeproj_name -Os -fno-ident -fno-asynchronous-unwind-tables -target arm64-apple-macos11
+echo "macOS intel"
+g++ -std=c++20 src/*.cpp -o bin/$xcodeproj_name -Os -fno-ident -fno-asynchronous-unwind-tables -target x86_64-apple-macos10.12
+strip bin/$xcodeproj_name
+strip bin/arm/$xcodeproj_name
+
+# Ask the user a question
+result=$(osascript -e 'display dialog "Do you want to sign this code?" buttons {"Yes", "No"} default button "Yes"')
+
+# Process the result
+if [[ "$result" == *"Yes"* ]]; then
+    # Code Signing...
+    echo "Code Signing... Please wait!"
+    IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | awk '{print $2}')
+    codesign -s "$IDENTITY" ./bin/$xcodeproj_name
+
+    IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | awk '{print $2}')
+    codesign -s "$IDENTITY" ./bin/arm/$xcodeproj_name
+fi
+
+# Close the Terminal window
+osascript -e 'tell application "Terminal" to close window 1' & exit
