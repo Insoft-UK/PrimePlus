@@ -81,6 +81,8 @@ while isRunning == true do
     isRunning := false;
 wend;
 ```
+> [!NOTE]
+While **end** can be used in place of **wend**, by using **wend** helps in idetifing it's the end of a while loop.
 
 
 **try** _condition_ **catch** _statement/s_ [**else** _statement/s_] **end**
