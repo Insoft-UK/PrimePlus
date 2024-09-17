@@ -27,7 +27,7 @@ next;
 ```
 
 **do...loop**
-The **do...loop** is simply a form of subtitution for PPL code of `WHILE 1 DO ... END;`
+The **do...loop** is simply a form of subtitution for PPL code for `WHILE 1 DO ... END;`
 ```
 do
     // statement/s
