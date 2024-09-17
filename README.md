@@ -4,9 +4,9 @@ P+ is a proprietary programming language designed to mitigate the challenges ass
 P+ is essentially the PPL language with additional features, such as substitution capabilities, and requires all keywords to be in lowercase.
 
 **Variable & Constant**
-
 Using longer, more meaningful variable and function names can enhance code readability and ease maintenance. However, when targeting the HP Prime's PPL (Programming Language) with UTF16-LE text-based files, employing lengthy names can lead to larger .hpprgm files, which poses a downside. This is where substitution proves beneficial in P+.
-
+The **var** keyword is the subtitution for PPL code for `LOCAL`
+The **global** keyword is a marker for P+ to idetify global variable/s.
 > [!NOTE]
 Please look at using **PPL Minifier** to handle long names in some situations.
 >
