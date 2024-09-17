@@ -37,19 +37,6 @@ loop;
 ```
 
 
-**switch**
-```
-local m:menuSelection;
-switch menuSelection
-    case 0 do
-        // statement/s
-    end;
-end;
-```
-> [!NOTE]
-Advised to use PPL style **case** instead of P+ style.
-
-
 **if** _condition_ **then** _statement/s_ **else** _statement/s_ **endif**
 ```
 local e:hasError = true;
