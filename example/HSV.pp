@@ -50,4 +50,4 @@ begin
     if m==5 then red = value; green = p; blue = q; end;
   
     return RGB(red * 255, green * 255, blue * 255);
-end
+end;

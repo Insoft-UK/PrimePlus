@@ -47,16 +47,16 @@ begin
         green = temperature;
         green = 99.4708025861 * log(green) - 161.1195681661;
         green = clamp(green);
-#pragma ( cstyle )
-        if (temperature <= 19) {
+
+        if temperature <= 19 do
             return RGB(red, green, 0);
-        }
-#pragma ( cstyle )
+        endif;
+
         blue = temperature - 10;
         blue = 138.5177312231 * log(blue) - 305.0447927307;
         blue = clamp(blue);
-    endif
+    endif;
     
     
     return RGB(red, green, blue);
-end
+end;
