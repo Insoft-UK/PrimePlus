@@ -34,13 +34,11 @@ def ASC             str::asc;
 def CHAR            str::char;
 def DIM             str::dim;
 def STRING          str::string;
-def INSTRING        str::string::in((deprecated));
 def INSTRING        str::inString;
 def LEFT            str::left;
 def RIGHT           str::right;
 def MID             str::mid;
 def ROTATE          str::rotate;
-def STRINGFROMID    str::string::fromId((deprecated));
 def STRINGFROMID    str::string.fromId;
 def REPLACE         str::replace;
 

@@ -416,6 +416,10 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     ln = regex_replace(ln, std::regex(R"(<int>\((.*)\))"), "IP($1)");
     ln = regex_replace(ln, std::regex(R"(<string>\((.*)\))"), "STRING($1)");
     
+    ln = regex_replace(ln, std::regex(R"(\bfloor\b)"), "FLOOR");
+    ln = regex_replace(ln, std::regex(R"(\bceil\b)"), "CEILING");
+    ln = regex_replace(ln, std::regex(R"(\bround\b)"), "ROUND");
+    
     ln = regex_replace(ln, std::regex(R"(\btrue\b)"), "1");
     ln = regex_replace(ln, std::regex(R"(\bfalse\b)"), "0");
     

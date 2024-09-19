@@ -33,14 +33,14 @@ begin
     saturation = MIN(MAX(saturation, 0), 100) / 100;
     value = MIN(MAX(value, 0), 100) / 100;
     
-    var f, p, q, t, m;
-    f = hue - math::floor(h);
+    local f, p, q, t, m;
+    f = hue - floor(h);
     p = value * (1 - saturation);
     q = value * (1 - saturation * f);
     t = value * (1 - saturation * (1 - f));
 
-    var r:red, g:green, b:blue;
-    m = math::floor(h);
+    local r:red, g:green, b:blue;
+    m = floor(h);
     
     if m==0 then red = value; green = t; blue = p; end;
     if m==1 then red = q; green = value; blue = p; end;

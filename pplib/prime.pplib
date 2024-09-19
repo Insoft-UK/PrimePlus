@@ -35,8 +35,6 @@
 #include <stdstr>
 #include <stdstc>
 
-def STARTAPP    fn::start::app((deprecated));
-def STARTVIEW   fn::start::view((deprecated));
 def STARTAPP    fn::start.app;
 def STARTVIEW   fn::start.view;
 def VIEW        fn::view;

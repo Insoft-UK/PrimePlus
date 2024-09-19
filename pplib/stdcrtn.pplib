@@ -32,7 +32,6 @@ prefix::sifix::camelCase
 
 def ARC       cartesian::arc;
 def BLIT      cartesian::blit;
-def DIMGROB   cartesian::GROB::dim((deprecated:"use 'cartesian::dimGROB'"));
 def DIMGROB   cartesian::dimGROB;
 def GETPIX    cartesian::get::pixel;
 def GROBH     cartesian::GROB::height;

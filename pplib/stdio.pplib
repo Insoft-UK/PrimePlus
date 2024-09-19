@@ -31,23 +31,15 @@ prefix::sufix::camelCase
 */
 
 def CHOOSE     io::choose;
-def EDITLIST   io::edit::list((deprecated));
 def EDITLIST   io::editList;
-def EDITMAT    io::edit::matrix((deprecated:"use 'matrix::edit'"));
-def EDITMAT    io::editMatrix((deprecated:"use 'matrix::edit'"));
-def GETKEY     io::get::key((deprecated:"use 'io::getKey'"));
 def GETKEY     io::getKey;
 def INPUT      io::input;
-def ISKEYDOWN  io::isKey::down((deprecated:"use 'io::isKeyDown'"));
 def ISKEYDOWN  io::isKeyDown;
 def MOUSE      io::mouse;
-def MSGBOX     io::message::box((deprecated:"use 'io::messageBox'"));
 def MSGBOX     io::messageBox;
-def DRAWMENU   io::draw::menu((deprecated:"use 'io::drawMenu'"));
 def DRAWMENU   io::drawMenu;
 def PRINT      io::print;
 def WAIT       io::wait;
-def AFiles     io::app::files((deprecated:"use 'io::appFiles'"));
 def AFiles     io::appFiles;
 
 #endif /// STDIO_PPLIB

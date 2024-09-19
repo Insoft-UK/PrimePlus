@@ -30,25 +30,8 @@ Recommended P+ Style and Coding Standards
 prefix::camelCase
 */
 
-def ARC_P       px::arc((deprecated:"use 'arc'"));
-def BLIT_P      px::blit((deprecated:"use 'blit'"));
-def DIMGROB_P   px::grob::dim((deprecated:"use 'dimGROB'"));
-def DIMGROB_P   px::defineGROB((deprecated:"use 'dimGROB'"));
-def GETPIX_P    px::getPixel((deprecated:"use 'getPixel'"));
-def INVERT_P    px::invert((deprecated:"use 'invert'"));
-def LINE_P      px::line((deprecated:"use 'line'"));
-def PIXOFF_P    px::off((deprecated:"use 'pixelOff'"));
-def PIXON_P     px::on((deprecated:"use 'pixelOn'"));
-def RECT_P      px::rect((deprecated:"use 'rect'"));
-def FILLPOLY_P  px::fillPoly((deprecated:"use 'fillPoly'"));
-def SUBGROB_P   px::grobSub((deprecated:"use 'subGROB'"));
-def TEXTOUT_P   px::text::out((deprecated:"use 'textout'"));
-def TEXTOUT_P   px::textOut((deprecated:"use 'textout'"));
-
 def ARC_P       arc;
 def BLIT_P      blit;
-def DIMGROB_P   defineGROB((deprecated:"use 'dimGROB'"));
-def DIMGROB_P   defGROB((deprecated:"use 'dimGROB'"));
 def DIMGROB_P   dimGROB;
 def GETPIX_P    getPixel;
 def INVERT_P    invert;
@@ -57,8 +40,6 @@ def PIXOFF_P    pixelOff;
 def PIXON_P     pixelOn;
 def RECT_P      rect;
 def FILLPOLY_P  fillPoly;
-def SUBGROB_P   grobSub((deprecated:"use 'subGROB'"));
-def SUBGROB_P   GROBSub((deprecated:"use 'subGROB'"));
 def SUBGROB_P   subGROB;
 def TEXTOUT_P   textout;
 def TEXTSIZE    textsize;

@@ -27,7 +27,7 @@
 
 /*
 Recommended P+ Style and Coding Standards
-CamelCase : UPPERCASE CamelCase = ? end
+CamelCase [: UPPERCASE] CamelCase = ? end
 */
 
 enum ThemeMode

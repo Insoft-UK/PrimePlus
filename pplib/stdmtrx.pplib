@@ -31,21 +31,15 @@ prefix::camelCase.camelCase...
 */
 
 def EDITMAT    matrix::edit;
-def ADDCOL     matrix::add::col((deprecated:"use 'matrix::add.col'"));
 def ADDCOL     matrix::add.col;
-def ADDROW     matrix::add::row((deprecated:"use 'matrix::add.row'"));
 def ADDROW     matrix::add.row;
-def DELCOL     matrix::del::col((deprecated:"use 'matrix::del.col'"));
 def DELCOL     matrix::del.col;
 def REDIM      matrix::reDIM;
 def REPLACE    matrix::replace;
 def SCALE      matrix::scale;
-def SCALEADD   matrix::scale::add((deprecated));
 def SCALEADD   matrix::scale.add;
 def Sub        matrix::sub;
-def SAWAPCOL   matrix::swap::col((deprecated));
 def SAWAPCOL   matrix::swap.col;
-def SWAPROW    matrix::swap::row((deprecated));
 def SWAPROW    matrix::swap.row;
 
 
