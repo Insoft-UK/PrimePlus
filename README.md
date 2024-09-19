@@ -4,8 +4,11 @@ P+ is a proprietary programming language designed to mitigate the challenges ass
 P+ is essentially the PPL language with additional features, such as substitution capabilities, and requires all keywords to be in lowercase.
 
 **Variable & Constant**
-
 Using longer, more meaningful variable and function names can enhance code readability and ease maintenance. However, when targeting the HP Prime's PPL (Programming Language) with UTF16-LE text-based files, employing lengthy names can lead to larger .hpprgm files, which poses a downside. This is where substitution proves beneficial in P+.
+
+The **var** keyword is the subtitution for PPL code for `LOCAL`
+
+The **global** keyword is a marker for P+ to idetify global variable/s.
 
 > [!NOTE]
 Please look at using **PPL Minifier** to handle long names in some situations.
@@ -25,29 +28,14 @@ for index := 0; index<10; index++ do
     // statement/s
 next;
 ```
-> [!NOTE]
-While **end** can be used in place of **next**, by using **next** helps in idetifing it's the end of a for loop.
 
 **do...loop**
-The **do...loop** is simply a form of subtitution for PPL code of `WHILE 1 DO ... END;`
+The **do...loop** is simply a form of subtitution for PPL code for `WHILE 1 DO ... END;`
 ```
 do
     // statement/s
 loop;
 ```
-
-
-**switch**
-```
-local m:menuSelection;
-switch menuSelection
-    case 0 do
-        // statement/s
-    end;
-end;
-```
-> [!NOTE]
-Advised to use PPL style **case** instead of P+ style.
 
 
 **if** _condition_ **then** _statement/s_ **else** _statement/s_ **endif**
@@ -128,9 +116,6 @@ local a := #[SCREEN_WIDTH / #[8 - 6]];
 local b := #[SCREEN_WIDTH / 4];
 b := #[SCREEN_WIDTH / 2]:2; // Pre-Calc #[]:scale
 // PPL b := 160.00;
-
-// 2.0
-local a := ± SCREEN_WIDTH / ± 8 - 6;
 ```
 
 
