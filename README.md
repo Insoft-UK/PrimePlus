@@ -8,8 +8,6 @@ Using longer, more meaningful variable and function names can enhance code reada
 
 The **var** keyword is the subtitution for PPL code for `LOCAL`
 
-The **global** keyword is a marker for P+ to idetify global variable/s.
-
 > [!NOTE]
 Please look at using **PPL Minifier** to handle long names in some situations.
 >
