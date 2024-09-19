@@ -26,7 +26,7 @@ fi
 
 localhost=/usr/local/var/www
 if [ -n "$xcodeproj_file" ]; then
-    zip_file="$(cat zip_filename.txt).zip"
+    zip_file=$(cat .www)
 else
     zip_file="$xcodeproj_file.zip"
 fi
