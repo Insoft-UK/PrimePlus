@@ -1,7 +1,7 @@
 /*
  The MIT License (MIT)
  
- Copyright (c) 2024 Insoft. All rights reserved.
+ Copyright (c) 2023-2024 Insoft. All rights reserved.
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -28,83 +28,83 @@
 #include <prime>
 #include <hp>
 
-global auto:gg;
-
-
-#define bb aa
-
-
-myFunction()
-begin
-local auto:aa;
-#define cc aa
-aa++;
-bb++;
-cc++;
-gg++;
-    local longname;
-    longname = <calc>(π / 2 :2);
-    
-    
-    do
-        if NOT(A) then
-            return;
-        endif;
-    loop;
-    try
-    catch
-    else
-    end;
-end;
-
-Example::DoLoop(auto:value);
-gg++;
-
 Example::Switch()
 begin
-    gg++;
+    gg+=1;
     struct Event auto:event;
     event = hp::waitEvent;
     
-    if [hp isKeyPressedForEvent:event] == true then
-        switch event.key
-            case KeyCode.Esc do
+    gg = #65h
+    gg = 5 & 7;
+    
+    
+    
+    if hp::isKeyPressed(event) == true && hp::isKeyPressed(event) != false then
+        case
+            if event.key==KeyCode.Esc then
                 return 0;
-            end
+            endif;
             
-            case KeyCode.1 do
+            if event.key==KeyCode.1 then
                 return 10;
-            end
+            endif;
             
-            case KeyCode.2 do
+            if event.key==KeyCode.2 then
                 return 100;
-            end
+            endif;
             
-            case KeyCode.3 do
+            if event.key==KeyCode.3 then
                 return 1000;
-            end
-        end
+            endif;
+        end;
     endif;
-end
+    
+    switch event.key
+        case KeyCode.Esc do
+            switch event.key
+                case KeyCode.Esc do
+                end;
+            end;
+        end;
+    end;
+    
+    switch event.key
+        case KeyCode.Esc do
+        end;
+    end;
+end;
 
-Example::DoLoop(auto:value)
+Example::DoLoop(auto: value)
 begin
     do
         if value <= 0 then
             return;
         endif;
         
-        value -= 1;
+        value += -1;
     loop;
 end;
 
-Example::ForNext()
+Example::ForNext(value)
 begin
-    local n:number, auto:count = 0;
+    var count = 0;
     
-    for number = 0; number < 100; number += 1 do
+    for count = 0; value <= 0; value -= 1 do
         count += 1;
-    next
+    next;
+    
+    for ; value <= 0; value -= 1 do
+        count += 1;
+    next;
+    
+    for ; value <= 0; do
+        count += 1;
+        value -= 1;
+    next;
+    
+    for ;; do
+    next;
+    
     return count;
 end;
 
@@ -122,19 +122,19 @@ begin
     
     Example::DoLoop(Example::Switch);
   
-    myStruct = {value, [Example ForNext]};
+    myStruct = {value, Example::ForNext};
     return myStruct.one + myStruct.two;
     
-    if value <= π do
+    if value <= π then
         KILL;
     endif;
     
     R→B(value,4)=>value;
     
-    String(#[5.5/7]);
+    
     local t = IP(0.06);
-    local t = <calc>(<calc>(1+1)^-4:2);
-    var t = <int>(#[#[1+1]^-4]:2);
+    var t = <string>(<int>(#[#[1+1]^-4]:2));
+  
     
 end;
 

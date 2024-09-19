@@ -1,7 +1,7 @@
 /*
  The MIT License (MIT)
  
- Copyright (c) 2024 Insoft. All rights reserved.
+ Copyright (c) 2023-2024 Insoft. All rights reserved.
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -22,7 +22,7 @@
  SOFTWARE.
  */
 
-
+#pragma mode( separator(.,;) integer(h64) )
 #pragma ( minify -1, reduce, newline )
 
 #include <prime>
