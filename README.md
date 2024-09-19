@@ -8,13 +8,11 @@ Using longer, more meaningful variable and function names can enhance code reada
 
 The **var** keyword is the subtitution for PPL code for `LOCAL`
 
-The **global** keyword is a marker for P+ to idetify global variable/s.
-
 > [!NOTE]
 Please look at using **PPL Minifier** to handle long names in some situations.
 >
 ```
-local a:indexA;
+var a:indexA;
 const b:indexB := 1;
 indexA += indexB; // Using subtitution.
 a := a+b; // PPL results in a smaller .hpprgm file.
@@ -23,7 +21,7 @@ a := a+b; // PPL results in a smaller .hpprgm file.
 
 **for...next**
 ```
-local I:index
+var I:index
 for index := 0; index<10; index++ do
     // statement/s
 next;
@@ -40,7 +38,7 @@ loop;
 
 **if** _condition_ **then** _statement/s_ **else** _statement/s_ **endif**
 ```
-local e:hasError = true;
+var e:hasError = true;
 if hasError == true then
     // statement/s
 else
@@ -63,7 +61,7 @@ end;
 
 **while...wend**
 ```
-local r:isRunning := true
+var r:isRunning := true
 while isRunning == true do
     // statement/s
     isRunning := false;
@@ -87,14 +85,14 @@ end;
 
 **(** _condition_ **?** _true_ **:** _false_**)**
 ```
-local a:myValue := 0;
+var a:myValue := 0;
 a := (X>Y ? 1 : 0);
 ```
 
 
 **def eval:... name(...);**
 ```
-local auto:alpha;
+var auto:alpha;
 /// It is necessary to evaluate, as we are referencing a defined alias 'alpha' in the definition.
 def eval:alpha := a setAlpha(a);
 setAlpha(50.0);
