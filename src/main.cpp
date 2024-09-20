@@ -43,6 +43,7 @@
 #include "ifte.hpp"
 #include "bitwise.hpp"
 #include "for_next.hpp"
+#include "do_loop.hpp"
 #include "calc.hpp"
 
 #include "build.h"
@@ -219,10 +220,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     
     static bool multiLineComment = false;
     
-    std::string s("        ");
-    s.resize(tabWidth);
-    ln = regex_replace(ln, std::regex(R"(\t)"), s); // Tab width = 4 spaces :- future reg-ex will not require to deal with '\t', only spaces.
-    
+    ln = regex_replace(ln, std::regex(R"(\t)"), " "); // Tab to space, future reg-ex will not require to deal with '\t', only spaces.
     
     /*
      While parsing the contents, strings may inadvertently undergo parsing, leading
@@ -278,14 +276,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
             ln = std::string("");
             return;
         }
-        
-        ln = regex_replace(ln, std::regex(R"(>=)"), "≥");
-        ln = regex_replace(ln, std::regex(R"(<=)"), "≤");
-        ln = regex_replace(ln, std::regex(R"(!=)"), "≠");
-        ln = regex_replace(ln, std::regex(R"(=>)"), "▶");
-        
         ln += '\n';
-        
         return;
     }
     
@@ -382,52 +373,18 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     ln = regex_replace(ln, std::regex(R"(<int>\((.*)\))"), "IP($1)");
     ln = regex_replace(ln, std::regex(R"(<string>\((.*)\))"), "STRING($1)");
     
-    ln = regex_replace(ln, std::regex(R"(\bfloor\b)"), "FLOOR");
-    ln = regex_replace(ln, std::regex(R"(\bceil\b)"), "CEILING");
-    ln = regex_replace(ln, std::regex(R"(\bround\b)"), "ROUND");
-    
-    ln = regex_replace(ln, std::regex(R"(\btrue\b)"), "1");
-    ln = regex_replace(ln, std::regex(R"(\bfalse\b)"), "0");
-    
-    
     singleton->autoname.parse(ln);
     Alias::parse(ln);
     
-    
-//    static std::vector<std::string> stack;
     if (singleton->scope == Singleton::Scope::Local) {
         singleton->switches.parse(ln);
         
         if (regex_search(ln, std::regex(R"(\b(IF|WHILE|UNTIL|FOR)\b)", std::regex_constants::icase)))
             translateCLogicalOperatorsToPPL(ln);
         
-        r = R"(\bguard +(.+) +else)";
-        while (regex_search(ln, m, r)) {
-            std::string matched = m.str();
-            std::sregex_token_iterator it = std::sregex_token_iterator {
-                matched.begin(), matched.end(), r, {1}
-            };
-            std::string result = "IF NOT(";
-            if (it != std::sregex_token_iterator()) {
-                result += *it++;
-            }
-            result += ") THEN";
-            ln = ln.replace(m.position(), m.length(), result);
-            std::cout << MessageType::Verbose << "deprecated: guard, recomended to use 'if...then...endif;'\n";
-        }
-
-
-        ln = regex_replace(ln, std::regex(R"(\btry\b)", std::regex_constants::icase), "IFERR");
-        ln = regex_replace(ln, std::regex(R"(\bcatch\b)", std::regex_constants::icase), "THEN");
-        
         IFTE::parse(ln);
         ForNext::parse(ln);
-        
-    
-        if (regex_match(ln, std::regex(R"(^do\b)"))) {
-            ln = regex_replace(ln, std::regex(R"(\bdo\b)"), "WHILE 1 DO");
-            singleton->setNestingLevel(singleton->nestingLevel + 1);
-        }
+        DoLoop::parse(ln);
         
         ln = regex_replace(ln, std::regex(R"(\btry\b)"), "IFERR");
         ln = regex_replace(ln, std::regex(R"(\bcatch\b)"), "THEN");
@@ -435,7 +392,6 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
         ln = regex_replace(ln, std::regex(R"(\.{3})"), " TO ");
     }
     
-    ln = regex_replace(ln, std::regex(R"(\bpi\b)"), "π");
     
     singleton->calc.parse(ln);
     ln = translateCOperatorsToPPL(ln);

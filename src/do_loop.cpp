@@ -1,7 +1,7 @@
 /*
  The MIT License (MIT)
  
- Copyright (c) 2023-2024 Insoft. All rights reserved.
+ Copyright (c) 2023 Insoft. All rights reserved.
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -22,51 +22,18 @@
  SOFTWARE.
  */
 
+#include "do_loop.hpp"
+#include "singleton.hpp"
 
-#ifndef PRIME_PPLIB
-#define PRIME_PPLIB
+#include <regex>
 
-#include <stdcrtn>
-#include <stdpix>
-#include <stdio>
-#include <stdmtrx>
-#include <stdint>
-#include <stdenm>
-#include <stdstr>
-#include <stdstc>
+using namespace pp;
 
-def STARTAPP    fn::start.app;
-def STARTVIEW   fn::start.view;
-def VIEW        fn::view;
-def FREEZE      fn::freeze;
-def KILL        fn::kill;
-def EVAL        fn::eval;
-
-def CEILING     ceil;
-def FLOOR       floor;
-def ROUND       round;
-def π           pi;
-def 1           true;
-def 0           false;
-
-def Theme[1]    Theme.color;
-def Theme[2]    Theme.colorShade;
-
-#define SCREEN_WIDTH        320
-#define SCREEN_HEIGHT       240
-
-#define SCREEN_TOP            0
-#define SCREEN_MIDDLE       120
-#define SCREEN_BOTTOM       239
-
-#define SCREEN_LEFT           0
-#define SCREEN_CENTRE       160
-#define SCREEN_RIGHT        319
-
-#define TOUCH_MENU          220
-
-#define MOUSE_X 2
-#define MOUSE_Y 3
-
-
-#endif /// PRIME_PPLIB
+bool DoLoop::parse(std::string &str) {
+    if (regex_match(str, std::regex(R"(^do\b)"))) {
+        str = regex_replace(str, std::regex(R"(\bdo\b)"), "WHILE 1 DO");
+        Singleton::shared()->setNestingLevel(Singleton::shared()->nestingLevel + 1);
+        return true;
+    }
+    return false;
+}

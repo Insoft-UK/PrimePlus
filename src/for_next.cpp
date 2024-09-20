@@ -24,13 +24,18 @@
 
 #include "for_next.hpp"
 #include "singleton.hpp"
+
 #include <regex>
+
+static std::vector<std::string> _stack;
 
 using namespace pp;
 
 bool ForNext::parse(std::string &str) {
     std::regex r;
     std::smatch m;
+    
+    bool parsed = false;
     
     // C style for loop.
     r = R"(\bfor\b(.*);(.*);(.*)\bdo\b)";
@@ -55,6 +60,7 @@ bool ForNext::parse(std::string &str) {
             str = str.replace(m.position(), m.length(), statements[0] + ";WHILE " + statements[1] + " DO");
         }
         if (!statements[2].empty()) _stack.push_back(statements[2] + ";");
+        parsed = true;
     }
     
     while (regex_search(str, m, std::regex(R"(\bnext( *)?;?)", std::regex_constants::icase))) {
@@ -70,6 +76,7 @@ bool ForNext::parse(std::string &str) {
         } else {
             str = str.replace(m.position(), m.length(), std::string(INDENT_WIDTH, ' ') + ppl + "END;");
         }
+        parsed = true;
     }
-    return true;
+    return parsed;
 }

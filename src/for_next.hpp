@@ -32,9 +32,6 @@ namespace pp {
     class ForNext {
     public:
         static bool parse(std::string &str);
-        
-    private:
-        static std::vector<std::string> _stack;
     };
 }
 
