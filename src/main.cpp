@@ -134,7 +134,6 @@ void translateCLogicalOperatorsToPPL(std::string& str) {
 
 
 // MARK: - P+ To PPL Translater...
-
 void reformatPPLLine(std::string &str) {
     std::regex r;
     
@@ -162,6 +161,9 @@ void reformatPPLLine(std::string &str) {
     r = R"(≥|≤|≠|=|:=|\+|-|\*|\/)";
     str = regex_replace(str, r, " $0 ");
     
+    // We now hand the issue of Unary Minus/Operator
+    
+    // Ensuring that `≥`, `≤`, `≠`, `=`, `+`, `-`, `*` and `/` have a whitespace befor `-`.
     r = R"(([≥≤≠=\+|\-|\*|\/]) +- +)";
     str = regex_replace(str, r, "$1 -");
     
@@ -207,6 +209,7 @@ void capitalizeKeywords(std::string &str) {
         str = str.replace(it->position(), it->length(), result);
     }
 }
+
 
 void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     std::regex r;
@@ -327,11 +330,6 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     ln = regex_replace(ln, std::regex(R"(!=)"), "≠");
     ln = regex_replace(ln, std::regex(R"(=>)"), "▶");
     
-//    if (Def::parse(ln)) return;
-#ifdef MESSAGES_HPP
-    // Obj-C Style
-    if (preprocessor.messages) Messages::parse(ln);
-#endif
     ln = singleton->aliases.resolveAliasesInText(ln);
     
     

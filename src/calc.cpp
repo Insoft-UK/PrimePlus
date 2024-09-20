@@ -175,6 +175,116 @@ static double evaluateExpression(const std::string& expression) {
     return evaluatePostfix(postfix);
 }
 
+
+// MARK: -
+// MARK: PPL Integer Number Handerling
+
+// Function to convert a 64-bit number to a specified bit width
+static uint64_t convertToBitWidth(uint64_t num, int bitWidth) {
+    if (bitWidth <= 0) {
+        // If bit width is 0 or negative, return 0 (no bits to retain)
+        return 0;
+    }
+    
+    if (bitWidth >= 64) {
+        // If bit width is 64 or more, return the number as-is
+        return num;
+    }
+
+    // Create a mask with the desired number of bits
+    uint64_t mask = (1ULL << bitWidth) - 1;
+
+    // Apply the mask to the number and return the result
+    return num & mask;
+}
+
+// Function to perform two's complement on a number with a given bit width
+static int64_t twosComplement(int64_t num, int bitWidth) {
+    if (bitWidth <= 0 || bitWidth > 64) {
+        throw std::invalid_argument("Bit width must be between 1 and 64.");
+    }
+
+    // Create a mask to fit within the specified bit width
+    int64_t mask = (1LL << bitWidth) - 1;
+
+    // Mask the number to limit it to the bit width
+    num &= mask;
+
+    // Check if the number is negative in two's complement by checking the most significant bit
+    int64_t signBit = 1LL << (bitWidth - 1);
+    if (num & signBit) {
+        // The number is negative, so we apply two's complement
+        num = num - (1LL << bitWidth);  // Subtract 2^bitWidth to get the negative value
+    }
+
+    return num;
+}
+
+static std::string decimalSignedNumber(int64_t num, int bitWidth) {
+    if (bitWidth < 1 || bitWidth > 64) bitWidth = 64;
+    
+    num = convertToBitWidth(num, bitWidth);
+    num = twosComplement(num, bitWidth);
+
+    return std::to_string(num);
+}
+
+static std::string decimalUnsignedNumber(int64_t num, int bitWidth) {
+    if (bitWidth < 1 || bitWidth > 64) bitWidth = 64;
+    
+    num = convertToBitWidth(num, bitWidth);
+
+    return std::to_string(num);
+}
+
+// Function to convert a string with PPL-style integer number to return a base 10 number
+static std::string convertPPLIntegerNumberToBase10(const std::string &str) {
+    std::regex r;
+    std::smatch m;
+    
+    r = R"(#([\dA-F]+)(?::(-)?(6[0-4]|[1-5][0-9]|[1-9]))?([odh])?)";
+    if (!regex_search(str, m, r)) return str;
+    
+    /*
+     Group 1 The hex part of the string.
+     Group 2 The signed part if given!.
+     Group 3 The bit width of the integer number if also given!
+     Group 4 The base type, should always be `h` in this case.
+     */
+    
+    int base = 10;
+    if (m.str(4) == "h") base = 16;
+    if (m.str(4) == "o") base = 8;
+    
+    int64_t num = std::stol(m.str(1), nullptr, base);
+    int bitWidth = m.str(3).empty() ? 64 : atoi(m.str(3).c_str());
+    
+    if (m.str(2).empty())
+        return decimalUnsignedNumber(num, bitWidth);
+    
+    return decimalSignedNumber(num, bitWidth);
+}
+
+// Function to convert a string with PPL-style integer number to a plain base 10 number
+static void convertPPLStyleNumberToBase10(std::string &str) {
+    std::regex r;
+    std::smatch m;
+    std::string s;
+    
+    r = R"(#([\dA-F])+(?::-?\d+)?([odh])?)";
+    while (regex_search(str, m, r)) {
+        /*
+         Group 1 The number part of the string.
+         Group 2 The base type, should be `h`, `d` or `o` if given!.
+         */
+        
+        s = convertPPLIntegerNumberToBase10(m.str());
+        str = str.replace(m.position(), m.length(), s);
+    }
+}
+
+// MARK: -
+
 bool Calc::parse(std::string &str)
 {
     std::regex r;
@@ -193,6 +303,7 @@ bool Calc::parse(std::string &str)
         
         std::string matched = m.str();
         
+        convertPPLStyleNumberToBase10(matched);
         
         std::string expression;
         int scale = -1;
