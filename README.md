@@ -1,12 +1,13 @@
 <img src="https://raw.githubusercontent.com/Insoft-UK/PrimePlus/main/assets/P+_Logo.svg" style="width: 128px" />
 P+ is a proprietary programming language designed to mitigate the challenges associated with code maintenance and comprehensibility in the HP Programming Language (PPL). P+ serves as an intermediary language that addresses these issues by introducing support for substitutions and facilitating code organization. The final output is a PPL program file with a minimal footprint, optimized to conserve the limited storage space available on the HP Prime.
-
+<br/><br/>
 P+ is essentially the PPL language with additional features, such as substitution capabilities, and requires all keywords to be in lowercase.
-
-**Variable & Constant**
+<br/><br/>
+<b>Variable & Constant</b>
+<br/>
 Using longer, more meaningful variable and function names can enhance code readability and ease maintenance. However, when targeting the HP Prime's PPL (Programming Language) with UTF16-LE text-based files, employing lengthy names can lead to larger .hpprgm files, which poses a downside. This is where substitution proves beneficial in P+.
-
-The **var** keyword is the subtitution for PPL code for `LOCAL`
+<br/><br/>
+The <b>var</b> keyword is the subtitution for PPL code for `LOCAL`
 
 > [!NOTE]
 Please look at using **PPL Minifier** to handle long names in some situations.
