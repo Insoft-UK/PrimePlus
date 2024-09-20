@@ -32,6 +32,36 @@
 using namespace pp;
 using namespace std;
 
+static void inferredAutoForVar(std::string &ln) {
+    std::regex r;
+    
+    r = std::regex(R"(\b((?:var|local|const) +)(.*)(?=;))", std::regex_constants::icase);
+    std::sregex_token_iterator it = std::sregex_token_iterator {
+        ln.begin(), ln.end(), r, {1, 2}
+    };
+    if (it != std::sregex_token_iterator()) {
+        std::string code = *it++;
+        std::string str = *it;
+        
+        r =  R"([^,;]+)";
+        for (auto it = std::sregex_iterator(str.begin(), str.end(), r);;) {
+            std::string s = trim_copy(it->str());
+            if (regex_search(s, std::regex(R"(^[A-Za-z]\w*:[a-zA-Z])"))) {
+                code.append(s);
+            } else {
+                if (regex_search(s, std::regex(R"(^[A-Za-z]\w*(?:(::)|\.))"))) {
+                    s.insert(0, "auto:");
+                }
+                code.append(s);
+            }
+            
+            if (++it == std::sregex_iterator()) break;
+            code.append(",");
+        }
+        ln = regex_replace(ln, std::regex(R"(\b((?:var|local|const) +)(.*)(?=;))", std::regex_constants::icase), code);
+    }
+}
+
 bool Auto::parse(string &str) {
     smatch m;
     regex r;
@@ -40,6 +70,8 @@ bool Auto::parse(string &str) {
     
     // Functions/Subroutines
     // TODO: ^ *(export +)?\bauto *: *((?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *(?=\()
+    
+    inferredAutoForVar(str);
     
     if (singleton->scope == Singleton::Scope::Global) {
         r = R"(\b(var|local|const) +)";

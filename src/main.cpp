@@ -42,7 +42,7 @@
 #include "strings.hpp"
 #include "ifte.hpp"
 #include "bitwise.hpp"
-//#include "Messages.hpp"
+#include "for_next.hpp"
 #include "calc.hpp"
 
 #include "build.h"
@@ -57,7 +57,6 @@ static Preprocessor preprocessor = Preprocessor();
 static Enums enumerators = Enums();
 static Structs structurs = Structs();
 static Strings strings = Strings();
-
 
 
 void terminator() {
@@ -321,9 +320,6 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     
     if (Def::parse(ln)) return;
     ln = removeWhitespaceAroundOperators(ln);
-
-    ln = regex_replace(ln, std::regex(R"(\btry\b)", std::regex_constants::icase), "IFERR");
-    ln = regex_replace(ln, std::regex(R"(\bcatch\b)", std::regex_constants::icase), "THEN");
     
     ln = regex_replace(ln, std::regex(R"(>=)"), "≥");
     ln = regex_replace(ln, std::regex(R"(<=)"), "≤");
@@ -331,35 +327,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     ln = regex_replace(ln, std::regex(R"(=>)"), "▶");
     
     ln = singleton->aliases.resolveAliasesInText(ln);
-    
-    
 
-    // `auto` is inferred for var & const if name is not a valid PPL name.
-    r = std::regex(R"(\b((?:var|local|const) +)(.*)(?=;))", std::regex_constants::icase);
-    std::sregex_token_iterator it = std::sregex_token_iterator {
-        ln.begin(), ln.end(), r, {1, 2}
-    };
-    if (it != std::sregex_token_iterator()) {
-        std::string code = *it++;
-        std::string str = *it;
-        
-        r =  R"([^,;]+)";
-        for (auto it = std::sregex_iterator(str.begin(), str.end(), r);;) {
-            std::string s = trim_copy(it->str());
-            if (regex_search(s, std::regex(R"(^[A-Za-z]\w*:[a-zA-Z])"))) {
-                code.append(s);
-            } else {
-                if (regex_search(s, std::regex(R"(^[A-Za-z]\w*(?:(::)|\.))"))) {
-                    s.insert(0, "auto:");
-                }
-                code.append(s);
-            }
-            
-            if (++it == std::sregex_iterator()) break;
-            code.append(",");
-        }
-        ln = regex_replace(ln, std::regex(R"(\b((?:var|local|const) +)(.*)(?=;))", std::regex_constants::icase), code);
-    }
     
     if (structurs.parse(ln)) {
         ln = std::string("");
@@ -426,7 +394,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     Alias::parse(ln);
     
     
-    static std::vector<std::string> stack;
+//    static std::vector<std::string> stack;
     if (singleton->scope == Singleton::Scope::Local) {
         singleton->switches.parse(ln);
         
@@ -449,49 +417,13 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
         }
 
 
+        ln = regex_replace(ln, std::regex(R"(\btry\b)", std::regex_constants::icase), "IFERR");
+        ln = regex_replace(ln, std::regex(R"(\bcatch\b)", std::regex_constants::icase), "THEN");
         
         IFTE::parse(ln);
+        ForNext::parse(ln);
         
-        // C style for loop.
-        r = R"(\bfor\b(.*);(.*);(.*)\bdo\b)";
-        while (regex_search(ln, m, r)) {
-            std::string matched = m.str();
-            std::sregex_token_iterator it = std::sregex_token_iterator {
-                matched.begin(), matched.end(), r, {1, 2, 3}
-            };
-            std::string statements[3];
-            if (it != std::sregex_token_iterator()) {
-                if (it->matched) statements[0] = *it++;
-                if (it->matched) statements[1] = *it++;
-                if (it->matched) statements[2] = *it++;
-            }
-            trim(statements[0]);
-            trim(statements[1]);
-            trim(statements[2]);
-            if (statements[1].empty()) statements[1] = "1";
-            if (statements[0].empty()) {
-                ln = ln.replace(m.position(), m.length(), "WHILE " + statements[1] + " DO");
-            } else {
-                ln = ln.replace(m.position(), m.length(), statements[0] + ";WHILE " + statements[1] + " DO");
-            }
-            if (!statements[2].empty()) stack.push_back(statements[2] + ";");
-        }
-        
-        while (regex_search(ln, m, std::regex(R"(\bnext( *)?;?)", std::regex_constants::icase))) {
-            if (stack.empty()) {
-                ln = ln.replace(m.position(), m.length(), "END;");
-                continue;
-            }
-            std::string ppl = stack.back();
-            stack.pop_back();
-            
-            if (ppl.empty()) {
-                ln = ln.replace(m.position(), m.length(), "END;");
-            } else {
-                ln = ln.replace(m.position(), m.length(), std::string(INDENT_WIDTH, ' ') + ppl + "END;");
-            }
-        }
-        
+    
         if (regex_match(ln, std::regex(R"(^do\b)"))) {
             ln = regex_replace(ln, std::regex(R"(\bdo\b)"), "WHILE 1 DO");
             singleton->setNestingLevel(singleton->nestingLevel + 1);
@@ -506,13 +438,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     ln = regex_replace(ln, std::regex(R"(\bpi\b)"), "π");
     
     singleton->calc.parse(ln);
-    
     ln = translateCOperatorsToPPL(ln);
-    
-    
-    
-    
-    
     Bitwise::parse(ln);
     ln = regex_replace(ln, std::regex(R"(=>)"), "▶");
     
