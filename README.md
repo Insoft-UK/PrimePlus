@@ -51,13 +51,6 @@ Also in P+ the use of `≤` `≠` and `≥` for `<=` `!=` and `>=` is also optio
 > [!NOTE]
 While **end** can be used in place of **endif**, by using **endif** helps in idetifing it's the end of a if statement.
 
-**guard** _condition_ **else** _statement/s_ **end**
-```
-guard key ≠ KeyCode.Esc else
-    return;
-end;
-```
-
 
 **while...wend**
 ```
