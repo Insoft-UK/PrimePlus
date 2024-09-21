@@ -33,13 +33,9 @@ namespace pp {
 class Auto {
 public:
     bool parse(std::string &str);
-    
-protected:
-    
+
 private:
     unsigned _fnCount = 0, _varCount = 0, _paramCount = 0, _globalCount = 0;
-    
-    std::string base10ToBase32(unsigned int num);
 };
 
 }
