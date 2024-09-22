@@ -32,7 +32,6 @@
 #include "auto.hpp"
 #include "switch.hpp"
 #include "comments.hpp"
-#include "calc.hpp"
 #include "common.hpp"
 
 using namespace pp;
@@ -51,7 +50,6 @@ public:
     Auto autoname;
     Switch switches;
     Comments comments;
-    Calc calc;
     
     
     static Singleton *shared();

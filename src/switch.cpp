@@ -61,6 +61,7 @@ bool Switch::parse(std::string &str) {
             oss.str("");
             oss << "sw" << _sw;
             _expressions.push_back({oss.str(), countLeadingCharacters(str, ' ')});
+            _level.push_back(Singleton::shared()->nestingLevel - 1);
             if (verbose) std::cout
                 << MessageType::Verbose
                 << "switch"
@@ -73,7 +74,7 @@ bool Switch::parse(std::string &str) {
     if (!_expressions.size()) return false;
     TExpression exp = _expressions.back();
     
-    r = R"(\bcase +([\w#.]*) +do\b)";
+    r = R"(\bcase ([\w#.]*) do\b)";
     if (regex_search(str, m, r)) {
         std::string s = m.str();
         
@@ -89,12 +90,13 @@ bool Switch::parse(std::string &str) {
     
     r = R"(^ *end;)";
     if (regex_match(str, r)) {
-        if (countLeadingCharacters(str, ' ') == exp.indeted) {
+        if (countLeadingCharacters(str, ' ') == exp.indeted && _level.back() == Singleton::shared()->nestingLevel) {
             if (verbose) std::cout
                 << MessageType::Verbose
                 << "switch"
                 << ": '" << _expressions.back().expression << "' expression removed!\n";
             _expressions.pop_back();
+            _level.pop_back();
         }
     }
     

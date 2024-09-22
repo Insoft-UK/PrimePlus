@@ -1,0 +1,32 @@
+!/bin/bash
+DIR=$(dirname "$0")
+printf '\e[1;40;92m'
+clear
+
+cd $DIR
+
+# Use find to locate the .xcodeproj file
+xcodeproj_file=$(find . -name "*.xcodeproj" -print -quit)
+
+# Check if a .xcodeproj file was found
+if [ -n "$xcodeproj_file" ]; then
+    xcodeproj_name=$(basename "$xcodeproj_file" .xcodeproj)
+else
+    echo "No .xcodeproj file found."
+    # Close the Terminal window
+    osascript -e 'tell application "Terminal" to close window 1' & exit
+fi
+
+echo "Archiving File... Please Wait!"
+
+zip_file="$xcodeproj_name.zip"
+
+echo "Archiving for $platform"
+rm $zip_file
+
+zip $zip_file bin/* -r -x "*/.DS_Store"
+zip $zip_file pplib/* -x "*/.DS_Store"
+zip $zip_file hpprgm/* -x "*/.DS_Store"
+
+# Close the Terminal window
+#osascript -e 'tell application "Terminal" to close window 1' & exit

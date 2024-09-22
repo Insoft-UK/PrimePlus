@@ -290,7 +290,6 @@ bool Calc::parse(std::string &str)
     std::regex r;
     std::smatch m;
     
-    _verbose = this->verbose;
 
     /*
      eg. test(#[320/(7+-2*2)]:0); or test(±320/(7+-2*2):0)
@@ -309,14 +308,12 @@ bool Calc::parse(std::string &str)
         int scale = -1;
         
         matched = regex_replace(matched, std::regex(R"(e)"), "2.71828182845904523536028747135266250");
-        matched = regex_replace(matched, std::regex(R"(π)"), "3.14159265358979323846264338327950288");
+        matched = regex_replace(matched, std::regex(R"(π|pi)"), "3.14159265358979323846264338327950288");
         matched = regex_replace(matched, std::regex(R"(MOD)"), "%");
         matched = regex_replace(matched, std::regex(R"(BITAND)"), "&");
         matched = regex_replace(matched, std::regex(R"(BITOR)"), "|");
         
         strip(matched);
-        
-        if (this->verbose) std::cout << MessageType::Verbose << "calc: '" << matched << "'\n";
         
         auto it = std::sregex_token_iterator {
             matched.begin(), matched.end(), r, {1, 2}
@@ -330,8 +327,7 @@ bool Calc::parse(std::string &str)
         
         parse(expression);
         
-        if (this->verbose) std::cout << MessageType::Verbose << "calc: expression: '" << expression << "'\n";
-    
+        
         expression = separateExpression(expression);
         double result = evaluateExpression(expression);
         
@@ -344,7 +340,6 @@ bool Calc::parse(std::string &str)
             s.erase ( s.find_last_not_of('.') + 1, std::string::npos );
         }
         
-        if (this->verbose) std::cout << MessageType::Verbose << "calc: '" << s << "'\n";
         
         str = str.replace(m.position(), m.length(), s);
         return true;

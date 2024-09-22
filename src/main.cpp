@@ -100,29 +100,28 @@ uint32_t utf8_to_utf16(const char *str) {
 std::string removeWhitespaceAroundOperators(const std::string& str) {
     // Regular expression pattern to match spaces around the specified operators
     // Operators: {}[]()≤≥≠<>=*/+-▶.,;:!^
-    std::regex r(R"(\s*([{}[\]()≤≥≠<>=*/+\-▶.,;:!^])\s*)");
+    std::regex r(R"(\s*([{}[\]()≤≥≠<>=*\/+\-▶.,;:!^&|%])\s*)");
 
     // Replace matches with the operator and no surrounding spaces
     std::string result = std::regex_replace(str, r, "$1");
-
+    
     return result;
 }
 
 // MARK: - C To PPL Translater...
 
-std::string translateCOperatorsToPPL(const std::string &str) {
-    std::string s = str;
-    std::smatch m;
+/*
+ Parses and converts C-style expressions like a+=b to PPL form like a := a + b
+ */
+std::string expandAssignment(const std::string& expression) {
+    std::string str = expression;
+    std::regex r(R"(([A-Za-z]\w*(?:\[.*\])*)([*\/+\-&|^%]|(?:>>|<<))=)");
+    str = regex_replace(str, r, "$1:=$1$2");
     
-    // Convert C/C++ style shorthand += -= *= /= %= &= |= ^= to PPL longhand
-    while (regex_search(s, m, std::regex(R"([a-zA-Z]\w* *(\[.*\] *)*[*\/+\-%&|^]=)"))) {
-        char op = m.str().at(m.str().find("=") - 1);
-        std::string str = trim_copy(m.str().substr(0, m.str().find("=") - 1));
-        s = s.replace(m.position(), m.length(), str + " := " + str + op);
-    }
-    s = regex_replace(s, std::regex(R"( *\% *)"), " MOD ");
+    r = R"(%)";
+    str = regex_replace(str, r, " MOD ");
     
-    return s;
+    return str;
 }
 
 void translateCLogicalOperatorsToPPL(std::string& str) {
@@ -158,7 +157,7 @@ void reformatPPLLine(std::string &str) {
     str = regex_replace(str, std::regex(R"(==)"), "=");
 
     // Ensuring that standalone `≥`, `≤`, `≠`, `=`, `:=`, `+`, `-`, `*` and `/` have surrounding whitespace.
-    r = R"(≥|≤|≠|=|:=|\+|-|\*|\/)";
+    r = R"(≥|≤|≠|=|:=|\+|-|\*|\/|▶)";
     str = regex_replace(str, r, " $0 ");
     
     // We now hand the issue of Unary Minus/Operator
@@ -177,7 +176,7 @@ void reformatPPLLine(std::string &str) {
     }
     
     if (Singleton::Scope::Local == Singleton::shared()->scope) {
-        if (!regex_search(str, std::regex(R"(\b(BEGIN|IF|CASE|REPEAT|WHILE)\b)", std::regex_constants::icase))) {
+        if (!regex_search(str, std::regex(R"(\b(BEGIN|IF|CASE|REPEAT|WHILE|FOR)\b)", std::regex_constants::icase))) {
             str.insert(0, std::string(Singleton::shared()->nestingLevel * INDENT_WIDTH, ' '));
         } else {
             str.insert(0, std::string((Singleton::shared()->nestingLevel - 1) * INDENT_WIDTH, ' '));
@@ -311,11 +310,53 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     
     if (Def::parse(ln)) return;
     ln = removeWhitespaceAroundOperators(ln);
+     
+    /*
+     In C++, the standard library provides support for regular expressions
+     through the <regex> library, but it does not support lookbehind
+     assertions (such as (?<!...)) directly, as they are not part of the
+     regular expressions supported by the C++ Standard Library.
+
+     However, we can work around this limitation by adjusting your regular
+     expression to achieve the same result using alternative techniques.
+     
+     This approach doesn’t fully replicate lookbehind functionality, but
+     it can be effective for simpler cases where a limited lookbehind is
+     required.
+     */
+    std::string::const_iterator it(ln.cbegin());
+    r = R"((?:[^<>=]|^)(>=|!=|<>|<=|=>)(?!=[<>=]))";
     
-    ln = regex_replace(ln, std::regex(R"(>=)"), "≥");
-    ln = regex_replace(ln, std::regex(R"(<=)"), "≤");
-    ln = regex_replace(ln, std::regex(R"(!=)"), "≠");
-    ln = regex_replace(ln, std::regex(R"(=>)"), "▶");
+    //TODO: Remove the Hack
+    int hack = 0; // a hack for now to avoid any infinite loop
+    while (std::regex_search(it, ln.cend(), m, r)) {
+        // We will convert any >= != <= or => to PPLs ≥ ≠ ≤ and ▶
+        std::string s = m.str(1);
+        
+        // Replace the operator with the appropriate PPL symbol.
+        if (s == ">=") s = "≥";
+        if (s == "!=") s = "≠";
+        if (s == "<>") s = "≠";
+        if (s == "<=") s = "≤";
+        if (s == "=>") s = "▶";
+        
+        ln = ln.replace(m.position(1), m.length(1), s);
+        
+        // Reset the iterator to the beginning
+        it = ln.cbegin();
+        
+        // Advance the iterator to the position just after the current match
+//        std::advance(it, m.position(1) + s.length() + std::distance(ln.cbegin(), it));
+        if (++hack > 100) break;
+        
+    }
+    
+    ln = expandAssignment(ln);
+    Bitwise::parse(ln);
+    
+    // PPL uses := instead of C's = for assignment. Converting all = to PPL style :=
+    r = R"(([^:=]|^)(?:=)(?!=))";
+    ln = std::regex_replace(ln, r, "$1 := ");
     
     ln = singleton->aliases.resolveAliasesInText(ln);
 
@@ -393,19 +434,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     }
     
     
-    singleton->calc.parse(ln);
-    ln = translateCOperatorsToPPL(ln);
-    Bitwise::parse(ln);
-    ln = regex_replace(ln, std::regex(R"(=>)"), "▶");
-    
-    /*
-     PPL uses := instead of C's = for assignment. Converting = to := in PPL turns every == into :=:= and := into ::=
-     To fix this, we convert all :=:= to == and then all ::= to :=
-     */
-    ln = regex_replace(ln, std::regex(R"(=)"), ":=");
-    ln = regex_replace(ln, std::regex(R"(:=:=)"), "==");
-    ln = regex_replace(ln, std::regex(R"(::=)"), ":=");
-    
+    Calc::parse(ln);
     
     capitalizeKeywords(ln);
     reformatPPLLine(ln);
@@ -544,7 +573,6 @@ void usage(void) {
     std::cout << " verbose :- flags\n";
     std::cout << "            a aliases\n";
     std::cout << "            c comments\n";
-    std::cout << "            l calc\n";
     std::cout << "            e enumerator\n";
     std::cout << "            p preprocessor\n";
     std::cout << "            w structs\n\n";
@@ -619,7 +647,6 @@ int main(int argc, char **argv) {
             if ( args == "-" ) {
                 Singleton::shared()->aliases.verbose = true;
                 Singleton::shared()->comments.verbose = true;
-                Singleton::shared()->calc.verbose = true;
                 enumerators.verbose = true;
                 structurs.verbose = true;
                 preprocessor.verbose = true;
@@ -629,7 +656,6 @@ int main(int argc, char **argv) {
             
             if (args.find("a") != std::string::npos) Singleton::shared()->aliases.verbose = true;
             if (args.find("c") != std::string::npos) Singleton::shared()->comments.verbose = true;
-            if (args.find("l") != std::string::npos) Singleton::shared()->calc.verbose = true;
             if (args.find("e") != std::string::npos) enumerators.verbose = true;
             if (args.find("s") != std::string::npos) structurs.verbose = true;
             if (args.find("p") != std::string::npos) preprocessor.verbose = true;

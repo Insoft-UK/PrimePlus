@@ -36,8 +36,7 @@
 namespace pp {
     class Calc {
     public:
-        bool verbose = false;
-        bool parse(std::string &str);
+        static bool parse(std::string &str);
     };
 }
 

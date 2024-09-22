@@ -1,7 +1,7 @@
 /*
  The MIT License (MIT)
  
- Copyright (c) 2023 Insoft. All rights reserved.
+ Copyright (c) 2023-2024 Insoft. All rights reserved.
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -22,29 +22,32 @@
  SOFTWARE.
  */
 
+#pragma mode( separator(.,;) integer(h64) )
+#pragma ( minify -1, reduce, newline )
 
-#ifndef SWITCH_HPP
-#define SWITCH_HPP
+#include <prime>
 
-#include <iostream>
-#include <vector>
+export HSV(h:hue, s:saturation, v:value)
+begin
+    hue = hue % 360 / 60;
+    saturation = MIN(MAX(saturation, 0), 100) / 100;
+    value = MIN(MAX(value, 0), 100) / 100;
+    
+    local f, p, q, t, m;
+    f = hue - floor(h);
+    p = value * (1 - saturation);
+    q = value * (1 - saturation * f);
+    t = value * (1 - saturation * (1 - f));
 
-namespace pp {
-    class Switch {
-    public:
-        bool verbose = false;
-        bool parse(std::string &str);
-        
-    private:
-        typedef struct TExpression {
-            std::string expression;
-            long indeted;
-        } TExpression;
-        
-        std::vector<TExpression> _expressions;
-        std::vector<int> _level;
-        int _sw = 0;
-    };
-}
-
-#endif /* SWITCH_HPP */
+    local r:red, g:green, b:blue;
+    m = floor(h);
+    
+    if m==0 then red = value; green = t; blue = p; end;
+    if m==1 then red = q; green = value; blue = p; end;
+    if m==2 then red = p; green = value; blue = t; end;
+    if m==3 then red = p; green = q; blue = value; end;
+    if m==4 then red = t; green = p; blue = value; end;
+    if m==5 then red = value; green = p; blue = q; end;
+  
+    return RGB(red * 255, green * 255, blue * 255);
+end;

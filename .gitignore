@@ -6,4 +6,6 @@ xcuserdata/
 bin/*
 .www
 www
-example
+examples/Kelvin.*
+examples/Celsius.*
+*.zip

@@ -51,7 +51,7 @@
 		1314A8BA2B2A09AA00566D5F /* structs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = structs.hpp; sourceTree = "<group>"; };
 		13166E822BA12DE100D1E6F0 /* pplib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = pplib; sourceTree = "<group>"; };
 		13166E842BA12E1D00D1E6F0 /* hpprgm */ = {isa = PBXFileReference; lastKnownFileType = folder; path = hpprgm; sourceTree = "<group>"; };
-		13166E852BA12E5E00D1E6F0 /* example */ = {isa = PBXFileReference; lastKnownFileType = folder; path = example; sourceTree = "<group>"; };
+		13166E852BA12E5E00D1E6F0 /* examples */ = {isa = PBXFileReference; lastKnownFileType = folder; path = examples; sourceTree = "<group>"; };
 		1351CC512BF530CE0073FEDF /* calc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = calc.cpp; sourceTree = "<group>"; };
 		1351CC522BF530CE0073FEDF /* calc.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = calc.hpp; sourceTree = "<group>"; };
 		1351CC552BFC0E180073FEDF /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
@@ -103,7 +103,7 @@
 				138F54D22C976F10009357F9 /* LICENCE.txt */,
 				1351CC552BFC0E180073FEDF /* README.md */,
 				137FB2942A046E8E00AEFDF2 /* p+.entitlements */,
-				13166E852BA12E5E00D1E6F0 /* example */,
+				13166E852BA12E5E00D1E6F0 /* examples */,
 				13166E842BA12E1D00D1E6F0 /* hpprgm */,
 				13166E822BA12DE100D1E6F0 /* pplib */,
 				137FB2872A03B06500AEFDF2 /* src */,

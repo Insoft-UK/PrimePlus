@@ -32,53 +32,19 @@
 using namespace pp;
 
 bool Bitwise::parse(std::string &str) {
-    std::string s, line = str;
-    std::smatch m;
-    std::string result;
+    std::string expresion = str;
     std::regex r;
     
-    bool parsed = false;
+    r = R"(([\w#:]+)>>([\w#:]+))";
+    str = regex_replace(str, r, "BITSR($1,$2)");
+    r = R"(([\w#:]+)<<([\w#:]+))";
+    str = regex_replace(str, r, "BITSL($1,$2)");
+    r = R"(([\w#:]+)\&([\w#:]+))";
+    str = regex_replace(str, r, "BITAND($1,$2)");
+    r = R"(([\w#:]+)\|([\w#:]+))";
+    str = regex_replace(str, r, "BITOR($1,$2)");
     
-    r = R"((?:\()? *([\w#:→]+(?: *\(.*\))?) *([&|\|]|<<|>>) *([\w#:→]+(?: *\(.*\))?)(?:\))?)";
-    while (regex_search(line, m, r)) {
-        std::string matched = m.str();
-        std::sregex_token_iterator it = std::sregex_token_iterator {
-            matched.begin(), matched.end(), r, {1,2,3}
-        };
-        std::string ppl;
-        if (it != std::sregex_token_iterator()) {
-            std::string firstOperand,operation,secondOperand;
-            
-            firstOperand = *it++;
-            operation = *it++;
-            secondOperand = *it++;
-            
-            if (operation == "<<") ppl = "BITSL";
-            if (operation == ">>") ppl = "BITSR";
-            if (operation == "&") ppl = "BITAND";
-            if (operation == "|") ppl = "BITOR";
-            if (operation == "^") ppl = "BITXOR";
-            
-            line = line.replace(m.position(), m.str().length(), ppl + "(" + firstOperand + "," + secondOperand + ")");
-            parsed = true;
-        } else line = line.replace(m.position(), m.str().length(), "(BITWISE PARSING ERROR!)");
-    }
-    
-    r = R"(~ *(?:\()?([\w#:→]+(?: *\(.*\))?)(?:\))?)";
-    while (regex_search(line, m, r)) {
-        std::string matched = m.str();
-        std::sregex_token_iterator it = std::sregex_token_iterator {
-            matched.begin(), matched.end(), r, {1}
-        };
-        if (it != std::sregex_token_iterator()) {
-            line = line.replace(m.position(), m.str().length(), "BITNOT(" + (std::string)*it + ")");
-            parsed = true;
-        } else line = line.replace(m.position(), m.str().length(), "(BITWISE NOT PARSING ERROR!)");
-    }
-
-    str = line;
-    
-    return parsed;
+    return (expresion != str);
 }
 
 
