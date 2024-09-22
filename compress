@@ -29,4 +29,4 @@ zip $zip_file pplib/* -x "*/.DS_Store"
 zip $zip_file hpprgm/* -x "*/.DS_Store"
 
 # Close the Terminal window
-#osascript -e 'tell application "Terminal" to close window 1' & exit
+osascript -e 'tell application "Terminal" to close window 1' & exit

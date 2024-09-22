@@ -379,7 +379,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
         ln = ln.replace(it->position(), it->length(), result);
     }
     
-    r = R"(\b(begin|if|for|case|repeat|while|switch)\b)";
+    r = R"(\b(begin|if|for|case|repeat|while|switch|try)\b)";
     for(auto it = std::sregex_iterator(ln.begin(), ln.end(), r); it != std::sregex_iterator(); ++it) {
         singleton->setNestingLevel(singleton->nestingLevel + 1);
     }
@@ -420,7 +420,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     if (singleton->scope == Singleton::Scope::Local) {
         singleton->switches.parse(ln);
         
-        if (regex_search(ln, std::regex(R"(\b(IF|WHILE|UNTIL|FOR)\b)", std::regex_constants::icase)))
+        if (regex_search(ln, std::regex(R"(\b(IF|WHILE|UNTIL|FOR|TRY)\b)", std::regex_constants::icase)))
             translateCLogicalOperatorsToPPL(ln);
         
         IFTE::parse(ln);
@@ -476,8 +476,6 @@ void translatePPlusAndWriteLine(const std::string& str, std::ofstream &outfile)
     if (ln.length() < 2) ln = std::string("");
 
     writeUTF16Line(ln, outfile);
-    
-    singleton.incrementLineNumber();
 }
 
 
@@ -495,49 +493,41 @@ void translatePPlusToPPL(const std::string &pathname, std::ofstream &outfile)
 {
     Singleton& singleton = *Singleton::shared();
     std::ifstream infile;
+    std::regex r;
+    std::string utf8;
 
     singleton.pushPathname(pathname);
     
     infile.open(pathname,std::ios::in);
     if (!infile.is_open()) exit(2);
     
-    
-    // Read in the whole of the file into a `std::string`
-    std::string utf8;
-    
-    char c;
-    while (!infile.eof()) {
-        infile.get(c);
-        utf8 += c;
-        infile.peek();
-    }
-    
-    /*
-     Pre-correct any `THEN`, `DO` or `REPEAT` statements that are followed by other statements on the
-     same line by moving the additional statement(s) to the next line. This ensures that the code
-     is correctly processed, as it separates the conditional or loop structure from the subsequent
-     statements for proper handling.
-     */
-    
-    std::regex r;
-    
-    r = std::regex(R"(\b(THEN|DO|REPEAT)\b)", std::regex_constants::icase);
-    utf8 = regex_replace(utf8, r, "$0\n");
-    
-    // Make sure all `LOCAL` are on seperate lines.
-    r = std::regex(R"(\b(LOCAL|CONST|var)\b)", std::regex_constants::icase);
-    utf8 = regex_replace(utf8, r, "\n$0");
+    while(getline(infile, utf8)) {
+        std::istringstream iss;
+        
+        /*
+         Pre-correct any `THEN`, `DO` or `REPEAT` statements that are followed by other statements on the
+         same line by moving the additional statement(s) to the next line. This ensures that the code
+         is correctly processed, as it separates the conditional or loop structure from the subsequent
+         statements for proper handling.
+         */
+        r = std::regex(R"(\b(THEN|DO|REPEAT)\b)", std::regex_constants::icase);
+        utf8 = regex_replace(utf8, r, "$0\n");
+        
+        // Make sure all `LOCAL` are on seperate lines.
+        r = std::regex(R"(\b(LOCAL|CONST|var)\b)", std::regex_constants::icase);
+        utf8 = regex_replace(utf8, r, "\n$0");
 
-    r = std::regex(R"(\b(END|endif|wend|next);)", std::regex_constants::icase);
-    utf8 = regex_replace(utf8, r, "\n$0");
-    
-    r = R"(\/\/.*$;)";
-    utf8 = regex_replace(utf8, r, "\n$0");
-    
-    std::istringstream iss;
-    iss.str(utf8);
-    
-    processAndWriteLines(iss, outfile);
+        // All `END` `endif` `wend` and `next` must also be on seperate lines.
+        r = std::regex(R"(\b(END|endif|wend|next);)", std::regex_constants::icase);
+        utf8 = regex_replace(utf8, r, "\n$0");
+        
+        r = R"(\/\/.*$;)";
+        utf8 = regex_replace(utf8, r, "\n$0");
+        
+        iss.str(utf8);
+        processAndWriteLines(iss, outfile);
+        Singleton::shared()->incrementLineNumber();
+    }
     
     infile.close();
     singleton.popPathname();

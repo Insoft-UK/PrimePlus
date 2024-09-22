@@ -115,7 +115,6 @@ begin
                 end;
             end;
     end;
-    
     case
         if a == 0 then a += 1; end;
         if a == 1 then a -= 1; end;
@@ -133,6 +132,19 @@ begin
     
     myStruct.first = 1;
     myStruct.second = 2;
+end;
+
+Try()
+begin
+    var a, b = 0;
+    try
+        a += 1;
+        a /= b;
+    catch
+        return -1;
+    else
+        return 0;
+    end;
 end;
 
 
