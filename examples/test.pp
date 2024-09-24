@@ -21,11 +21,23 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  SOFTWARE.
  */
+ 
+Comments() // After.
+begin
+    // Before on seperate line.
+    // Another Comment!
+    local a, b::iamNotValidAlso;
+end;
 
+Invalid::NameForPPL() // An auto name will be picked for function name `Invalid::NameForPPL` due to it being an invalid name in PPL
+begin
+    Invalid::NameForPPL();
+end;
 
-#pragma ( messages )
-
-
+ValidNameForPPL()
+begin
+    Invalid::NameForPPL(); // `Invalid::NameForPPL`
+end;
 
 Operators()
 begin
@@ -88,6 +100,7 @@ end;
 Auto()
 begin
     auto iWasAVeryLongName, b;
+    auto iWas::Invalid = 0; // invalid because it's asigning a value.
     var a:thisIsMyLongName, auto:letYouDecideMyShortName;
     
     iWasAVeryLongName = thisIsMyLongName + b;
@@ -146,6 +159,14 @@ begin
         return 0;
     end;
 end;
+
+PreCalc()
+begin
+    var c:centre = #[320 / #2d];
+    centre *= 2; // Alias Name!
+    return c; // Actual Name!
+end;
+
 
 
 

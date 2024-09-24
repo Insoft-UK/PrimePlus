@@ -259,7 +259,8 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     }
     
     if (ln.substr(0,2) == "//") {
-        ln = ln.insert(0, std::string(singleton->nestingLevel * INDENT_WIDTH, ' ') + "\n");
+        ln = ln.insert(0, std::string(singleton->nestingLevel * INDENT_WIDTH, ' '));
+        ln += '\n';
         return;
     }
     
@@ -470,7 +471,6 @@ void writeUTF16Line(const std::string& ln, std::ofstream& outfile) {
 
 void translatePPlusAndWriteLine(const std::string& str, std::ofstream &outfile)
 {
-    Singleton& singleton = *Singleton::shared();
     std::string ln = str;
     translatePPlusLine(ln, outfile);
     if (ln.length() < 2) ln = std::string("");
@@ -708,16 +708,10 @@ int main(int argc, char **argv) {
     str = R"(#define __VERSION 2.0)";
     preprocessor.parse(str);
     
-    
-    
     translatePPlusToPPL(in_filename, outfile);
     
     // Stop measuring time and calculate the elapsed time.
     clock_gettime(CLOCK_MONOTONIC, &end);
-    
-    // Display elasps time in secononds.
-    double delta_us = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_nsec - start.tv_nsec) / 1000;
-    printf("Completed in %.3f seconds.\n", delta_us * 1e-6);
     
     outfile.close();
     
@@ -727,6 +721,9 @@ int main(int argc, char **argv) {
         return 0;
     }
 
+    // Display elasps time in secononds.
+    double delta_us = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_nsec - start.tv_nsec) / 1000;
+    printf("Completed in %.3f seconds.\n", delta_us * 1e-6);
     
     std::cout << "UTF-16LE File '" << out_filename << "' Succefuly Created.\n";
     
