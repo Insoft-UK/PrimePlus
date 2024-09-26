@@ -40,6 +40,7 @@ public:
 
     
     bool parse(std::string &str);
+    void removeAllLocalStructs(void);
     
 protected:
     
@@ -47,6 +48,7 @@ private:
     struct _Structure {
         std::string identifier;
         std::vector<std::string> members;
+        bool local;
     };
     std::vector<_Structure> _structures;
     _Structure _structure;

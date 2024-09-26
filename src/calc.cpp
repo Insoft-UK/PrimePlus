@@ -283,6 +283,34 @@ static void convertPPLStyleNumberToBase10(std::string &str) {
     }
 }
 
+static void migratePreCalcInstructions(std::string& str) {
+    std::regex r;
+    std::smatch m;
+    std::string s;
+    
+    r = R"(#\[(.*)\](?::(\d+))?)";
+    
+    while (regex_search(str, m, r)) {
+        std::string expression;
+        std::string matched = m.str();
+        int scale = 0;
+        
+        auto it = std::sregex_token_iterator {
+            matched.begin(), matched.end(), r, {1, 2}
+        };
+        if (it != std::sregex_token_iterator()) {
+            expression = *it++;
+            if (it->matched) {
+                scale = atoi(it->str().c_str());
+            } else scale = 0; // 0 means auto scale
+        }
+        migratePreCalcInstructions(expression);
+        str = str.replace(m.position(), m.length(), "\\" + std::to_string(scale) + "[" + expression + "]");
+        return;
+    }
+}
+
+
 // MARK: -
 
 bool Calc::parse(std::string &str)
@@ -290,14 +318,10 @@ bool Calc::parse(std::string &str)
     std::regex r;
     std::smatch m;
     
-
-    /*
-     eg. test(#[320/(7+-2*2)]:0); or test(±320/(7+-2*2):0)
-     Group  0 #[320/(7+-2*2)]:0
-            1 320/(7+-2*2)
-     Opt!   2 0
-    */
-    r = R"(#\[(.*)\](?::(\d))?)";
+    // Convert any legacy pre-calc instructions to the updated pre-calc format.
+    migratePreCalcInstructions(str);
+    
+    r = R"(\\( *\d{1,2})?\[(.*)\])";
     while (regex_search(str, m, r)) {
         
         std::string matched = m.str();
@@ -305,7 +329,7 @@ bool Calc::parse(std::string &str)
         convertPPLStyleNumberToBase10(matched);
         
         std::string expression;
-        int scale = -1;
+        int scale = 0;
         
         matched = regex_replace(matched, std::regex(R"(e)"), "2.71828182845904523536028747135266250");
         matched = regex_replace(matched, std::regex(R"(π|pi)"), "3.14159265358979323846264338327950288");
@@ -319,10 +343,11 @@ bool Calc::parse(std::string &str)
             matched.begin(), matched.end(), r, {1, 2}
         };
         if (it != std::sregex_token_iterator()) {
-            expression = *it++;
             if (it->matched) {
                 scale = atoi(it->str().c_str());
             } else scale = -1; // -1 means auto scale
+            it++;
+            expression = *it;
         }
         
         parse(expression);

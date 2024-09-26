@@ -1,62 +1,50 @@
-/*
- The MIT License (MIT)
- 
- Copyright (c) 2023-2024 Insoft. All rights reserved.
- 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
- 
- The above copyright notice and this permission notice shall be included in all
- copies or substantial portions of the Software.
- 
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- SOFTWARE.
- */
- 
-Comments() // After.
+Var()
 begin
-    // Before on seperate line.
-    // Another Comment!
-    local a, b::iamNotValidAlso;
+    var a, b; var c, d;
 end;
 
-Invalid::NameForPPL() // An auto name will be picked for function name `Invalid::NameForPPL` due to it being an invalid name in PPL
+Comments()
 begin
-    Invalid::NameForPPL();
+    // blar...blar...blar..
+    return "blar...blar...blar.."; // blar...blar...blar..
 end;
 
-ValidNameForPPL()
+Implied::AutoNameForPPL()
 begin
-    Invalid::NameForPPL(); // `Invalid::NameForPPL`
+    return 0;
+end;
+
+ValidPPLFunctionName()
+begin
+    Implied::AutoNameForPPL();
 end;
 
 Operators()
 begin
     var a, b;
-
+    
+    a >> b;
     a >> b;
     a << b;
+    
     a & b;
     a | b;
+    
     a = b;
     
     a += b;
     a -= b;
     a /= b;
     a %= b;
+
     a &= b;
     a |= b;
+
+    // In mathematics, the symbol ^ represents exponentiation.
+    // It is used to denote that a number (the base) is raised
+    // to the power of another number (the exponent).
     a ^= b;
-    
+
     a <<= b;
     a >>= b;
 end;
@@ -64,11 +52,21 @@ end;
 Branch()
 begin
     var a, b;
-
+    
+    if a == b then
+        a += 1;
+    else
+        a = 10;
+    endif;
+    
     if a <= b && b > 10 then a += 1; endif;
+    
     if a != b && b > 10 then a += 1; endif;
+    
     if a <> b && b > 10 then a += 1; endif;
+    
     if a >= b || b < 20 then a += 1; endif;
+    
     if a == b || b < 20 then a += 1; endif;
 end;
 
@@ -128,20 +126,33 @@ begin
                 end;
             end;
     end;
+    
     case
         if a == 0 then a += 1; end;
         if a == 1 then a -= 1; end;
     end;
 end;
 
-Struct()
+Struct_1()
 begin
-    struct TMyStruct
+    struct LocalStruct
         first[1];
         second[2];
     end;
+    struct LocalStruct auto:myStruct;
     
-    struct TMyStruct auto:myStruct;
+    myStruct.first = 1;
+    myStruct.second = 2;
+end;
+
+struct GlobalStruct
+    first[1,1];
+    second[2,1];
+end;
+
+Struct_2()
+begin
+    struct GlobalStruct auto:myStruct;
     
     myStruct.first = 1;
     myStruct.second = 2;
@@ -162,10 +173,18 @@ end;
 
 PreCalc()
 begin
-    var c:centre = #[320 / #2d];
-    centre *= 2; // Alias Name!
-    return c; // Actual Name!
+    var ppl_numbers = \[320 / #2d];
+    var old = #[ 1 + 2 * 4 / 2 ]:2;
+    var new = \ 2 [ 1 + 2 * 4 / 2 ];
 end;
+
+#PPL
+I_AM_PPL_CODE()
+BEGIN
+    LOCAL a; LOCAL b;
+    var b; // I am not PPL Code!
+END;
+#end
 
 
 

@@ -31,7 +31,11 @@
 
 using namespace pp;
 
+static unsigned counter = 0;
 static Singleton *singleton = Singleton::shared();
+
+// MARK: - Private Functions
+
 
 static bool isStructureVariable(const std::string str) {
     return regex_search(str, std::regex(R"(\bstruct +[A-Za-z]\w* +[A-Za-z][\w*:.]* *(?:;|,))"));
@@ -53,14 +57,12 @@ static std::string extractDeclarationName(const std::string &str) {
     std::string identifier = str;
     std::regex r(R"([A-Za-z]\w*(?=:))");
     std::smatch m;
-    static unsigned counter = 0;
+//    static unsigned counter = 0;
     
     if (regex_search(str, m, r)) {
         identifier = m.str();
         if (identifier == "auto") {
-            std::ostringstream os;
-            os << "s" << ++counter;
-            identifier = os.str();
+            identifier = "s" + std::to_string(++counter);
         }
         return identifier;
     }
@@ -93,6 +95,73 @@ static bool isValidVariableName(const std::string &str) {
     return !regex_search(str, r);
 }
 
+// MARK: - Public Methods
+
+bool Structs::parse(std::string& str) {
+    std::regex r;
+    std::smatch m;
+    std::string s = str;
+    std::ostringstream os;
+    
+    
+    if (!parsing) {
+        r = R"(^struct +([A-Za-z][\w:.]*)$)";
+        std::sregex_token_iterator it = std::sregex_token_iterator {
+            str.begin(), str.end(), r, {1}
+        };
+        if (it != std::sregex_token_iterator()) {
+            // Structure Declaration
+            _structure.identifier = *it++;
+            _structure.local = Singleton::shared()->scope == Singleton::Scope::Local;
+            if (verbose) std::cout << MessageType::Verbose << "struct: '" << _structure.identifier << "' defined\n";
+            
+            parsing = true;
+            return true;
+        }
+        
+        if (isStructureVariable(str)) {
+            // Create a Structure Variable
+            createStructureVariable(str);
+        }
+        return false;
+    }
+    
+    // End of Structure Declaration
+    r = R"(^end;$)";
+    if (regex_match(str, r)) {
+        _structures.push_back(_structure);
+        _structure.members.clear();
+        parsing = false;
+        return true;
+    }
+    
+    
+    // Structure Members
+    r =  R"([^;]+(?=[^;]*))";
+    for(std::sregex_iterator it = std::sregex_iterator(str.begin(), str.end(), r); it != std::sregex_iterator(); ++it) {
+        std::string member = it->str();
+        trim(member);
+        _structure.members.push_back(member);
+    }
+
+    return parsing;
+}
+
+void Structs::removeAllLocalStructs(void) {
+    for (auto it = _structures.begin(); it != _structures.end(); ++it) {
+        if (it->local == true) {
+            if (verbose) std::cout
+                << MessageType::Verbose
+                << "struct: '" << it->identifier << "' removed!\n";
+            _structures.erase(it);
+            removeAllLocalStructs();
+            break;
+        }
+    }
+    counter = 0;
+}
+
+// MARK: - Private Methods
 void Structs::defineStruct(const _Structure &structure, const std::string &real, const std::string &identifier) {
     std::regex r;
     
@@ -120,7 +189,7 @@ void Structs::defineStruct(const _Structure &structure, const std::string &real,
             continue;
         }
         
-        if (verbose) std::cout << MessageType::Verbose << "struct: P+: " << identity.identifier << " PPL: " << identity.real << "\n";
+        if (verbose) std::cout << MessageType::Verbose << "struct: P+ '" << identity.identifier << "' subtitution for PPL '" << identity.real << "' \n";
         singleton->aliases.append(identity);
     }
 }
@@ -180,54 +249,7 @@ void Structs::createStructureVariable(std::string &str) {
     }
 }
 
-bool Structs::parse(std::string& str) {
-    std::regex r;
-    std::smatch m;
-    std::string s = str;
-    std::ostringstream os;
-    
-    
-    if (!parsing) {
-        r = R"(^struct +([A-Za-z][\w:.]*)$)";
-        std::sregex_token_iterator it = std::sregex_token_iterator {
-            str.begin(), str.end(), r, {1}
-        };
-        if (it != std::sregex_token_iterator()) {
-            // Structure Declaration
-            _structure.identifier = *it++;
-            if (verbose) std::cout << MessageType::Verbose << "struct: '" << _structure.identifier << "' defined\n";
-            
-            parsing = true;
-            return true;
-        }
-        
-        if (isStructureVariable(str)) {
-            // Create a Structure Variable
-            createStructureVariable(str);
-        }
-        return false;
-    }
-    
-    // End of Structure Declaration
-    r = R"(^end;$)";
-    if (regex_match(str, r)) {
-        _structures.push_back(_structure);
-        _structure.members.clear();
-        parsing = false;
-        return true;
-    }
-    
-    
-    // Structure Members
-    r =  R"([^;]+(?=[^;]*))";
-    for(std::sregex_iterator it = std::sregex_iterator(str.begin(), str.end(), r); it != std::sregex_iterator(); ++it) {
-        std::string member = it->str();
-        trim(member);
-        _structure.members.push_back(member);
-    }
 
-    return parsing;
-}
 
 
 
