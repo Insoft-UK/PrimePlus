@@ -4,6 +4,7 @@ P+ is a proprietary programming language designed to mitigate the challenges ass
 P+ is essentially the PPL language with additional features, such as substitution capabilities, and requires all keywords to be in lowercase.
 <br/><br/>
 
+Please view the test <a href="https://github.com/Insoft-UK/PrimePlus/blob/main/examples/test.pp">code</a> to see what additional features P+ adds to the Prime Programming Language (PPL).
 
 > [!IMPORTANT]
 In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
