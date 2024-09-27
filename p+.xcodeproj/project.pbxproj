@@ -61,6 +61,7 @@
 		137FB2942A046E8E00AEFDF2 /* p+.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "p+.entitlements"; sourceTree = "<group>"; };
 		1384DE7B2B6D70DE0090E24D /* switch.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = switch.cpp; sourceTree = "<group>"; };
 		1384DE7C2B6D70DE0090E24D /* switch.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = switch.hpp; sourceTree = "<group>"; };
+		1389CFEA2CA73BA6008FDBEB /* timer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = timer.hpp; sourceTree = "<group>"; };
 		138F54D22C976F10009357F9 /* LICENCE.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENCE.txt; sourceTree = "<group>"; };
 		138F54DC2C9E12EF009357F9 /* for_next.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = for_next.cpp; sourceTree = "<group>"; };
 		138F54DD2C9E12EF009357F9 /* for_next.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = for_next.hpp; sourceTree = "<group>"; };
@@ -130,6 +131,7 @@
 				13C21F9B2A783D8D0067CE22 /* common.cpp */,
 				1308E8F52AC48F20001EEC82 /* singleton.hpp */,
 				1308E8F42AC48F20001EEC82 /* singleton.cpp */,
+				1389CFEA2CA73BA6008FDBEB /* timer.hpp */,
 			);
 			path = src;
 			sourceTree = "<group>";

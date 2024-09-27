@@ -33,9 +33,9 @@ namespace pp {
     public:
         bool verbose = false;
         
-        void preserveComment(const std::string &str);
-        std::string& removeComment(std::string &str);
-        std::string& restoreComment(std::string &str);
+        void preserveComment(const std::string& str);
+        std::string& removeComment(std::string& str);
+        std::string& restoreComment(std::string& str);
         
     private:
         std::string _preservedComment;

@@ -28,9 +28,11 @@
 #include <regex>
 #include <cstring>
 #include <iomanip>
-
+#include <cmath>
 #include <sys/time.h>
+#include <ctime>
 
+#include "timer.hpp"
 #include "singleton.hpp"
 #include "common.hpp"
 
@@ -71,6 +73,8 @@ void (*old_terminate)() = std::set_terminate(terminator);
 void translatePPlusToPPL(const std::string &pathname, std::ofstream &outfile);
 
 // MARK: - Utills
+
+
 
 /*
  The decimalToBase24 function converts a given
@@ -776,8 +780,7 @@ int main(int argc, char **argv) {
     outfile.put(0xFE);
     
     // Start measuring time
-    struct timespec start, end;
-    clock_gettime(CLOCK_MONOTONIC, &start);
+    Timer timer;
     
     std::string str;
     str = "#define __pplus";
@@ -792,7 +795,8 @@ int main(int argc, char **argv) {
     translatePPlusToPPL(in_filename, outfile);
     
     // Stop measuring time and calculate the elapsed time.
-    clock_gettime(CLOCK_MONOTONIC, &end);
+    long long elapsed_time = timer.elapsed();
+
     
     outfile.close();
     
@@ -803,9 +807,7 @@ int main(int argc, char **argv) {
     }
 
     // Display elasps time in secononds.
-    double delta_us = (end.tv_sec - start.tv_sec) * 1000000 + (end.tv_nsec - start.tv_nsec) / 1000;
-    printf("Completed in %.3f seconds.\n", delta_us * 1e-6);
-    
+    std::cout << "Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e9 << " seconds\n";
     std::cout << "UTF-16LE File '" << out_filename << "' Succefuly Created.\n";
     
     

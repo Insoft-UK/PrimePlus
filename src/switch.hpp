@@ -27,13 +27,14 @@
 #define SWITCH_HPP
 
 #include <iostream>
+#include <iostream>
 #include <vector>
 
 namespace pp {
     class Switch {
     public:
         bool verbose = false;
-        bool parse(std::string &str);
+        bool parse(std::string& str);
         
     private:
         typedef struct TExpression {

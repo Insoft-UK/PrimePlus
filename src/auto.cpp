@@ -53,7 +53,7 @@ static std::string base10ToBase32(unsigned int num) {
 }
 
 // This function will examine any variable name thats not a valid PPL variable name and asign an auto: prefix to it.
-static void inferredAutoForVariableName(std::string &ln) {
+static void inferredAutoForVariableName(std::string& ln) {
     std::regex r;
     
     r = std::regex(R"(\b((?:var|local|const) +)(.*)(?=;))", std::regex_constants::icase);
@@ -69,7 +69,8 @@ static void inferredAutoForVariableName(std::string &ln) {
             std::string s = trim_copy(it->str());
             if (regex_search(s, std::regex(R"(^[A-Za-z]\w*:[a-zA-Z])"))) {
                 code.append(s);
-            } else {
+            }
+            else {
                 if (regex_search(s, std::regex(R"(^[A-Za-z]\w*(?:(::)|\.))"))) {
                     s.insert(0, "auto:");
                 }
@@ -83,7 +84,7 @@ static void inferredAutoForVariableName(std::string &ln) {
     }
 }
 
-static void inferredAutoForShortNameOnly(std::string &str) {
+static void inferredAutoForShortNameOnly(std::string& str) {
     std::regex r;
     std::smatch m;
     
@@ -95,7 +96,7 @@ static void inferredAutoForShortNameOnly(std::string &str) {
     }
 }
 
-bool Auto::parse(std::string &str) {
+bool Auto::parse(std::string& str) {
     std::smatch m;
     std::regex r;
     size_t pos;

@@ -31,7 +31,7 @@
 namespace pp {
     class IFTE {
     public:
-        static bool parse(std::string &str);
+        static bool parse(std::string& str);
     };
 }
 

@@ -42,7 +42,7 @@ namespace pp {
         bool operators = true;
         bool logicalOperators = true;
         
-        bool parse(std::string &str);
+        bool parse(std::string& str);
         
     private:
         std::list<std::string> _nesting;

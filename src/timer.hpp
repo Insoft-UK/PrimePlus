@@ -1,7 +1,7 @@
 /*
  The MIT License (MIT)
  
- Copyright (c) 2023 Insoft. All rights reserved.
+ Copyright (c) 2023-2024 Insoft. All rights reserved.
  
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -22,22 +22,26 @@
  SOFTWARE.
  */
 
-
-#ifndef Calc_hpp
-#define Calc_hpp
+#ifndef TIMER_HPP
+#define TIMER_HPP
 
 #include <iostream>
-#include <vector>
-#include <string>
-#include <unordered_map>
-#include <deque>
-#include <stdint.h>
+#include <chrono>
+#include <thread>
 
-namespace pp {
-    class Calc {
-    public:
-        static bool parse(std::string& str);
-    };
-}
+class Timer {
+public:
+    Timer() : start_time_point(std::chrono::high_resolution_clock::now()) {}
 
-#endif /* Calc_hpp */
+    // Method to stop the timer and get elapsed time in nanoseconds
+    long long elapsed() {
+        auto end_time_point = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(end_time_point - start_time_point);
+        return duration.count();
+    }
+
+private:
+    std::chrono::high_resolution_clock::time_point start_time_point;
+};
+
+#endif /* TIMER_HPP */

@@ -30,6 +30,8 @@
 #include <vector>
 #include <stack>
 #include <sstream>
+#include <iomanip>
+#include <cmath>
 
 using namespace pp;
 
@@ -238,7 +240,7 @@ static std::string decimalUnsignedNumber(int64_t num, int bitWidth) {
 }
 
 // Function to convert a string with PPL-style integer number to return a base 10 number
-static std::string convertPPLIntegerNumberToBase10(const std::string &str) {
+static std::string convertPPLIntegerNumberToBase10(const std::string& str) {
     std::regex r;
     std::smatch m;
     
@@ -266,7 +268,7 @@ static std::string convertPPLIntegerNumberToBase10(const std::string &str) {
 }
 
 // Function to convert a string with PPL-style integer number to a plain base 10 number
-static void convertPPLStyleNumberToBase10(std::string &str) {
+static void convertPPLStyleNumberToBase10(std::string& str) {
     std::regex r;
     std::smatch m;
     std::string s;
@@ -302,7 +304,10 @@ static void migratePreCalcInstructions(std::string& str) {
             expression = *it++;
             if (it->matched) {
                 scale = atoi(it->str().c_str());
-            } else scale = 0; // 0 means auto scale
+            }
+            else {
+                scale = 0; // 0 means auto scale
+            }
         }
         migratePreCalcInstructions(expression);
         str = str.replace(m.position(), m.length(), "\\" + std::to_string(scale) + "[" + expression + "]");
@@ -345,7 +350,10 @@ bool Calc::parse(std::string &str)
         if (it != std::sregex_token_iterator()) {
             if (it->matched) {
                 scale = atoi(it->str().c_str());
-            } else scale = -1; // -1 means auto scale
+            }
+            else {
+                scale = -1; // -1 means auto scale
+            }
             it++;
             expression = *it;
         }

@@ -35,11 +35,11 @@ using namespace pp;
 
 static Singleton *singleton = Singleton::shared();
 
-static void eval(std::string &str) {
+static void eval(std::string& str) {
     str = singleton->aliases.resolveAliasesInText(str);
 }
 
-static std::string shell(std::string &cmd) {
+static std::string shell(std::string& cmd) {
     FILE *fp;
     std::string out;
     
@@ -59,7 +59,7 @@ static std::string shell(std::string &cmd) {
     return out;
 }
 
-static std::ifstream openAsBinary(const std::string &filename) {
+static std::ifstream openAsBinary(const std::string& filename) {
     std::ifstream infile;
     Singleton *singleton = Singleton::shared();
     std::string pathname = filename;
@@ -72,18 +72,22 @@ static std::ifstream openAsBinary(const std::string &filename) {
     return infile;
 }
 
-static std::string load(std::string &filename) {
+static std::string load(std::string& filename) {
     std::ifstream infile;
     std::string str;
     
     infile = openAsBinary(filename);
-    if (!infile.is_open()) return str;
+    if (!infile.is_open()) {
+        return str;
+    }
 
     std::string ln;
     while (!infile.eof()) {
         std::getline(infile, ln);
         infile.peek();
-        if (!infile.eof()) ln += '\n';
+        if (!infile.eof()) {
+            ln += '\n';
+        }
         str.append(ln);
     }
     
@@ -91,7 +95,7 @@ static std::string load(std::string &filename) {
     return str;
 }
 
-bool Def::parse(std::string &str) {
+bool Def::parse(std::string& str) {
     std::regex r;
     std::smatch m;
     std::string s;

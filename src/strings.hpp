@@ -34,8 +34,8 @@ namespace pp {
     public:
         Strings() {
         }
-        void preserveStrings(const std::string &str);
-        void restoreStrings(std::string &altered);
+        void preserveStrings(const std::string& str);
+        void restoreStrings(std::string& altered);
         
     private:
         std::list<std::string> _preservedStrings;

@@ -30,7 +30,7 @@
 namespace pp {
     class DoLoop {
     public:
-        static bool parse(std::string &str);
+        static bool parse(std::string& str);
     };
 }
 

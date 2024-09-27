@@ -46,14 +46,14 @@ static bool hasAliasDeclaration(const std::string& str) {
     return regex_search(str, r);
 }
 
-static std::string extractAliasDeclarationName(const std::string &str) {
+static std::string extractAliasDeclarationName(const std::string& str) {
     std::string identifier;
     size_t pos = str.find(':') + 1;
     identifier = str.substr(pos, str.length() - pos);
     return identifier;
 }
 
-static std::string extractDeclarationName(const std::string &str) {
+static std::string extractDeclarationName(const std::string& str) {
     std::string identifier = str;
     std::regex r(R"([A-Za-z]\w*(?=:))");
     std::smatch m;
@@ -71,7 +71,7 @@ static std::string extractDeclarationName(const std::string &str) {
     return identifier;
 }
 
-static std::vector<std::string> extractVariableDeclarationName(const std::string &str) {
+static std::vector<std::string> extractVariableDeclarationName(const std::string& str) {
     std::vector<std::string> name;
     std::string s;
     std::regex r(R"(([A-Za-z][\w*:.]*))");
@@ -84,7 +84,7 @@ static std::vector<std::string> extractVariableDeclarationName(const std::string
     return name;
 }
 
-static bool isValidVariableName(const std::string &str) {
+static bool isValidVariableName(const std::string& str) {
     std::regex r;
     
     r = R"(\w:\w)";
@@ -162,7 +162,7 @@ void Structs::removeAllLocalStructs(void) {
 }
 
 // MARK: - Private Methods
-void Structs::defineStruct(const _Structure &structure, const std::string &real, const std::string &identifier) {
+void Structs::defineStruct(const _Structure& structure, const std::string& real, const std::string& identifier) {
     std::regex r;
     
     Aliases::TIdentity identity = {
@@ -184,7 +184,8 @@ void Structs::defineStruct(const _Structure &structure, const std::string &real,
         
         if (it != std::sregex_token_iterator()) {
             identity.identifier = identifier + "." + (std::string)*it;
-        } else {
+        }
+        else {
             if (verbose) std::cout << MessageType::Verbose << "struct: syntax error!\n";
             continue;
         }
@@ -224,7 +225,8 @@ void Structs::createStructureVariable(std::string &str) {
                 identifier = extractAliasDeclarationName(*name);
                 real = extractDeclarationName(*name);
                 if (verbose) std::cout << MessageType::Verbose << "struct: variable '" << identifier << "' for '" << real << "' defined\n";
-            } else {
+            }
+            else {
                 identifier = *name;
                 real = *name;
                 if (verbose) std::cout << MessageType::Verbose << "struct: variable '" << real << "' defined\n";

@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 DIR=$(dirname "$0")
 printf '\e[1;40;92m'
 clear
@@ -21,10 +21,10 @@ echo "Archiving File... Please Wait!"
 
 zip_file="$xcodeproj_name.zip"
 
-echo "Archiving for $platform"
+echo "Archiving..."
 rm $zip_file
 
-zip $zip_file bin/* -r -x "*/.DS_Store"
+zip $zip_file bin/macos/* -r -x "*/.DS_Store"
 zip $zip_file pplib/* -x "*/.DS_Store"
 zip $zip_file hpprgm/* -x "*/.DS_Store"
 

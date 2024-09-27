@@ -45,7 +45,7 @@ namespace pp {
         std::string _enumerator;
         std::vector<Aliases::TIdentity> _identities;
         
-        void parseEnumItems(const std::string &str);
+        void parseEnumItems(const std::string& str);
     };
 }
 

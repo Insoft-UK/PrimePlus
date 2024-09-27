@@ -4,8 +4,6 @@ xcuserdata/
 *.sh
 *.psd
 bin/*
-.www
-www
 examples/Kelvin.*
 examples/Celsius.*
 *.zip

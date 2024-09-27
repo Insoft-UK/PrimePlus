@@ -1,0 +1,66 @@
+#!/bin/bash
+DIR=$(dirname "$0")
+clear
+ANSI_ART=$(cat <<EOF
+\e[0;m              \e[48;5;34m    \e[0;m    \e[0;m
+\e[0;m            \e[48;5;34m      \e[0;m    \e[0;m
+\e[0;m            \e[48;5;34m    \e[0;m      \e[0;m
+\e[0;m                      \e[0;m
+\e[0;m    \e[48;5;34m      \e[0;m      \e[48;5;34m      \e[0;m
+\e[0;m  \e[48;5;220m                    \e[0;m
+\e[48;5;220m                    \e[0;m  \e[0;m
+\e[48;5;208m                  \e[0;m    \e[0;m
+\e[48;5;208m                  \e[0;m    \e[0;m
+\e[48;5;160m                    \e[0;m  \e[0;m
+\e[48;5;160m                      \e[0;m
+\e[0;m  \e[48;5;125m                    \e[0;m
+\e[0;m    \e[48;5;125m                \e[0;m  \e[0;m
+\e[0;m      \e[48;5;38m    \e[0;m    \e[48;5;38m    \e[0;m    \e[0;m
+EOF
+)
+
+printf "$ANSI_ART\n"
+
+cd $DIR
+
+# Use find to locate the .xcodeproj file
+xcodeproj_file=$(find . -name "*.xcodeproj" -print -quit)
+
+# Check if a .xcodeproj file was found
+if [ -n "$xcodeproj_file" ]; then
+    xcodeproj_name=$(basename "$xcodeproj_file" .xcodeproj)
+else
+    echo "No .xcodeproj file found."
+    # Close the Terminal window
+    osascript -e 'tell application "Terminal" to close window 1' & exit
+fi
+
+# Compiling Code...
+
+if [ ! -d "bin" ]; then
+    mkdir bin
+fi
+if [ ! -d "bin/macos" ]; then
+    mkdir bin/macos
+fi
+
+echo "Compiling Code..."
+echo "macOS Universal Binary"
+g++ -arch x86_64 -arch arm64 -std=c++20 src/*.cpp -o bin/macos/$xcodeproj_name -Os -fno-ident -fno-asynchronous-unwind-tables
+strip bin/macos/$xcodeproj_name
+lipo -info bin/macos/$xcodeproj_name
+
+# Ask the user a question
+result=$(osascript -e 'display dialog "Do you want to sign this code?" buttons {"Yes", "No"} default button "Yes"')
+
+# Process the result
+if [[ "$result" == *"Yes"* ]]; then
+    # Code Signing...
+    echo "Code Signing... Please wait!"
+
+    IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | awk '{print $2}')
+    codesign -s "$IDENTITY" ./bin/macos/$xcodeproj_name
+fi
+
+# Close the Terminal window
+osascript -e 'tell application "Terminal" to close window 1' & exit

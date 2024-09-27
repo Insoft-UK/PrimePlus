@@ -68,14 +68,14 @@ namespace pp {
         
         bool verbose = false;
         
-        bool append(const TIdentity &identity);
+        bool append(const TIdentity& identity);
         void removeAllLocalAliases();
         void removeAllAliasesOfType(const Type type);
-        std::string resolveAliasesInText(const std::string &str);
-        void remove(const std::string &identifier);
-        bool exists(const TIdentity &identity);
-        bool identifierExists(const std::string &identifier);
-        bool realExists(const std::string &real);
+        std::string resolveAliasesInText(const std::string& str);
+        void remove(const std::string& identifier);
+        bool exists(const TIdentity& identity);
+        bool identifierExists(const std::string& identifier);
+        bool realExists(const std::string& real);
         void dumpIdentities();
         
     private:

@@ -1,0 +1,63 @@
+#!/bin/bash
+DIR=$(dirname "$0")
+
+clear
+ANSI_ART=$(cat <<EOF
+\e[0;m                                  \e[48;5;25m        \e[0;m                  \e[0;m
+\e[0;m                              \e[48;5;25m                    \e[0;m          \e[0;m
+\e[0;m                      \e[48;5;25m              \e[0;m        \e[48;5;25m          \e[0;m      \e[0;m
+\e[0;m                \e[48;5;25m            \e[0;m                        \e[48;5;25m    \e[0;m    \e[0;m
+\e[0;m              \e[48;5;25m  \e[0;m                                      \e[48;5;25m    \e[0;m  \e[0;m
+\e[0;m                                                        \e[48;5;25m    \e[0;m
+\e[0;m          \e[48;5;25m    \e[0;m            \e[48;5;25m  \e[0;m              \e[48;5;25m    \e[0;m  \e[48;5;25m  \e[0;m      \e[48;5;25m    \e[0;m
+\e[0;m      \e[48;5;25m  \e[0;m                  \e[48;5;25m  \e[0;m              \e[48;5;25m    \e[0;m            \e[48;5;25m  \e[0;m
+\e[0;m    \e[48;5;25m  \e[0;m    \e[48;5;25m    \e[0;m  \e[48;5;25m      \e[0;m    \e[48;5;25m    \e[0;m    \e[48;5;25m    \e[0;m    \e[48;5;25m    \e[0;m          \e[48;5;25m    \e[0;m
+\e[0;m  \e[48;5;25m    \e[0;m    \e[48;5;25m    \e[0;m  \e[48;5;25m  \e[0;m    \e[48;5;25m  \e[0;m  \e[48;5;25m  \e[0;m    \e[48;5;25m  \e[0;m    \e[48;5;25m  \e[0;m  \e[48;5;25m    \e[0;m          \e[48;5;25m    \e[0;m
+\e[0;m  \e[48;5;25m    \e[0;m    \e[48;5;25m    \e[0;m  \e[48;5;25m  \e[0;m    \e[48;5;25m  \e[0;m  \e[48;5;25m  \e[0;m    \e[48;5;25m        \e[0;m  \e[48;5;25m    \e[0;m        \e[48;5;25m    \e[0;m  \e[0;m
+\e[48;5;25m    \e[0;m      \e[48;5;25m    \e[0;m  \e[48;5;25m  \e[0;m    \e[48;5;25m  \e[0;m  \e[48;5;25m  \e[0;m    \e[48;5;25m  \e[0;m        \e[48;5;25m    \e[0;m      \e[48;5;25m    \e[0;m    \e[0;m
+\e[48;5;25m  \e[0;m          \e[48;5;25m  \e[0;m  \e[48;5;25m  \e[0;m    \e[48;5;25m  \e[0;m    \e[48;5;25m  \e[0;m    \e[48;5;25m    \e[0;m      \e[48;5;25m  \e[0;m    \e[48;5;25m    \e[0;m      \e[0;m
+\e[48;5;25m  \e[0;m                                                          \e[0;m
+\e[48;5;25m      \e[0;m                                  \e[48;5;25m          \e[0;m          \e[0;m
+\e[0;m  \e[48;5;25m      \e[0;m                          \e[48;5;25m          \e[0;m                \e[0;m
+\e[0;m    \e[48;5;25m          \e[0;m            \e[48;5;25m            \e[0;m                      \e[0;m
+\e[0;m      \e[48;5;25m                      \e[0;m                                \e[0;m
+\e[0;m              \e[48;5;25m        \e[0;m                                      \e[0;m
+EOF
+)
+printf "$ANSI_ART\n"
+
+cd $DIR
+
+# Use find to locate the .xcodeproj file
+xcodeproj_file=$(find . -name "*.xcodeproj" -print -quit)
+
+# Check if a .xcodeproj file was found
+if [ -n "$xcodeproj_file" ]; then
+    xcodeproj_name=$(basename "$xcodeproj_file" .xcodeproj)
+else
+    echo "No .xcodeproj file found."
+    read
+    # Close the Terminal window
+    osascript -e 'tell application "Terminal" to close window 1' & exit
+fi
+
+# Compiling Code...
+if [ ! -d "bin" ]; then
+    mkdir bin
+fi
+if [ ! -d "bin/windows" ]; then
+    mkdir bin/windows
+fi
+if [ ! -d "bin/windows/x86_64" ]; then
+    mkdir bin/windows/x86_64
+fi
+if [ ! -d "bin/windows/i386" ]; then
+    mkdir bin/windows/i386
+fi
+
+echo "Compiling Code..."
+x86_64-w64-mingw32-g++ -o bin/windows/x86_64/$xcodeproj_name.exe src/*.cpp -static -s
+i686-w64-mingw32-g++ -o bin/windows/i386/$xcodeproj_name.exe src/*.cpp -static -s
+
+# Close the Terminal window
+osascript -e 'tell application "Terminal" to close window 1' & exit

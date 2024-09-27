@@ -53,9 +53,9 @@ private:
     std::vector<_Structure> _structures;
     _Structure _structure;
     
-    void defineStruct(const _Structure &structure, const std::string &real, const std::string &identifier);
-    void createStructureVariableMembers(_Structure *structure, const std::string &structureVariableName);
-    void createStructureVariable(std::string &str);
+    void defineStruct(const _Structure &structure, const std::string& real, const std::string& identifier);
+    void createStructureVariableMembers(_Structure *structure, const std::string& structureVariableName);
+    void createStructureVariable(std::string& str);
 };
 
 }
