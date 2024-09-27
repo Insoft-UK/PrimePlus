@@ -590,7 +590,7 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile)
     while(getline(infile, utf8)) {
         std::istringstream iss;
         
-        if (!preprocessor.ppl) {
+        if (!preprocessor.ppl && !preprocessor.python) {
             r = std::regex(R"(\b(THEN|DO|REPEAT)\b(.*\S+))", std::regex_constants::icase);
             // Adds a newline only if there is content after THEN, DO, or REPEAT
             utf8 = std::regex_replace(utf8, r, "$1\n$2");
