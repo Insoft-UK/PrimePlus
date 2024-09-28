@@ -6,4 +6,5 @@ xcuserdata/
 bin/*
 examples/Kelvin.*
 examples/Celsius.*
+examples/*.hpprgm
 *.zip
