@@ -25,21 +25,18 @@
 #ifndef STDIO_PPLIB
 #define STDIO_PPLIB
 
-/*
-Recommended P+ Style and Coding Standards
-prefix::sufix::camelCase
-*/
 
-def CHOOSE     io::choose;
-def EDITLIST   io::editList;
-def GETKEY     io::getKey;
-def INPUT      io::input;
-def ISKEYDOWN  io::isKeyDown;
-def MOUSE      io::mouse;
-def MSGBOX     io::messageBox;
-def DRAWMENU   io::drawMenu;
-def PRINT      io::print;
-def WAIT       io::wait;
-def AFiles     io::appFiles;
+
+def CHOOSE     std::io::choose;
+def EDITLIST   std::io::editList;
+def GETKEY     std::io::getKey;
+def INPUT      std::io::input;
+def ISKEYDOWN  std::io::isKeyDown;
+def MOUSE      std::io::mouse;
+def MSGBOX     std::io::messageBox;
+def DRAWMENU   std::io::drawMenu;
+def PRINT      std::io::print;
+def WAIT       std::io::wait;
+def AFiles     std::io::appFiles;
 
 #endif /// STDIO_PPLIB

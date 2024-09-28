@@ -25,42 +25,38 @@
 #ifndef STDPIX_PPLIB
 #define STDPIX_PPLIB
 
-/*
-Recommended P+ Style and Coding Standards
-prefix::camelCase
-*/
 
-def ARC_P       arc;
-def BLIT_P      blit;
-def DIMGROB_P   dimGROB;
-def GETPIX_P    getPixel;
-def INVERT_P    invert;
-def LINE_P      line;
-def PIXOFF_P    pixelOff;
-def PIXON_P     pixelOn;
-def RECT_P      rect;
-def FILLPOLY_P  fillPoly;
-def SUBGROB_P   subGROB;
-def TEXTOUT_P   textout;
-def TEXTSIZE    textsize;
+def ARC_P       std::arc;
+def BLIT_P      std::blit;
+def DIMGROB_P   std::dimGROB;
+def GETPIX_P    std::getPixel;
+def INVERT_P    std::invert;
+def LINE_P      std::line;
+def PIXOFF_P    std::pixelOff;
+def PIXON_P     std::pixelOn;
+def RECT_P      std::rect;
+def FILLPOLY_P  std::fillPoly;
+def SUBGROB_P   std::subGROB;
+def TEXTOUT_P   std::textout;
+def TEXTSIZE    std::textsize;
 
-def GROBW_P(G1) G1.width;
-def GROBH_P(G1) G1.height;
-def GROBW_P(G2) G2.width;
-def GROBH_P(G2) G2.height;
-def GROBW_P(G3) G3.width;
-def GROBH_P(G3) G3.height;
-def GROBW_P(G4) G4.width;
-def GROBH_P(G4) G4.height;
-def GROBW_P(G5) G5.width;
-def GROBH_P(G5) G5.height;
-def GROBW_P(G6) G6.width;
-def GROBH_P(G6) G6.height;
-def GROBW_P(G7) G7.width;
-def GROBH_P(G7) G7.height;
-def GROBW_P(G8) G8.width;
-def GROBH_P(G8) G8.height;
-def GROBW_P(G9) G9.width;
-def GROBH_P(G9) G9.height;
+def GROBW_P(G1) std::G1.width;
+def GROBH_P(G1) std::G1.height;
+def GROBW_P(G2) std::G2.width;
+def GROBH_P(G2) std::G2.height;
+def GROBW_P(G3) std::G3.width;
+def GROBH_P(G3) std::G3.height;
+def GROBW_P(G4) std::G4.width;
+def GROBH_P(G4) std::G4.height;
+def GROBW_P(G5) std::G5.width;
+def GROBH_P(G5) std::G5.height;
+def GROBW_P(G6) std::G6.width;
+def GROBH_P(G6) std::G6.height;
+def GROBW_P(G7) std::G7.width;
+def GROBH_P(G7) std::G7.height;
+def GROBW_P(G8) std::G8.width;
+def GROBH_P(G8) std::G8.height;
+def GROBW_P(G9) std::G9.width;
+def GROBH_P(G9) std::G9.height;
 
 #endif /// STDPIX_PPLIB

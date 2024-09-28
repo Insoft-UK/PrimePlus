@@ -48,6 +48,11 @@ std::ostream& operator<<(std::ostream& os, MessageType type) {
             os << " error: ";
             _failed = true;
             break;
+            
+        case MessageType::CriticalError:
+            os << " critical error: ";
+            _failed = true;
+            break;
 
         case MessageType::Warning:
             os << " warning: ";

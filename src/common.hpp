@@ -41,6 +41,7 @@
 enum class MessageType {
     Warning,
     Error,
+    CriticalError,
     Verbose,
     Deprecated,
     Tip

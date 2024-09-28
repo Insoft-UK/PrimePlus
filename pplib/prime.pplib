@@ -23,8 +23,8 @@
  */
 
 
-#ifndef PRIME_PPLIB
-#define PRIME_PPLIB
+#ifndef PPLIB
+#define PPLIB
 
 #include <stdcrtn>
 #include <stdpix>
@@ -35,12 +35,12 @@
 #include <stdstr>
 #include <stdstc>
 
-def STARTAPP    fn::start.app;
-def STARTVIEW   fn::start.view;
-def VIEW        fn::view;
-def FREEZE      fn::freeze;
-def KILL        fn::kill;
-def EVAL        fn::eval;
+def STARTAPP    start.app;
+def STARTVIEW   start.view;
+def VIEW        view;
+def FREEZE      freeze;
+def KILL        kill;
+def EVAL        eval;
 
 def CEILING     ceil;
 def FLOOR       floor;
@@ -49,8 +49,9 @@ def π           pi;
 def 1           true;
 def 0           false;
 
-def Theme[1]    Theme.color;
-def Theme[2]    Theme.colorShade;
+
+def Theme[1]    theme.color;
+def Theme[2]    theme.shade;
 
 #define SCREEN_WIDTH        320
 #define SCREEN_HEIGHT       240
@@ -69,4 +70,4 @@ def Theme[2]    Theme.colorShade;
 #define MOUSE_Y 3
 
 
-#endif /// PRIME_PPLIB
+#endif /// PPLIB

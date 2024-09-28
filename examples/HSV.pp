@@ -23,23 +23,21 @@
  */
 
 #pragma mode( separator(.,;) integer(h64) )
-#pragma ( minify -1, reduce, newline )
-
-#include <prime>
 
 export HSV(h:hue, s:saturation, v:value)
 begin
     hue = hue % 360 / 60;
     saturation = MIN(MAX(saturation, 0), 100) / 100;
     value = MIN(MAX(value, 0), 100) / 100;
+    def FLOOR       floor;
     
-    local f, p, q, t, m;
+    var f, p, q, t, m;
     f = hue - floor(h);
     p = value * (1 - saturation);
     q = value * (1 - saturation * f);
     t = value * (1 - saturation * (1 - f));
 
-    local r:red, g:green, b:blue;
+    var r:red, g:green, b:blue;
     m = floor(h);
     
     if m==0 then red = value; green = t; blue = p; end;

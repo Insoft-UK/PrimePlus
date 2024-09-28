@@ -36,7 +36,7 @@ bool compareInterval(Aliases::TIdentity i1, Aliases::TIdentity i2) {
     return (i1.identifier.length() > i2.identifier.length());
 }
 
-bool Aliases::append(const TIdentity &idty) {
+bool Aliases::append(const TIdentity& idty) {
     TIdentity identity = idty;
     Singleton *singleton = Singleton::shared();
     
@@ -92,7 +92,7 @@ bool Aliases::append(const TIdentity &idty) {
         << (Scope::Global == identity.scope && Type::Macro != identity.type ? "global:" : "")
         << (Type::Eenum == identity.type ? " enumerator" : "")
         << (Type::Struct == identity.type ? " structure" : "")
-        << (Type::Macro == identity.type ? "macro" : "")
+        << (Type::Macro == identity.type ? " macro" : "")
         << (Type::Def == identity.type ? " def" : "")
         << (Type::Unknown == identity.type ? " identifier" : "")
         << " '" << identity.identifier << "' for '" << identity.real << "' defined\n";
@@ -107,7 +107,7 @@ void Aliases::removeAllLocalAliases() {
                 << "local:"
                 << (Type::Eenum == it->type ? " enumerator" : "")
                 << (Type::Struct == it->type ? " structure" : "")
-                << (Type::Def == it->type ? "def" : "")
+                << (Type::Def == it->type ? " def" : "")
                 << (Type::Member == it->type ? " identifier" : "")
                 << (Type::Unknown == it->type ? " identifier" : "")
                 << " '" << it->identifier << "' removed!\n";
@@ -115,6 +115,10 @@ void Aliases::removeAllLocalAliases() {
             removeAllLocalAliases();
             break;
         }
+    }
+    
+    while (_namespaseCheckpoint != _namespaces.size()) {
+        _namespaces.resize(_namespaseCheckpoint);
     }
 }
 
@@ -128,12 +132,12 @@ void Aliases::removeAllAliasesOfType(const Type type) {
                 << (Type::Macro == it->type ? "macro" : "")
                 << (Type::Eenum == it->type ? "enumerator" : "")
                 << (Type::Struct == it->type ? "structure" : "")
-                << (Type::Def == it->type ? "def" : "")
+                << (Type::Def == it->type ? " def" : "")
                 << (Type::Member == it->type ? "identifier" : "")
                 << (Type::Unknown == it->type ? "identifier" : "")
                 << " '" << it->identifier << "' removed!\n";
             _identities.erase(it);
-            removeAllLocalAliases();
+            removeAllAliasesOfType(type);
             break;
         }
     }
@@ -180,22 +184,39 @@ static std::string resolveMacroFunction(const std::string &str, const std::strin
     return s;
 }
 
-std::string Aliases::resolveAliasesInText(const std::string &str) {
+std::string Aliases::resolveAllAliasesInText(const std::string& str) {
     std::string s = str;
     std::regex r;
     std::smatch m;
+    std::string namespaces, pattern;
+    
+    namespaces = "((";
+    for (auto it = _namespaces.begin(); it != _namespaces.end(); ++it) {
+        if (it != _namespaces.begin()) {
+            namespaces += "|";
+        }
+        namespaces += *it;
+    }
+    namespaces += ")::)";
     
     if (s.empty()) return s;
         
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if ('`' == it->identifier.at(0) && '`' == it->identifier.at(it->identifier.length() - 1)) {
-            r = it->identifier;
+            pattern = it->identifier;
         } else {
-            r = R"(\b)" + it->identifier + R"(\b)";
+            if (_namespaces.size()) {
+                pattern = R"(\b)" + namespaces + "?" + regex_replace(it->identifier, std::regex(namespaces), "") + R"(\b)";
+            }
+            else {
+                pattern = R"(\b)" + it->identifier + R"(\b)";
+            }
         }
+        
+        r = pattern;
 
         if (!it->parameters.empty()) {
-            r = R"(\b)" + it->identifier + R"(\([^()]*\))";
+            r = R"(\b)" + namespaces + "?" + it->identifier + R"(\([^()]*\))";
             while (regex_search(s, m, r)) {
                 if (it->deprecated) std::cout << MessageType::Deprecated << it->identifier << it->message << "\n";
                 std::string result = resolveMacroFunction(m.str(), it->parameters, it->identifier, it->real);
@@ -209,13 +230,13 @@ std::string Aliases::resolveAliasesInText(const std::string &str) {
         s = regex_replace(s, r, it->real);
     }
     
-  
+  //TODO: Rework to remove this hack!
     /*
      To ensures proper resolution in cases where one alias refers to another.
      It nessasary to perform another check, only if the first check was an alias.
      */
     if (s != str) {
-        s = resolveAliasesInText(s);
+        s = resolveAllAliasesInText(s);
     }
     
     return s;
@@ -237,7 +258,7 @@ void Aliases::remove(const std::string &identifier) {
                 << " '" << it->identifier << "' removed!\n";
             
             _identities.erase(it);
-            return;
+            break;
         }
     }
 }
@@ -272,5 +293,37 @@ bool Aliases::realExists(const std::string &real) {
 void Aliases::dumpIdentities() {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if (verbose) std::cout << "_identities : " << it->identifier << " = " << it->real << "\n";
+    }
+}
+
+Aliases::TIdentity Aliases::getIdentity(const std::string& identifier) {
+    TIdentity identity;
+    for (auto it = _identities.begin(); it != _identities.end(); ++it) {
+        if (it->identifier == identifier) {
+            memcpy(&identity, &*it, sizeof(TIdentity));
+            break;
+        }
+    }
+    return identity;
+}
+
+void Aliases::addNamespace(const std::string& name) {
+    for (auto it = _namespaces.begin(); it != _namespaces.end(); ++it) {
+        if (name == *it) return;
+    }
+    _namespaces.push_back(name);
+    
+    if (Singleton::shared()->scope == Singleton::Scope::Global) {
+        _namespaseCheckpoint = _namespaces.size();
+    }
+}
+
+void Aliases::removeNamespace(const std::string& name) {
+    int index = 0;
+    for (auto it = _namespaces.begin(); it != _namespaces.end(); ++it, ++index) {
+        if (name != *it) continue;
+        _namespaces.erase(it);
+        if (index < _namespaseCheckpoint) _namespaseCheckpoint--;
+        break;
     }
 }

@@ -71,15 +71,23 @@ namespace pp {
         bool append(const TIdentity& identity);
         void removeAllLocalAliases();
         void removeAllAliasesOfType(const Type type);
-        std::string resolveAliasesInText(const std::string& str);
+        std::string resolveAllAliasesInText(const std::string& str);
         void remove(const std::string& identifier);
         bool exists(const TIdentity& identity);
         bool identifierExists(const std::string& identifier);
         bool realExists(const std::string& real);
         void dumpIdentities();
+        TIdentity getIdentity(const std::string& identifier);
+        
+        //MARK: - namespaces
+        void addNamespace(const std::string& name);
+        void removeNamespace(const std::string& name);
         
     private:
         std::vector<TIdentity> _identities;
+        std::vector<std::string> _namespaces;
+        size_t _namespaseCheckpoint = _namespaces.size();
+        
     };
 }
 #endif // ALIASES_HPP

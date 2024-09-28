@@ -30,17 +30,17 @@ Recommended P+ Style and Coding Standards
 prefix::camelCase.camelCase...
 */
 
-def EDITMAT    matrix::edit;
-def ADDCOL     matrix::add.col;
-def ADDROW     matrix::add.row;
-def DELCOL     matrix::del.col;
-def REDIM      matrix::reDIM;
-def REPLACE    matrix::replace;
-def SCALE      matrix::scale;
-def SCALEADD   matrix::scale.add;
-def Sub        matrix::sub;
-def SAWAPCOL   matrix::swap.col;
-def SWAPROW    matrix::swap.row;
+def EDITMAT    std::matrix::edit;
+def ADDCOL     std::matrix::add.col;
+def ADDROW     std::matrix::add.row;
+def DELCOL     std::matrix::del.col;
+def REDIM      std::matrix::reDIM;
+def REPLACE    std::matrix::replace;
+def SCALE      std::matrix::scale;
+def SCALEADD   std::matrix::scale.add;
+def Sub        std::matrix::sub;
+def SAWAPCOL   std::matrix::swap.col;
+def SWAPROW    std::matrix::swap.row;
 
 
 #endif /// STDMTRX_PPLIB

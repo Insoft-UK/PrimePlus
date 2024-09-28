@@ -110,24 +110,21 @@ bool Auto::parse(std::string& str) {
         if (regex_search(str, m, r)) {
             while ((pos = str.find("auto:")) != std::string::npos) {
                 str.erase(pos, 4);
-                std::ostringstream os;
-                os << "g" << base10ToBase32(++_globalCount);
-                str.insert(pos, os.str());
+                while (singleton->aliases.realExists("g" + base10ToBase32(++_globalCount)));
+                str.insert(pos, "g" + base10ToBase32(_globalCount));
             }
         }
 
         r = R"(\bauto *(?=: *(?:(?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *(?=\()))";
         if (regex_search(str, m, r)) {
-            std::ostringstream os;
-            os << "fn" << base10ToBase32(++_fnCount);
-            str.replace(m.position(), m.str().length(), os.str());
+            while (singleton->aliases.realExists("fn" + base10ToBase32(++_fnCount)));
+            str.replace(m.position(), m.str().length(), "fn" + base10ToBase32(_fnCount));
         }
         
         _paramCount = 0;
         while ((pos = str.find("auto:")) != std::string::npos) {
-            std::ostringstream os;
-            os << "p" << base10ToBase32(++_paramCount);
-            str.replace(pos, 4, os.str());
+            while (singleton->aliases.realExists("p" + base10ToBase32(++_paramCount)));
+            str.replace(pos, 4, "p" + base10ToBase32(_paramCount));
         }
     }
     
@@ -137,9 +134,8 @@ bool Auto::parse(std::string& str) {
     if (regex_search(str, m, r)) {
         while ((pos = str.find("auto:")) != std::string::npos) {
             str.erase(pos, 4);
-            std::ostringstream os;
-            os << "v" << base10ToBase32(++_varCount);
-            str.insert(pos, os.str());
+            while (singleton->aliases.realExists("v" + base10ToBase32(++_varCount)));
+            str.insert(pos, "v" + base10ToBase32(_varCount));
         }
     }
     

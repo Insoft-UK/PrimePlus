@@ -26,11 +26,6 @@
 #ifndef CSPACE_PPLIB
 #define CSPACE_PPLIB
 
-/*
-Recommended P+ Style and Coding Standards
-prefix::camelCase
-*/
-
 def HSVtoRGB    color::convertHSVtoRGB;
 def HSLtoHSV    color::convertHSLtoHSV;
 def HSLtoRGB    color::convertHSLtoRGB;

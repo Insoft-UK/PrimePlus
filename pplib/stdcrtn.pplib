@@ -25,44 +25,36 @@
 #ifndef STDCRTN_PPLIB
 #define STDCRTN_PPLIB
 
-/*
-Recommended P+ Style and Coding Standards
-prefix::sifix::camelCase
-*/
+def ARC       std::cartesian::arc;
+def BLIT      std::cartesian::blit;
+def DIMGROB   std::cartesian::dimGROB;
+def GETPIX    std::cartesian::getPixel;
+def INVERT    std::cartesian::invert;
+def LINE      std::cartesian::line;
+def PIXOFF    std::cartesian::pixelOff;
+def PIXON     std::cartesian::pixelOn;
+def RECT      std::cartesian::rect;
+def FILLPOLY  std::cartesian::fillPoly;
+def SUBGROB   std::cartesian::subGROB;
+def TEXTOUT   std::cartesian::textout;
 
-def ARC       cartesian::arc;
-def BLIT      cartesian::blit;
-def DIMGROB   cartesian::dimGROB;
-def GETPIX    cartesian::get::pixel;
-def GROBH     cartesian::GROB::height;
-def GROBW     cartesian::GROB::width;
-def INVERT    cartesian::invert;
-def LINE      cartesian::line;
-def PIXOFF    cartesian::off;
-def PIXON     cartesian::on;
-def RECT      cartesian::rect;
-def FILLPOLY  cartesian::fill::poly;
-def SUBGROB   cartesian::GROB::sub;
-def TEXTOUT   cartesian::text::out;
-def TEXTSIZE  cartesian::text::size;
-
-def GROBW(G1) cartesian::G1.width;
-def GROBH(G1) cartesian::G1.height;
-def GROBW(G2) cartesian::G2.width;
-def GROBH(G2) cartesian::G2.height;
-def GROBW(G3) cartesian::G3.width;
-def GROBH(G3) cartesian::G3.height;
-def GROBW(G4) cartesian::G4.width;
-def GROBH(G4) cartesian::G4.height;
-def GROBW(G5) cartesian::G5.width;
-def GROBH(G5) cartesian::G5.height;
-def GROBW(G6) cartesian::G6.width;
-def GROBH(G6) cartesian::G6.height;
-def GROBW(G7) cartesian::G7.width;
-def GROBH(G7) cartesian::G7.height;
-def GROBW(G8) cartesian::G8.width;
-def GROBH(G8) cartesian::G8.height;
-def GROBW(G9) cartesian::G9.width;
-def GROBH(G9) cartesian::G9.height;
+def GROBW(G1) std::cartesian::G1.width;
+def GROBH(G1) std::cartesian::G1.height;
+def GROBW(G2) std::cartesian::G2.width;
+def GROBH(G2) std::cartesian::G2.height;
+def GROBW(G3) std::cartesian::G3.width;
+def GROBH(G3) std::cartesian::G3.height;
+def GROBW(G4) std::cartesian::G4.width;
+def GROBH(G4) std::cartesian::G4.height;
+def GROBW(G5) std::cartesian::G5.width;
+def GROBH(G5) std::cartesian::G5.height;
+def GROBW(G6) std::cartesian::G6.width;
+def GROBH(G6) std::cartesian::G6.height;
+def GROBW(G7) std::cartesian::G7.width;
+def GROBH(G7) std::cartesian::G7.height;
+def GROBW(G8) std::cartesian::G8.width;
+def GROBH(G8) std::cartesian::G8.height;
+def GROBW(G9) std::cartesian::G9.width;
+def GROBH(G9) std::cartesian::G9.height;
 
 #endif /// STDCRTN_PPLIB

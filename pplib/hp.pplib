@@ -28,10 +28,6 @@
 
 #define __STORE_SCREEN G9
 
-/*
-Recommended P+ Style and Coding Standards
-prefix::camelCase
-*/
 
 def G0                          hp::screen;
 def G9                          hp::storageScreen;

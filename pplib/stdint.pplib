@@ -25,17 +25,12 @@
 #ifndef STDINT_PPLIB
 #define STDINT_PPLIB
 
-/*
-Recommended P+ Style and Coding Standards
-prefix::camelCase
-*/
-
-def B→R     integer::toReal;
-def GETBASE integer::getBase;
-def GETBITS integer::getBits;
-def R→B     integer::toBase;
-def SETBITS integer::setBits;
-def SETBASE integer::setBase;
+def B→R     std::integer::toReal;
+def GETBASE std::integer::getBase;
+def GETBITS std::integer::getBits;
+def R→B     std::integer::toBase;
+def SETBITS std::integer::setBits;
+def SETBASE std::integer::setBase;
 
 
 #endif /// STDINT_PPLIB

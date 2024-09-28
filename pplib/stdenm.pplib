@@ -25,11 +25,6 @@
 #ifndef STDENM_PPLIB
 #define STDENM_PPLIB
 
-/*
-Recommended P+ Style and Coding Standards
-CamelCase [: UPPERCASE] CamelCase = ? end
-*/
-
 enum ThemeMode
     Dark  := 0,
     Light := 1

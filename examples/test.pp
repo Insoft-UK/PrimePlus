@@ -1,6 +1,53 @@
+using namespace std;
+
+Namespace()
+begin
+    def RECT      std::cartesian::rect;
+    
+    std::cartesian::rect(0);
+    cartesian::rect(0);
+    
+    var d;
+end;
+
+unuse namespace std;
+
 Var()
 begin
     var a, b; var c, d;
+end;
+
+fn1:Function1()
+begin
+end;
+
+auto:Function2()
+begin
+    Function1();
+end;
+
+Parameter(a:alpha, auto:iAmUknown)
+begin
+    alpha += iAmUknown;
+    a += iAmUknown;
+end;
+
+def Theme[1] theme.color;
+Def1()
+begin
+    def Theme[2] theme.shade;
+    theme.color = 2;
+    theme.shade = 1;
+end;
+
+Def2()
+begin
+    def RECT      std::cartesian::rect;
+    
+    std::cartesian::rect(0);
+    cartesian::rect(0);
+    theme.color = 2;
+    theme.shade = 1;
 end;
 
 Comments()
@@ -156,6 +203,8 @@ begin
     
     myStruct.first = 1;
     myStruct.second = 2;
+    
+    theme.color = 2;
 end;
 
 Try()
@@ -175,7 +224,9 @@ PreCalc()
 begin
     var ppl_numbers = \[320 / #2d];
     var old = #[ 1 + 2 * 4 / 2 ]:2;
+#if __VERSION == 202
     var new = \ 2 [ 1 + 2 * 4 / 2 ];
+#endif
 end;
 
 #PPL

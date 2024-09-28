@@ -36,7 +36,7 @@ using namespace pp;
 static Singleton *singleton = Singleton::shared();
 
 static void eval(std::string& str) {
-    str = singleton->aliases.resolveAliasesInText(str);
+    str = singleton->aliases.resolveAllAliasesInText(str);
 }
 
 static std::string shell(std::string& cmd) {
@@ -103,25 +103,12 @@ bool Def::parse(std::string& str) {
     Singleton *singleton = Singleton::shared();
     
     /*
-     def subtitution `name`
+     def subtitution `name with spaces`
      def subtitution name
      def subtitution name(p1,p2,...)
      */
     r = R"(^ *def +(.+) +(`[^`]+`) *;)";
     if (!regex_match(str, r)) {
-        /**
-          **NEW! 1.6.5
-           def functions
-         */
-        
-        /*
-         eg. def c := a+b NAME(a,b,c);
-         Group  0 def  c := a+b NAME(a,b,c);
-                1 c := a+b
-                2 NAME
-                3 a,b,c
-         */
-        
         r = R"(^ *def +(.+) +([a-zA-Z][\w.]*(?:(?:::)?[a-zA-Z][\w.]*)*\b) *(?:\(([A-Za-z_ ,]+)\))?(\(\(deprecated(?: *: *\"([^"]*)\")?\)\))?;)";
     }
     
