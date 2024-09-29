@@ -27,25 +27,25 @@
 
 using namespace pp;
 
-void Strings::preserveStrings(const std::string &str) {
+void Strings::preserveStrings(const std::string& str) {
     _original = str;
 }
 
-void Strings::restoreStrings(std::string &altered) {
-    std::regex r;
+void Strings::restoreStrings(std::string& altered) {
+    std::regex re;
     std::list<std::string> s;
     
-    r = R"("[^"]*")";
-    if (!regex_search(_original, r)) return;
+    re = R"("[^"]*")";
+    if (!regex_search(_original, re)) return;
     
-    for( std::sregex_iterator it = std::sregex_iterator(_original.begin(), _original.end(), r); it != std::sregex_iterator(); ++it ) {
+    for( std::sregex_iterator it = std::sregex_iterator(_original.begin(), _original.end(), re); it != std::sregex_iterator(); ++it ) {
         s.push_back(it->str());
     }
     
     std::string replace;
     std::string result;
     
-    auto iter = std::sregex_iterator(altered.begin(), altered.end(), r);
+    auto iter = std::sregex_iterator(altered.begin(), altered.end(), re);
     auto stop = std::sregex_iterator();
     auto last_iter = iter;
     

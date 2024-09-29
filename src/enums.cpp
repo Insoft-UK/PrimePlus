@@ -34,37 +34,42 @@ using namespace pp;
 static std::string name;
 static std::string prefix;
 
-static std::string prefixFromName(const std::string &str) {
+static std::string prefixFromName(const std::string& str) {
     std::string s;
-    std::regex r(R"([A-Z])");
-    for(std::sregex_iterator it = std::sregex_iterator(str.begin(), str.end(), r); it != std::sregex_iterator(); ++it) {
+    std::regex re(R"([A-Z])");
+    
+    for(std::sregex_iterator it = std::sregex_iterator(str.begin(), str.end(), re); it != std::sregex_iterator(); ++it) {
         s += it->str();
     }
+    
     return s;
 }
 
-static bool parseEnum(const std::string &str) {
+static bool parseEnum(const std::string& str) {
     /*
      eg. enum Name : AB
      Group  0 enum Name : AB
             1 Name
             2 AB
      */
-    std::regex r(R"(^ *enum +([A-Za-z]\w*) *:? *([A-Z]*) *$)");
+    std::regex re(R"(^ *enum +([A-Za-z]\w*) *:? *([A-Z]*) *$)");
+    const std::sregex_token_iterator end;
+    
     std::sregex_token_iterator it = std::sregex_token_iterator {
-        str.begin(), str.end(), r, {1, 2}
+        str.begin(), str.end(), re, {1, 2}
     };
-    if (it != std::sregex_token_iterator()) {
+    if (it != end) {
         name = *it++;
         prefix = *it;
         if (prefix.empty()) prefix = prefixFromName(name);
         return true;
     }
+    
     return false;
 }
 
-bool Enums::parse(std::string &str) {
-    std::regex r;
+bool Enums::parse(std::string& str) {
+    std::regex re;
     
     if (!parsing) {
         if (parseEnum(str)) {
@@ -74,25 +79,27 @@ bool Enums::parse(std::string &str) {
         return parsing;
     }
     
-    r = R"(^ *end;)";
-    if (regex_match(str, r)) {
+    re = R"(^ *end;)";
+    if (regex_match(str, re)) {
         for (auto identity=_identities.begin(); identity != _identities.end(); ++identity) {
             _singleton->aliases.append(*identity);
         }
         parsing = false;
         return true;
     }
-    
     parseEnumItems(str);
+    
     return parsing;
 }
 
-void Enums::parseEnumItems(const std::string &str) {
-    std::regex r(R"(([a-zA-Z\d]\w*) *:?= *((?:#[\dA-F]+(?::\d+)?h)|(?:#\d+(?::\d+)?d)|(?:#[0-1]+(?::\d+)?b)|(?:#[0-7]+(?::\d+)?o)|(?:\d+(?:\.\d+)?)))");
+void Enums::parseEnumItems(const std::string& str) {
+    std::regex re(R"(([a-zA-Z\d]\w*) *:?= *((?:#[\dA-F]+(?::\d+)?h)|(?:#\d+(?::\d+)?d)|(?:#[0-1]+(?::\d+)?b)|(?:#[0-7]+(?::\d+)?o)|(?:\d+(?:\.\d+)?)))");
+    const std::sregex_token_iterator end;
+    
     std::sregex_token_iterator it = std::sregex_token_iterator {
-        str.begin(), str.end(), r, {1, 2}
+        str.begin(), str.end(), re, {1, 2}
     };
-    while (it != std::sregex_token_iterator()) {
+    while (it != end) {
         Aliases::TIdentity identity;
         std::string identifier = *it++;
         identity.type = Aliases::Type::Eenum;

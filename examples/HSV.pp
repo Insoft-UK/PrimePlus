@@ -26,10 +26,10 @@
 
 export HSV(h:hue, s:saturation, v:value)
 begin
-    hue = hue % 360 / 60;
+    hue = hue % \[360 / 60];
     saturation = MIN(MAX(saturation, 0), 100) / 100;
     value = MIN(MAX(value, 0), 100) / 100;
-    def FLOOR       floor;
+    def FLOOR floor;
     
     var f, p, q, t, m;
     f = hue - floor(h);

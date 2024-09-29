@@ -31,18 +31,18 @@ static std::vector<std::string> _stack;
 
 using namespace pp;
 
-bool ForNext::parse(std::string &str) {
-    std::regex r;
-    std::smatch m;
+bool ForNext::parse(std::string& str) {
+    std::regex re;
+    std::smatch match;
     
     bool parsed = false;
     
     // C style for loop.
-    r = R"(\bfor\b(.*);(.*);(.*)\bdo\b)";
-    while (regex_search(str, m, r)) {
-        std::string matched = m.str();
+    re = R"(\bfor\b(.*);(.*);(.*)\bdo\b)";
+    while (regex_search(str, match, re)) {
+        std::string matched = match.str();
         std::sregex_token_iterator it = std::sregex_token_iterator {
-            matched.begin(), matched.end(), r, {1, 2, 3}
+            matched.begin(), matched.end(), re, {1, 2, 3}
         };
         std::string statements[3];
         if (it != std::sregex_token_iterator()) {
@@ -55,26 +55,26 @@ bool ForNext::parse(std::string &str) {
         trim(statements[2]);
         if (statements[1].empty()) statements[1] = "1";
         if (statements[0].empty()) {
-            str = str.replace(m.position(), m.length(), "WHILE " + statements[1] + " DO");
+            str = str.replace(match.position(), match.length(), "WHILE " + statements[1] + " DO");
         } else {
-            str = str.replace(m.position(), m.length(), statements[0] + ";WHILE " + statements[1] + " DO");
+            str = str.replace(match.position(), match.length(), statements[0] + ";WHILE " + statements[1] + " DO");
         }
         if (!statements[2].empty()) _stack.push_back(statements[2] + ";");
         parsed = true;
     }
     
-    while (regex_search(str, m, std::regex(R"(\bnext( *)?;?)", std::regex_constants::icase))) {
+    while (regex_search(str, match, std::regex(R"(\bnext( *)?;?)", std::regex_constants::icase))) {
         if (_stack.empty()) {
-            str = str.replace(m.position(), m.length(), "END;");
+            str = str.replace(match.position(), match.length(), "END;");
             continue;
         }
         std::string ppl = _stack.back();
         _stack.pop_back();
         
         if (ppl.empty()) {
-            str = str.replace(m.position(), m.length(), "END;");
+            str = str.replace(match.position(), match.length(), "END;");
         } else {
-            str = str.replace(m.position(), m.length(), std::string(INDENT_WIDTH, ' ') + ppl + "END;");
+            str = str.replace(match.position(), match.length(), std::string(INDENT_WIDTH, ' ') + ppl + "END;");
         }
         parsed = true;
     }

@@ -63,7 +63,7 @@ public:
     // returns the pathname of
     std::string getPath(void);
     
-    void pushPathname(const std::string &pathname);
+    void pushPathname(const std::string& pathname);
     void popPathname(void);
     
     

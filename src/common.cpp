@@ -74,40 +74,40 @@ std::ostream& operator<<(std::ostream& os, MessageType type) {
     return os;
 }
 
-std::string& ltrim(std::string &str)
+std::string& ltrim(std::string& str)
 {
   auto it2 =  std::find_if( str.begin() , str.end() , [](char ch){ return !std::isspace<char>(ch , std::locale::classic() ) ; } );
   str.erase( str.begin() , it2);
   return str;
 }
 
-std::string& rtrim(std::string &str) {
+std::string& rtrim(std::string& str) {
   auto it1 =  std::find_if( str.rbegin() , str.rend() , [](char ch){ return !std::isspace<char>(ch , std::locale::classic() ) ; } );
   str.erase( it1.base() , str.end() );
   return str;
 }
 
-std::string& trim(std::string &str) {
+std::string& trim(std::string& str) {
    return ltrim(rtrim(str));
 }
 
-std::string trim_copy(const std::string &str) {
+std::string trim_copy(const std::string& str) {
    auto s = str;
    return ltrim(rtrim(s));
 }
 
-std::string& strip(std::string &str) {
+std::string& strip(std::string& str) {
     str.erase(remove(str.begin(), str.end(), ' '), str.end());
     return str;
 }
 
-std::string strip_copy(const std::string &str) {
+std::string strip_copy(const std::string& str) {
     auto s = str;
     s.erase(remove(s.begin(), s.end(), ' '), s.end());
     return s;
 }
 
-std::ifstream::pos_type file_size(const std::string &filename)
+std::ifstream::pos_type file_size(const std::string& filename)
 {
     std::ifstream in(filename, std::ifstream::ate | std::ifstream::binary);
     std::ifstream::pos_type pos = in.tellg();
@@ -127,7 +127,7 @@ bool file_exists(const char *filename) {
     return false;
 }
 
-bool file_exists(const std::string &filename) {
+bool file_exists(const std::string& filename) {
     return file_exists(filename.c_str());
 }
 

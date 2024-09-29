@@ -31,18 +31,18 @@
 
 using namespace pp;
 
-bool Bitwise::parse(std::string &str) {
+bool Bitwise::parse(std::string& str) {
     std::string expresion = str;
-    std::regex r;
+    std::regex re;
     
-    r = R"(([\w#:]+)>>([\w#:]+))";
-    str = regex_replace(str, r, "BITSR($1,$2)");
-    r = R"(([\w#:]+)<<([\w#:]+))";
-    str = regex_replace(str, r, "BITSL($1,$2)");
-    r = R"(([\w#:]+)\&([\w#:]+))";
-    str = regex_replace(str, r, "BITAND($1,$2)");
-    r = R"(([\w#:]+)\|([\w#:]+))";
-    str = regex_replace(str, r, "BITOR($1,$2)");
+    re = R"(([\w#:]+)>>([\w#:]+))";
+    str = regex_replace(str, re, "BITSR($1,$2)");
+    re = R"(([\w#:]+)<<([\w#:]+))";
+    str = regex_replace(str, re, "BITSL($1,$2)");
+    re = R"(([\w#:]+)\&([\w#:]+))";
+    str = regex_replace(str, re, "BITAND($1,$2)");
+    re = R"(([\w#:]+)\|([\w#:]+))";
+    str = regex_replace(str, re, "BITOR($1,$2)");
     
     return (expresion != str);
 }

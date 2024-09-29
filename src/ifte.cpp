@@ -32,15 +32,15 @@
 using namespace pp;
 
 
-bool IFTE::parse(std::string &str) {
-    std::smatch m;
-    std::regex r;
+bool IFTE::parse(std::string& str) {
+    std::smatch match;
+    std::regex re;
     
-    r = R"(\(([^?]+)\?(.+):(.+)\))";
-    while (regex_search(str, m, r)) {
-        std::string matched = m.str();
+    re = R"(\(([^?]+)\?(.+):(.+)\))";
+    while (regex_search(str, match, re)) {
+        std::string matched = match.str();
         std::sregex_token_iterator it = std::sregex_token_iterator {
-            matched.begin(), matched.end(), r, {1, 2, 3}
+            matched.begin(), matched.end(), re, {1, 2, 3}
         };
         
         if (it != std::sregex_token_iterator()) {
@@ -53,7 +53,7 @@ bool IFTE::parse(std::string &str) {
             parse(falseClause);
             
             ppl = "IFTE(" + expr + ", " + trueClause + ", " + falseClause + ")";
-            str = str.replace(m.position(), m.str().length(), ppl);
+            str = str.replace(match.position(), match.str().length(), ppl);
             return true;
         }
     }

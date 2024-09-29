@@ -29,7 +29,7 @@
 
 using namespace pp;
 
-bool DoLoop::parse(std::string &str) {
+bool DoLoop::parse(std::string& str) {
     if (regex_match(str, std::regex(R"(^do\b)"))) {
         str = regex_replace(str, std::regex(R"(\bdo\b)"), "WHILE 1 DO");
         Singleton::shared()->setNestingLevel(Singleton::shared()->nestingLevel + 1);

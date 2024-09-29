@@ -1,20 +1,31 @@
-using namespace std;
+PPL()
+BEGIN
+    // PPL & P+
+    LOCAL a;
+    var b:beta;
+    
+    
+    IF a==beta THEN
+        a▶beta;
+        if a==1 then
+            a += 1;
+        endif;
+    END;
+END;
 
+using namespace std;
 Namespace()
 begin
-    def RECT      std::cartesian::rect;
-    
+    def RECT std::cartesian::rect;
     std::cartesian::rect(0);
     cartesian::rect(0);
-    
-    var d;
 end;
-
 unuse namespace std;
 
 Var()
 begin
     var a, b; var c, d;
+    auto iAmVerryLong;
 end;
 
 fn1:Function1()
@@ -33,19 +44,8 @@ begin
 end;
 
 def Theme[1] theme.color;
-Def1()
+Def()
 begin
-    def Theme[2] theme.shade;
-    theme.color = 2;
-    theme.shade = 1;
-end;
-
-Def2()
-begin
-    def RECT      std::cartesian::rect;
-    
-    std::cartesian::rect(0);
-    cartesian::rect(0);
     theme.color = 2;
     theme.shade = 1;
 end;
@@ -53,6 +53,8 @@ end;
 Comments()
 begin
     // blar...blar...blar..
+    var a; /* variable
+    */
     return "blar...blar...blar.."; // blar...blar...blar..
 end;
 
@@ -186,10 +188,10 @@ begin
         first[1];
         second[2];
     end;
-    struct LocalStruct auto:myStruct;
+    struct LocalStruct auto:localStruct;
     
-    myStruct.first = 1;
-    myStruct.second = 2;
+    localStruct.first = 1;
+    localStruct.second = 2;
 end;
 
 struct GlobalStruct
@@ -199,12 +201,10 @@ end;
 
 Struct_2()
 begin
-    struct GlobalStruct auto:myStruct;
+    struct GlobalStruct auto:globalStruct;
     
-    myStruct.first = 1;
-    myStruct.second = 2;
-    
-    theme.color = 2;
+    globalStruct.first = 1;
+    globalStruct.second = 2;
 end;
 
 Try()
@@ -224,7 +224,7 @@ PreCalc()
 begin
     var ppl_numbers = \[320 / #2d];
     var old = #[ 1 + 2 * 4 / 2 ]:2;
-#if __VERSION == 202
+#if __VERSION >= 202
     var new = \ 2 [ 1 + 2 * 4 / 2 ];
 #endif
 end;

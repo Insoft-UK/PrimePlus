@@ -70,7 +70,7 @@ void terminator() {
 void (*old_terminate)() = std::set_terminate(terminator);
 
 
-void translatePPlusToPPL(const std::string &pathname, std::ofstream &outfile);
+void translatePPlusToPPL(const std::string& pathname, std::ofstream &outfile);
 
 // MARK: - Utills
 
@@ -191,8 +191,11 @@ std::string removeWhitespaceAroundOperators(const std::string& str) {
  */
 std::string expandAssignment(const std::string& expression) {
     std::string str = expression;
-    std::regex re(R"(([A-Za-z]\w*(?:\[.*\])*)([*\/+\-&|^%]|(?:>>|<<))=)");
+    std::regex re;
+    
+    re = R"(([A-Za-z]\w*(?:\[.*\])*)([*\/+\-&|^%]|(?:>>|<<))=)";
     str = regex_replace(str, re, "$1:=$1$2");
+    
     
     re = R"(%)";
     str = regex_replace(str, re, " MOD ");
@@ -209,7 +212,7 @@ void translateCLogicalOperatorsToPPL(std::string& str) {
 
 
 // MARK: - P+ To PPL Translater...
-void reformatPPLLine(std::string &str) {
+void reformatPPLLine(std::string& str) {
     std::regex re;
     
     str = removeWhitespaceAroundOperators(str);
@@ -277,7 +280,7 @@ void reformatPPLLine(std::string &str) {
     }
 }
 
-void capitalizeKeywords(std::string &str) {
+void capitalizeKeywords(std::string& str) {
     std::string result = str;
     std::regex re;
     
@@ -291,9 +294,9 @@ void capitalizeKeywords(std::string &str) {
 }
 
 
-void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
+void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     std::regex re;
-    std::smatch m;
+    std::smatch match;
     std::ifstream infile;
     
     Singleton *singleton = Singleton::shared();
@@ -420,9 +423,9 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     
     //TODO: Remove the Hack
     int hack = 0; // a hack for now to avoid any infinite loop
-    while (std::regex_search(it, ln.cend(), m, re)) {
+    while (std::regex_search(it, ln.cend(), match, re)) {
         // We will convert any >= != <= or => to PPLs ≥ ≠ ≤ and ▶
-        std::string s = m.str(1);
+        std::string s = match.str(1);
         
         // Replace the operator with the appropriate PPL symbol.
         if (s == ">=") s = "≥";
@@ -431,13 +434,13 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
         if (s == "<=") s = "≤";
         if (s == "=>") s = "▶";
         
-        ln = ln.replace(m.position(1), m.length(1), s);
+        ln = ln.replace(match.position(1), match.length(1), s);
         
         // Reset the iterator to the beginning
         it = ln.cbegin();
         
         // Advance the iterator to the position just after the current match
-//        std::advance(it, m.position(1) + s.length() + std::distance(ln.cbegin(), it));
+//        std::advance(it, match.position(1) + s.length() + std::distance(ln.cbegin(), it));
         if (++hack > 100) break;
         
     }
@@ -445,15 +448,15 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     //MARK: - namespace parsing
     
     re = R"(^using namespace ([A-Za-z](?:\w+|::[A-Za-z]+)*);$)";
-    if (regex_search(ln, m, re)) {
-        singleton->aliases.addNamespace(m[1].str());
+    if (regex_search(ln, match, re)) {
+        singleton->aliases.addNamespace(match[1].str());
         ln = "";
         return;
     }
     
     re = R"(^unuse namespace ([A-Za-z](?:\w+|::[A-Za-z]+)*);$)";
-    if (regex_search(ln, m, re)) {
-        singleton->aliases.removeNamespace(m[1].str());
+    if (regex_search(ln, match, re)) {
+        singleton->aliases.removeNamespace(match[1].str());
         ln = "";
         return;
     }
@@ -488,12 +491,12 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
         ln = ln.replace(it->position(), it->length(), result);
     }
     
-    re = R"(\b(begin|if|for|case|repeat|while|switch|try)\b)";
+    re = R"(\b(BEGIN|IF|FOR|CASE|REPEAT|WHILE|begin|if|for|case|repeat|while|switch|try)\b)";
     for(auto it = std::sregex_iterator(ln.begin(), ln.end(), re); it != std::sregex_iterator(); ++it) {
         singleton->setNestingLevel(singleton->nestingLevel + 1);
     }
     
-    re = R"(\b(w?end(if)?|until|next|loop)\b)";
+    re = R"(\b(w?end(if)?|END|UNTIL|until|next|loop)\b)";
     for(auto it = std::sregex_iterator(ln.begin(), ln.end(), re); it != std::sregex_iterator(); ++it) {
         singleton->setNestingLevel(singleton->nestingLevel - 1);
         if (0 == singleton->nestingLevel) {
@@ -578,31 +581,13 @@ void writeUTF16Line(const std::string& ln, std::ofstream& outfile) {
     }
 }
 
-void translatePPlusAndWriteLine(const std::string& str, std::ofstream& outfile)
-{
-    std::string ln = str;
-    translatePPlusLine(ln, outfile);
-    writeUTF16Line(ln, outfile);
-}
-
-
-void processAndWriteLines(std::istringstream& iss, std::ofstream& outfile)
-{
-    std::string str;
-    
-    while(getline(iss, str)) {
-        translatePPlusAndWriteLine(str, outfile);
-    }
-}
-
-
 void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile)
 {
     Singleton& singleton = *Singleton::shared();
     std::ifstream infile;
     std::regex re;
-    std::smatch m;
     std::string utf8;
+    std::string str;
 
     singleton.pushPathname(pathname);
     
@@ -631,8 +616,12 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile)
         }
         
         iss.str(utf8);
-            
-        processAndWriteLines(iss, outfile);
+        
+        while(getline(iss, str)) {
+            translatePPlusLine(str, outfile);
+            writeUTF16Line(str, outfile);
+        }
+        
         Singleton::shared()->incrementLineNumber();
     }
     
@@ -643,17 +632,9 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile)
 
 // MARK: - Command Line
 void version(void) {
-    int major = BUILD_NUMBER / 100000;
-    int minor = BUILD_NUMBER / 10000 % 10;
-    int revision = BUILD_NUMBER / 1000 % 10;
-    
-    std::cout << "Insoft P+ Pre-Processor, version "
-    << major << "."
-    << minor << "."
-    << revision
-    << " (BUILD " << getBuildCode() << ")\n";
-    
     std::cout << "Copyright (C) 2024 Insoft. All rights reserved.\n";
+    std::cout << "Insoft P+ Pre-Processor, version " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << "." << BUILD_NUMBER / 1000 % 10
+    << " (BUILD " << getBuildCode() << ")\n";
     std::cout << "Built on: " << CURRENT_DATE << "\n";
     std::cout << "Licence: MIT License\n\n";
     std::cout << "For more information, visit: http://www.insoft.uk\n";
@@ -668,7 +649,7 @@ void error(void)
 void info(void) {
     std::cout << "Copyright (c) 2024 Insoft. All rights reserved.\n";
     int rev = BUILD_NUMBER / 1000 % 10;
-    std::cout << "Insoft P+ Pre-Processor version " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "")
+    std::cout << "Insoft P+ Pre-Processor version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "")
     << " (BUILD " << getBuildCode() << "-" << decimalToBase24(BUILD_DATE) << ")\n\n";
 }
 
@@ -676,17 +657,17 @@ void help(void) {
     int rev = BUILD_NUMBER / 1000 % 10;
     
     std::cout << "Copyright (C) 2024 Insoft. All rights reserved.\n";
-    std::cout << "Insoft P+ Pre-Processor version " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "")
+    std::cout << "Insoft P+ Pre-Processor version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "")
     << " (BUILD " << getBuildCode() << "-" << decimalToBase24(BUILD_DATE) << ")\n\n";
     std::cout << "Usage: p+ <input-file> [-o <output-file>] [-b <flags>] [-l <pathname>]\n\n";
     std::cout << "Options:\n";
-    std::cout << "  -o <output-file>        Specify the filename for generated PPL code.\n";
-    std::cout << "  -v                      Display detailed processing information.\n\n";
+    std::cout << "    -o <output-file>      Specify the filename for generated PPL code.\n";
+    std::cout << "    -v                    Display detailed processing information.\n\n";
     std::cout << "  Verbose Flags:\n";
-    std::cout << "    a                     Aliases\n";
-    std::cout << "    e                     Enumerator\n";
-    std::cout << "    p                     Preprocessor\n";
-    std::cout << "    s                     Structs\n\n";
+    std::cout << "     a                    Aliases\n";
+    std::cout << "     e                    Enumerator\n";
+    std::cout << "     p                    Preprocessor\n";
+    std::cout << "     s                    Structs\n\n";
     std::cout << "\n";
     std::cout << "Additional Commands:\n";
     std::cout << "  ansiart {-version | -help}\n";

@@ -54,18 +54,18 @@ static std::string base10ToBase32(unsigned int num) {
 
 // This function will examine any variable name thats not a valid PPL variable name and asign an auto: prefix to it.
 static void inferredAutoForVariableName(std::string& ln) {
-    std::regex r;
+    std::regex re;
     
-    r = std::regex(R"(\b((?:var|local|const) +)(.*)(?=;))", std::regex_constants::icase);
+    re = std::regex(R"(\b((?:var|local|const) +)(.*)(?=;))", std::regex_constants::icase);
     std::sregex_token_iterator it = std::sregex_token_iterator {
-        ln.begin(), ln.end(), r, {1, 2}
+        ln.begin(), ln.end(), re, {1, 2}
     };
     if (it != std::sregex_token_iterator()) {
         std::string code = *it++;
         std::string str = *it;
         
-        r =  R"([^,;]+)";
-        for (auto it = std::sregex_iterator(str.begin(), str.end(), r);;) {
+        re =  R"([^,;]+)";
+        for (auto it = std::sregex_iterator(str.begin(), str.end(), re);;) {
             std::string s = trim_copy(it->str());
             if (regex_search(s, std::regex(R"(^[A-Za-z]\w*:[a-zA-Z])"))) {
                 code.append(s);
@@ -85,20 +85,20 @@ static void inferredAutoForVariableName(std::string& ln) {
 }
 
 static void inferredAutoForShortNameOnly(std::string& str) {
-    std::regex r;
-    std::smatch m;
+    std::regex re;
+    std::smatch match;
     
-    r = R"(^(auto )[\w,]*(?=;))";
-    if (regex_search(str, m, r)) {
-        r = R"(\b(?!auto\b)\w{3,}\b)";
-        str = regex_replace(str, r, "auto:$0");
-        str.replace(m.position(1), m.str(1).length(), "local ");
+    re = R"(^(auto )[\w,]*(?=;))";
+    if (regex_search(str, match, re)) {
+        re = R"(\b(?!auto\b)\w{3,}\b)";
+        str = regex_replace(str, re, "auto:$0");
+        str.replace(match.position(1), match.str(1).length(), "local ");
     }
 }
 
 bool Auto::parse(std::string& str) {
-    std::smatch m;
-    std::regex r;
+    std::smatch match;
+    std::regex re;
     size_t pos;
     Singleton *singleton = Singleton::shared();
     
@@ -106,8 +106,8 @@ bool Auto::parse(std::string& str) {
     inferredAutoForShortNameOnly(str);
     
     if (singleton->scope == Singleton::Scope::Global) {
-        r = R"(\b(var|local|const) +)";
-        if (regex_search(str, m, r)) {
+        re = R"(\b(var|local|const) +)";
+        if (regex_search(str, match, re)) {
             while ((pos = str.find("auto:")) != std::string::npos) {
                 str.erase(pos, 4);
                 while (singleton->aliases.realExists("g" + base10ToBase32(++_globalCount)));
@@ -115,10 +115,10 @@ bool Auto::parse(std::string& str) {
             }
         }
 
-        r = R"(\bauto *(?=: *(?:(?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *(?=\()))";
-        if (regex_search(str, m, r)) {
+        re = R"(\bauto *(?=: *(?:(?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *(?=\()))";
+        if (regex_search(str, match, re)) {
             while (singleton->aliases.realExists("fn" + base10ToBase32(++_fnCount)));
-            str.replace(m.position(), m.str().length(), "fn" + base10ToBase32(_fnCount));
+            str.replace(match.position(), match.str().length(), "fn" + base10ToBase32(_fnCount));
         }
         
         _paramCount = 0;
@@ -130,8 +130,8 @@ bool Auto::parse(std::string& str) {
     
     
     // Variables/Constants
-    r = R"(\b(var|local|const) +)";
-    if (regex_search(str, m, r)) {
+    re = R"(\b(var|local|const) +)";
+    if (regex_search(str, match, re)) {
         while ((pos = str.find("auto:")) != std::string::npos) {
             str.erase(pos, 4);
             while (singleton->aliases.realExists("v" + base10ToBase32(++_varCount)));

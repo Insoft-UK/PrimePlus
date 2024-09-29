@@ -40,9 +40,9 @@ static void parseAlias(const std::string& str, Aliases::TIdentity& identity) {
             1 name
             2 alias
      */
-    std::regex r(R"(((?:[^\x00-\x7F]|\w)+):([a-zA-Z][\w.]*((?:::)?[a-zA-Z][\w.]*)*))");
+    std::regex re(R"(((?:[^\x00-\x7F]|\w)+):([a-zA-Z][\w.]*((?:::)?[a-zA-Z][\w.]*)*))");
     std::sregex_token_iterator it = std::sregex_token_iterator {
-        str.begin(), str.end(), r, {1, 2}
+        str.begin(), str.end(), re, {1, 2}
     };
     if (it != std::sregex_token_iterator()) {
         identity.real = *it++;
@@ -52,9 +52,9 @@ static void parseAlias(const std::string& str, Aliases::TIdentity& identity) {
 }
 
 static void parseAliases(const std::string& str, Aliases::TIdentity& identity) {
-    std::regex r(R"((?:[^\x00-\x7F]|\w)+\w*:[a-zA-Z][\w.]*((?:::)?[a-zA-Z][\w.]*)*)");
+    std::regex re(R"((?:[^\x00-\x7F]|\w)+\w*:[a-zA-Z][\w.]*((?:::)?[a-zA-Z][\w.]*)*)");
     
-    for(std::sregex_iterator it = std::sregex_iterator(str.begin(), str.end(), r); it != std::sregex_iterator(); ++it) {
+    for(std::sregex_iterator it = std::sregex_iterator(str.begin(), str.end(), re); it != std::sregex_iterator(); ++it) {
         parseAlias(it->str(), identity);
     }
 }
@@ -82,8 +82,8 @@ static void parseVariables(const std::string& str) {
 
 bool Alias::parse(std::string& str) {
     std::string s;
-    std::regex r;
-    std::smatch m;
+    std::regex re;
+    std::smatch match;
     std::ostringstream os;
     
     bool parsed = false;
@@ -95,9 +95,9 @@ bool Alias::parse(std::string& str) {
          1 name:alias
          2 p1, p2:alias, auto:alias
          */
-        r = R"(^ *(?:export +)?\b((?:(?:[^\x00-\x7F]|\w)+ *: *)?(?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *\((.*)\))";
+        re = R"(^ *(?:export +)?\b((?:(?:[^\x00-\x7F]|\w)+ *: *)?(?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *\((.*)\))";
         auto it = std::sregex_token_iterator {
-            str.begin(), str.end(), r, {1, 2}
+            str.begin(), str.end(), re, {1, 2}
         };
         if (it != std::sregex_token_iterator()) {
             parseFunctionName(*it++);
@@ -106,8 +106,8 @@ bool Alias::parse(std::string& str) {
         }
     }
     
-    r = R"(^ *(var|local|const) +.*)";
-    if (regex_match(str, r)) {
+    re = R"(^ *(var|local|const) +.*)";
+    if (regex_match(str, re)) {
         parseVariables(str);
         str = regex_replace(str, std::regex(R"(\bvar\b)"), "LOCAL");
         parsed = true;

@@ -38,10 +38,10 @@ namespace pp {
         bool parsing = false;
         bool verbose = false;
         
-        bool parse(std::string &str);
+        bool parse(std::string& str);
         
     private:
-        Singleton *_singleton = Singleton::shared();
+        Singleton* _singleton = Singleton::shared();
         std::string _enumerator;
         std::vector<Aliases::TIdentity> _identities;
         

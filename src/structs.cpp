@@ -42,8 +42,8 @@ static bool isStructureVariable(const std::string str) {
 }
 
 static bool hasAliasDeclaration(const std::string& str) {
-    std::regex r(R"(\w:\w)");
-    return regex_search(str, r);
+    std::regex re(R"(\w:\w)");
+    return regex_search(str, re);
 }
 
 static std::string extractAliasDeclarationName(const std::string& str) {
@@ -55,12 +55,12 @@ static std::string extractAliasDeclarationName(const std::string& str) {
 
 static std::string extractDeclarationName(const std::string& str) {
     std::string identifier = str;
-    std::regex r(R"([A-Za-z]\w*(?=:))");
-    std::smatch m;
+    std::regex re(R"([A-Za-z]\w*(?=:))");
+    std::smatch match;
 //    static unsigned counter = 0;
     
-    if (regex_search(str, m, r)) {
-        identifier = m.str();
+    if (regex_search(str, match, re)) {
+        identifier = match.str();
         if (identifier == "auto") {
             identifier = "s" + std::to_string(++counter);
         }
@@ -74,10 +74,10 @@ static std::string extractDeclarationName(const std::string& str) {
 static std::vector<std::string> extractVariableDeclarationName(const std::string& str) {
     std::vector<std::string> name;
     std::string s;
-    std::regex r(R"(([A-Za-z][\w*:.]*))");
+    std::regex re(R"(([A-Za-z][\w*:.]*))");
     
     s = regex_replace(str, std::regex(R"(struct +[A-Za-z]\w* +)"), "");
-    for(auto it = std::sregex_iterator(s.begin(), s.end(), r); it != std::sregex_iterator(); ++it) {
+    for(auto it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); ++it) {
         name.push_back(it->str());
     }
     
@@ -85,29 +85,29 @@ static std::vector<std::string> extractVariableDeclarationName(const std::string
 }
 
 static bool isValidVariableName(const std::string& str) {
-    std::regex r;
+    std::regex re;
     
-    r = R"(\w:\w)";
-    if (regex_search(str, r)) {
+    re = R"(\w:\w)";
+    if (regex_search(str, re)) {
         return true;
     }
-    r = (R"([:.])");
-    return !regex_search(str, r);
+    re = (R"([:.])");
+    return !regex_search(str, re);
 }
 
 // MARK: - Public Methods
 
 bool Structs::parse(std::string& str) {
-    std::regex r;
-    std::smatch m;
+    std::regex re;
+    std::smatch match;
     std::string s = str;
     std::ostringstream os;
     
     
     if (!parsing) {
-        r = R"(^struct +([A-Za-z][\w:.]*)$)";
+        re = R"(^struct +([A-Za-z][\w:.]*)$)";
         std::sregex_token_iterator it = std::sregex_token_iterator {
-            str.begin(), str.end(), r, {1}
+            str.begin(), str.end(), re, {1}
         };
         if (it != std::sregex_token_iterator()) {
             // Structure Declaration
@@ -127,8 +127,8 @@ bool Structs::parse(std::string& str) {
     }
     
     // End of Structure Declaration
-    r = R"(^end;$)";
-    if (regex_match(str, r)) {
+    re = R"(^end;$)";
+    if (regex_match(str, re)) {
         _structures.push_back(_structure);
         _structure.members.clear();
         parsing = false;
@@ -137,8 +137,8 @@ bool Structs::parse(std::string& str) {
     
     
     // Structure Members
-    r =  R"([^;]+(?=[^;]*))";
-    for(std::sregex_iterator it = std::sregex_iterator(str.begin(), str.end(), r); it != std::sregex_iterator(); ++it) {
+    re =  R"([^;]+(?=[^;]*))";
+    for(std::sregex_iterator it = std::sregex_iterator(str.begin(), str.end(), re); it != std::sregex_iterator(); ++it) {
         std::string member = it->str();
         trim(member);
         _structure.members.push_back(member);
@@ -163,7 +163,7 @@ void Structs::removeAllLocalStructs(void) {
 
 // MARK: - Private Methods
 void Structs::defineStruct(const _Structure& structure, const std::string& real, const std::string& identifier) {
-    std::regex r;
+    std::regex re;
     
     Aliases::TIdentity identity = {
         .type = Aliases::Type::Variable,
@@ -174,12 +174,12 @@ void Structs::defineStruct(const _Structure& structure, const std::string& real,
     for (auto member = structure.members.begin(); member != structure.members.end(); ++member) {
         std::string s = member->data();
         
-        r = R"([A-Za-z][\w.]*)";
-        identity.real = regex_replace(s, r, real);
+        re = R"([A-Za-z][\w.]*)";
+        identity.real = regex_replace(s, re, real);
         
-        r = R"(([A-Za-z][\w.]*) *(?:(\[[\d, [\]]*)|(\([\d, ()]*\)))?)";
+        re = R"(([A-Za-z][\w.]*) *(?:(\[[\d, [\]]*)|(\([\d, ()]*\)))?)";
         std::sregex_token_iterator it = std::sregex_token_iterator {
-            s.begin(), s.end(), r, {1}
+            s.begin(), s.end(), re, {1}
         };
         
         if (it != std::sregex_token_iterator()) {
@@ -195,9 +195,9 @@ void Structs::defineStruct(const _Structure& structure, const std::string& real,
     }
 }
 
-void Structs::createStructureVariable(std::string &str) {
-    std::regex r;
-    std::smatch m;
+void Structs::createStructureVariable(std::string& str) {
+    std::regex re;
+    std::smatch match;
     
     Aliases::TIdentity identity = {
         .type = Aliases::Type::Variable,
@@ -208,11 +208,11 @@ void Structs::createStructureVariable(std::string &str) {
     
 
     for (auto structure = _structures.begin(); structure != _structures.end(); ++structure) {
-        r = R"(\bstruct +)" + structure->identifier + R"( +(?:[A-Za-z][\w:.]*(?: *, *)?)+)";// R"( +[A-Za-z][\w:.]*)";
-        if (!regex_search(str, m, r)) continue;
+        re = R"(\bstruct +)" + structure->identifier + R"( +(?:[A-Za-z][\w:.]*(?: *, *)?)+)";// R"( +[A-Za-z][\w:.]*)";
+        if (!regex_search(str, match, re)) continue;
         
         std::string real, identifier;
-        std::vector<std::string> names = extractVariableDeclarationName(m.str());
+        std::vector<std::string> names = extractVariableDeclarationName(match.str());
         std::string PPL;
 
         for (auto name = names.begin(); name < names.end(); ++name) {

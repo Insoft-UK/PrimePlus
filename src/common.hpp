@@ -50,18 +50,18 @@ enum class MessageType {
 bool hasErrors(void);
 std::ostream& operator<<(std::ostream& os, MessageType type);
 
-std::string& ltrim(std::string &str);
-std::string& rtrim(std::string &str);
-std::string& trim(std::string &str);
+std::string& ltrim(std::string& str);
+std::string& rtrim(std::string& str);
+std::string& trim(std::string& str);
 
-std::string trim_copy(const std::string &str);
+std::string trim_copy(const std::string& str);
 
-std::string& strip(std::string &str);
-std::string strip_copy(const std::string &str);
+std::string& strip(std::string& str);
+std::string strip_copy(const std::string& str);
 
-std::ifstream::pos_type file_size(const std::string &filename);
+std::ifstream::pos_type file_size(const std::string& filename);
 bool file_exists(const char *filename);
-bool file_exists(const std::string &filename);
+bool file_exists(const std::string& filename);
 
 int countLeadingCharacters(const std::string& str, const char character);
 

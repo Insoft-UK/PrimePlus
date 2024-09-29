@@ -33,9 +33,9 @@
 
 using namespace pp;
 
-bool Switch::parse(std::string &str) {
-    std::regex r;
-    std::smatch m;
+bool Switch::parse(std::string& str) {
+    std::regex re;
+    std::smatch match;
     
     if (Singleton::shared()->scope == Singleton::Scope::Global) {
         _sw = 0;
@@ -47,17 +47,17 @@ bool Switch::parse(std::string &str) {
      Group  0 switch expresion
             1 expresion
      */
-    r = R"(\bswitch (.+))";
-    if (regex_search(str, m, r)) {
-        std::string s = m.str();
+    re = R"(\bswitch (.+))";
+    if (regex_search(str, match, re)) {
+        std::string s = match.str();
         
         auto it = std::sregex_token_iterator {
-            s.begin(), s.end(), r, {1}
+            s.begin(), s.end(), re, {1}
         };
         if (it != std::sregex_token_iterator()) {
             std::ostringstream oss;
             oss << "LOCAL sw" << ++_sw << " := " << *it << ";\n" << std::string((Singleton::shared()->nestingLevel - 1) * 2, ' ') << "CASE";
-            str.replace(m.position(), m.str().length(), oss.str());
+            str.replace(match.position(), match.str().length(), oss.str());
             oss.str("");
             oss << "sw" << _sw;
             _expressions.push_back({oss.str(), countLeadingCharacters(str, ' ')});
@@ -74,22 +74,22 @@ bool Switch::parse(std::string &str) {
     if (!_expressions.size()) return false;
     TExpression exp = _expressions.back();
     
-    r = R"(\bcase ([\w#.]*) do\b)";
-    if (regex_search(str, m, r)) {
-        std::string s = m.str();
+    re = R"(\bcase ([\w#.]*) do\b)";
+    if (regex_search(str, match, re)) {
+        std::string s = match.str();
         
         
         auto it = std::sregex_token_iterator {
-            s.begin(), s.end(), r, {1}
+            s.begin(), s.end(), re, {1}
         };
         if (it != std::sregex_token_iterator()) {
-            str.replace(m.position(), m.str().length(), "if " + exp.expression + " == " + (std::string)*it + " then");
+            str.replace(match.position(), match.str().length(), "if " + exp.expression + " == " + (std::string)*it + " then");
         }
         return true;
     }
     
-    r = R"(^ *end;)";
-    if (regex_match(str, r)) {
+    re = R"(^ *end;)";
+    if (regex_match(str, re)) {
         if (countLeadingCharacters(str, ' ') == exp.indeted && _level.back() == Singleton::shared()->nestingLevel) {
             if (verbose) std::cout
                 << MessageType::Verbose

@@ -93,8 +93,8 @@ static std::vector<std::string> infixToPostfix(const std::string& expression) {
     std::vector<std::string> output;
     std::stack<char> operators;
     
-    std::regex r(R"([^ ]+)");
-    for(auto it = std::sregex_iterator(expression.begin(), expression.end(), r); it != std::sregex_iterator(); ++it ) {
+    std::regex re(R"([^ ]+)");
+    for(auto it = std::sregex_iterator(expression.begin(), expression.end(), re); it != std::sregex_iterator(); ++it ) {
         std::string result = it->str();
         
         if (isdigit(result[0]) || (result.length() > 1 && result[0] == '-')) {
@@ -241,11 +241,11 @@ static std::string decimalUnsignedNumber(int64_t num, int bitWidth) {
 
 // Function to convert a string with PPL-style integer number to return a base 10 number
 static std::string convertPPLIntegerNumberToBase10(const std::string& str) {
-    std::regex r;
-    std::smatch m;
+    std::regex re;
+    std::smatch match;
     
-    r = R"(#([\dA-F]+)(?::(-)?(6[0-4]|[1-5][0-9]|[1-9]))?([odh])?)";
-    if (!regex_search(str, m, r)) return str;
+    re = R"(#([\dA-F]+)(?::(-)?(6[0-4]|[1-5][0-9]|[1-9]))?([odh])?)";
+    if (!regex_search(str, match, re)) return str;
     
     /*
      Group 1 The hex part of the string.
@@ -255,13 +255,13 @@ static std::string convertPPLIntegerNumberToBase10(const std::string& str) {
      */
     
     int base = 10;
-    if (m.str(4) == "h") base = 16;
-    if (m.str(4) == "o") base = 8;
+    if (match.str(4) == "h") base = 16;
+    if (match.str(4) == "o") base = 8;
     
-    int64_t num = std::stol(m.str(1), nullptr, base);
-    int bitWidth = m.str(3).empty() ? 64 : atoi(m.str(3).c_str());
+    int64_t num = std::stol(match.str(1), nullptr, base);
+    int bitWidth = match.str(3).empty() ? 64 : atoi(match.str(3).c_str());
     
-    if (m.str(2).empty())
+    if (match.str(2).empty())
         return decimalUnsignedNumber(num, bitWidth);
     
     return decimalSignedNumber(num, bitWidth);
@@ -269,36 +269,36 @@ static std::string convertPPLIntegerNumberToBase10(const std::string& str) {
 
 // Function to convert a string with PPL-style integer number to a plain base 10 number
 static void convertPPLStyleNumberToBase10(std::string& str) {
-    std::regex r;
-    std::smatch m;
+    std::regex re;
+    std::smatch match;
     std::string s;
     
-    r = R"(#([\dA-F])+(?::-?\d+)?([odh])?)";
-    while (regex_search(str, m, r)) {
+    re = R"(#([\dA-F])+(?::-?\d+)?([odh])?)";
+    while (regex_search(str, match, re)) {
         /*
          Group 1 The number part of the string.
          Group 2 The base type, should be `h`, `d` or `o` if given!.
          */
         
-        s = convertPPLIntegerNumberToBase10(m.str());
-        str = str.replace(m.position(), m.length(), s);
+        s = convertPPLIntegerNumberToBase10(match.str());
+        str = str.replace(match.position(), match.length(), s);
     }
 }
 
 static void migratePreCalcInstructions(std::string& str) {
-    std::regex r;
-    std::smatch m;
+    std::regex re;
+    std::smatch match;
     std::string s;
     
-    r = R"(#\[(.*)\](?::(\d+))?)";
+    re = R"(#\[(.*)\](?::(\d+))?)";
     
-    while (regex_search(str, m, r)) {
+    while (regex_search(str, match, re)) {
         std::string expression;
-        std::string matched = m.str();
+        std::string matched = match.str();
         int scale = 0;
         
         auto it = std::sregex_token_iterator {
-            matched.begin(), matched.end(), r, {1, 2}
+            matched.begin(), matched.end(), re, {1, 2}
         };
         if (it != std::sregex_token_iterator()) {
             expression = *it++;
@@ -310,7 +310,7 @@ static void migratePreCalcInstructions(std::string& str) {
             }
         }
         migratePreCalcInstructions(expression);
-        str = str.replace(m.position(), m.length(), "\\" + std::to_string(scale) + "[" + expression + "]");
+        str = str.replace(match.position(), match.length(), "\\" + std::to_string(scale) + "[" + expression + "]");
         return;
     }
 }
@@ -318,18 +318,18 @@ static void migratePreCalcInstructions(std::string& str) {
 
 // MARK: -
 
-bool Calc::parse(std::string &str)
+bool Calc::parse(std::string& str)
 {
-    std::regex r;
-    std::smatch m;
+    std::regex re;
+    std::smatch match;
     
     // Convert any legacy pre-calc instructions to the updated pre-calc format.
     migratePreCalcInstructions(str);
     
-    r = R"(\\( *\d{1,2})?\[(.*)\])";
-    while (regex_search(str, m, r)) {
+    re = R"(\\( *\d{1,2})?\[(.*)\])";
+    while (regex_search(str, match, re)) {
         
-        std::string matched = m.str();
+        std::string matched = match.str();
         
         convertPPLStyleNumberToBase10(matched);
         
@@ -345,7 +345,7 @@ bool Calc::parse(std::string &str)
         strip(matched);
         
         auto it = std::sregex_token_iterator {
-            matched.begin(), matched.end(), r, {1, 2}
+            matched.begin(), matched.end(), re, {1, 2}
         };
         if (it != std::sregex_token_iterator()) {
             if (it->matched) {
@@ -374,7 +374,7 @@ bool Calc::parse(std::string &str)
         }
         
         
-        str = str.replace(m.position(), m.length(), s);
+        str = str.replace(match.position(), match.length(), s);
         return true;
     }
 

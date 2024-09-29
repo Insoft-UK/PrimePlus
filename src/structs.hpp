@@ -39,7 +39,7 @@ public:
     bool verbose = false;
 
     
-    bool parse(std::string &str);
+    bool parse(std::string& str);
     void removeAllLocalStructs(void);
     
 protected:

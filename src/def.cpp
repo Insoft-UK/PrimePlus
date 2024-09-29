@@ -43,7 +43,7 @@ static std::string shell(std::string& cmd) {
     FILE *fp;
     std::string out;
     
-    fp = popen(cmd.c_str(),"r");
+    fp = popen(cmd.c_str(),"re");
     if (fp == NULL) {
         std::cout << MessageType::Error << "ERROR!\n" ;
         exit(300);
@@ -96,8 +96,8 @@ static std::string load(std::string& filename) {
 }
 
 bool Def::parse(std::string& str) {
-    std::regex r;
-    std::smatch m;
+    std::regex re;
+    std::smatch match;
     std::string s;
     
     Singleton *singleton = Singleton::shared();
@@ -107,13 +107,13 @@ bool Def::parse(std::string& str) {
      def subtitution name
      def subtitution name(p1,p2,...)
      */
-    r = R"(^ *def +(.+) +(`[^`]+`) *;)";
-    if (!regex_match(str, r)) {
-        r = R"(^ *def +(.+) +([a-zA-Z][\w.]*(?:(?:::)?[a-zA-Z][\w.]*)*\b) *(?:\(([A-Za-z_ ,]+)\))?(\(\(deprecated(?: *: *\"([^"]*)\")?\)\))?;)";
+    re = R"(^ *def +(.+) +(`[^`]+`) *;)";
+    if (!regex_match(str, re)) {
+        re = R"(^ *def +(.+) +([a-zA-Z][\w.]*(?:(?:::)?[a-zA-Z][\w.]*)*\b) *(?:\(([A-Za-z_ ,]+)\))?(\(\(deprecated(?: *: *\"([^"]*)\")?\)\))?;)";
     }
     
     std::sregex_token_iterator it = std::sregex_token_iterator {
-        str.begin(), str.end(), r, {1, 2, 3, 4, 5}
+        str.begin(), str.end(), re, {1, 2, 3, 4, 5}
     };
     if (it != std::sregex_token_iterator()) {
         Aliases::TIdentity identity;

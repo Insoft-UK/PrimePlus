@@ -143,30 +143,32 @@ void Aliases::removeAllAliasesOfType(const Type type) {
     }
 }
 
-static std::string resolveMacroFunction(const std::string &str, const std::string &parameters, const std::string &identifier, const std::string &real) {
+static std::string resolveMacroFunction(const std::string& str, const std::string& parameters, const std::string& identifier, const std::string& real) {
     std::string s;
-    std::regex r;
-    std::smatch m;
+    std::regex re;
+    std::smatch match;
+    const std::sregex_token_iterator end;
     
     /*
      eg. NAME(a,b,c)
      Group  0 NAME(a,b,c)
             1 a,b,c
      */
-    r = R"(\b)" + identifier + R"(\(([^()]*)\))";
+    re = R"(\b)" + identifier + R"(\(([^()]*)\))";
     std::sregex_token_iterator it = std::sregex_token_iterator {
-        str.begin(), str.end(), r, {1}
+        str.begin(), str.end(), re, {1}
     };
-    if (it != std::sregex_token_iterator()) {
-        r = R"([^,]+(?=[^,]*))";
+    if (it != end) {
+        re = R"([^,]+(?=[^,]*))";
         s = *it++;
         std::vector<std::string> arguments;
-        for(std::sregex_iterator it = std::sregex_iterator(s.begin(), s.end(), r); it != std::sregex_iterator(); ++it) {
+        
+        for(std::sregex_iterator it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); ++it) {
             arguments.push_back(it->str());
         }
         s = real;
         size_t argumentIndex = 0;
-        for(std::sregex_iterator it = std::sregex_iterator(parameters.begin(), parameters.end(), r); it != std::sregex_iterator(); ++it) {
+        for(std::sregex_iterator it = std::sregex_iterator(parameters.begin(), parameters.end(), re); it != std::sregex_iterator(); ++it) {
             if (arguments.empty()) {
                 std::cout << MessageType::Error << "macro parameters mismatched" << '\n';
                 break;
@@ -186,8 +188,8 @@ static std::string resolveMacroFunction(const std::string &str, const std::strin
 
 std::string Aliases::resolveAllAliasesInText(const std::string& str) {
     std::string s = str;
-    std::regex r;
-    std::smatch m;
+    std::regex re;
+    std::smatch match;
     std::string namespaces, pattern;
     
     namespaces = "((";
@@ -213,21 +215,21 @@ std::string Aliases::resolveAllAliasesInText(const std::string& str) {
             }
         }
         
-        r = pattern;
+        re = pattern;
 
         if (!it->parameters.empty()) {
-            r = R"(\b)" + namespaces + "?" + it->identifier + R"(\([^()]*\))";
-            while (regex_search(s, m, r)) {
+            re = R"(\b)" + namespaces + "?" + it->identifier + R"(\([^()]*\))";
+            while (regex_search(s, match, re)) {
                 if (it->deprecated) std::cout << MessageType::Deprecated << it->identifier << it->message << "\n";
-                std::string result = resolveMacroFunction(m.str(), it->parameters, it->identifier, it->real);
-                s.replace(m.position(), m.length(), result);
+                std::string result = resolveMacroFunction(match.str(), it->parameters, it->identifier, it->real);
+                s.replace(match.position(), match.length(), result);
             }
             continue;
         }
         
-        if (regex_search(s, r) && it->deprecated)
+        if (regex_search(s, re) && it->deprecated)
             std::cout << MessageType::Deprecated << it->identifier << it->message << "\n";
-        s = regex_replace(s, r, it->real);
+        s = regex_replace(s, re, it->real);
     }
     
   //TODO: Rework to remove this hack!
@@ -242,7 +244,7 @@ std::string Aliases::resolveAllAliasesInText(const std::string& str) {
     return s;
 }
 
-void Aliases::remove(const std::string &identifier) {
+void Aliases::remove(const std::string& identifier) {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if (it->identifier == identifier) {
             if (verbose) std::cout
@@ -269,24 +271,27 @@ bool Aliases::exists(const TIdentity &identity) {
             return true;
         }
     }
+    
     return false;
 }
 
-bool Aliases::identifierExists(const std::string &identifier) {
+bool Aliases::identifierExists(const std::string& identifier) {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if (it->identifier == identifier) {
             return true;
         }
     }
+    
     return false;
 }
 
-bool Aliases::realExists(const std::string &real) {
+bool Aliases::realExists(const std::string& real) {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if (it->real == real) {
             return true;
         }
     }
+    
     return false;
 }
 
@@ -306,6 +311,8 @@ Aliases::TIdentity Aliases::getIdentity(const std::string& identifier) {
     }
     return identity;
 }
+
+//MARK: - namespace
 
 void Aliases::addNamespace(const std::string& name) {
     for (auto it = _namespaces.begin(); it != _namespaces.end(); ++it) {
