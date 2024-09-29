@@ -20,7 +20,7 @@ begin
     std::cartesian::rect(0);
     cartesian::rect(0);
 end;
-unuse namespace std;
+remove namespace std;
 
 Var()
 begin

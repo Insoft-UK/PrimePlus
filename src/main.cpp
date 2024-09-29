@@ -454,7 +454,7 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
         return;
     }
     
-    re = R"(^unuse namespace ([A-Za-z](?:\w+|::[A-Za-z]+)*);$)";
+    re = R"(^remove namespace ([A-Za-z](?:\w+|::[A-Za-z]+)*);$)";
     if (regex_search(ln, match, re)) {
         singleton->aliases.removeNamespace(match[1].str());
         ln = "";

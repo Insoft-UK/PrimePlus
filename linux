@@ -3,18 +3,22 @@ DIR=$(dirname "$0")
 
 clear
 ANSI_ART=$(cat <<EOF
-\e[0;m                            \e[48;5;214m      \e[0;m      \e[0;m
-\e[48;5;214m          \e[0;m  \e[48;5;214m                    \e[0;m  \e[48;5;214m      \e[0;m
-\e[48;5;214m          \e[0;m  \e[48;5;214m                  \e[0;m  \e[48;5;214m        \e[0;m
-\e[48;5;214m      \e[0;m                \e[48;5;214m      \e[0;m      \e[48;5;214m      \e[0;m
-\e[48;5;214m      \e[0;m              \e[48;5;214m      \e[0;m        \e[48;5;214m      \e[0;m
-\e[48;5;214m      \e[0;m            \e[48;5;214m      \e[0;m          \e[48;5;214m      \e[0;m
-\e[48;5;214m      \e[0;m          \e[48;5;214m      \e[0;m            \e[48;5;214m      \e[0;m
-\e[48;5;214m      \e[0;m        \e[48;5;214m      \e[0;m              \e[48;5;214m      \e[0;m
-\e[48;5;214m      \e[0;m      \e[48;5;214m      \e[0;m                \e[48;5;214m      \e[0;m
-\e[48;5;214m        \e[0;m  \e[48;5;214m                  \e[0;m  \e[48;5;214m          \e[0;m
-\e[48;5;214m      \e[0;m  \e[48;5;214m                    \e[0;m  \e[48;5;214m          \e[0;m
-\e[0;m      \e[48;5;214m      \e[0;m                            \e[0;m
+\e[0;m              \e[0;40m  \e[48;5;240m  \e[0;40m  \e[0;m            \e[0;m
+\e[0;m            \e[0;40m  \e[48;5;240m  \e[0;40m      \e[0;m          \e[0;m
+\e[0;m            \e[48;5;254m  \e[0;40m    \e[48;5;254m  \e[0;40m  \e[0;m          \e[0;m
+\e[0;m            \e[48;5;240m  \e[48;5;220m  \e[48;5;228m  \e[48;5;240m  \e[0;40m  \e[0;m          \e[0;m
+\e[0;m            \e[48;5;220m        \e[0;40m  \e[0;m          \e[0;m
+\e[0;m            \e[0;40m  \e[48;5;252m      \e[0;40m    \e[0;m        \e[0;m
+\e[0;m          \e[0;40m    \e[48;5;254m      \e[0;40m    \e[0;m        \e[0;m
+\e[0;m          \e[0;40m    \e[48;5;254m      \e[0;40m      \e[0;m      \e[0;m
+\e[0;m        \e[0;40m    \e[48;5;240m  \e[48;5;254m      \e[0;40m  \e[48;5;240m  \e[0;40m    \e[0;m    \e[0;m
+\e[0;m      \e[0;40m    \e[48;5;240m  \e[48;5;252m  \e[48;5;254m      \e[48;5;252m  \e[0;40m  \e[48;5;240m  \e[0;40m  \e[0;m    \e[0;m
+\e[0;m      \e[0;40m    \e[48;5;240m  \e[48;5;252m  \e[48;5;254m      \e[48;5;252m  \e[0;40m  \e[48;5;240m  \e[0;40m    \e[0;m  \e[0;m
+\e[0;m  \e[48;5;172m        \e[0;40m  \e[48;5;252m  \e[48;5;254m      \e[48;5;252m  \e[0;40m  \e[48;5;240m  \e[0;40m    \e[0;m  \e[0;m
+\e[48;5;172m  \e[48;5;228m      \e[48;5;172m  \e[48;5;240m  \e[0;40m  \e[48;5;252m      \e[48;5;172m      \e[48;5;240m  \e[48;5;172m  \e[0;m  \e[0;m
+\e[48;5;172m  \e[48;5;220m      \e[48;5;228m  \e[48;5;172m  \e[48;5;240m  \e[0;40m      \e[48;5;172m  \e[48;5;228m      \e[48;5;172m  \e[0;m  \e[0;m
+\e[0;m  \e[48;5;172m  \e[48;5;220m      \e[48;5;228m  \e[48;5;172m  \e[48;5;240m      \e[48;5;172m  \e[48;5;228m  \e[48;5;220m      \e[48;5;172m  \e[0;m
+\e[0;m    \e[48;5;172m        \e[0;m          \e[48;5;172m        \e[0;m  \e[0;m
 EOF
 )
 printf "$ANSI_ART\n"
@@ -34,12 +38,6 @@ else
     osascript -e 'tell application "Terminal" to close window 1' & exit
 fi
 
-# Ask the user a question
-CPU=$(osascript -e 'display dialog "CPU?" buttons {"x86_64", "i386", "aarch64"} default button "x86_64"')
-CPU=$xcodeproj_name_${CPU#button returned:}
-
-# Process the results
-TARGET=$CPU-linux-gnu
 
 # Compiling Code...
 if [ ! -d "bin" ]; then
@@ -48,13 +46,18 @@ fi
 if [ ! -d "bin/linux" ]; then
     mkdir bin/linux
 fi
-if [ ! -d "bin/linux/$CPU" ]; then
-    mkdir bin/linux/$CPU
+if [ ! -d "bin/linux/x86_64" ]; then
+    mkdir bin/linux/x86_64
+fi
+if [ ! -d "bin/linux/aarch64" ]; then
+    mkdir bin/linux/aarch64
 fi
 
 echo "Compiling Code..."
-zig c++ -target $TARGET -std=c++20 -o bin/linux/$CPU/$xcodeproj_name src/*.cpp -s
+zig c++ -target x86_64-linux-gnu -std=c++20 -o bin/linux/x86_64/$xcodeproj_name src/*.cpp -s
+zig c++ -target aarch64-linux.gnu -std=c++20 -o bin/linux/aarch64/$xcodeproj_name src/*.cpp -s
 
+zip linux.zip bin/linux/* -r -x "*/.DS_Store"
 
 # Close the Terminal window
 osascript -e 'tell application "Terminal" to close window 1' & exit
