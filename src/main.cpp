@@ -632,22 +632,21 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile)
 
 // MARK: - Command Line
 void version(void) {
-    std::cout << "Copyright (C) 2024 Insoft. All rights reserved.\n";
-    std::cout << "Insoft P+ Pre-Processor, version " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << "." << BUILD_NUMBER / 1000 % 10
+    std::cout << "Copyright (C) 2023-" << BUILD_DATE / 10000 << " Insoft. All rights reserved.\n";
+    std::cout << "Insoft P+ Pre-Processor version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << "." << BUILD_NUMBER / 1000 % 10
     << " (BUILD " << getBuildCode() << ")\n";
     std::cout << "Built on: " << CURRENT_DATE << "\n";
     std::cout << "Licence: MIT License\n\n";
     std::cout << "For more information, visit: http://www.insoft.uk\n";
 }
 
-void error(void)
-{
+void error(void) {
     std::cout << "p+: try 'p+ -help' for more information\n";
     exit(0);
 }
 
 void info(void) {
-    std::cout << "Copyright (c) 2024 Insoft. All rights reserved.\n";
+    std::cout << "Copyright (c) 2023-" << BUILD_DATE / 10000 << " Insoft. All rights reserved.\n";
     int rev = BUILD_NUMBER / 1000 % 10;
     std::cout << "Insoft P+ Pre-Processor version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "")
     << " (BUILD " << getBuildCode() << "-" << decimalToBase24(BUILD_DATE) << ")\n\n";
@@ -656,7 +655,7 @@ void info(void) {
 void help(void) {
     int rev = BUILD_NUMBER / 1000 % 10;
     
-    std::cout << "Copyright (C) 2024 Insoft. All rights reserved.\n";
+    std::cout << "Copyright (C) 2023-" << BUILD_DATE / 10000 << " Insoft. All rights reserved.\n";
     std::cout << "Insoft P+ Pre-Processor version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "")
     << " (BUILD " << getBuildCode() << "-" << decimalToBase24(BUILD_DATE) << ")\n\n";
     std::cout << "Usage: p+ <input-file> [-o <output-file>] [-b <flags>] [-l <pathname>]\n\n";

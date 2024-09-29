@@ -265,7 +265,7 @@ void Aliases::remove(const std::string& identifier) {
     }
 }
 
-bool Aliases::exists(const TIdentity &identity) {
+bool Aliases::exists(const TIdentity& identity) {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if (it->identifier == identity.identifier) {
             return true;
