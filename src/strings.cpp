@@ -28,38 +28,55 @@
 using namespace pp;
 
 void Strings::preserveStrings(const std::string& str) {
-    _original = str;
-}
-
-void Strings::restoreStrings(std::string& altered) {
     std::regex re;
-    std::list<std::string> s;
     
     re = R"("[^"]*")";
-    if (!regex_search(_original, re)) return;
-    
-    for( std::sregex_iterator it = std::sregex_iterator(_original.begin(), _original.end(), re); it != std::sregex_iterator(); ++it ) {
-        s.push_back(it->str());
+    for (auto it = std::sregex_iterator(str.begin(), str.end(), re); it != std::sregex_iterator(); ++it ) {
+        _preservedStrings.push_back(it->str());
     }
+}
+
+void Strings::blankOutStrings(std::string &str) {
+    std::regex re;
     
-    std::string replace;
+    re = R"("[^"]*")";
+    str = regex_replace(str, re, R"("")");
+}
+
+void Strings::restoreStrings(std::string& str) {
+    const std::regex re(R"("[^"]*")");
+
+    // If there are no preserved strings, return early
+    if (_preservedStrings.empty()) return;
+
     std::string result;
-    
-    auto iter = std::sregex_iterator(altered.begin(), altered.end(), re);
-    auto stop = std::sregex_iterator();
-    auto last_iter = iter;
-    
-    auto out = back_inserter(result);
-    
-    for(;s.size() && iter != stop; ++iter)
-    {
-        out = copy(iter->prefix().first, iter->prefix().second, out);
-        replace = s.front();
-        s.pop_front();
-        out = iter->format(out, replace);
-        last_iter = iter;
+    auto inserter = std::back_inserter(result);
+
+    auto it = std::sregex_iterator(str.begin(), str.end(), re);
+    auto end = std::sregex_iterator();
+
+    // Track the position after the last match
+    std::sregex_iterator last_iter = it;
+
+    for (; it != end && !_preservedStrings.empty(); ++it) {
+        // Append text before the match
+        inserter = std::copy(it->prefix().first, it->prefix().second, inserter);
+        
+        // Insert the next preserved string
+        inserter = std::copy(_preservedStrings.front().begin(), _preservedStrings.front().end(), inserter);
+        _preservedStrings.pop_front();  // Remove the used preserved string
+
+        last_iter = it;
     }
-    
-    out = copy(last_iter->suffix().first, last_iter->suffix().second, out);
-    altered = result;
+
+    // Handle the text after the last match
+    if (last_iter != end) {
+        inserter = std::copy(last_iter->suffix().first, last_iter->suffix().second, inserter);
+    } else {
+        // If no matches were found, copy the entire string
+        result = str;
+    }
+
+    // Update the input string with the modified result
+    str = result;
 }

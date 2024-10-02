@@ -233,13 +233,13 @@ bool Preprocessor::parse(std::string& str) {
     
     if (regex_search(str, std::regex(R"(^ *#else\b *((\/\/.*)|)$)"))) {
         disregard = !disregard;
-        if (_singleton->aliases.verbose) std::cout << MessageType::Verbose << "#else: " << disregard << '\n';
+        if (verbose) std::cout << MessageType::Verbose << "#else: " << disregard << '\n';
         return true;
     }
     
     if (regex_search(str, std::regex(R"(^ *#endif\b *((\/\/.*)|)$)"))) {
         disregard = false;
-        if (_singleton->aliases.verbose) std::cout << MessageType::Verbose << "#endif: " << disregard << '\n';
+        if (verbose) std::cout << MessageType::Verbose << "#endif: " << disregard << '\n';
         return true;
     }
     

@@ -63,8 +63,8 @@ static Strings strings = Strings();
 
 
 void terminator() {
-  std::cout << MessageType::Error << "An internal preprocessing problem occurred. Please review the syntax before this point.\n";
-  exit(-1);
+    std::cout << MessageType::CriticalError << "An internal pre-processing problem occurred. Please review the syntax before this point.\n";
+    exit(0);
 }
  
 void (*old_terminate)() = std::set_terminate(terminator);
@@ -309,12 +309,16 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     /*
      While parsing the contents, strings may inadvertently undergo parsing, leading
      to potential disruptions in the string's content.
+     
      To address this issue, we prioritize the preservation of any existing strings.
-     Subsequently, after parsing, any strings that have been universally altered can
-     be restored to their original state.
+     After we prioritize the preservation of any existing strings, we blank out the
+     string/s.
+     
+     Subsequently, after parsing, any strings that have been blanked out can be
+     restored to their original state.
      */
     strings.preserveStrings(ln);
-    
+    strings.blankOutStrings(ln);
     
     
     if (multiLineComment) {
@@ -581,6 +585,15 @@ void writeUTF16Line(const std::string& ln, std::ofstream& outfile) {
     }
 }
 
+bool verbose(void) {
+    if (Singleton::shared()->aliases.verbose) return true;
+    if (enumerators.verbose) return true;
+    if (structurs.verbose) return true;
+    if (preprocessor.verbose) return true;
+    
+    return false;
+}
+
 void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile)
 {
     Singleton& singleton = *Singleton::shared();
@@ -622,8 +635,11 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile)
             writeUTF16Line(str, outfile);
         }
         
+        
         Singleton::shared()->incrementLineNumber();
     }
+    
+   
     
     infile.close();
     singleton.popPathname();
@@ -657,16 +673,19 @@ void help(void) {
     
     std::cout << "Copyright (C) 2023-" << BUILD_DATE / 10000 << " Insoft. All rights reserved.\n";
     std::cout << "Insoft P+ Pre-Processor version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "")
-    << " (BUILD " << getBuildCode() << "-" << decimalToBase24(BUILD_DATE) << ")\n\n";
-    std::cout << "Usage: p+ <input-file> [-o <output-file>] [-b <flags>] [-l <pathname>]\n\n";
+    << " (BUILD " << getBuildCode() << "-" << decimalToBase24(BUILD_DATE) << ")\n";
+    std::cout << "\n";
+    std::cout << "Usage: p+ <input-file> [-o <output-file>] [-b <flags>] [-l <pathname>]\n";
+    std::cout << "\n";
     std::cout << "Options:\n";
-    std::cout << "    -o <output-file>      Specify the filename for generated PPL code.\n";
-    std::cout << "    -v                    Display detailed processing information.\n\n";
+    std::cout << "  -o <output-file>        Specify the filename for generated PPL code.\n";
+    std::cout << "  -v                      Display detailed processing information.\n";
+    std::cout << "\n";
     std::cout << "  Verbose Flags:\n";
     std::cout << "     a                    Aliases\n";
     std::cout << "     e                    Enumerator\n";
     std::cout << "     p                    Preprocessor\n";
-    std::cout << "     s                    Structs\n\n";
+    std::cout << "     s                    Structs\n";
     std::cout << "\n";
     std::cout << "Additional Commands:\n";
     std::cout << "  ansiart {-version | -help}\n";
@@ -719,15 +738,6 @@ int main(int argc, char **argv) {
                 exit(103);
             }
             args = argv[++n];
-            if ( args == "-" ) {
-                Singleton::shared()->aliases.verbose = true;
-                Singleton::shared()->comments.verbose = true;
-                enumerators.verbose = true;
-                structurs.verbose = true;
-                preprocessor.verbose = true;
-                Singleton::shared()->switches.verbose = true;
-                continue;
-            }
             
             if (args.find("a") != std::string::npos) Singleton::shared()->aliases.verbose = true;
             if (args.find("e") != std::string::npos) enumerators.verbose = true;
@@ -801,7 +811,7 @@ int main(int argc, char **argv) {
     outfile.close();
     
     if (hasErrors() == true) {
-        std::cout << "ERRORS!\n";
+        std::cout << "\e[48;5;160mERRORS\e[0m!\n";
         remove(out_filename.c_str());
         return 0;
     }

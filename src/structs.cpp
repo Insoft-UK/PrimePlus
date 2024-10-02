@@ -190,7 +190,7 @@ void Structs::defineStruct(const _Structure& structure, const std::string& real,
             continue;
         }
         
-        if (verbose) std::cout << MessageType::Verbose << "struct: P+ '" << identity.identifier << "' subtitution for PPL '" << identity.real << "' \n";
+        if (verbose) std::cout << MessageType::Verbose << "\e[0;96mstruct\e[0;m: P+ \e[1;92m" << identity.identifier << "\e[0;m subtitution for PPL \e[1;92m" << identity.real << "\e[0;m \n";
         singleton->aliases.append(identity);
     }
 }
@@ -224,12 +224,12 @@ void Structs::createStructureVariable(std::string& str) {
             if (hasAliasDeclaration(*name)) {
                 identifier = extractAliasDeclarationName(*name);
                 real = extractDeclarationName(*name);
-                if (verbose) std::cout << MessageType::Verbose << "struct: variable '" << identifier << "' for '" << real << "' defined\n";
+                if (verbose) std::cout << MessageType::Verbose << "\e[0;96mstruct\e[0;m: variable \e[1;92m" << identifier << "\e[0;m for \e[1;92m" << real << "\e[0;m defined\n";
             }
             else {
                 identifier = *name;
                 real = *name;
-                if (verbose) std::cout << MessageType::Verbose << "struct: variable '" << real << "' defined\n";
+                if (verbose) std::cout << MessageType::Verbose << "\e[0;96mstruct\e[0;m: variable \e[1;92m" << real << "\e[0;m defined\n";
             }
             
             bool realExists = singleton->aliases.realExists(real);

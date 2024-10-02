@@ -1,0 +1,13 @@
+#!/bin/bash
+DIR=$(dirname "$0")
+clear
+
+cd $DIR
+
+
+rm *.zip
+rm -r bin
+
+
+# Close the Terminal window
+osascript -e 'tell application "Terminal" to close window 1' & exit

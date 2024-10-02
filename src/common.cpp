@@ -39,35 +39,37 @@ bool hasErrors(void) {
 std::ostream& operator<<(std::ostream& os, MessageType type) {
     Singleton *singlenton = Singleton::shared();
 
-    if (singlenton->currentPathname() != "") os << singlenton->currentPathname() << ":";
-    os << singlenton->currentLineNumber();
+    if (!singlenton->currentPathname().empty()) {
+        os << "\e[0;96m" << basename(singlenton->currentPathname()) << "\e[0;m on line \e[1;97m";
+        os << singlenton->currentLineNumber() << "\e[0;m ";
+    }
 
 
     switch (type) {
         case MessageType::Error:
-            os << " error: ";
+            os << "\e[48;5;160merror\e[0m: ";
             _failed = true;
             break;
             
         case MessageType::CriticalError:
-            os << " critical error: ";
+            os << "🛑 ";
             _failed = true;
             break;
 
         case MessageType::Warning:
-            os << " warning: ";
+            os << "⚠️ ";
             break;
             
         case MessageType::Verbose:
-            os << " : ";
+            os << "💬 ";
             break;
             
         case MessageType::Deprecated:
-            os << " deprecated: ";
+            os << "\e[48;5;208mdeprecated\e[0m: ";
             break;
 
         default:
-            os << " : ";
+            os << ": ";
             break;
     }
 
@@ -143,3 +145,4 @@ int countLeadingCharacters(const std::string& str, const char character) {
     }
     return count;
 }
+

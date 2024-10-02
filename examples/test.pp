@@ -1,3 +1,10 @@
+
+
+enum MyEnum
+   First     = 1,
+   Second    = 2
+end;
+
 PPL()
 BEGIN
     // PPL & P+
@@ -8,7 +15,9 @@ BEGIN
     IF a==beta THEN
         a▶beta;
         if a==1 then
-            a += 1;
+            a += MyEnum.First;
+            a += ME_Second;
+            a += MyEnum_Second
         endif;
     END;
 END;
