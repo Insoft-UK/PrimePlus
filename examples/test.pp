@@ -7,8 +7,59 @@
 */
 #define MacroList(n)      L$1
 
-fornext()
+#define COPYWRITE "Copyright (c) 2023-2024 Insoft. All rights reserved."
+
+#if __VERSION >= 204
+    var text = {"This is some text...   ... ...", "If I see you", "It means it's working."};
+#else
+    var text {"I never want to see you.", "If I do, we have a BUG!"}
+#endif
+
+fn1:Function1()
 begin
+    var auto:copywriteText = COPYWRITE;
+end;
+
+auto:Function2()
+begin
+    Function1();
+end;
+
+Implied::AutoNameForPPL()
+begin
+    return 0;
+end;
+
+ValidPPLFunctionName()
+begin
+    Implied::AutoNameForPPL();
+end;
+
+TRY:Try(a, b)
+begin
+    var _c;
+    try
+        a /= b;
+    catch
+        a = -1;
+    end;
+    
+    return a;
+end;
+
+Ifte(a)
+begin
+    var b = 1;
+    
+    a = Try(a, b);
+    b = (a == 0 ? 0 : 1);
+end;
+
+FOR_NEXT:forNext()
+begin
+    var a, b;
+    
+    def M$1 matrix(n) @ deprecated "just testing deprecated message!";
     for a = 0; a <= 10; a += 1 do
         b += 1;
     next;
@@ -18,6 +69,8 @@ begin
     
     for ;; do
     next;
+    
+    a = matrix(1);
 end;
 
 export Parameters(auto:a, b:beta)
@@ -71,15 +124,6 @@ begin
     auto iAmVerryLong;
 end;
 
-fn1:Function1()
-begin
-end;
-
-auto:Function2()
-begin
-    Function1();
-end;
-
 Parameter(a:alpha, auto:iAmUknown)
 begin
     alpha += iAmUknown;
@@ -100,16 +144,6 @@ begin
     var a; /* variable
     */
     return "blar...blar...blar.."; // blar...blar...blar..
-end;
-
-Implied::AutoNameForPPL()
-begin
-    return 0;
-end;
-
-ValidPPLFunctionName()
-begin
-    Implied::AutoNameForPPL();
 end;
 
 Operators()

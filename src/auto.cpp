@@ -52,6 +52,17 @@ static std::string base10ToBase32(unsigned int num) {
     return result;
 }
 
+static bool isValidPPLName(const std::string name) {
+    std::regex re;
+    
+    re = R"(^[A-Za-z]\w*(?:(::)|\.))";
+    if (std::regex_search(name, re)) {
+        return false;
+    }
+    
+    return true;
+}
+
 // This function will examine any variable name thats not a valid PPL variable name and asign an auto: prefix to it.
 static void inferredAutoForVariableName(std::string& ln) {
     std::regex re;
@@ -71,7 +82,7 @@ static void inferredAutoForVariableName(std::string& ln) {
                 code.append(s);
             }
             else {
-                if (regex_search(s, std::regex(R"(^[A-Za-z]\w*(?:(::)|\.))"))) {
+                if (!isValidPPLName(s)) {
                     s.insert(0, "auto:");
                 }
                 code.append(s);
@@ -104,6 +115,7 @@ bool Auto::parse(std::string& str) {
     
     inferredAutoForVariableName(str);
     inferredAutoForShortNameOnly(str);
+
     
     if (singleton->scope == Singleton::Scope::Global) {
         re = R"(\b(var|local|const) +)";
@@ -115,7 +127,7 @@ bool Auto::parse(std::string& str) {
             }
         }
 
-        re = R"(\bauto *(?=: *(?:(?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *(?=\()))";
+        re = R"(\bauto *(?=: *(?:[a-zA-Z_][\w:.]*) *(?=\()))";
         if (regex_search(str, match, re)) {
             while (singleton->aliases.realExists("fn" + base10ToBase32(++_fnCount)));
             str.replace(match.position(), match.str().length(), "fn" + base10ToBase32(_fnCount));

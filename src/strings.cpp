@@ -80,3 +80,43 @@ void Strings::restoreStrings(std::string& str) {
     // Update the input string with the modified result
     str = result;
 }
+
+void Strings::restoreStringsAndRetain(std::string& str) {
+    const std::regex re(R"("[^"]*")");
+
+    // If there are no preserved strings, return early
+    if (_preservedStrings.empty()) return;
+
+    std::string result;
+    auto inserter = std::back_inserter(result);
+
+    auto it = std::sregex_iterator(str.begin(), str.end(), re);
+    auto end = std::sregex_iterator();
+
+    // Track the position after the last match
+    std::sregex_iterator last_iter = it;
+
+    // Iterator to track preserved strings (without modifying _preservedStrings)
+    auto preservedIt = _preservedStrings.begin();
+
+    for (; it != end && preservedIt != _preservedStrings.end(); ++it, ++preservedIt) {
+        // Append text before the match
+        inserter = std::copy(it->prefix().first, it->prefix().second, inserter);
+        
+        // Insert the preserved string (using iterator)
+        inserter = std::copy(preservedIt->begin(), preservedIt->end(), inserter);
+
+        last_iter = it;
+    }
+
+    // Handle the text after the last match
+    if (last_iter != end) {
+        inserter = std::copy(last_iter->suffix().first, last_iter->suffix().second, inserter);
+    } else {
+        // If no matches were found, copy the entire string
+        result = str;
+    }
+
+    // Update the input string with the modified result
+    str = result;
+}

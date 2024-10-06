@@ -119,7 +119,7 @@ bool Preprocessor::parse(std::string& str) {
                 2 a,b,c
                 3 c := a+b
          */
-        re = R"(^#define ([A-Za-z_]\w*)(?:\(([A-Za-z_ ,]+)\))? *(.*))";
+        re = R"(^ *#define +([A-Za-z_]\w*)(?:\(([A-Za-z_ ,]+)\))? *(.*))";
         if (std::regex_search(str, match, re)) {
             identity.identifier = match[1].str();
             identity.parameters = match[2].str();
@@ -139,7 +139,7 @@ bool Preprocessor::parse(std::string& str) {
          Group  0 #undef NAME
                 1 NAME
          */
-        re = R"(^#undef +([A-Za-z_][\w.:]*) *$)";
+        re = R"(^ *#undef +([A-Za-z_][\w.:]*) *$)";
         if (std::regex_search(str, match, re)) {
             _singleton->aliases.remove(match[1].str());
             if (verbose) std::cout << MessageType::Verbose << "#undef: " << *it << '\n';
@@ -171,7 +171,7 @@ bool Preprocessor::parse(std::string& str) {
          Group  0 #ifdef NAME
                 1 NAME
          */
-        re = R"(^#ifdef ([A-Za-z_]\w*) *$)";
+        re = R"(^ *#ifdef +([A-Za-z_]\w*) *$)";
         if (std::regex_search(str, match, re)) {
             identity.identifier = match[1].str();
             disregard = !_singleton->aliases.exists(identity);
@@ -194,7 +194,7 @@ bool Preprocessor::parse(std::string& str) {
         }
         
         
-        re = R"(^#if ([A-Za-z_]\w*) *(==|!=|>=|<=|>|<) *(.+)$)";
+        re = R"(^ *#if +([A-Za-z_]\w*) *(==|!=|>=|<=|>|<) *(.+)$)";
         if (std::regex_search(str, match, re)) {
             identity = _singleton->aliases.getIdentity(match[1].str());
             if (identity.identifier.empty()) return true;

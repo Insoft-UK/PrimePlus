@@ -101,9 +101,9 @@ bool Def::parse(std::string& str) {
     
     Singleton *singleton = Singleton::shared();
     
-    re = R"(^def (.+) +(`[^`]+`)() *(@deprecated(?: *\"([^"]*)\")?)?;)";
+    re = R"(^def (.+) +(`[^`]+`)() *(@ *deprecated(?: *\"([^"]*)\")?)?;)";
     if (!regex_match(str, re)) {
-        re = R"(^def (.+) +([a-zA-Z][\w.]*(?:(?:::)?[a-zA-Z][\w.]*)*\b)(?:\(([A-Za-z_ ,]+)\))? *(@deprecated(?: *\"([^"]*)\")?)?;)";
+        re = R"(^def (.+) +([a-zA-Z][\w.]*(?:(?:::)?[a-zA-Z][\w.]*)*\b)(?:\(([A-Za-z_ ,]+)\))? *(@ *deprecated(?: *\"([^"]*)\")?)?;)";
     }
 
     if (std::regex_search(str, match, re)) {

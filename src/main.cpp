@@ -216,6 +216,9 @@ void translateCLogicalOperatorsToPPL(std::string& str) {
 void reformatPPLLine(std::string& str) {
     std::regex re;
     
+    Strings strings = Strings();
+    strings.preserveStrings(str);
+    
     str = removeWhitespaceAroundOperators(str);
     
     str = regex_replace(str, std::regex(R"(,)"), ", ");
@@ -279,6 +282,8 @@ void reformatPPLLine(std::string& str) {
         str = regex_replace(str, std::regex(R"(END;)"), "$0\n");
         str = regex_replace(str, std::regex(R"(LOCAL )"), "");
     }
+    
+    strings.restoreStrings(str);
 }
 
 void capitalizeKeywords(std::string& str) {
@@ -306,21 +311,6 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     static int consecutiveBlankLines = 0;
     
     
-    /*
-     While parsing the contents, strings may inadvertently undergo parsing, leading
-     to potential disruptions in the string's content.
-     
-     To address this issue, we prioritize the preservation of any existing strings.
-     After we prioritize the preservation of any existing strings, we blank out the
-     string/s.
-     
-     Subsequently, after parsing, any strings that have been blanked out can be
-     restored to their original state.
-     */
-    strings.preserveStrings(ln);
-    strings.blankOutStrings(ln);
-    
-    ln = regex_replace(ln, std::regex(R"(\s+)"), " "); // All multiple whitespaces in succesion to a single space, future reg-ex will not require to deal with '\t', only spaces.
     
     if (multiLineComment) {
         multiLineComment = !regex_search(ln, std::regex(R"(\*\/ *$)"));
@@ -362,6 +352,9 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     // Remove any leading white spaces before or after.
     trim(ln);
     
+    if (Def::parse(ln)) return;
+    
+    
     if (ln.empty()) {
         ln = "";
         if (!consecutiveBlankLines++) {
@@ -371,19 +364,13 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     }
     consecutiveBlankLines = 0;
     
+    
     if (ln.substr(0,2) == "//") {
         ln = ln.insert(0, std::string(singleton->nestingLevel * INDENT_WIDTH, ' '));
         ln += '\n';
         return;
     }
     
-    // Remove any comments.
-    re = R"(\/\* *(.*)\*\/ *)";
-    ln = regex_replace(ln, re, "// $1\n" + std::string(singleton->nestingLevel * INDENT_WIDTH, ' ')); // Convert any C style `/* comment */` to PPL style `// comment` first.
-    singleton->comments.preserveComment(ln);
-    singleton->comments.removeComment(ln);
-    
-   
     
     re = R"(\#pragma mode *\(.*\)$)";
     if (std::regex_match(ln, re)) {
@@ -407,10 +394,29 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
         return;
     }
     
-    
-    strings.restoreStrings(ln);
-    if (Def::parse(ln)) return;
+    /*
+     While parsing the contents, strings may inadvertently undergo parsing, leading
+     to potential disruptions in the string's content.
+     
+     To address this issue, we prioritize the preservation of any existing strings.
+     After we prioritize the preservation of any existing strings, we blank out the
+     string/s.
+     
+     Subsequently, after parsing, any strings that have been blanked out can be
+     restored to their original state.
+     */
+    strings.preserveStrings(ln);
     strings.blankOutStrings(ln);
+    
+    ln = regex_replace(ln, std::regex(R"(\s+)"), " "); // All multiple whitespaces in succesion to a single space, future reg-ex will not require to deal with '\t', only spaces.
+    
+    
+    // Remove any comments.
+    re = R"(\/\* *(.*)\*\/ *)";
+    ln = regex_replace(ln, re, "// $1\n" + std::string(singleton->nestingLevel * INDENT_WIDTH, ' ')); // Convert any C style `/* comment */` to PPL style `// comment` first.
+    singleton->comments.preserveComment(ln);
+    singleton->comments.removeComment(ln);
+    
     
     ln = removeWhitespaceAroundOperators(ln);
      
@@ -521,6 +527,15 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
             ln = "KEY " + s + "()";
         }
         
+        re = R"(^ *(?:export +)?([_:.\w]+) *(?=\())";
+        if (regex_search(ln, match, re)) {
+            if (match[1].str().at(0) == '_') {
+                std::string pattern;
+                pattern = match[1].str();
+                re = pattern;
+                ln = regex_replace(ln, re, "auto:" + match[1].str());
+            }
+        }
         re = R"(^ *(export +)?([a-zA-Z_]\w*((::)|\.))+[a-zA-Z_]\w* *(?=\())";
         ln = regex_replace(ln, re, "auto:$0");
     }
@@ -800,7 +815,6 @@ int main(int argc, char **argv) {
     str = R"(#define __VERSION )" + std::to_string(BUILD_NUMBER / 100000) + std::to_string(BUILD_NUMBER / 10000 % 10) + std::to_string(BUILD_NUMBER / 1000 % 10);
     preprocessor.parse(str);
     
-//    Singleton::shared()->aliases.addNamespace("std");
     translatePPlusToPPL(in_filename, outfile);
     
     // Stop measuring time and calculate the elapsed time.
@@ -810,7 +824,7 @@ int main(int argc, char **argv) {
     outfile.close();
     
     if (hasErrors() == true) {
-        std::cout << "\e[48;5;160mERRORS\e[0m!\n";
+        std::cout << ANSI::Red << "ERRORS" << ANSI::Default << "❗\n";
         remove(out_filename.c_str());
         return 0;
     }
