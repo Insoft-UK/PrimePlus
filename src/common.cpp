@@ -40,14 +40,14 @@ std::ostream& operator<<(std::ostream& os, MessageType type) {
     Singleton *singlenton = Singleton::shared();
 
     if (!singlenton->currentPathname().empty()) {
-        os << "\e[0;96m" << basename(singlenton->currentPathname()) << "\e[0;m on line \e[1;97m";
-        os << singlenton->currentLineNumber() << "\e[0;m ";
+        os << ANSI::Blue << basename(singlenton->currentPathname()) << ANSI::Default << " on line " << ANSI::Bold;
+        os << singlenton->currentLineNumber() << ANSI::Default << " ";
     }
 
 
     switch (type) {
         case MessageType::Error:
-            os << "\e[48;5;160merror\e[0m: ";
+            os << ANSI::Red << "error" << ANSI::Default << ": ";
             _failed = true;
             break;
             
@@ -65,7 +65,7 @@ std::ostream& operator<<(std::ostream& os, MessageType type) {
             break;
             
         case MessageType::Deprecated:
-            os << "\e[48;5;208mdeprecated\e[0m: ";
+            os << ANSI::Orange << "deprecated" << ANSI::Default << ": ";
             break;
 
         default:

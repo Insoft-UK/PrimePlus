@@ -49,6 +49,30 @@ enum class MessageType {
     Tip
 };
 
+
+namespace ANSI {
+#ifdef DEBUG
+    const std::string Default = "";
+    const std::string Bold = "";
+    const std::string Green = "";
+    const std::string Red = "";
+    const std::string Orange = "";
+    const std::string Yellow = "";
+    const std::string Purpel = "";
+    const std::string Blue = "";
+#else
+    const std::string Default = R"(\e[0;m)";
+    const std::string Bold = R"(\e[1m)";
+    const std::string Green = R"(\e[38;5;34m)";
+    const std::string Red = R"(\e[38;5;160m)";
+    const std::string Orange = R"(\e[38;5;208m)";
+    const std::string Yellow = R"(\e[38;5;220)";
+    const std::string Purpel = R"(\e[38;5;125m)";
+    const std::string Blue = R"(\e[48;5;38m)";
+#endif
+};
+
+
 bool hasErrors(void);
 std::ostream& operator<<(std::ostream& os, MessageType type);
 

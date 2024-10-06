@@ -32,36 +32,15 @@
 using namespace pp;
 
 static std::string name;
-static std::string prefix;
 
-static std::string prefixFromName(const std::string& str) {
-    std::string s;
-    std::regex re(R"([A-Z])");
-    
-    for(std::sregex_iterator it = std::sregex_iterator(str.begin(), str.end(), re); it != std::sregex_iterator(); ++it) {
-        s += it->str();
-    }
-    
-    return s;
-}
 
 static bool parseEnum(const std::string& str) {
-    /*
-     eg. enum Name : AB
-     Group  0 enum Name : AB
-            1 Name
-            2 AB
-     */
-    std::regex re(R"(^ *enum +([A-Za-z]\w*) *:? *([A-Z]*) *$)");
-    const std::sregex_token_iterator end;
+    std::regex re;
+    std::smatch match;
     
-    std::sregex_token_iterator it = std::sregex_token_iterator {
-        str.begin(), str.end(), re, {1, 2}
-    };
-    if (it != end) {
-        name = *it++;
-        prefix = *it;
-        if (prefix.empty()) prefix = prefixFromName(name);
+    re = R"(enum ([A-Za-z]\w*)$)";
+    if (std::regex_search(str, match, re)) {
+        name = match.str(1);
         return true;
     }
     
@@ -79,37 +58,35 @@ bool Enums::parse(std::string& str) {
         return parsing;
     }
     
-    re = R"(^ *end;)";
+    re = R"(^end;$)";
     if (regex_match(str, re)) {
-        for (auto identity=_identities.begin(); identity != _identities.end(); ++identity) {
-            _singleton->aliases.append(*identity);
-        }
         parsing = false;
         return true;
     }
+    
     parseEnumItems(str);
     
     return parsing;
 }
 
 void Enums::parseEnumItems(const std::string& str) {
-    std::regex re(R"(([a-zA-Z\d]\w*) *:?= *((?:#[\dA-F]+(?::\d+)?h)|(?:#\d+(?::\d+)?d)|(?:#[0-1]+(?::\d+)?b)|(?:#[0-7]+(?::\d+)?o)|(?:\d+(?:\.\d+)?)))");
-    const std::sregex_token_iterator end;
+    std::regex re(R"(([A-Za-z]\w*) :?= ((?:#[\dA-F]+(?::\d+)?h)|(?:#\d+(?::\d+)?d)|(?:#[0-1]+(?::\d+)?b)|(?:#[0-7]+(?::\d+)?o)|(?:\d+(?:\.\d+)?)))");
     
-    std::sregex_token_iterator it = std::sregex_token_iterator {
-        str.begin(), str.end(), re, {1, 2}
-    };
-    while (it != end) {
-        Aliases::TIdentity identity;
-        std::string identifier = *it++;
-        identity.type = Aliases::Type::Eenum;
-        identity.scope = Aliases::Scope::Auto;
-        identity.real = *it++;
+    // Create an iterator to go over all matches
+    auto matches_begin = std::sregex_iterator(str.begin(), str.end(), re);
+    auto matches_end = std::sregex_iterator();
+    
+    Aliases::TIdentity identity;
+    identity.type = Aliases::Type::Eenum;
+    identity.scope = Aliases::Scope::Auto;
+    
+    // Iterate over all matches
+    for (std::sregex_iterator it = matches_begin; it != matches_end; ++it) {
+        std::smatch match = *it;  // Dereference the iterator to get the match
         
-        identity.identifier = name + "." + identifier;
-        _identities.push_back(identity);
-        identity.identifier = prefix + "_" + identifier;
-        _identities.push_back(identity);
+        identity.real = match[2].str();
+        identity.identifier = name + "." + match[1].str();
+        _singleton->aliases.append(identity);
     }
 }
 

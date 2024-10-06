@@ -47,7 +47,7 @@ bool Switch::parse(std::string& str) {
      Group  0 switch expresion
             1 expresion
      */
-    re = R"(\bswitch (.+))";
+    re = R"(^switch (.+))";
     if (regex_search(str, match, re)) {
         std::string s = match.str();
         

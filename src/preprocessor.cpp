@@ -119,15 +119,12 @@ bool Preprocessor::parse(std::string& str) {
                 2 a,b,c
                 3 c := a+b
          */
-        re = R"(^ *#define +([A-Za-z_]\w*)(?:\(([A-Za-z_ ,]+)\))? *(.*))";
-        it = std::sregex_token_iterator {
-            str.begin(), str.end(), re, {1, 2, 3}
-        };
-        if (it != end) {
-            identity.identifier = *it++;
-            identity.parameters = *it++;
+        re = R"(^#define ([A-Za-z_]\w*)(?:\(([A-Za-z_ ,]+)\))? *(.*))";
+        if (std::regex_search(str, match, re)) {
+            identity.identifier = match[1].str();
+            identity.parameters = match[2].str();
             strip(identity.parameters);
-            identity.real = *it++;
+            identity.real = match[3].str();
             
             identity.scope = Aliases::Scope::Global;
             identity.type = Aliases::Type::Macro;
@@ -142,50 +139,41 @@ bool Preprocessor::parse(std::string& str) {
          Group  0 #undef NAME
                 1 NAME
          */
-        // #undef
-        
-        re = R"(^ *#undef +([a-zA-Z_][\w.:]*) *$)";
-        it = std::sregex_token_iterator {
-            str.begin(), str.end(), re, {1}
-        };
-        if (it != end) {
-            _singleton->aliases.remove(*it);
+        re = R"(^#undef +([A-Za-z_][\w.:]*) *$)";
+        if (std::regex_search(str, match, re)) {
+            _singleton->aliases.remove(match[1].str());
             if (verbose) std::cout << MessageType::Verbose << "#undef: " << *it << '\n';
             return true;
         }
         
-        
-        // #pragma
-        re = R"((?:^ *#pragma +)\((.*)\) *$)";
-        it = std::sregex_token_iterator {
-            str.begin(), str.end(), re, {1}
-        };
-        if (it != end) {
-            s = *it;
-            re = R"([^,]+(?=[^,]*))";
-            for(std::sregex_iterator it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); ++it) {
-                std::string pragma = trim_copy(it->str());
-                
-                if (pragma == "verbose aliases") {
-                    Singleton::shared()->aliases.verbose = !Singleton::shared()->aliases.verbose;
-                }
-           
-                if (verbose) std::cout << MessageType::Verbose << "#pragma: " << pragma << '\n';
-            }
-            return true;
-        }
+//        // #pragma
+//        re = R"((?:^ *#pragma +)\((.*)\) *$)";
+//        it = std::sregex_token_iterator {
+//            str.begin(), str.end(), re, {1}
+//        };
+//        if (it != end) {
+//            s = *it;
+//            re = R"([^,]+(?=[^,]*))";
+//            for(std::sregex_iterator it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); ++it) {
+//                std::string pragma = trim_copy(it->str());
+//                
+//                if (pragma == "verbose aliases") {
+//                    Singleton::shared()->aliases.verbose = !Singleton::shared()->aliases.verbose;
+//                }
+//           
+//                if (verbose) std::cout << MessageType::Verbose << "#pragma: " << pragma << '\n';
+//            }
+//            return true;
+//        }
 
         /*
          eg. #ifdef NAME
          Group  0 #ifdef NAME
                 1 NAME
          */
-        re = R"(^\ *#ifdef +([A-Za-z_]\w*) *$)";
-        it = std::sregex_token_iterator {
-            str.begin(), str.end(), re, {1}
-        };
-        if (it != end) {
-            identity.identifier = *it;
+        re = R"(^#ifdef ([A-Za-z_]\w*) *$)";
+        if (std::regex_search(str, match, re)) {
+            identity.identifier = match[1].str();
             disregard = !_singleton->aliases.exists(identity);
             if (verbose) std::cout << MessageType::Verbose << "#ifdef: " << identity.identifier << " is " << (!disregard ? "true" : "false") << '\n';
             return true;
@@ -197,11 +185,8 @@ bool Preprocessor::parse(std::string& str) {
                 1 NAME
          */
         re = R"(^\ *#ifndef +([A-Za-z_]\w*) *$)";
-        it = std::sregex_token_iterator {
-            str.begin(), str.end(), re, {1}
-        };
-        if (it != end) {
-            identity.identifier = *it;
+        if (std::regex_search(str, match, re)) {
+            identity.identifier = match[1].str();
             
             disregard = _singleton->aliases.exists(identity);
             if (verbose) std::cout << MessageType::Verbose << "#ifndef: " << identity.identifier << " is " << (!disregard ? "true" : "false") << '\n';
@@ -209,15 +194,12 @@ bool Preprocessor::parse(std::string& str) {
         }
         
         
-        re = R"(#if +([A-Za-z_]\w*) *(==|!=|>=|<=|>|<) *(.+)$)";
-        it = std::sregex_token_iterator {
-            str.begin(), str.end(), re, {1,2,3}
-        };
-        if (it != end) {
-            identity = _singleton->aliases.getIdentity(*it++);
+        re = R"(^#if ([A-Za-z_]\w*) *(==|!=|>=|<=|>|<) *(.+)$)";
+        if (std::regex_search(str, match, re)) {
+            identity = _singleton->aliases.getIdentity(match[1].str());
             if (identity.identifier.empty()) return true;
-            std::string op = *it++;
-            std::string real = *it;
+            std::string op = match[2].str();
+            std::string real = match[3].str();
             
             disregard = true;
             if (op == "==" && identity.real == real) disregard = false;

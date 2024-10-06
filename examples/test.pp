@@ -1,10 +1,44 @@
+/*
+ When defining a macro with parameters, issues can arise if an argument
+ name is adjacent to a letter, causing conflicts. To resolve this, you
+ can use numbered placeholders like `1$` for the first argument, `2$` for
+ the second, `3$` for the third, and so on. This ensures the macro
+ arguments remain uniquely identifiable and avoid conflicts.
+*/
+#define MacroList(n)      L$1
 
-
-enum MyEnum
-   First     = 1,
-   Second    = 2
+fornext()
+begin
+    for a = 0; a <= 10; a += 1 do
+        b += 1;
+    next;
+    
+    for ; a != 10; a = 10 do
+    next;
+    
+    for ;; do
+    next;
 end;
 
+export Parameters(auto:a, b:beta)
+begin
+    def L$1 DefList(n);
+    
+    auto alpha;
+    var auto:beta;
+    var z:zero;
+    
+    alpha += beta + zero;
+    
+    MacroList(1) = 0;
+    DefList(1) = 0;
+end;
+
+enum MyEnum
+   First = 1, Second = 2
+end;
+
+def MyEnum.Second ME_Second;
 PPL()
 BEGIN
     // PPL & P+
@@ -17,7 +51,7 @@ BEGIN
         if a==1 then
             a += MyEnum.First;
             a += ME_Second;
-            a += MyEnum_Second
+            a += MyEnum_Second;
         endif;
     END;
 END;
@@ -53,6 +87,7 @@ begin
 end;
 
 def Theme[1] theme.color;
+def Theme[2] theme.shade;
 Def()
 begin
     theme.color = 2;
@@ -193,27 +228,27 @@ end;
 
 Struct_1()
 begin
-    struct LocalStruct
+    struct MyStruct
         first[1];
         second[2];
     end;
-    struct LocalStruct auto:localStruct;
+    struct MyStruct auto:myStruct;
     
-    localStruct.first = 1;
-    localStruct.second = 2;
+    myStruct.first = 1;
+    myStruct.second = 2;
 end;
 
-struct GlobalStruct
+struct MyGlobalStruct
     first[1,1];
     second[2,1];
 end;
 
 Struct_2()
 begin
-    struct GlobalStruct auto:globalStruct;
+    struct MyGlobalStruct auto:myGlobalStruct;
     
-    globalStruct.first = 1;
-    globalStruct.second = 2;
+    myGlobalStruct.first = 1;
+    myGlobalStruct.second = 2;
 end;
 
 Try()
@@ -245,8 +280,3 @@ BEGIN
     var b; // I am not PPL Code!
 END;
 #end
-
-
-
-
-

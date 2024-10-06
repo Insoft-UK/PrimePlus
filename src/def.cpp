@@ -45,8 +45,7 @@ static std::string shell(std::string& cmd) {
     
     fp = popen(cmd.c_str(),"re");
     if (fp == NULL) {
-        std::cout << MessageType::Error << "ERROR!\n" ;
-        exit(300);
+        std::cout << MessageType::CriticalError << "ERROR!\n" ;
     }
     
     char buf[2048];
@@ -102,30 +101,21 @@ bool Def::parse(std::string& str) {
     
     Singleton *singleton = Singleton::shared();
     
-    /*
-     def subtitution `name with spaces`
-     def subtitution name
-     def subtitution name(p1,p2,...)
-     */
-    re = R"(^ *def +(.+) +(`[^`]+`) *;)";
+    re = R"(^def (.+) +(`[^`]+`)() *(@deprecated(?: *\"([^"]*)\")?)?;)";
     if (!regex_match(str, re)) {
-        re = R"(^ *def +(.+) +([a-zA-Z][\w.]*(?:(?:::)?[a-zA-Z][\w.]*)*\b) *(?:\(([A-Za-z_ ,]+)\))?(\(\(deprecated(?: *: *\"([^"]*)\")?\)\))?;)";
+        re = R"(^def (.+) +([a-zA-Z][\w.]*(?:(?:::)?[a-zA-Z][\w.]*)*\b)(?:\(([A-Za-z_ ,]+)\))? *(@deprecated(?: *\"([^"]*)\")?)?;)";
     }
-    
-    std::sregex_token_iterator it = std::sregex_token_iterator {
-        str.begin(), str.end(), re, {1, 2, 3, 4, 5}
-    };
-    if (it != std::sregex_token_iterator()) {
+
+    if (std::regex_search(str, match, re)) {
         Aliases::TIdentity identity;
-        identity.real = *it++;
-        identity.identifier = *it++;
-        identity.parameters = *it++;
+        identity.real = match[1].str();
+        identity.identifier = match[2].str();
+        identity.parameters = match[3].str();
         
-        if (it->matched) {
+        if (!match[4].str().empty()) {
             identity.deprecated = true;
-            it++;
-            if (it->matched) {
-                identity.message = *it;
+            if (!match[5].str().empty()) {
+                identity.message = match[5].str();
             }
         }
         

@@ -31,6 +31,7 @@
 #include <cmath>
 #include <sys/time.h>
 #include <ctime>
+#include <vector>
 
 #include "timer.hpp"
 #include "singleton.hpp"
@@ -50,9 +51,7 @@
 
 #include "build.h"
 
-#define PPLUS_TAB_WIDTH  4
-
-int tabWidth = PPLUS_TAB_WIDTH;
+#define NAME "P+ Pre-Processor"
 
 using namespace pp;
 
@@ -60,6 +59,8 @@ static Preprocessor preprocessor = Preprocessor();
 static Enums enumerators = Enums();
 static Structs structurs = Structs();
 static Strings strings = Strings();
+
+static std::string _basename;
 
 
 void terminator() {
@@ -304,7 +305,6 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     static bool multiLineComment = false;
     static int consecutiveBlankLines = 0;
     
-    ln = regex_replace(ln, std::regex(R"(\t)"), " "); // Tab to space, future reg-ex will not require to deal with '\t', only spaces.
     
     /*
      While parsing the contents, strings may inadvertently undergo parsing, leading
@@ -320,6 +320,7 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     strings.preserveStrings(ln);
     strings.blankOutStrings(ln);
     
+    ln = regex_replace(ln, std::regex(R"(\s+)"), " "); // All multiple whitespaces in succesion to a single space, future reg-ex will not require to deal with '\t', only spaces.
     
     if (multiLineComment) {
         multiLineComment = !regex_search(ln, std::regex(R"(\*\/ *$)"));
@@ -406,7 +407,11 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
         return;
     }
     
+    
+    strings.restoreStrings(ln);
     if (Def::parse(ln)) return;
+    strings.blankOutStrings(ln);
+    
     ln = removeWhitespaceAroundOperators(ln);
      
     /*
@@ -425,8 +430,6 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     std::string::const_iterator it(ln.cbegin());
     re = R"((?:[^<>=]|^)(>=|!=|<>|<=|=>)(?!=[<>=]))";
     
-    //TODO: Remove the Hack
-    int hack = 0; // a hack for now to avoid any infinite loop
     while (std::regex_search(it, ln.cend(), match, re)) {
         // We will convert any >= != <= or => to PPLs ≥ ≠ ≤ and ▶
         std::string s = match.str(1);
@@ -440,13 +443,8 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
         
         ln = ln.replace(match.position(1), match.length(1), s);
         
-        // Reset the iterator to the beginning
+        // Reset the iterator to the beginning : HACK
         it = ln.cbegin();
-        
-        // Advance the iterator to the position just after the current match
-//        std::advance(it, match.position(1) + s.length() + std::distance(ln.cbegin(), it));
-        if (++hack > 100) break;
-        
     }
     
     //MARK: - namespace parsing
@@ -475,7 +473,6 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     ln = std::regex_replace(ln, re, "$1 := ");
     
     ln = singleton->aliases.resolveAllAliasesInText(ln);
-
     
     if (structurs.parse(ln)) {
         ln = std::string("");
@@ -624,7 +621,7 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile)
             re = std::regex(R"((\S+.*)\b((?:END|endif|wend|next);))", std::regex_constants::icase);
             utf8 = std::regex_replace(utf8, re, "$1\n$2");
             
-            re = R"(\/\/.*$;)";
+            re = R"((?:\/\*.*|.*\*\/)$)";
             utf8 = regex_replace(utf8, re, "\n$0");
         }
         
@@ -649,7 +646,7 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile)
 // MARK: - Command Line
 void version(void) {
     std::cout << "Copyright (C) 2023-" << BUILD_DATE / 10000 << " Insoft. All rights reserved.\n";
-    std::cout << "Insoft P+ Pre-Processor version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << "." << BUILD_NUMBER / 1000 % 10
+    std::cout << "Insoft " << NAME << " version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << "." << BUILD_NUMBER / 1000 % 10
     << " (BUILD " << getBuildCode() << ")\n";
     std::cout << "Built on: " << CURRENT_DATE << "\n";
     std::cout << "Licence: MIT License\n\n";
@@ -657,14 +654,14 @@ void version(void) {
 }
 
 void error(void) {
-    std::cout << "p+: try 'p+ -help' for more information\n";
+    std::cout << _basename << ": try '" << _basename << " -help' for more information\n";
     exit(0);
 }
 
 void info(void) {
     std::cout << "Copyright (c) 2023-" << BUILD_DATE / 10000 << " Insoft. All rights reserved.\n";
     int rev = BUILD_NUMBER / 1000 % 10;
-    std::cout << "Insoft P+ Pre-Processor version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "")
+    std::cout << "Insoft " << NAME << " version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "")
     << " (BUILD " << getBuildCode() << "-" << decimalToBase24(BUILD_DATE) << ")\n\n";
 }
 
@@ -672,10 +669,10 @@ void help(void) {
     int rev = BUILD_NUMBER / 1000 % 10;
     
     std::cout << "Copyright (C) 2023-" << BUILD_DATE / 10000 << " Insoft. All rights reserved.\n";
-    std::cout << "Insoft P+ Pre-Processor version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "")
+    std::cout << "Insoft " << NAME << " version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "")
     << " (BUILD " << getBuildCode() << "-" << decimalToBase24(BUILD_DATE) << ")\n";
     std::cout << "\n";
-    std::cout << "Usage: p+ <input-file> [-o <output-file>] [-b <flags>] [-l <pathname>]\n";
+    std::cout << "Usage: " << _basename << " <input-file> [-o <output-file>] [-b <flags>] [-l <pathname>]\n";
     std::cout << "\n";
     std::cout << "Options:\n";
     std::cout << "  -o <output-file>        Specify the filename for generated PPL code.\n";
@@ -703,8 +700,11 @@ int main(int argc, char **argv) {
         exit(100);
     }
     
+    std::string args(argv[0]);
+    _basename = basename(args);
+    
     for (int n = 1; n < argc; n++) {
-        std::string args(argv[n]);
+        args = argv[n];
         
         if (args == "-o") {
             if ( n + 1 >= argc ) {
@@ -801,7 +801,6 @@ int main(int argc, char **argv) {
     preprocessor.parse(str);
     
 //    Singleton::shared()->aliases.addNamespace("std");
-    
     translatePPlusToPPL(in_filename, outfile);
     
     // Stop measuring time and calculate the elapsed time.

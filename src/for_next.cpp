@@ -27,7 +27,7 @@
 
 #include <regex>
 
-static std::vector<std::string> _stack;
+static std::vector<std::string> _increments;
 
 using namespace pp;
 
@@ -39,37 +39,34 @@ bool ForNext::parse(std::string& str) {
     
     // C style for loop.
     re = R"(\bfor\b(.*);(.*);(.*)\bdo\b)";
-    while (regex_search(str, match, re)) {
-        std::string matched = match.str();
-        std::sregex_token_iterator it = std::sregex_token_iterator {
-            matched.begin(), matched.end(), re, {1, 2, 3}
-        };
-        std::string statements[3];
-        if (it != std::sregex_token_iterator()) {
-            if (it->matched) statements[0] = *it++;
-            if (it->matched) statements[1] = *it++;
-            if (it->matched) statements[2] = *it++;
+    while (std::regex_search(str, match, re)) {
+        std::string init, condition, increment, ppl;
+        
+        init = trim_copy(match[1].str());
+        condition = trim_copy(match[2].str());
+        increment = trim_copy(match[3].str());
+        
+        if (!init.empty()) {
+            ppl = init + ";";
         }
-        trim(statements[0]);
-        trim(statements[1]);
-        trim(statements[2]);
-        if (statements[1].empty()) statements[1] = "1";
-        if (statements[0].empty()) {
-            str = str.replace(match.position(), match.length(), "WHILE " + statements[1] + " DO");
-        } else {
-            str = str.replace(match.position(), match.length(), statements[0] + ";WHILE " + statements[1] + " DO");
+        ppl = "WHILE " + (condition.empty() ? "1" : condition) + " DO";
+        
+        if (!increment.empty()) {
+            _increments.push_back(increment + ";");
         }
-        if (!statements[2].empty()) _stack.push_back(statements[2] + ";");
+        
+        str = str.replace(match.position(), match.length(), ppl);
         parsed = true;
     }
     
-    while (regex_search(str, match, std::regex(R"(\bnext( *)?;?)", std::regex_constants::icase))) {
-        if (_stack.empty()) {
+    re = R"(\bnext;)";
+    while (regex_search(str, match, re)) {
+        if (_increments.empty()) {
             str = str.replace(match.position(), match.length(), "END;");
             continue;
         }
-        std::string ppl = _stack.back();
-        _stack.pop_back();
+        std::string ppl = _increments.back();
+        _increments.pop_back();
         
         if (ppl.empty()) {
             str = str.replace(match.position(), match.length(), "END;");

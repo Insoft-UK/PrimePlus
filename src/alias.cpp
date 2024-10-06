@@ -34,19 +34,20 @@ using namespace pp;
 static Singleton *singleton = Singleton::shared();
 
 static void parseAlias(const std::string& str, Aliases::TIdentity& identity) {
+    std::regex re;
+    std::smatch matches;
+    
     /*
      eg. name:alias
      Group  0 name:alias
             1 name
             2 alias
      */
-    std::regex re(R"(((?:[^\x00-\x7F]|\w)+):([a-zA-Z][\w.]*((?:::)?[a-zA-Z][\w.]*)*))");
-    std::sregex_token_iterator it = std::sregex_token_iterator {
-        str.begin(), str.end(), re, {1, 2}
-    };
-    if (it != std::sregex_token_iterator()) {
-        identity.real = *it++;
-        identity.identifier = *it;
+    re = R"(((?:[^\x00-\x7F]|\w)+):([a-zA-Z][\w.]*((?:::)?[a-zA-Z][\w.]*)*))";
+    
+    if (regex_search(str, matches, re)) {
+        identity.real = matches[1].str();
+        identity.identifier = matches[2].str();
         singleton->aliases.append(identity);
     }
 }
@@ -83,7 +84,7 @@ static void parseVariables(const std::string& str) {
 bool Alias::parse(std::string& str) {
     std::string s;
     std::regex re;
-    std::smatch match;
+    std::smatch matches;
     std::ostringstream os;
     
     bool parsed = false;
@@ -95,13 +96,14 @@ bool Alias::parse(std::string& str) {
          1 name:alias
          2 p1, p2:alias, auto:alias
          */
-        re = R"(^ *(?:export +)?\b((?:(?:[^\x00-\x7F]|\w)+ *: *)?(?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*) *\((.*)\))";
-        auto it = std::sregex_token_iterator {
-            str.begin(), str.end(), re, {1, 2}
-        };
-        if (it != std::sregex_token_iterator()) {
-            parseFunctionName(*it++);
-            parseParameters(*it++);
+        re = R"((?:export )?((?:(?:[^\x00-\x7F]|\w)+:)?(?:(?:[a-zA-Z_]\w*::)*?)[a-zA-Z][\w.]*)\((.*)\))";
+        
+        if (regex_search(str, matches, re)) {
+            parseFunctionName(matches[1].str());
+            
+            if (!matches[2].str().empty()) {
+                parseParameters(matches[2].str());
+            }
             parsed = true;
         }
     }

@@ -71,7 +71,7 @@ bool Aliases::append(const TIdentity& idty) {
                     std::cout << "previous definition on line " << it.line << "\n";
                 }
                 else {
-                    std::cout << "previous definition in \e[1;92m" << basename(it.pathname) << "\e[0;m on line " << it.line << "\n";
+                    std::cout << "previous definition in " << ANSI::Green << basename(it.pathname) << ANSI::Default << " on line " << it.line << "\n";
                 }
                 break;
             }
@@ -86,14 +86,14 @@ bool Aliases::append(const TIdentity& idty) {
     
     if (verbose) std::cout
         << MessageType::Verbose
-        << (Scope::Local == identity.scope && Type::Macro != identity.type ? "\e[1;97mlocal\e[0;m:" : "")
-        << (Scope::Global == identity.scope && Type::Macro != identity.type ? "\e[1;93mglobal\e[0;m:" : "")
+        << (Scope::Local == identity.scope && Type::Macro != identity.type ? ANSI::Default + ANSI::Bold + "local" + ANSI::Default + ":" : "")
+        << (Scope::Global == identity.scope && Type::Macro != identity.type ? ANSI::Yellow + "global" + ANSI::Default + ":" : "")
         << (Type::Eenum == identity.type ? " enumerator" : "")
         << (Type::Struct == identity.type ? " structure" : "")
         << (Type::Macro == identity.type ? "macro" : "")
         << (Type::Def == identity.type ? " def" : "")
         << (Type::Unknown == identity.type ? " identifier" : "")
-        << " \e[1;92m" << identity.identifier << "\e[0;m for \e[1;92m" << identity.real << "\e[0;m defined\n";
+        << " " << ANSI::Green << identity.identifier << ANSI::Default << " for " << ANSI::Green << identity.real << ANSI::Default << " defined\n";
     return true;
 }
 
@@ -102,13 +102,13 @@ void Aliases::removeAllLocalAliases() {
         if (it->scope == Scope::Local) {
             if (verbose) std::cout
                 << MessageType::Verbose
-                << "\e[1;97mlocal\e[0;m:"
+                << ANSI::Default << ANSI::Bold << "local" << ANSI::Default << ":"
                 << (Type::Eenum == it->type ? " enumerator" : "")
                 << (Type::Struct == it->type ? " structure" : "")
                 << (Type::Def == it->type ? " def" : "")
                 << (Type::Member == it->type ? " identifier" : "")
                 << (Type::Unknown == it->type ? " identifier" : "")
-                << " \e[1;92m" << it->identifier << "\e[0;m removed❗\n";
+                << " " << ANSI::Green << it->identifier << ANSI::Default << " removed❗\n";
             _identities.erase(it);
             removeAllLocalAliases();
             break;
@@ -125,15 +125,15 @@ void Aliases::removeAllAliasesOfType(const Type type) {
         if (it->type == type) {
             if (verbose) std::cout
                 << MessageType::Verbose
-                << (Scope::Local == it->scope && Type::Macro != it->type ? "\e[1;97mlocal\e[0;m: " : "")
-                << (Scope::Global == it->scope && Type::Macro != it->type ? "\e[1;93mglobal\e[0;m: " : "")
+                << (Scope::Local == it->scope && Type::Macro != it->type ? ANSI::Default + ANSI::Bold + "local" + ANSI::Default + ": " : "")
+                << (Scope::Global == it->scope && Type::Macro != it->type ? ANSI::Yellow + "global" + ANSI::Default + ": " : "")
                 << (Type::Macro == it->type ? "macro" : "")
                 << (Type::Eenum == it->type ? "enumerator" : "")
                 << (Type::Struct == it->type ? "structure" : "")
                 << (Type::Def == it->type ? " def" : "")
                 << (Type::Member == it->type ? "identifier" : "")
                 << (Type::Unknown == it->type ? "identifier" : "")
-                << " \e[1;92m" << it->identifier << "\e[1;m removed❗\n";
+                << " " << ANSI::Green << it->identifier << ANSI::Default << " removed❗\n";
             _identities.erase(it);
             removeAllAliasesOfType(type);
             break;
@@ -142,46 +142,38 @@ void Aliases::removeAllAliasesOfType(const Type type) {
 }
 
 static std::string resolveMacroFunction(const std::string& str, const std::string& parameters, const std::string& identifier, const std::string& real) {
-    std::string s;
+    std::string result;
     std::regex re;
     std::smatch match;
-    const std::sregex_token_iterator end;
+    std::string pattern;
     
-    /*
-     eg. NAME(a,b,c)
-     Group  0 NAME(a,b,c)
-            1 a,b,c
-     */
     re = R"(\b)" + identifier + R"(\(([^()]*)\))";
-    std::sregex_token_iterator it = std::sregex_token_iterator {
-        str.begin(), str.end(), re, {1}
-    };
-    if (it != end) {
-        re = R"([^,]+(?=[^,]*))";
-        s = *it++;
-        std::vector<std::string> arguments;
+    if (std::regex_search(str, match, re)) {
+        result = match[1].str();
         
-        for(std::sregex_iterator it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); ++it) {
+        re = R"([^,]+(?=[^,]*))";
+        std::vector<std::string> arguments;
+        for (auto it = std::sregex_iterator(result.begin(), result.end(), re); it != std::sregex_iterator(); ++it) {
             arguments.push_back(it->str());
         }
-        s = real;
-        size_t argumentIndex = 0;
-        for(std::sregex_iterator it = std::sregex_iterator(parameters.begin(), parameters.end(), re); it != std::sregex_iterator(); ++it) {
+        
+        result = real;
+        size_t i = 0;
+        for (auto it = std::sregex_iterator(parameters.begin(), parameters.end(), re); it != std::sregex_iterator(); ++it, ++i) {
             if (arguments.empty()) {
-                std::cout << MessageType::Error << "\e[0;91mmacro parameters mismatched\e[0;m" << '\n';
+                std::cout << MessageType::Error << ANSI::Red << "macro parameters mismatched" << ANSI::Default << '\n';
                 break;
             }
-            std::ostringstream os;
             
-            if (it->str().at(0) != '_') os << R"(\b)";
-            os << it->str();
-            if (it->str().at(it->str().length() - 1) != '_') os << R"(\b)";
+            pattern = "\\b" + it->str() + "\\b";
+            result = std::regex_replace(result, std::regex(pattern), arguments.at(i));
             
-            s = std::regex_replace(s, std::regex(os.str()), arguments.at(argumentIndex++));
+            pattern = "\\$" + std::to_string(i + 1);
+            result = std::regex_replace(result, std::regex(pattern), arguments.at(i));
         }
     }
     
-    return s;
+    return result;
 }
 
 std::string Aliases::resolveAllAliasesInText(const std::string& str) {
@@ -247,15 +239,15 @@ void Aliases::remove(const std::string& identifier) {
         if (it->identifier == identifier) {
             if (verbose) std::cout
                 << MessageType::Verbose
-                << (Scope::Local == it->scope && Type::Macro != it->type ? "\e[1;97mlocal\e[0;m: " : "")
-                << (Scope::Global == it->scope && Type::Macro != it->type ? "\e[1;93mglobal\e[0;m: " : "")
+                << (Scope::Local == it->scope && Type::Macro != it->type ? ANSI::Default + ANSI::Bold + "local" + ANSI::Default + ": " : "")
+                << (Scope::Global == it->scope && Type::Macro != it->type ? ANSI::Yellow + "global" + ANSI::Default + ": " : "")
                 << (Type::Macro == it->type ? "macro" : "")
                 << (Type::Eenum == it->type ? "enumerator" : "")
                 << (Type::Struct == it->type ? "structure" : "")
                 << (Type::Def == it->type ? "def" : "")
                 << (Type::Member == it->type ? "identifier" : "")
                 << (Type::Unknown == it->type ? "identifier" : "")
-                << " \e[1;92m" << it->identifier << "\e[0;m removed❗\n";
+                << " " << ANSI::Green << it->identifier << ANSI::Default << " removed❗\n";
             
             _identities.erase(it);
             break;
