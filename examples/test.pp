@@ -143,7 +143,7 @@ begin
     // blar...blar...blar..
     var a; /* variable
     */
-    return "blar...blar...blar.."; // blar...blar...blar..
+    return "blar...blar...   blar.."; // blar...blar...blar..
 end;
 
 Operators()

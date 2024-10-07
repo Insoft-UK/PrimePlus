@@ -49,7 +49,7 @@ bool ForNext::parse(std::string& str) {
         if (!init.empty()) {
             ppl = init + ";";
         }
-        ppl = "WHILE " + (condition.empty() ? "1" : condition) + " DO";
+        ppl.append("WHILE " + (condition.empty() ? "1" : condition) + " DO");
         
         if (!increment.empty()) {
             _increments.push_back(increment + ";");
