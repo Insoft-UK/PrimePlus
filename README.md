@@ -6,7 +6,7 @@ P+ is essentially the PPL language with additional features, such as substitutio
 
 Please view the test <a href="https://github.com/Insoft-UK/PrimePlus/blob/main/examples/test.pp">code</a> to see what additional features P+ adds to the Prime Programming Language (PPL).
 
-> [!IMPORTANT]
+>[!IMPORTANT]
 In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
 
 >[!NOTE]
