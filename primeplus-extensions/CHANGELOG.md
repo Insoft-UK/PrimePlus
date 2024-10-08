@@ -8,15 +8,14 @@ This is the first officially released version. The intention is to provide a mor
 
 ###Added
 
-    •    All programming commands have been added.
-    •    Example templates for conditionals such as if, for, while, etc. have been added.
+    •    All programming commands added.
+    •    Example templates for conditionals such as IF, FOR, WHILE, etc. have been added.
     •    Descriptions of what the commands do have been added. Simply hover the mouse pointer over them to get an example of usage and a brief description.
     •    A specific color scheme has been added for each type of command, variables, numbers, etc., compatible with all VSCode themes.
     •    All commands are updated to the 2023 version of the HP PRIME calculator.
     •    You can open files created in VSCode using the HP Connectivity Kit.
-    •    You cannot open files created in the Connectivity Kit directly in VSCode as some symbols will appear. We are looking for a solution.
     •    For now, you can open your files in the Connectivity Kit, copy the code content, and paste it into VSCode.
-    •    Currently, the HP PRIME extension in VSCode is only available in Spanish, but other languages will be added soon.
+    •    Currently, the HP PRIME extension in VSCode is only available in English.
 
 ###Fixed
 
