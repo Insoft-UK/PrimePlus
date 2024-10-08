@@ -1,5 +1,5 @@
 {
-	"name": "hp-prime-language-support",
+	"name": "hp-prime-language",
 	"displayName": "HP Prime Language Support",
 	"description": "HP Prime Language Support is an extension that provides language support and tools to facilitate the development of programs and applications in the HP Prime calculator environment. This extension includes syntax highlighting, code autocompletion, and contextual help to enhance the programming experience and increase the productivity of developers working with the HP Prime calculator.",
 	"icons": "icons/hpprgm-icon.png",
@@ -66,7 +66,7 @@
             {
                 "label": "PrimePlus",
                 "uiTheme": "vs-dark",
-                "path": "./themes/hpprime.json"
+                "path": "./themes/hp-prime.json"
             }
         ]
 	},

@@ -4,7 +4,7 @@
     "colors": {
         "editor.background": "#1E1E1E",
         "editor.foreground": "#FFFFFF",
-        "editorCursor.foreground": "#68B1FF",
+        "editorCursor.foreground": "#c",
         "editor.lineHighlightBackground": "#2A2A2A"
     },
     "tokenColors": [
@@ -17,24 +17,35 @@
         {
             "scope": ["keyword"],
             "settings": {
-                "foreground": "#68B1FF"
+                "foreground": "#66BBFF"
             }
         },
         {
             "scope": ["strings"],
             "settings": {
-                "foreground": "#FC635F"
+                "foreground": "#FF6600"
+            }
+        },
+        {
+            "scope": [
+                "punctuation.definition.bracket",
+                "punctuation.definition.parameters",
+                "punctuation.definition.block",
+                "punctuation.bracket"
+            ],
+            "settings": {
+                "foreground": "#66BBFF"
             }
         },
         {
             "scope": ["markup"],
             "settings": {
-                "foreground": "#FC635F"
+                "foreground": "#FF6600"
             }
         },{
             "scope": ["punctuation.definition.parameters.hp-prime"],
             "settings": {
-                "foreground": "#FC635F"
+                "foreground": "#FF6600"
             }
         },
         {
@@ -46,19 +57,19 @@
         {
             "scope": ["punctuation.definition.block.hp-prime"],
             "settings": {
-                "foreground": "#FC635F"
+                "foreground": "#FF6600"
             }
         },
         {
             "scope": ["meta.brace", "meta.brace.hp-prime"],
             "settings": {
-                "foreground": "#FC635F"
+                "foreground": "#FF6600"
             }
         },
         {
             "scope": ["meta.block.hp-prime", "meta.function.hp-prime"],
             "settings": {
-                "foreground": "#FC635F"
+                "foreground": "#FF6600"
             }
         }
     ]
