@@ -85,7 +85,11 @@ void Enums::parseEnumItems(const std::string& str) {
         std::smatch match = *it;  // Dereference the iterator to get the match
         
         identity.real = match[2].str();
+        // Old
         identity.identifier = name + "." + match[1].str();
+        _singleton->aliases.append(identity);
+        // New v2.0.5
+        identity.identifier = name + "::" + match[1].str();
         _singleton->aliases.append(identity);
     }
 }

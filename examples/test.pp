@@ -217,8 +217,10 @@ begin
         a += 1;
     until a == b;
     
+    a = 0;
     do
-        break;
+        if a > 10 then break; endif;
+        a += 1;
     loop;
 end;
 
