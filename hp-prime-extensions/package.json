@@ -61,7 +61,14 @@
 			"icons": {
 				"hp-prime": "icons/HP.png"
 			}
-		}
+		},
+        "themes": [
+            {
+                "label": "PrimePlus",
+                "uiTheme": "vs-dark",
+                "path": "./themes/hpprime.json"
+            }
+        ]
 	},
 	"devDependencies": {
 		"@types/node": "^20.3.1",
