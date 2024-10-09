@@ -56,17 +56,12 @@ bool Aliases::append(const TIdentity& idty) {
         identity.scope = singleton->scope == Singleton::Scope::Global ? Aliases::Scope::Global : Aliases::Scope::Local;
     }
     
-    if ('_' == identity.identifier.at(0) && '_' != identity.identifier.at(1)) {
-        identity.identifier = identity.identifier.substr(1, identity.identifier.length() - 1);
-        identity.type = Type::Property;
-    }
-    
     if (exists(identity) == true) {
         for (const auto &it : _identities) {
             if (it.identifier == identity.identifier) {
                 std::cout
                 << MessageType::Warning
-                << "redefinition of: \e[1;97m" << identity.identifier << "\e[0;m, ";
+                << "redefinition of: " << ANSI::Bold << identity.identifier << ANSI::Default << ", ";
                 if (basename(Singleton::shared()->currentPathname()) == basename(it.pathname)) {
                     std::cout << "previous definition on line " << it.line << "\n";
                 }
@@ -191,7 +186,7 @@ std::string Aliases::resolveAllAliasesInText(const std::string& str) {
         }
         namespaces += *it;
     }
-    namespaces += ")::)";
+    namespaces += ")(?:::|.))";
         
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if ('`' == it->identifier.at(0) && '`' == it->identifier.at(it->identifier.length() - 1)) {
@@ -305,6 +300,7 @@ Aliases::TIdentity Aliases::getIdentity(const std::string& identifier) {
 //MARK: - namespace
 
 void Aliases::addNamespace(const std::string& name) {
+    // We check to see if namespace allready exists, if it dose we just return.
     for (auto it = _namespaces.begin(); it != _namespaces.end(); ++it) {
         if (name == *it) return;
     }

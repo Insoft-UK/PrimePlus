@@ -9,13 +9,33 @@
 
 #define COPYWRITE "Copyright (c) 2023-2024 Insoft. All rights reserved."
 
+// Synthetic Class
+#define this MyClass
+
+
+var _a;
+var MyClass.b;
+
+MyClass::method()
+begin
+    _a = this.b = 0;
+end;
+
+#undef this
+
+
+using namespace MyClass;
+b = 0;
+method();
+remove namespace MyClass;
+
 #if __VERSION >= 204
     var text = {"This is some text...   ... ...", "If I see you", "It means it's working."};
 #else
     var text {"I never want to see you.", "If I do, we have a BUG!"}
 #endif
 
-fn1:Function1()
+fn2:Function1()
 begin
     var auto:copywriteText = COPYWRITE;
 end;

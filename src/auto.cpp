@@ -55,6 +55,8 @@ static std::string base10ToBase32(unsigned int num) {
 static bool isValidPPLName(const std::string name) {
     std::regex re;
     
+    if (name.at(0) == '_') return false;
+    
     re = R"(^[A-Za-z]\w*(?:(::)|\.))";
     if (std::regex_search(name, re)) {
         return false;

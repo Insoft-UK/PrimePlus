@@ -139,7 +139,7 @@ bool Preprocessor::parse(std::string& str) {
          Group  0 #undef NAME
                 1 NAME
          */
-        re = R"(^ *#undef +([A-Za-z_][\w.:]*) *$)";
+        re = R"(^ *#undef +([A-Za-z_][\w]*) *$)";
         if (std::regex_search(str, match, re)) {
             _singleton->aliases.remove(match[1].str());
             if (verbose) std::cout << MessageType::Verbose << "#undef: " << *it << '\n';
