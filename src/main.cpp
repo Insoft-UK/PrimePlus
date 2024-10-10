@@ -67,7 +67,7 @@ void terminator() {
     std::cout << MessageType::CriticalError << "An internal pre-processing problem occurred. Please review the syntax before this point.\n";
     exit(0);
 }
- 
+
 void (*old_terminate)() = std::set_terminate(terminator);
 
 
@@ -82,10 +82,10 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream &outfile);
  base 10 integer into its base 24 representation using a
  specific set of characters. The character set is
  comprised of the following 24 symbols:
-
-     •    Numbers: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
-     •    Letters: C, D, F, H, J, K, M, N, R, U, V, W, X, Y
-     
+ 
+ •    Numbers: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+ •    Letters: C, D, F, H, J, K, M, N, R, U, V, W, X, Y
+ 
  Character Selection:
  The choice of characters was made to avoid confusion
  with common alphanumeric representations, ensuring
@@ -98,16 +98,16 @@ static std::string decimalToBase24(long num) {
     if (num == 0) {
         return "C";
     }
-
+    
     const std::string base24Chars = "0123456789CDFHJKMNRUVWXY";
     std::string base24;
-
+    
     while (num > 0) {
         int remainder = num % 24;
         base24 = base24Chars[remainder] + base24; // Prepend character
         num /= 24; // Integer division
     }
-
+    
     return base24;
 }
 
@@ -178,7 +178,7 @@ std::string removeWhitespaceAroundOperators(const std::string& str) {
     // Regular expression pattern to match spaces around the specified operators
     // Operators: {}[]()≤≥≠<>=*/+-▶.,;:!^
     std::regex re(R"(\s*([{}[\]()≤≥≠<>=*\/+\-▶.,;:!^&|%])\s*)");
-
+    
     // Replace matches with the operator and no surrounding spaces
     std::string result = std::regex_replace(str, re, "$1");
     
@@ -238,7 +238,7 @@ void reformatPPLLine(std::string& str) {
      without affecting other operators.
      */
     str = regex_replace(str, std::regex(R"(==)"), "=");
-
+    
     // Ensuring that standalone `≥`, `≤`, `≠`, `=`, `:=`, `+`, `-`, `*` and `/` have surrounding whitespace.
     re = R"(≥|≤|≠|=|:=|\+|-|\*|\/|▶)";
     str = regex_replace(str, re, " $0 ");
@@ -258,17 +258,25 @@ void reformatPPLLine(std::string& str) {
         str = regex_replace(str, std::regex(R"( = )"), " == ");
     }
     
+    
     if (Singleton::Scope::Local == Singleton::shared()->scope) {
-        if (!regex_search(str, std::regex(R"(\b(BEGIN|IF|CASE|REPEAT|WHILE|FOR|ELSE|IFERR)\b)"))) {
-            str.insert(0, std::string(Singleton::shared()->nestingLevel * INDENT_WIDTH, ' '));
-        } else {
-            str.insert(0, std::string((Singleton::shared()->nestingLevel - 1) * INDENT_WIDTH, ' '));
+        try {
+            if (!regex_search(str, std::regex(R"(\b(BEGIN|IF|CASE|REPEAT|WHILE|FOR|ELSE|IFERR)\b)"))) {
+                str.insert(0, std::string(Singleton::shared()->nestingLevel * INDENT_WIDTH, ' '));
+            } else {
+                str.insert(0, std::string((Singleton::shared()->nestingLevel - 1) * INDENT_WIDTH, ' '));
+            }
         }
+        catch (...) {
+            std::cout << MessageType::CriticalError << "'" << str << "'\n";
+            exit(0);
+        }
+        
         
         re = std::regex(R"(^ *\b(THEN)\b)", std::regex_constants::icase);
         str = regex_replace(str, re, std::string((Singleton::shared()->nestingLevel - 1) * INDENT_WIDTH, ' ') + "$1");
         
-    
+        
         str = regex_replace(str, std::regex(R"(\(\s*\))"), "");
         
         if (regex_search(str, std::regex(R"(\bEND;$)"))) {
@@ -307,45 +315,12 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     
     Singleton *singleton = Singleton::shared();
     
-    static bool multiLineComment = false;
     static int consecutiveBlankLines = 0;
     
-    
-    
-    if (multiLineComment) {
-        multiLineComment = !regex_search(ln, std::regex(R"(\*\/ *$)"));
-        ln = std::string("");
-        return;
-    }
-    
-    if (std::regex_match(ln, std::regex(R"(^\ *\/\*)"))) {
-        multiLineComment = true;
-        ln = std::string("");
-        return;
-    }
     
     if (preprocessor.disregard == true) {
         preprocessor.parse(ln);
         ln = std::string("");
-        return;
-    }
-    
-    if (preprocessor.ppl) {
-        // We're presently handling PPL code.
-        preprocessor.parse(ln);
-        if (!preprocessor.ppl) {
-            // Signaling PPL code ending with the #end preprocessor, we clear the line to discard #end, and return to the calling function.
-            ln = std::string("");
-            return;
-        }
-        ln += '\n';
-        return;
-    }
-    
-    if (preprocessor.python) {
-        // We're presently handling Python code.
-        preprocessor.parse(ln);
-        ln += '\n';
         return;
     }
     
@@ -379,17 +354,11 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     }
     
     if (preprocessor.parse(ln)) {
-        if (preprocessor.python) {
-            // Indicating Python code ahead with the #PYTHON preprocessor, we maintain the line unchanged and return to the calling function.
-            ln += '\n';
-            return;
-        }
-
         if (!preprocessor.pathname.empty()) {
             // Flagged with #include preprocessor for file inclusion, we process it before continuing.
             translatePPlusToPPL(preprocessor.pathname, outfile);
         }
-
+        
         ln = std::string("");
         return;
     }
@@ -419,13 +388,13 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     
     
     ln = removeWhitespaceAroundOperators(ln);
-     
+    
     /*
      In C++, the standard library provides support for regular expressions
      through the <regex> library, but it does not support lookbehind
      assertions (such as (?<!...)) directly, as they are not part of the
      regular expressions supported by the C++ Standard Library.
-
+     
      However, we can work around this limitation by adjusting your regular
      expression to achieve the same result using alternative techniques.
      
@@ -453,6 +422,12 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
         it = ln.cbegin();
     }
     
+    // PPL uses := instead of C's = for assignment. Converting all = to PPL style :=
+    re = R"(([^:=]|^)(?:=)(?!=))";
+    ln = std::regex_replace(ln, re, "$1 := ");
+    
+    ln = singleton->aliases.resolveAllAliasesInText(ln);
+    
     //MARK: - namespace parsing
     
     re = R"(^using namespace ([A-Za-z](?:\w+|::[A-Za-z]+)*);$)";
@@ -473,12 +448,6 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     
     ln = expandAssignment(ln);
     Bitwise::parse(ln);
-    
-    // PPL uses := instead of C's = for assignment. Converting all = to PPL style :=
-    re = R"(([^:=]|^)(?:=)(?!=))";
-    ln = std::regex_replace(ln, re, "$1 := ");
-    
-    ln = singleton->aliases.resolveAllAliasesInText(ln);
     
     if (structurs.parse(ln)) {
         ln = std::string("");
@@ -516,7 +485,7 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
         }
     }
     
-
+    
     if (singleton->scope == Singleton::Scope::Global) {
         re = R"(^ *(KS?A?_[A-Z\d][a-z]*) *$)";
         std::sregex_token_iterator it = std::sregex_token_iterator {
@@ -539,7 +508,7 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
         re = R"(^ *(export +)?([a-zA-Z_]\w*((::)|\.))+[a-zA-Z_]\w* *(?=\())";
         ln = regex_replace(ln, re, "auto:$0");
     }
-
+    
     ln = regex_replace(ln, std::regex(R"(<int>\((.*)\))"), "IP($1)");
     ln = regex_replace(ln, std::regex(R"(<string>\((.*)\))"), "STRING($1)");
     
@@ -606,40 +575,150 @@ bool verbose(void) {
     return false;
 }
 
-void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile)
-{
+enum BlockType {
+    BlockType_Python, BlockType_PPL, BlockType_PrimePlus
+};
+
+bool isMultilineComment(const std::string str) {
+    std::regex re(R"(^ *\/*)");
+    return std::regex_search(str, re);
+}
+
+bool isPythonBlock(const std::string str) {
+    std::regex re(R"(^ *# *PYTHON *(\/\/.*)?$)");
+    return std::regex_search(str, re);
+}
+
+bool isPPLBlock(const std::string str) {
+    std::regex re(R"(^ *# *PPL *(\/\/.*)?$)");
+    return std::regex_search(str, re);
+}
+
+void writePPLBlock(std::ifstream& infile, std::ofstream& outfile) {
+    std::regex re(R"(^ *# *(END) *(?:\/\/.*)?$)");
+    std::string str;
+    
+    Singleton::shared()->incrementLineNumber();
+    
+    while(getline(infile, str)) {
+        if (std::regex_search(str, re)) {
+            Singleton::shared()->incrementLineNumber();
+            return;
+        }
+        
+        str.append("\n");
+        writeUTF16Line(str, outfile);
+        Singleton::shared()->incrementLineNumber();
+    }
+}
+
+void writePythonBlock(std::ifstream& infile, std::ofstream& outfile) {
+    std::regex re(R"(^ *# *(END) *(?:\/\/.*)?$)");
+    std::string str;
+    
+    writeUTF16Line("#PYTHON\n", outfile);
+    Singleton::shared()->incrementLineNumber();
+    
+    while(getline(infile, str)) {
+        if (std::regex_search(str, re)) {
+            writeUTF16Line("#END\n", outfile);
+            Singleton::shared()->incrementLineNumber();
+            return;
+        }
+        
+        str.append("\n");
+        writeUTF16Line(str, outfile);
+        Singleton::shared()->incrementLineNumber();
+    }
+}
+
+bool isBlockCommentStart(const std::string str) {
+    std::regex re(R"(^ *\/\* *)");
+    return std::regex_search(str, re);
+}
+
+void convertToLineComment(std::string& str) {
+    std::regex re(R"(^ *\/\* *)");
+    
+    str = std::regex_replace(str, re, "//");
+    str.append("\n");
+}
+
+void writeBlockAsLineComments(std::ifstream& infile, std::ofstream& outfile) {
+    std::regex re;
+    std::string str;
+    
+    Singleton::shared()->incrementLineNumber();
+    
+    re = R"( *\*\/(.*)$)";
+    
+    while(getline(infile, str)) {
+        if (std::regex_search(str, re)) {
+            str = std::regex_replace(str, re, "//$1");
+            str.append("\n");
+            writeUTF16Line(str, outfile);
+            Singleton::shared()->incrementLineNumber();
+            break;
+        }
+        str.insert(0, "// ");
+        str.append("\n");
+        writeUTF16Line(str, outfile);
+        Singleton::shared()->incrementLineNumber();
+    }
+}
+
+void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile) {
     Singleton& singleton = *Singleton::shared();
     std::ifstream infile;
     std::regex re;
     std::string utf8;
     std::string str;
-
+    std::smatch match;
+    
     singleton.pushPathname(pathname);
     
     infile.open(pathname,std::ios::in);
     if (!infile.is_open()) exit(2);
     
     while(getline(infile, utf8)) {
-        std::istringstream iss;
-        
-        if (!preprocessor.ppl && !preprocessor.python) {
-            re = std::regex(R"(\b(THEN|DO|REPEAT)\b(.*\S+))", std::regex_constants::icase);
-            // Adds a newline only if there is content after THEN, DO, or REPEAT
-            utf8 = std::regex_replace(utf8, re, "$1\n$2");
-            
-            // Make sure all `LOCAL` are on seperate lines.
-            re = std::regex(R"((\S+.*)\b(LOCAL|CONST|var)\b)", std::regex_constants::icase);
-            utf8 = regex_replace(utf8, re, "$1\n$2");
-            
-            // All `END`, `endif`, `wend`, and `next` must also be on separate lines,
-            // but no newline is added if they are already at the start of the line.
-            re = std::regex(R"((\S+.*)\b((?:END|endif|wend|next);))", std::regex_constants::icase);
-            utf8 = std::regex_replace(utf8, re, "$1\n$2");
-            
-            re = R"((?:\/\*.*|.*\*\/)$)";
-            utf8 = regex_replace(utf8, re, "\n$0");
+        if (isPythonBlock(utf8)) {
+            writePythonBlock(infile, outfile);
+            continue;
         }
         
+        if (isPPLBlock(utf8)) {
+            writePPLBlock(infile, outfile);
+            continue;
+        }
+        
+        // Convert any `/* comment */` to `// comment`
+        re = R"(\/\*(.*)(?:(\*\/)))";
+        utf8 = regex_replace(utf8, re, "//$1\n");
+        
+        if (isBlockCommentStart(utf8)) {
+            convertToLineComment(utf8);
+            writeUTF16Line(utf8, outfile);
+            writeBlockAsLineComments(infile, outfile);
+            continue;
+        }
+        
+        
+        re = std::regex(R"(\b(THEN|DO|REPEAT)\b(.*\S+))", std::regex_constants::icase);
+        // Adds a newline only if there is content after THEN, DO, or REPEAT
+        utf8 = std::regex_replace(utf8, re, "$1\n$2");
+        
+        // Make sure all `LOCAL` are on seperate lines.
+        re = std::regex(R"((\S+.*)\b(LOCAL|CONST|var)\b)", std::regex_constants::icase);
+        utf8 = regex_replace(utf8, re, "$1\n$2");
+        
+        // All `END`, `endif`, `wend`, and `next` must also be on separate lines,
+        // but no newline is added if they are already at the start of the line.
+        re = std::regex(R"((\S+.*)\b((?:END|endif|wend|next);))", std::regex_constants::icase);
+        utf8 = std::regex_replace(utf8, re, "$1\n$2");
+        
+        
+        
+        std::istringstream iss;
         iss.str(utf8);
         
         while(getline(iss, str)) {
@@ -651,7 +730,6 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile)
         Singleton::shared()->incrementLineNumber();
     }
     
-   
     
     infile.close();
     singleton.popPathname();
@@ -709,7 +787,7 @@ void help(void) {
 // MARK: - Main
 int main(int argc, char **argv) {
     std::string in_filename, out_filename;
-
+    
     if (argc == 1) {
         error();
         exit(100);
@@ -730,7 +808,7 @@ int main(int argc, char **argv) {
             if (out_filename.substr(out_filename.length() - 7).compare(".hpprgm") != 0) {
                 out_filename += ".hpprgm";
             }
-
+            
             n++;
             continue;
         }
@@ -739,7 +817,7 @@ int main(int argc, char **argv) {
             help();
             return 0;
         }
-
+        
         
         if ( strcmp( argv[n], "-version" ) == 0 ) {
             version();
@@ -758,7 +836,7 @@ int main(int argc, char **argv) {
             if (args.find("e") != std::string::npos) enumerators.verbose = true;
             if (args.find("s") != std::string::npos) structurs.verbose = true;
             if (args.find("p") != std::string::npos) preprocessor.verbose = true;
-        
+            
             continue;
         }
         
@@ -774,10 +852,6 @@ int main(int argc, char **argv) {
         
         in_filename = argv[n];
         std::regex re(R"(.\w*$)");
-        std::smatch extension;
-        if (regex_search(in_filename, extension, re)) {
-            if (".ppl" == extension.str()) preprocessor.ppl = true;
-        }
     }
     
     if (!out_filename.length()) {
@@ -819,7 +893,7 @@ int main(int argc, char **argv) {
     
     // Stop measuring time and calculate the elapsed time.
     long long elapsed_time = timer.elapsed();
-
+    
     
     outfile.close();
     
@@ -828,7 +902,7 @@ int main(int argc, char **argv) {
         remove(out_filename.c_str());
         return 0;
     }
-
+    
     // Display elasps time in secononds.
     std::cout << "Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e9 << " seconds\n";
     std::cout << "UTF-16LE File '" << out_filename << "' Succefuly Created.\n";

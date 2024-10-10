@@ -37,8 +37,6 @@ namespace pp {
         bool verbose = false;
         
         bool disregard = false;
-        bool python = false;
-        bool ppl = false;
         bool operators = true;
         bool logicalOperators = true;
         

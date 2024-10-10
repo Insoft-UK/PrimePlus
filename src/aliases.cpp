@@ -32,9 +32,13 @@
 
 using namespace pp;
 
-bool compareInterval(Aliases::TIdentity i1, Aliases::TIdentity i2) {
+//MARK: - Functions
+
+static bool compareInterval(Aliases::TIdentity i1, Aliases::TIdentity i2) {
     return (i1.identifier.length() > i2.identifier.length());
 }
+
+//MARK: - Public Methods
 
 bool Aliases::append(const TIdentity& idty) {
     TIdentity identity = idty;
@@ -56,7 +60,7 @@ bool Aliases::append(const TIdentity& idty) {
         identity.scope = singleton->scope == Singleton::Scope::Global ? Aliases::Scope::Global : Aliases::Scope::Local;
     }
     
-    if (exists(identity) == true) {
+    if (identifierExists(identity.identifier)) {
         for (const auto &it : _identities) {
             if (it.identifier == identity.identifier) {
                 std::cout
@@ -66,7 +70,7 @@ bool Aliases::append(const TIdentity& idty) {
                     std::cout << "previous definition on line " << it.line << "\n";
                 }
                 else {
-                    std::cout << "previous definition in " << ANSI::Green << basename(it.pathname) << ANSI::Default << " on line " << it.line << "\n";
+                    std::cout << "previous definition in '" << ANSI::Green << basename(it.pathname) << ANSI::Default << "' on line " << it.line << "\n";
                 }
                 break;
             }
@@ -88,7 +92,7 @@ bool Aliases::append(const TIdentity& idty) {
         << (Type::Macro == identity.type ? "macro" : "")
         << (Type::Def == identity.type ? " def" : "")
         << (Type::Unknown == identity.type ? " identifier" : "")
-        << " " << ANSI::Green << identity.identifier << ANSI::Default << " for " << ANSI::Green << identity.real << ANSI::Default << " defined\n";
+        << " '" << ANSI::Green << identity.identifier << ANSI::Default << "' for '" << ANSI::Green << identity.real << ANSI::Default << "' defined\n";
     return true;
 }
 
@@ -103,7 +107,7 @@ void Aliases::removeAllLocalAliases() {
                 << (Type::Def == it->type ? " def" : "")
                 << (Type::Member == it->type ? " identifier" : "")
                 << (Type::Unknown == it->type ? " identifier" : "")
-                << " " << ANSI::Green << it->identifier << ANSI::Default << " removed❗\n";
+                << " '" << ANSI::Green << it->identifier << ANSI::Default << "' removed❗\n";
             _identities.erase(it);
             removeAllLocalAliases();
             break;
@@ -128,7 +132,7 @@ void Aliases::removeAllAliasesOfType(const Type type) {
                 << (Type::Def == it->type ? " def" : "")
                 << (Type::Member == it->type ? "identifier" : "")
                 << (Type::Unknown == it->type ? "identifier" : "")
-                << " " << ANSI::Green << it->identifier << ANSI::Default << " removed❗\n";
+                << " '" << ANSI::Green << it->identifier << ANSI::Default << "' removed❗\n";
             _identities.erase(it);
             removeAllAliasesOfType(type);
             break;
@@ -179,20 +183,15 @@ std::string Aliases::resolveAllAliasesInText(const std::string& str) {
     
     if (s.empty()) return s;
     
-    namespaces = "((";
-    for (auto it = _namespaces.begin(); it != _namespaces.end(); ++it) {
-        if (it != _namespaces.begin()) {
-            namespaces += "|";
-        }
-        namespaces += *it;
-    }
-    namespaces += ")(?:::|.))";
+    
+    namespaces = namespacePattern();
+    
         
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if ('`' == it->identifier.at(0) && '`' == it->identifier.at(it->identifier.length() - 1)) {
             pattern = it->identifier;
         } else {
-            if (_namespaces.size()) {
+            if (!namespaces.empty()) {
                 pattern = R"(\b)" + namespaces + "?" + regex_replace(it->identifier, std::regex(namespaces), "") + R"(\b)";
             }
             else {
@@ -203,7 +202,12 @@ std::string Aliases::resolveAllAliasesInText(const std::string& str) {
         re = pattern;
 
         if (!it->parameters.empty()) {
-            re = R"(\b)" + namespaces + "?" + it->identifier + R"(\([^()]*\))";
+            if (namespaces.empty()) {
+                re = R"(\b)" + it->identifier + R"(\([^()]*\))";
+            }
+            else {
+                re = R"(\b)" + namespaces + "?" + it->identifier + R"(\([^()]*\))";
+            }
             while (regex_search(s, match, re)) {
                 if (it->deprecated) std::cout << MessageType::Deprecated << it->identifier << it->message << "\n";
                 std::string result = resolveMacroFunction(match.str(), it->parameters, it->identifier, it->real);
@@ -242,7 +246,7 @@ void Aliases::remove(const std::string& identifier) {
                 << (Type::Def == it->type ? "def" : "")
                 << (Type::Member == it->type ? "identifier" : "")
                 << (Type::Unknown == it->type ? "identifier" : "")
-                << " " << ANSI::Green << it->identifier << ANSI::Default << " removed❗\n";
+                << " '" << ANSI::Green << it->identifier << ANSI::Default << "' removed❗\n";
             
             _identities.erase(it);
             break;
@@ -250,15 +254,7 @@ void Aliases::remove(const std::string& identifier) {
     }
 }
 
-bool Aliases::exists(const TIdentity& identity) {
-    for (auto it = _identities.begin(); it != _identities.end(); ++it) {
-        if (it->identifier == identity.identifier) {
-            return true;
-        }
-    }
-    
-    return false;
-}
+
 
 bool Aliases::identifierExists(const std::string& identifier) {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
@@ -286,18 +282,17 @@ void Aliases::dumpIdentities() {
     }
 }
 
-Aliases::TIdentity Aliases::getIdentity(const std::string& identifier) {
+const Aliases::TIdentity Aliases::getIdentity(const std::string& identifier) {
     TIdentity identity;
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if (it->identifier == identifier) {
-            memcpy(&identity, &*it, sizeof(TIdentity));
-            break;
+            return *it;
         }
     }
     return identity;
 }
 
-//MARK: - namespace
+//MARK: namespace
 
 void Aliases::addNamespace(const std::string& name) {
     // We check to see if namespace allready exists, if it dose we just return.
@@ -319,4 +314,25 @@ void Aliases::removeNamespace(const std::string& name) {
         if (index < _namespaseCheckpoint) _namespaseCheckpoint--;
         break;
     }
+}
+
+//MARK: - Private Methods
+
+const std::string Aliases::namespacePattern(void) {
+    if (_namespaces.size() == 0) {
+        return std::string("");
+    }
+    
+    std::string pattern;
+    
+    pattern = "((";
+    for (auto it = _namespaces.begin(); it != _namespaces.end(); ++it) {
+        if (it != _namespaces.begin()) {
+            pattern += "|";
+        }
+        pattern += *it;
+    }
+    pattern += ")(?:::|.))";
+    
+    return pattern;
 }

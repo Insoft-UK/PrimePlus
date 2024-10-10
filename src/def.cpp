@@ -101,6 +101,16 @@ bool Def::parse(std::string& str) {
     
     Singleton *singleton = Singleton::shared();
     
+    re = R"(^undef (.*);)";
+    if (regex_match(str, match, re)) {
+        if (!Singleton::shared()->aliases.identifierExists(match[1].str())) return false;
+        const Aliases::TIdentity identity = Singleton::shared()->aliases.getIdentity(match[1].str());
+        if (identity.type != Aliases::Type::Def) return false;
+        Singleton::shared()->aliases.remove(identity.identifier);
+        return true;
+    }
+    
+    
     re = R"(^def (.+) +(`[^`]+`)() *(@ *deprecated(?: *\"([^"]*)\")?)?;)";
     if (!regex_match(str, re)) {
         re = R"(^def (.+) +([a-zA-Z][\w.]*(?:(?:::)?[a-zA-Z][\w.]*)*\b)(?:\(([A-Za-z_ ,]+)\))? *(@ *deprecated(?: *\"([^"]*)\")?)?;)";

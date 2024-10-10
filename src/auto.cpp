@@ -80,7 +80,7 @@ static void inferredAutoForVariableName(std::string& ln) {
         re =  R"([^,;]+)";
         for (auto it = std::sregex_iterator(str.begin(), str.end(), re);;) {
             std::string s = trim_copy(it->str());
-            if (regex_search(s, std::regex(R"(^[A-Za-z]\w*:[a-zA-Z])"))) {
+            if (regex_search(s, std::regex(R"(^[a-zA-Z]\w*:[a-zA-Z])"))) {
                 code.append(s);
             }
             else {
@@ -97,18 +97,6 @@ static void inferredAutoForVariableName(std::string& ln) {
     }
 }
 
-static void inferredAutoForShortNameOnly(std::string& str) {
-    std::regex re;
-    std::smatch match;
-    
-    re = R"(^(auto )[\w,]*(?=;))";
-    if (regex_search(str, match, re)) {
-        re = R"(\b(?!auto\b)\w{3,}\b)";
-        str = regex_replace(str, re, "auto:$0");
-        str.replace(match.position(1), match.str(1).length(), "local ");
-    }
-}
-
 bool Auto::parse(std::string& str) {
     std::smatch match;
     std::regex re;
@@ -116,8 +104,15 @@ bool Auto::parse(std::string& str) {
     Singleton *singleton = Singleton::shared();
     
     inferredAutoForVariableName(str);
-    inferredAutoForShortNameOnly(str);
-
+    
+    
+    re = R"(^(auto +)([^:=]*)(?=;))";
+    if (regex_search(str, match, re)) {
+        str.replace(match.position(1), match.str(1).length(), "var ");
+        
+        re = R"(([a-zA-Z_]\w*) *(?=;|,))";
+        str = regex_replace(str, re, "auto:$1");
+    }
     
     if (singleton->scope == Singleton::Scope::Global) {
         re = R"(\b(var|local|const) +)";
@@ -129,7 +124,7 @@ bool Auto::parse(std::string& str) {
             }
         }
 
-        re = R"(\bauto *(?=: *(?:[a-zA-Z_][\w:.]*) *(?=\()))";
+        re = R"(\bauto *(?=: *(?:[A-Za-z_][\w:.]*) *(?=\()))";
         if (regex_search(str, match, re)) {
             while (singleton->aliases.realExists("fn" + base10ToBase32(++_fnCount)));
             str.replace(match.position(), match.str().length(), "fn" + base10ToBase32(_fnCount));

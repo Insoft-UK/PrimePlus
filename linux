@@ -59,5 +59,3 @@ zig c++ -target aarch64-linux-gnu -std=c++20 -o bin/linux/aarch64/$xcodeproj_nam
 
 zip linux.zip bin/linux/* -r -x "*/.DS_Store"
 
-# Close the Terminal window
-osascript -e 'tell application "Terminal" to close window 1' & exit

@@ -22,7 +22,7 @@
  SOFTWARE.
  */
 
-#pragma mode( separator(.,;) integer(h64) )
+#pragma mode( separator(.,,) integer(h64) )
 
 export HSV(h:hue, s:saturation, v:value)
 begin

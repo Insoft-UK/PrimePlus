@@ -46,36 +46,14 @@ bool Preprocessor::parse(std::string& str) {
     Aliases::TIdentity  identity;
     pathname = std::string("");
     
-    if (regex_search(str, std::regex(R"(^ *#END\b)", std::regex_constants::icase))) {
+    if (regex_search(str, std::regex(R"(^ *#end\b)"))) {
         if (_nesting.size() == 0) {
             std::cout << MessageType::CriticalError << "unexpected #end\n";
             exit(-1);
             return false;
         }
-        if (std::string::npos != _nesting.back().compare("#PYTHON")) {
-            python = false;
-        } // #END is for #PYTHON
-        
-        if (std::string::npos != _nesting.back().compare("#PPL")) {
-            ppl = false;
-        } // #END is for #PPL
-        
         _nesting.pop_back();
-        
         return false;
-    }
-    
-    
-    if (regex_search(str, std::regex(R"(^ *#PYTHON\b)"))) {
-        _nesting.push_back(std::string("#PYTHON"));
-        python=true;
-        return true;
-    }
-    
-    if (regex_search(str, std::regex(R"(^ *#PPL\b)"))) {
-        _nesting.push_back(std::string("#PPL"));
-        ppl=true;
-        return true;
     }
     
     
@@ -146,25 +124,7 @@ bool Preprocessor::parse(std::string& str) {
             return true;
         }
         
-//        // #pragma
-//        re = R"((?:^ *#pragma +)\((.*)\) *$)";
-//        it = std::sregex_token_iterator {
-//            str.begin(), str.end(), re, {1}
-//        };
-//        if (it != end) {
-//            s = *it;
-//            re = R"([^,]+(?=[^,]*))";
-//            for(std::sregex_iterator it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); ++it) {
-//                std::string pragma = trim_copy(it->str());
-//                
-//                if (pragma == "verbose aliases") {
-//                    Singleton::shared()->aliases.verbose = !Singleton::shared()->aliases.verbose;
-//                }
-//           
-//                if (verbose) std::cout << MessageType::Verbose << "#pragma: " << pragma << '\n';
-//            }
-//            return true;
-//        }
+
 
         /*
          eg. #ifdef NAME
@@ -174,7 +134,7 @@ bool Preprocessor::parse(std::string& str) {
         re = R"(^ *#ifdef +([A-Za-z_]\w*) *$)";
         if (std::regex_search(str, match, re)) {
             identity.identifier = match[1].str();
-            disregard = !_singleton->aliases.exists(identity);
+            disregard = !_singleton->aliases.identifierExists(identity.identifier);
             if (verbose) std::cout << MessageType::Verbose << "#ifdef: " << identity.identifier << " is " << (!disregard ? "true" : "false") << '\n';
             return true;
         }
@@ -188,7 +148,7 @@ bool Preprocessor::parse(std::string& str) {
         if (std::regex_search(str, match, re)) {
             identity.identifier = match[1].str();
             
-            disregard = _singleton->aliases.exists(identity);
+            disregard = _singleton->aliases.identifierExists(identity.identifier);
             if (verbose) std::cout << MessageType::Verbose << "#ifndef: " << identity.identifier << " is " << (!disregard ? "true" : "false") << '\n';
             return true;
         }

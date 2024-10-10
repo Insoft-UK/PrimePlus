@@ -73,11 +73,12 @@ namespace pp {
         void removeAllAliasesOfType(const Type type);
         std::string resolveAllAliasesInText(const std::string& str);
         void remove(const std::string& identifier);
-        bool exists(const TIdentity& identity);
+        
         bool identifierExists(const std::string& identifier);
         bool realExists(const std::string& real);
+        
         void dumpIdentities();
-        TIdentity getIdentity(const std::string& identifier);
+        const TIdentity getIdentity(const std::string& identifier);
         
         //MARK: - namespaces
         void addNamespace(const std::string& name);
@@ -88,6 +89,7 @@ namespace pp {
         std::vector<std::string> _namespaces;
         size_t _namespaseCheckpoint = _namespaces.size();
         
+        const std::string namespacePattern(void);
     };
 }
 #endif // ALIASES_HPP
