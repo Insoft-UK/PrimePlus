@@ -20,7 +20,6 @@ EOF
 )
 
 printf "$ANSI_ART\n"
-
 cd $DIR
 
 # Use find to locate the .xcodeproj file

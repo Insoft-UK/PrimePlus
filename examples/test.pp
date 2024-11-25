@@ -55,13 +55,16 @@ def remove namespace endof;
 
 class MyClass;
 
-auto a;
+using namespace MyClass;
+var _a;
 var MyClass.b;
 
 MyClass::method()
 begin
-    a = b = 0;
+    _a = b = 0;
+    method();
 end;
+remove namespace MyClass;
 
 endof MyClass;
 
