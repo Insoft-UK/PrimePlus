@@ -17,4 +17,4 @@ Please view the test <a href="https://github.com/Insoft-UK/PrimePlus/blob/main/e
 In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
 
 >[!NOTE]
-The P+ proprietary programming language is susceptible to change, while also maintaining full compatibility with previous versions.
+The P+ proprietary programming language is susceptible to change, while also maintaining some compatibility with previous versions.
