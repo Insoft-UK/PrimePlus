@@ -43,7 +43,7 @@ namespace pp {
         bool parse(std::string& str);
         
     private:
-        std::list<std::string> _nesting;
+//        std::list<std::string> _nesting;
     };
     
 }

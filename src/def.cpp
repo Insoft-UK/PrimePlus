@@ -94,6 +94,17 @@ static std::string load(std::string& filename) {
     return str;
 }
 
+static std::string removeWhitespaceAroundOperators(const std::string& str) {
+    // Regular expression pattern to match spaces around the specified operators
+    // Operators: {}[]()≤≥≠<>=*/+-▶.,;:!^
+    std::regex re(R"(\s*([{}[\]()≤≥≠<>=*\/+\-▶.,;:!^&|%])\s*)");
+    
+    // Replace matches with the operator and no surrounding spaces
+    std::string result = std::regex_replace(str, re, "$1");
+    
+    return result;
+}
+
 bool Def::parse(std::string& str) {
     std::regex re;
     std::smatch match;
@@ -109,6 +120,50 @@ bool Def::parse(std::string& str) {
         Singleton::shared()->aliases.remove(identity.identifier);
         return true;
     }
+    
+    re = R"(^def +)";
+    if (!regex_search(str, match, re)) return false;
+    
+    
+    
+    re = R"(^def +dictionary(?: *< *(?:global|local) *> *)?: *((?:[a-zA-Z]\w*(?:(?:[a-zA-Z_]\w*)|(?:::)|\.)*(?:(?: *\[ *#?[\dA-F]+(?::\d{0,2}[bodh])? *(?:, *#?[\dA-F]+(?::\d{0,2}[bodh])? *)*\])|(?: *= *#?[\dA-F]+(?::\d{0,2}[bodh])? *))?(?:, *[a-zA-Z]\w*(?:(?: *\[ *#?[\dA-F]+(?::\d{0,2}[bodh])? *(?:, *#?[\dA-F]+(?::\d{0,2}[bodh])? *)*\])|(?: *= *#?[\dA-F]+(?::\d{0,2}[bodh])? *))?)*)) +([a-zA-Z]\w*(?:(?:[a-zA-Z_]\w*)|(?:::)|\.)*) *;$)";
+    if (regex_match(str, match, re)) {
+        Aliases::TIdentity identity;
+        identity.type = Aliases::Type::Def;
+        identity.scope = Aliases::Scope::Auto;
+        
+        std::smatch m;
+        if (regex_search(str, m, std::regex(R"(^def +dictionary(?: *< *(global|local) *> *))"))) {
+            identity.scope = m[1].str() == "global" ? Aliases::Scope::Global : Aliases::Scope::Local;
+        }
+        
+        re = R"(([a-zA-Z]\w*(?:(?:[a-zA-Z_]\w*)|(?:::)|\.)*)(?:(\[#?[\dA-F]+(?::\d{0,2}[bodh])?(?:,#?[\dA-F]+(?::\d{0,2}[bodh])?)*\])|(?:=(#?[\dA-F]+(?::\d{0,2}[bodh])?)))?)";
+        std::smatch matches;
+        s = removeWhitespaceAroundOperators(match[1].str());
+        
+        for (auto it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); it++) {
+            //s = removeWhitespaceAroundOperators(str);
+            identity.identifier = match[2].str() + "." + it->str(1);
+            
+            
+            if (!it->str(2).empty()) {
+                identity.real = match[2].str() + it->str(2);
+            }
+            if (!it->str(3).empty()) {
+                identity.real = it->str(3);
+            }
+            
+            if (it->str(2).empty() && it->str(3).empty()) {
+                identity.real = match[2].str();
+            }
+            
+            singleton->aliases.append(identity);
+        }
+        str = std::string("");
+        return true;
+    }
+    
+    
     
     
     re = R"(^def (.+) +(`[^`]+`)() *(@ *deprecated(?: *\"([^"]*)\")?)?;)";
@@ -138,10 +193,6 @@ bool Def::parse(std::string& str) {
             identity.real = shell(identity.real);
         }
         
-        if ("eval:" == identity.real.substr(0, 5)) {
-            identity.real = identity.real.substr(5, identity.real.length() - 5);
-            eval(identity.real);
-        }
         
         if ('"' == identity.real.at(0) && '"' == identity.real.at(identity.real.length() - 1)) {
             s = identity.real.substr(1, identity.real.length() - 2);

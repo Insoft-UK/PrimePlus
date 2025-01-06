@@ -46,18 +46,23 @@ bool Preprocessor::parse(std::string& str) {
     Aliases::TIdentity  identity;
     pathname = std::string("");
     
-    if (regex_search(str, std::regex(R"(^ *#end\b)"))) {
-        if (_nesting.size() == 0) {
-            std::cout << MessageType::CriticalError << "unexpected #end\n";
-            exit(-1);
-            return false;
-        }
-        _nesting.pop_back();
-        return false;
-    }
+//    if (regex_search(str, std::regex(R"(^ *#end\b)"))) {
+//        if (_nesting.size() == 0) {
+//            std::cout << MessageType::CriticalError << "unexpected #end\n";
+//            exit(-1);
+//            return false;
+//        }
+//        _nesting.pop_back();
+//        return false;
+//    }
     
     
     if (disregard == false) {
+        if (regex_search(str, std::regex(R"(^ *@disregard *$)"))) {
+            disregard = true;
+            return true;
+        }
+        
         re = R"(^ *#include +)";
         if (regex_search(str, re)) {
             std::sregex_token_iterator it;
@@ -182,6 +187,12 @@ bool Preprocessor::parse(std::string& str) {
     if (regex_search(str, std::regex(R"(^ *#endif\b *((\/\/.*)|)$)"))) {
         disregard = false;
         if (verbose) std::cout << MessageType::Verbose << "#endif: " << disregard << '\n';
+        return true;
+    }
+    
+    if (regex_search(str, std::regex(R"(^ *@end *$)"))) {
+        disregard = false;
+        if (verbose) std::cout << MessageType::Verbose << "@end: " << disregard << '\n';
         return true;
     }
     

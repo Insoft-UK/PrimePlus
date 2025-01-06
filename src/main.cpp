@@ -38,26 +38,21 @@
 #include "common.hpp"
 
 #include "preprocessor.hpp"
-#include "structs.hpp"
-#include "enums.hpp"
 #include "def.hpp"
 #include "alias.hpp"
 #include "strings.hpp"
 #include "ifte.hpp"
-#include "bitwise.hpp"
-#include "for_next.hpp"
 #include "do_loop.hpp"
 #include "calc.hpp"
 
-#include "build.h"
+#include "version_code.h"
 
 #define NAME "P+ Pre-Processor"
+#define COMMAND_NAME "p+"
 
 using namespace pp;
 
 static Preprocessor preprocessor = Preprocessor();
-static Enums enumerators = Enums();
-static Structs structurs = Structs();
 static Strings strings = Strings();
 
 static std::string _basename;
@@ -74,80 +69,6 @@ void (*old_terminate)() = std::set_terminate(terminator);
 void translatePPlusToPPL(const std::string& pathname, std::ofstream &outfile);
 
 // MARK: - Utills
-
-
-
-/*
- The decimalToBase24 function converts a given
- base 10 integer into its base 24 representation using a
- specific set of characters. The character set is
- comprised of the following 24 symbols:
- 
- •    Numbers: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9
- •    Letters: C, D, F, H, J, K, M, N, R, U, V, W, X, Y
- 
- Character Selection:
- The choice of characters was made to avoid confusion
- with common alphanumeric representations, ensuring
- that each character is visually distinct and easily
- recognizable. This set excludes characters that closely
- resemble each other or numerical digits, promoting
- clarity in representation.
- */
-static std::string decimalToBase24(long num) {
-    if (num == 0) {
-        return "C";
-    }
-    
-    const std::string base24Chars = "0123456789CDFHJKMNRUVWXY";
-    std::string base24;
-    
-    while (num > 0) {
-        int remainder = num % 24;
-        base24 = base24Chars[remainder] + base24; // Prepend character
-        num /= 24; // Integer division
-    }
-    
-    return base24;
-}
-
-/*
- The `base24ToDecimal` function converts a
- base 24 string (using the characters
- `"0123456789CDFHJKMNRUVWXY"`) into its
- decimal (base 10) equivalent. It validates the
- input for empty strings and invalid characters,
- making it the inverse of the
- `decimalToBase24` function.
- */
-//static long base24ToDecimal(const std::string& base24) {
-//    if (base24.empty()) {
-//        throw std::invalid_argument("Input string is empty.");
-//    }
-//
-//    const std::string base24Chars = "0123456789CDFHJKMNRUVWXY";
-//    long decimalValue = 0;
-//
-//    for (size_t i = 0; i < base24.length(); ++i) {
-//        char currentChar = base24[base24.length() - 1 - i]; // Reverse position
-//        size_t index = base24Chars.find(currentChar);
-//
-//        if (index == std::string::npos) {
-//            throw std::invalid_argument("Invalid character in base 24 string.");
-//        }
-//
-//        decimalValue += index * static_cast<long>(pow(24, i)); // Calculate value
-//    }
-//
-//    return decimalValue;
-//}
-
-static std::string getBuildCode(void) {
-    std::string str;
-    int majorVersionNumber = BUILD_NUMBER / 100000;
-    str = std::to_string(majorVersionNumber) + decimalToBase24(BUILD_NUMBER - majorVersionNumber * 100000);
-    return str;
-}
 
 uint32_t utf8_to_utf16(const char *str) {
     uint8_t *utf8 = (uint8_t *)str;
@@ -185,31 +106,7 @@ std::string removeWhitespaceAroundOperators(const std::string& str) {
     return result;
 }
 
-// MARK: - C To PPL Translater...
 
-/*
- Parses and converts C-style expressions like a+=b to PPL form like a := a + b
- */
-std::string expandAssignment(const std::string& expression) {
-    std::string str = expression;
-    std::regex re;
-    
-    re = R"(([A-Za-z]\w*(?:\[.*\])*)([*\/+\-&|^%]|(?:>>|<<))=)";
-    str = regex_replace(str, re, "$1:=$1$2");
-    
-    
-    re = R"(%)";
-    str = regex_replace(str, re, " MOD ");
-    
-    return str;
-}
-
-void translateCLogicalOperatorsToPPL(std::string& str) {
-    str = regex_replace(str, std::regex(R"(&&)"), " AND ");
-    str = regex_replace(str, std::regex(R"(\|\|)"), " OR ");
-    str = regex_replace(str, std::regex(R"(!)"), " NOT ");
-    str = regex_replace(str, std::regex(R"(\^\^)"), " XOR ");
-}
 
 
 // MARK: - P+ To PPL Translater...
@@ -327,9 +224,6 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     // Remove any leading white spaces before or after.
     trim(ln);
     
-    if (Def::parse(ln)) return;
-    
-    
     if (ln.empty()) {
         ln = "";
         if (!consecutiveBlankLines++) {
@@ -381,11 +275,11 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     
     
     // Remove any comments.
-    re = R"(\/\* *(.*)\*\/ *)";
-    ln = regex_replace(ln, re, "// $1\n" + std::string(singleton->nestingLevel * INDENT_WIDTH, ' ')); // Convert any C style `/* comment */` to PPL style `// comment` first.
     singleton->comments.preserveComment(ln);
     singleton->comments.removeComment(ln);
     
+    ln = singleton->aliases.resolveAllAliasesInText(ln);
+    if (Def::parse(ln)) return;
     
     ln = removeWhitespaceAroundOperators(ln);
     
@@ -426,7 +320,7 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     re = R"(([^:=]|^)(?:=)(?!=))";
     ln = std::regex_replace(ln, re, "$1 := ");
     
-    ln = singleton->aliases.resolveAllAliasesInText(ln);
+    
     
     //MARK: - namespace parsing
     
@@ -446,20 +340,6 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     
     //MARK: -
     
-    ln = expandAssignment(ln);
-    Bitwise::parse(ln);
-    
-    if (structurs.parse(ln)) {
-        ln = std::string("");
-        return;
-    }
-    
-    if (enumerators.parse(ln)) {
-        ln = std::string("");
-        return;
-    }
-    
-    
     re = R"(\b(log|cos|sin|tan|ln|min|max)\b)";
     for(std::sregex_iterator it = std::sregex_iterator(ln.begin(), ln.end(), re); it != std::sregex_iterator(); ++it) {
         std::string result = it->str();
@@ -477,7 +357,6 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
         singleton->setNestingLevel(singleton->nestingLevel - 1);
         if (0 == singleton->nestingLevel) {
             singleton->aliases.removeAllLocalAliases();
-            structurs.removeAllLocalStructs();
             ln += '\n';
         }
         if (singleton->nestingLevel < 0) {
@@ -518,11 +397,8 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     if (singleton->scope == Singleton::Scope::Local) {
         singleton->switches.parse(ln);
         
-        if (regex_search(ln, std::regex(R"(\b(IF|WHILE|UNTIL|FOR|TRY)\b)", std::regex_constants::icase)))
-            translateCLogicalOperatorsToPPL(ln);
         
         IFTE::parse(ln);
-        ForNext::parse(ln);
         DoLoop::parse(ln);
         
         ln = regex_replace(ln, std::regex(R"(\btry\b)"), "IFERR");
@@ -568,8 +444,6 @@ void writeUTF16Line(const std::string& ln, std::ofstream& outfile) {
 
 bool verbose(void) {
     if (Singleton::shared()->aliases.verbose) return true;
-    if (enumerators.verbose) return true;
-    if (structurs.verbose) return true;
     if (preprocessor.verbose) return true;
     
     return false;
@@ -578,11 +452,6 @@ bool verbose(void) {
 enum BlockType {
     BlockType_Python, BlockType_PPL, BlockType_PrimePlus
 };
-
-bool isMultilineComment(const std::string str) {
-    std::regex re(R"(^ *\/*)");
-    return std::regex_search(str, re);
-}
 
 bool isPythonBlock(const std::string str) {
     std::regex re(R"(^ *# *PYTHON *(\/\/.*)?$)");
@@ -632,41 +501,6 @@ void writePythonBlock(std::ifstream& infile, std::ofstream& outfile) {
     }
 }
 
-bool isBlockCommentStart(const std::string str) {
-    std::regex re(R"(^ *\/\* *)");
-    return std::regex_search(str, re);
-}
-
-void convertToLineComment(std::string& str) {
-    std::regex re(R"(^ *\/\* *)");
-    
-    str = std::regex_replace(str, re, "//");
-    str.append("\n");
-}
-
-void writeBlockAsLineComments(std::ifstream& infile, std::ofstream& outfile) {
-    std::regex re;
-    std::string str;
-    
-    Singleton::shared()->incrementLineNumber();
-    
-    re = R"( *\*\/(.*)$)";
-    
-    while(getline(infile, str)) {
-        if (std::regex_search(str, re)) {
-            str = std::regex_replace(str, re, "//$1");
-            str.append("\n");
-            writeUTF16Line(str, outfile);
-            Singleton::shared()->incrementLineNumber();
-            break;
-        }
-        str.insert(0, "// ");
-        str.append("\n");
-        writeUTF16Line(str, outfile);
-        Singleton::shared()->incrementLineNumber();
-    }
-}
-
 void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile) {
     Singleton& singleton = *Singleton::shared();
     std::ifstream infile;
@@ -691,17 +525,8 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile) {
             continue;
         }
         
-        // Convert any `/* comment */` to `// comment`
-        re = R"(\/\*(.*)(?:(\*\/)))";
-        utf8 = regex_replace(utf8, re, "//$1\n");
-        
-        if (isBlockCommentStart(utf8)) {
-            convertToLineComment(utf8);
-            writeUTF16Line(utf8, outfile);
-            writeBlockAsLineComments(infile, outfile);
-            continue;
-        }
-        
+        Singleton::shared()->comments.preserveComment(utf8);
+        Singleton::shared()->comments.removeComment(utf8);
         
         re = std::regex(R"(\b(THEN|DO|REPEAT)\b(.*\S+))", std::regex_constants::icase);
         // Adds a newline only if there is content after THEN, DO, or REPEAT
@@ -716,7 +541,7 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile) {
         re = std::regex(R"((\S+.*)\b((?:END|endif|wend|next);))", std::regex_constants::icase);
         utf8 = std::regex_replace(utf8, re, "$1\n$2");
         
-        
+        Singleton::shared()->comments.restoreComment(utf8);
         
         std::istringstream iss;
         iss.str(utf8);
@@ -738,32 +563,28 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile) {
 
 // MARK: - Command Line
 void version(void) {
-    std::cout << "Copyright (C) 2023-" << BUILD_DATE / 10000 << " Insoft. All rights reserved.\n";
-    std::cout << "Insoft " << NAME << " version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << "." << BUILD_NUMBER / 1000 % 10
-    << " (BUILD " << getBuildCode() << ")\n";
-    std::cout << "Built on: " << CURRENT_DATE << "\n";
+    std::cout << "Copyright (C) 2023-" << YEAR << " Insoft. All rights reserved.\n";
+    std::cout << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << VERSION_CODE << ")\n";
+    std::cout << "Built on: " << DATE << "\n";
     std::cout << "Licence: MIT License\n\n";
     std::cout << "For more information, visit: http://www.insoft.uk\n";
 }
 
 void error(void) {
-    std::cout << _basename << ": try '" << _basename << " -help' for more information\n";
+    std::cout << COMMAND_NAME << ": try '" << COMMAND_NAME << " --help' for more information\n";
     exit(0);
 }
 
 void info(void) {
-    std::cout << "Copyright (c) 2023-" << BUILD_DATE / 10000 << " Insoft. All rights reserved.\n";
-    int rev = BUILD_NUMBER / 1000 % 10;
-    std::cout << "Insoft " << NAME << " version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "")
-    << " (BUILD " << getBuildCode() << "-" << decimalToBase24(BUILD_DATE) << ")\n\n";
+    std::cout << "Copyright (C) 2023-" << YEAR << " Insoft. All rights reserved.\n";
+    std::cout << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << VERSION_CODE << ")\n";
+    std::cout << "Built on: " << DATE << "\n";
+    std::cout << "Licence: MIT License\n\n";
 }
 
 void help(void) {
-    int rev = BUILD_NUMBER / 1000 % 10;
-    
-    std::cout << "Copyright (C) 2023-" << BUILD_DATE / 10000 << " Insoft. All rights reserved.\n";
-    std::cout << "Insoft " << NAME << " version, " << BUILD_NUMBER / 100000 << "." << BUILD_NUMBER / 10000 % 10 << (rev ? "." + std::to_string(rev) : "")
-    << " (BUILD " << getBuildCode() << "-" << decimalToBase24(BUILD_DATE) << ")\n";
+    std::cout << "Copyright (C) 2023-" << YEAR << " Insoft. All rights reserved.\n";
+    std::cout << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << VERSION_CODE << ")\n";
     std::cout << "\n";
     std::cout << "Usage: " << _basename << " <input-file> [-o <output-file>] [-b <flags>] [-l <pathname>]\n";
     std::cout << "\n";
@@ -773,14 +594,12 @@ void help(void) {
     std::cout << "\n";
     std::cout << "  Verbose Flags:\n";
     std::cout << "     a                    Aliases\n";
-    std::cout << "     e                    Enumerator\n";
     std::cout << "     p                    Preprocessor\n";
-    std::cout << "     s                    Structs\n";
     std::cout << "\n";
     std::cout << "Additional Commands:\n";
-    std::cout << "  ansiart {-version | -help}\n";
-    std::cout << "    -version              Display the version information.\n";
-    std::cout << "    -help                 Show this help message.\n";
+    std::cout << "  ansiart {--version | --help}\n";
+    std::cout << "    --version              Display the version information.\n";
+    std::cout << "    --help                 Show this help message.\n";
 }
 
 
@@ -813,13 +632,13 @@ int main(int argc, char **argv) {
             continue;
         }
         
-        if ( args == "-help" ) {
+        if ( args == "--help" ) {
             help();
             return 0;
         }
         
         
-        if ( strcmp( argv[n], "-version" ) == 0 ) {
+        if ( strcmp( argv[n], "--version" ) == 0 ) {
             version();
             return 0;
         }
@@ -833,8 +652,6 @@ int main(int argc, char **argv) {
             args = argv[++n];
             
             if (args.find("a") != std::string::npos) Singleton::shared()->aliases.verbose = true;
-            if (args.find("e") != std::string::npos) enumerators.verbose = true;
-            if (args.find("s") != std::string::npos) structurs.verbose = true;
             if (args.find("p") != std::string::npos) preprocessor.verbose = true;
             
             continue;
@@ -886,7 +703,7 @@ int main(int argc, char **argv) {
     preprocessor.parse(str);
     str = R"(#define __LIST_LIMIT 10000)";
     preprocessor.parse(str);
-    str = R"(#define __VERSION )" + std::to_string(BUILD_NUMBER / 100000) + std::to_string(BUILD_NUMBER / 10000 % 10) + std::to_string(BUILD_NUMBER / 1000 % 10);
+    str = R"(#define __VERSION )" + std::to_string(NUMERIC_BUILD / 100);
     preprocessor.parse(str);
     
     translatePPlusToPPL(in_filename, outfile);

@@ -22,29 +22,30 @@
 // SOFTWARE.
 @end
 
+#pragma mode( separator(.,;) integer(h64) )
 
-#ifndef HP_PPLIB
-#define HP_PPLIB
+#define Bitmap bitWidth[1], width[2], height[3], colorsUsed[4], palette[5]
+#define dict(d, v) def dictionary: $1 $2
 
-#define __STORE_SCREEN G9
+def BITSR   bit::sr;
+func(auto:bitmap)
+begin
+    def dictionary: Bitmap bitmap;
 
+    auto i, j;
+    auto palette, data, length;
 
-def G0                          hp::screen;
-def G9                          hp::storageScreen;
-def L8[1,1]                     hp::mouse.x;
-def L8[1,2]                     hp::mouse.y;
-def L8[1,5]                     hp::mouse.type;
+    data = bitmap[5 + bitmap.colorsUsed];
+    length = bitmap.width * bitmap.height / (64 / bitmap.bitWidth);
 
-#define __TMP__                 DIMGROB_P(G9, 320, 240, 0); BLIT_P(G9, G0)
-def eval:__TMP__                hp::storeScreen;
-#undef __TMP__
-def BLIT_P(G0, G9)              hp::restoreScreen;
+    for i = 0 ... length - 1 do
+        for j = 0 ... 64 / bitmap.bitWidth - 1 do
+            bitmap.palette[1];
+data + 1 => data;
+if i == 7 and k < L then
+endif;
+bit::sr(i, 8);
 
-def RECT(g,color)               hp::clearGROB(g,color);
-def RECT(color)                 hp::clearScreen(color);
-
-def WAIT(-1)                    hp::waitEvent;
-def IFTE(SIZE(evt)==1,1,0)      hp::isKeyPressed(evt);
-def IFTE(SIZE(evt)>1,1,0)       hp::isMouseEvent(evt);
-
-#endif /// HP_PPLIB
+        end;
+    end;
+end;
