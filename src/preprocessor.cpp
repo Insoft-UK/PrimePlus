@@ -45,16 +45,7 @@ bool Preprocessor::parse(std::string& str) {
     std::sregex_token_iterator end;
     Aliases::TIdentity  identity;
     pathname = std::string("");
-    
-//    if (regex_search(str, std::regex(R"(^ *#end\b)"))) {
-//        if (_nesting.size() == 0) {
-//            std::cout << MessageType::CriticalError << "unexpected #end\n";
-//            exit(-1);
-//            return false;
-//        }
-//        _nesting.pop_back();
-//        return false;
-//    }
+
     
     
     if (disregard == false) {

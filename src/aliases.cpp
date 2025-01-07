@@ -57,7 +57,7 @@ bool Aliases::append(const TIdentity& idty) {
     }
     
     if (Scope::Auto == identity.scope) {
-        identity.scope = singleton->scope == Singleton::Scope::Global ? Aliases::Scope::Global : Aliases::Scope::Local;
+        identity.scope = singleton->scopeDepth.size() == 0 ? Aliases::Scope::Global : Aliases::Scope::Local;
     }
     
     if (identifierExists(identity.identifier)) {
@@ -169,6 +169,9 @@ static std::string resolveMacroFunction(const std::string& str, const std::strin
             
             pattern = "\\$" + std::to_string(i + 1);
             result = std::regex_replace(result, std::regex(pattern), arguments.at(i));
+            
+            pattern = "\\$0";
+            result = std::regex_replace(result, std::regex(pattern), identifier);
         }
     }
     
@@ -301,7 +304,7 @@ void Aliases::addNamespace(const std::string& name) {
     }
     _namespaces.push_back(name);
     
-    if (Singleton::shared()->scope == Singleton::Scope::Global) {
+    if (Singleton::shared()->scopeDepth.size() == 0) {
         _namespaseCheckpoint = _namespaces.size();
     }
 }

@@ -24,12 +24,16 @@
  
 #pragma mode( separator(.,,) integer(h64) )
 
+#include <dictionary>
+#include <prime>
+
+
 @disregard
  When defining a macro with parameters, issues can arise if an argument
- name is adjacent to a letter, causing conflicts. To resolve this, you
- can use numbered placeholders like `1$` for the first argument, `2$` for
- the second, `3$` for the third, and so on. This ensures the macro
- arguments remain uniquely identifiable and avoid conflicts.
+ name is adjacent to a letter. To resolve this, you can use numbered
+ placeholders like `1$` for the first argument, `2$` for the second, `3$`
+ for the third, and so on. This ensures the macro arguments remain uniquely
+ identifiable and avoid issues, note that $0 is the identifier.
 @end
 
 #define MacroList(L)      L$1
@@ -45,6 +49,7 @@
 #else
     var text = {"P+ 2.x"}
 #endif
+
 
 fn1:Function1()
 begin
@@ -116,6 +121,7 @@ BEGIN
     END;
 END;
 
+// Namespace
 using namespace std;
 Namespace()
 begin
@@ -138,25 +144,17 @@ begin
 end;
 
 
-Def()
-begin
-    def dictionary: color[1], shade[2] theme;
-    theme.color = 2;
-    theme.shade = 1;
-end;
-
 Branch()
 begin
     var a, b;
     
     if a == b then
-        a += 1;
-    else
-        a = 10;
+        a += 1; else a = 10;
     endif;
     
     if a <= b and b > 10 then a = a + 1; endif;
-    if a != b and b > 10 then a = a + 1; endif;
+    if a != b and b > 10 then
+    a = a + 1; endif;
     if a <> b and b > 10 then a = a + 1; endif;
     if a >= b or b < 20 then a = a + 1; endif;
     if a == b or b < 20 then a = a + 1; endif;
@@ -178,11 +176,6 @@ begin
         a = a + 1;
     until a == b;
     
-    a = 0;
-    do
-        if a > 10 then break; endif;
-                a = a + 1;
-    loop;
 end;
 
 Auto()

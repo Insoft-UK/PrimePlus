@@ -42,7 +42,6 @@
 #include "alias.hpp"
 #include "strings.hpp"
 #include "ifte.hpp"
-#include "do_loop.hpp"
 #include "calc.hpp"
 
 #include "version_code.h"
@@ -156,12 +155,12 @@ void reformatPPLLine(std::string& str) {
     }
     
     
-    if (Singleton::Scope::Local == Singleton::shared()->scope) {
+    if (Singleton::shared()->scopeDepth.size() > 0) {
         try {
             if (!regex_search(str, std::regex(R"(\b(BEGIN|IF|CASE|REPEAT|WHILE|FOR|ELSE|IFERR)\b)"))) {
-                str.insert(0, std::string(Singleton::shared()->nestingLevel * INDENT_WIDTH, ' '));
+                str.insert(0, std::string(Singleton::shared()->scopeDepth.size() * INDENT_WIDTH, ' '));
             } else {
-                str.insert(0, std::string((Singleton::shared()->nestingLevel - 1) * INDENT_WIDTH, ' '));
+                str.insert(0, std::string((Singleton::shared()->scopeDepth.size() - 1) * INDENT_WIDTH, ' '));
             }
         }
         catch (...) {
@@ -170,20 +169,20 @@ void reformatPPLLine(std::string& str) {
         }
         
         
-        re = std::regex(R"(^ *\b(THEN)\b)", std::regex_constants::icase);
-        str = regex_replace(str, re, std::string((Singleton::shared()->nestingLevel - 1) * INDENT_WIDTH, ' ') + "$1");
+        re = std::regex(R"(^ *(THEN)\b)", std::regex_constants::icase);
+        str = regex_replace(str, re, std::string((Singleton::shared()->scopeDepth.size() - 1) * INDENT_WIDTH, ' ') + "$1");
         
         
         str = regex_replace(str, std::regex(R"(\(\s*\))"), "");
         
         if (regex_search(str, std::regex(R"(\bEND;$)"))) {
-            str = regex_replace(str, std::regex(R"(;(.+))"), ";\n" + std::string(Singleton::shared()->nestingLevel * INDENT_WIDTH, ' ') + "$1");
+            str = regex_replace(str, std::regex(R"(;(.+))"), ";\n" + std::string(Singleton::shared()->scopeDepth.size() * INDENT_WIDTH, ' ') + "$1");
         } else {
-            str = regex_replace(str, std::regex(R"(;(.+))"), ";\n" + std::string((Singleton::shared()->nestingLevel - 1) * INDENT_WIDTH, ' ') + "$1");
+            str = regex_replace(str, std::regex(R"(;(.+))"), ";\n" + std::string((Singleton::shared()->scopeDepth.size() - 1) * INDENT_WIDTH, ' ') + "$1");
         }
     }
     
-    if (Singleton::Scope::Global == Singleton::shared()->scope) {
+    if (Singleton::shared()->scopeDepth.size() == 0) {
         str = regex_replace(str, std::regex(R"(END;)"), "$0\n");
         str = regex_replace(str, std::regex(R"(LOCAL )"), "");
     }
@@ -215,12 +214,6 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     static int consecutiveBlankLines = 0;
     
     
-    if (preprocessor.disregard == true) {
-        preprocessor.parse(ln);
-        ln = std::string("");
-        return;
-    }
-    
     // Remove any leading white spaces before or after.
     trim(ln);
     
@@ -235,25 +228,8 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     
     
     if (ln.substr(0,2) == "//") {
-        ln = ln.insert(0, std::string(singleton->nestingLevel * INDENT_WIDTH, ' '));
+        ln = ln.insert(0, std::string(singleton->scopeDepth.size() * INDENT_WIDTH, ' '));
         ln += '\n';
-        return;
-    }
-    
-    
-    re = R"(\#pragma mode *\(.*\)$)";
-    if (std::regex_match(ln, re)) {
-        ln += '\n';
-        return;
-    }
-    
-    if (preprocessor.parse(ln)) {
-        if (!preprocessor.pathname.empty()) {
-            // Flagged with #include preprocessor for file inclusion, we process it before continuing.
-            translatePPlusToPPL(preprocessor.pathname, outfile);
-        }
-        
-        ln = std::string("");
         return;
     }
     
@@ -279,6 +255,8 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     singleton->comments.removeComment(ln);
     
     ln = singleton->aliases.resolveAllAliasesInText(ln);
+    capitalizeKeywords(ln);
+    
     if (Def::parse(ln)) return;
     
     ln = removeWhitespaceAroundOperators(ln);
@@ -347,25 +325,23 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
         ln = ln.replace(it->position(), it->length(), result);
     }
     
-    re = R"(\b(BEGIN|IF|FOR|CASE|REPEAT|WHILE|begin|if|for|case|repeat|while|switch|try)\b)";
+    re = R"(\b(BEGIN|IF|FOR|CASE|REPEAT|WHILE|IFERR|switch)\b)";
     for(auto it = std::sregex_iterator(ln.begin(), ln.end(), re); it != std::sregex_iterator(); ++it) {
-        singleton->setNestingLevel(singleton->nestingLevel + 1);
+        singleton->increaseScopeDepth();
     }
     
-    re = R"(\b(w?end(if)?|END|UNTIL|until|next|loop)\b)";
+    re = R"(\b(END|UNTIL)\b)";
     for(auto it = std::sregex_iterator(ln.begin(), ln.end(), re); it != std::sregex_iterator(); ++it) {
-        singleton->setNestingLevel(singleton->nestingLevel - 1);
-        if (0 == singleton->nestingLevel) {
+        singleton->decreaseScopeDepth();
+        if (singleton->scopeDepth.size() == 0) {
             singleton->aliases.removeAllLocalAliases();
             ln += '\n';
         }
-        if (singleton->nestingLevel < 0) {
-            std::cout << MessageType::Error << "unexpected '" << it->str() << "'\n";
-        }
+       
     }
     
     
-    if (singleton->scope == Singleton::Scope::Global) {
+    if (singleton->scopeDepth.size() == 0) {
         re = R"(^ *(KS?A?_[A-Z\d][a-z]*) *$)";
         std::sregex_token_iterator it = std::sregex_token_iterator {
             ln.begin(), ln.end(), re, {1}
@@ -394,23 +370,18 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     singleton->autoname.parse(ln);
     Alias::parse(ln);
     
-    if (singleton->scope == Singleton::Scope::Local) {
+    if (singleton->scopeDepth.size() > 0) {
         singleton->switches.parse(ln);
         
         
         IFTE::parse(ln);
-        DoLoop::parse(ln);
-        
-        ln = regex_replace(ln, std::regex(R"(\btry\b)"), "IFERR");
-        ln = regex_replace(ln, std::regex(R"(\bcatch\b)"), "THEN");
-        ln = regex_replace(ln, std::regex(R"(\b(w?end(if)?|loop);)", std::regex_constants::icase), "END;");
         ln = regex_replace(ln, std::regex(R"(\.{3})"), " TO ");
     }
     
     
     Calc::parse(ln);
     
-    capitalizeKeywords(ln);
+    
     reformatPPLLine(ln);
     
     strings.restoreStrings(ln);
@@ -514,7 +485,7 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile) {
     infile.open(pathname,std::ios::in);
     if (!infile.is_open()) exit(2);
     
-    while(getline(infile, utf8)) {
+    while (getline(infile, utf8)) {
         if (isPythonBlock(utf8)) {
             writePythonBlock(infile, outfile);
             continue;
@@ -525,23 +496,38 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile) {
             continue;
         }
         
-        Singleton::shared()->comments.preserveComment(utf8);
-        Singleton::shared()->comments.removeComment(utf8);
+        if (preprocessor.disregard == true) {
+            preprocessor.parse(utf8);
+            continue;
+        }
         
-        re = std::regex(R"(\b(THEN|DO|REPEAT)\b(.*\S+))", std::regex_constants::icase);
-        // Adds a newline only if there is content after THEN, DO, or REPEAT
-        utf8 = std::regex_replace(utf8, re, "$1\n$2");
+        re = R"(\#pragma mode *\(.*\)$)";
+        if (std::regex_match(utf8, re)) {
+            continue;
+        }
         
-        // Make sure all `LOCAL` are on seperate lines.
-        re = std::regex(R"((\S+.*)\b(LOCAL|CONST|var)\b)", std::regex_constants::icase);
-        utf8 = regex_replace(utf8, re, "$1\n$2");
+        if (preprocessor.parse(utf8)) {
+            if (!preprocessor.pathname.empty()) {
+                // Flagged with #include preprocessor for file inclusion, we process it before continuing.
+                translatePPlusToPPL(preprocessor.pathname, outfile);
+            }
+            
+            continue;
+        }
         
-        // All `END`, `endif`, `wend`, and `next` must also be on separate lines,
-        // but no newline is added if they are already at the start of the line.
-        re = std::regex(R"((\S+.*)\b((?:END|endif|wend|next);))", std::regex_constants::icase);
-        utf8 = std::regex_replace(utf8, re, "$1\n$2");
+        /*
+         We first need to perform pre-parsing to ensure that, in lines such
+         as if condition then statement/s end;, the statement/s and end; are
+         not on the same line. This ensures proper indentation can be applied
+         during the reformatting stage of PPL code.
+        */
+        re = std::regex(R"(\b(THEN|ELSE)\b)", std::regex_constants::icase);
+        utf8 = std::regex_replace(utf8, re, "$1\n");
         
-        Singleton::shared()->comments.restoreComment(utf8);
+        re = std::regex(R"(; *(END|ENDIF|UNTIL|ELSE)?;)", std::regex_constants::icase);
+        utf8 = std::regex_replace(utf8, re, ";\n$1;");
+        
+        
         
         std::istringstream iss;
         iss.str(utf8);

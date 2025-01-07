@@ -94,16 +94,26 @@ static std::string load(std::string& filename) {
     return str;
 }
 
-static std::string removeWhitespaceAroundOperators(const std::string& str) {
+static void removeUnnecessaryWhitespace(std::string& str) {
     // Regular expression pattern to match spaces around the specified operators
     // Operators: {}[]()≤≥≠<>=*/+-▶.,;:!^
     std::regex re(R"(\s*([{}[\]()≤≥≠<>=*\/+\-▶.,;:!^&|%])\s*)");
     
     // Replace matches with the operator and no surrounding spaces
-    std::string result = std::regex_replace(str, re, "$1");
+    str = std::regex_replace(str, re, "$1");
     
-    return result;
+    auto pos = str.find_last_of("]");
+    if (pos != std::string::npos) str.insert(pos + 1, " ");
+    
+    return;
 }
+
+static bool isDef(const std::string& str) {
+    return regex_search(str, std::regex("^def (.*);"));
+}
+
+
+
 
 bool Def::parse(std::string& str) {
     std::regex re;
@@ -121,40 +131,37 @@ bool Def::parse(std::string& str) {
         return true;
     }
     
-    re = R"(^def +)";
+    if (!isDef(str)) return false;
+    
+    removeUnnecessaryWhitespace(str);
+    re = R"(^def +(?:([a-z]+)(?:<(global|local)>)?:)?(.+) ((?:`[\w.:]+`)|[\w.:]+)(?:\(([A-Za-z_ ,]+)\))?;$)";
     if (!regex_search(str, match, re)) return false;
     
+    Aliases::TIdentity identity;
+    identity.type = Aliases::Type::Def;
+    Aliases::Scope scope = Aliases::Scope::Auto;
     
+    if (!match[2].str().empty()) {
+        scope = match[2].str() == "global" ? Aliases::Scope::Global : Aliases::Scope::Local;
+    }
     
-    re = R"(^def +dictionary(?: *< *(?:global|local) *> *)?: *((?:[a-zA-Z]\w*(?:(?:[a-zA-Z_]\w*)|(?:::)|\.)*(?:(?: *\[ *#?[\dA-F]+(?::\d{0,2}[bodh])? *(?:, *#?[\dA-F]+(?::\d{0,2}[bodh])? *)*\])|(?: *= *#?[\dA-F]+(?::\d{0,2}[bodh])? *))?(?:, *[a-zA-Z]\w*(?:(?: *\[ *#?[\dA-F]+(?::\d{0,2}[bodh])? *(?:, *#?[\dA-F]+(?::\d{0,2}[bodh])? *)*\])|(?: *= *#?[\dA-F]+(?::\d{0,2}[bodh])? *))?)*)) +([a-zA-Z]\w*(?:(?:[a-zA-Z_]\w*)|(?:::)|\.)*) *;$)";
-    if (regex_match(str, match, re)) {
-        Aliases::TIdentity identity;
-        identity.type = Aliases::Type::Def;
-        identity.scope = Aliases::Scope::Auto;
-        
-        std::smatch m;
-        if (regex_search(str, m, std::regex(R"(^def +dictionary(?: *< *(global|local) *> *))"))) {
-            identity.scope = m[1].str() == "global" ? Aliases::Scope::Global : Aliases::Scope::Local;
-        }
-        
+    if (match[1] == "dictionary") {
         re = R"(([a-zA-Z]\w*(?:(?:[a-zA-Z_]\w*)|(?:::)|\.)*)(?:(\[#?[\dA-F]+(?::\d{0,2}[bodh])?(?:,#?[\dA-F]+(?::\d{0,2}[bodh])?)*\])|(?:=(#?[\dA-F]+(?::\d{0,2}[bodh])?)))?)";
-        std::smatch matches;
-        s = removeWhitespaceAroundOperators(match[1].str());
-        
+        s = match[3];
         for (auto it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); it++) {
-            //s = removeWhitespaceAroundOperators(str);
-            identity.identifier = match[2].str() + "." + it->str(1);
+            identity.identifier = match[4].str() + "." + it->str(1);
             
             
             if (!it->str(2).empty()) {
-                identity.real = match[2].str() + it->str(2);
+                // List
+                identity.real = match[4].str() + it->str(2);
             }
             if (!it->str(3).empty()) {
                 identity.real = it->str(3);
             }
             
             if (it->str(2).empty() && it->str(3).empty()) {
-                identity.real = match[2].str();
+                identity.real = match[4].str();
             }
             
             singleton->aliases.append(identity);
@@ -165,14 +172,12 @@ bool Def::parse(std::string& str) {
     
     
     
-    
     re = R"(^def (.+) +(`[^`]+`)() *(@ *deprecated(?: *\"([^"]*)\")?)?;)";
     if (!regex_match(str, re)) {
         re = R"(^def (.+) +([a-zA-Z][\w.]*(?:(?:::)?[a-zA-Z][\w.]*)*\b)(?:\(([A-Za-z_ ,]+)\))? *(@ *deprecated(?: *\"([^"]*)\")?)?;)";
     }
 
     if (std::regex_search(str, match, re)) {
-        Aliases::TIdentity identity;
         identity.real = match[1].str();
         identity.identifier = match[2].str();
         identity.parameters = match[3].str();

@@ -37,7 +37,7 @@ bool Switch::parse(std::string& str) {
     std::regex re;
     std::smatch match;
     
-    if (Singleton::shared()->scope == Singleton::Scope::Global) {
+    if (Singleton::shared()->scopeDepth.size() == 0) {
         _sw = 0;
         return false;
     }
@@ -55,13 +55,15 @@ bool Switch::parse(std::string& str) {
             s.begin(), s.end(), re, {1}
         };
         if (it != std::sregex_token_iterator()) {
+            int nestingLevel = (int)Singleton::shared()->scopeDepth.size();
+            
             std::ostringstream oss;
-            oss << "LOCAL sw" << ++_sw << " := " << *it << ";\n" << std::string((Singleton::shared()->nestingLevel - 1) * 2, ' ') << "CASE";
+            oss << "LOCAL sw" << ++_sw << " := " << *it << ";\n" << std::string((nestingLevel - 1) * 2, ' ') << "CASE";
             str.replace(match.position(), match.str().length(), oss.str());
             oss.str("");
             oss << "sw" << _sw;
             _expressions.push_back({oss.str(), countLeadingCharacters(str, ' ')});
-            _level.push_back(Singleton::shared()->nestingLevel - 1);
+            _level.push_back(nestingLevel - 1);
             if (verbose) std::cout
                 << MessageType::Verbose
                 << "switch"
@@ -74,7 +76,7 @@ bool Switch::parse(std::string& str) {
     if (!_expressions.size()) return false;
     TExpression exp = _expressions.back();
     
-    re = R"(\bcase ([\w#.]*) do\b)";
+    re = R"(\bcase (#?[0-9A-F]+(?::\d{0,2}[bodh]?)) do\b)";
     if (regex_search(str, match, re)) {
         std::string s = match.str();
         
@@ -83,14 +85,14 @@ bool Switch::parse(std::string& str) {
             s.begin(), s.end(), re, {1}
         };
         if (it != std::sregex_token_iterator()) {
-            str.replace(match.position(), match.str().length(), "if " + exp.expression + " == " + (std::string)*it + " then");
+            str.replace(match.position(), match.str().length(), "IF " + exp.expression + " == " + (std::string)*it + " THEN");
         }
         return true;
     }
     
     re = R"(^ *end;)";
     if (regex_match(str, re)) {
-        if (countLeadingCharacters(str, ' ') == exp.indeted && _level.back() == Singleton::shared()->nestingLevel) {
+        if (countLeadingCharacters(str, ' ') == exp.indeted && _level.back() == Singleton::shared()->scopeDepth.size()) {
             if (verbose) std::cout
                 << MessageType::Verbose
                 << "switch"

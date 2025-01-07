@@ -114,7 +114,7 @@ bool Auto::parse(std::string& str) {
         str = regex_replace(str, re, "auto:$1");
     }
     
-    if (singleton->scope == Singleton::Scope::Global) {
+    if (singleton->scopeDepth.size() == 0) {
         re = R"(\b(var|local|const) +)";
         if (regex_search(str, match, re)) {
             while ((pos = str.find("auto:")) != std::string::npos) {

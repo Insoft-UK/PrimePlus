@@ -26,31 +26,26 @@
 #ifndef PPLIB
 #define PPLIB
 
-#include <cartesian>
-#include <pixel>
-#include <io>
-#include <matrix>
-#include <integer>
-#include <string>
-#include <dictionary>
-
 def STARTAPP    start.app;
 def STARTVIEW   start.view;
-def VIEW        view;
-def FREEZE      freeze;
-def KILL        kill;
-def EVAL        eval;
 
-def CEILING     ceil;
-def FLOOR       floor;
-def ROUND       round;
-def π           pi;
-def 1           true;
-def 0           false;
+#define view    VIEW
+#define freeze  FREEZE
+#define kill    KILL
+#define eval    EVAL
 
-
-def Theme[1]    theme.color;
-def Theme[2]    theme.shade;
+#define ceil    CEILING
+#define floor   FLOOR
+#define round   ROUND
+#define pi      π
+#define true    1
+#define false   0
+#define loop    WHILE 1 DO
+#define try     IFERR
+#define catch   THEN
+#define endif   END
+#define wend    END
+#define next    END
 
 #define SCREEN_WIDTH        320
 #define SCREEN_HEIGHT       240
@@ -67,6 +62,5 @@ def Theme[2]    theme.shade;
 
 #define MOUSE_X 2
 #define MOUSE_Y 3
-
 
 #endif /// PPLIB

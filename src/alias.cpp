@@ -89,7 +89,7 @@ bool Alias::parse(std::string& str) {
     
     bool parsed = false;
     
-    if (singleton->scope == Singleton::Scope::Global) {
+    if (singleton->scopeDepth.size() == 0) {
         /*
          eg. export name:alias(p1, p2:alias, auto:alias)
          Group  0 export name:alias(p1, p2:alias, auto:alias)

@@ -39,18 +39,16 @@ using namespace pp;
 class Singleton {
 
 public:
-    enum class Scope {
-        Global = 1,
-        Local  = 2
-    };
-    const Scope &scope;
-    const int &nestingLevel;
-    
     Aliases aliases;
     Auto autoname;
     Switch switches;
     Comments comments;
     
+    typedef struct {
+        std::string endCode;
+    } TScopeDepth;
+    
+    const std::vector<TScopeDepth>& scopeDepth;
     
     static Singleton *shared();
     
@@ -66,10 +64,19 @@ public:
     void pushPathname(const std::string& pathname);
     void popPathname(void);
     
+    void increaseScopeDepth(const std::string& endCode = "") {
+        TScopeDepth scopeDepth = {
+            .endCode = endCode
+        };
+        _scopeDepth.push_back(scopeDepth);
+    }
     
-    void setNestingLevel(int new_value) {
-        _nestingLevel = new_value;
-        _scope = (_nestingLevel == 0) ? Scope::Global : Scope::Local;
+    void decreaseScopeDepth() {
+        if (_scopeDepth.size() == 0) {
+            //std::cout << MessageType::Error << "unexpected '" << "..." << "'\n";
+            return;
+        }
+        _scopeDepth.pop_back();
     }
     
 private:
@@ -77,11 +84,11 @@ private:
     std::vector<long> _lines;
     static Singleton* _shared;
     
-    int _nestingLevel = 0;
-    Scope _scope = Scope::Global;
+    std::vector<TScopeDepth> _scopeDepth;
     
-    Singleton() : nestingLevel(_nestingLevel), scope(_scope) {
+    Singleton() : scopeDepth(_scopeDepth) {
         _currentline = 1;
+        
     }
     Singleton(const Singleton &);
     Singleton& operator=(const Singleton &);
