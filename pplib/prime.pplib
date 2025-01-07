@@ -46,6 +46,7 @@ def STARTVIEW   start.view;
 #define endif   END
 #define wend    END
 #define next    END
+#define var     LOCAL
 
 #define SCREEN_WIDTH        320
 #define SCREEN_HEIGHT       240

@@ -69,7 +69,7 @@ static bool isValidPPLName(const std::string name) {
 static void inferredAutoForVariableName(std::string& ln) {
     std::regex re;
     
-    re = std::regex(R"(\b((?:var|local|const) +)(.*)(?=;))", std::regex_constants::icase);
+    re = std::regex(R"(\b((?:LOCAL|CONST) +)(.*)(?=;))", std::regex_constants::icase);
     std::sregex_token_iterator it = std::sregex_token_iterator {
         ln.begin(), ln.end(), re, {1, 2}
     };
@@ -93,7 +93,7 @@ static void inferredAutoForVariableName(std::string& ln) {
             if (++it == std::sregex_iterator()) break;
             code.append(",");
         }
-        ln = regex_replace(ln, std::regex(R"(\b((?:var|local|const) +)(.*)(?=;))", std::regex_constants::icase), code);
+        ln = regex_replace(ln, std::regex(R"(\b((?:LOCAL|CONST) +)(.*)(?=;))", std::regex_constants::icase), code);
     }
 }
 
@@ -108,14 +108,14 @@ bool Auto::parse(std::string& str) {
     
     re = R"(^(auto +)([^:=]*)(?=;))";
     if (regex_search(str, match, re)) {
-        str.replace(match.position(1), match.str(1).length(), "var ");
+        str.replace(match.position(1), match.str(1).length(), "LOCAL ");
         
         re = R"(([a-zA-Z_]\w*) *(?=;|,))";
         str = regex_replace(str, re, "auto:$1");
     }
     
     if (singleton->scopeDepth.size() == 0) {
-        re = R"(\b(var|local|const) +)";
+        re = std::regex(R"(\b(LOCAL|CONST) +)", std::regex_constants::icase);
         if (regex_search(str, match, re)) {
             while ((pos = str.find("auto:")) != std::string::npos) {
                 str.erase(pos, 4);
@@ -139,7 +139,7 @@ bool Auto::parse(std::string& str) {
     
     
     // Variables/Constants
-    re = R"(\b(var|local|const) +)";
+    re = std::regex(R"(\b(LOCAL|CONST) +)", std::regex_constants::icase);
     if (regex_search(str, match, re)) {
         while ((pos = str.find("auto:")) != std::string::npos) {
             str.erase(pos, 4);

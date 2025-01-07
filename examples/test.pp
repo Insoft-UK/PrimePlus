@@ -71,34 +71,13 @@ begin
     Implied::AutoNameBecauseNotValidInPPL();
 end;
 
-TRY:Try(a, b)
-begin
-    var c;
-    
-    try
-        a = a / b;
-    catch
-        a = -1;
-    end;
-    
-    return a;
-end;
-
-Ifte(a)
-begin
-    var b = 1;
-    
-    a = Try(a, b);
-    b = (a == 0 ? 0 : 1);
-end;
-
 export Parameters(auto:a, b:beta)
 begin
     def L$1 DefList(n);
     
     auto alpha;
     var auto:beta;
-    var z:zero;
+    const z:zero;
     
     alpha += beta + zero;
     
@@ -149,7 +128,7 @@ begin
     var a, b;
     
     if a == b then
-        a += 1; else a = 10;
+        a = a + 1; else 10 := a;
     endif;
     
     if a <= b and b > 10 then a = a + 1; endif;
@@ -164,7 +143,7 @@ Loop()
 begin
     var a, b = 10;
     
-    for a = 0 ... 9 step 1 do
+    for a from 0 ... 9 step 1 do
         b - 1 ▶ b;
     end;
     
@@ -220,7 +199,7 @@ end;
 
 Try()
 begin
-    var a, b = 0;
+    local a, b = 0;
     try
         a += 1;
         a /= b;
@@ -234,9 +213,11 @@ end;
 PreCalc()
 begin
     var ppl_numbers = \[320 / #2d];
+#if __VERSION < 303
     var old = #[ 1 + 2 * 4 / 2 ]:2;
+#endif
 #if __VERSION >= 202
-    var new = \ 2 [ 1 + 2 * 4 / 2 ];
+    var new = \ 2 [ 1 + pi * 4 / 2 & 2 % 7 ];
 #endif
 end;
 

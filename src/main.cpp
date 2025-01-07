@@ -187,6 +187,8 @@ void reformatPPLLine(std::string& str) {
         str = regex_replace(str, std::regex(R"(LOCAL )"), "");
     }
     
+    str = regex_replace(str, std::regex(R"( +:)"), " :");
+    
     strings.restoreStrings(str);
 }
 
@@ -524,7 +526,7 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile) {
         re = std::regex(R"(\b(THEN|ELSE)\b)", std::regex_constants::icase);
         utf8 = std::regex_replace(utf8, re, "$1\n");
         
-        re = std::regex(R"(; *(END|ENDIF|UNTIL|ELSE)?;)", std::regex_constants::icase);
+        re = std::regex(R"(; *(END|ENDIF|UNTIL|ELSE|LOCAL|CONST|var|auto)?;)", std::regex_constants::icase);
         utf8 = std::regex_replace(utf8, re, ";\n$1;");
         
         

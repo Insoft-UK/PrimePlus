@@ -108,10 +108,9 @@ bool Alias::parse(std::string& str) {
         }
     }
     
-    re = R"(^ *(var|local|const) +.*)";
+    re = std::regex(R"(^ *(LOCAL|CONST) +.*)", std::regex_constants::icase);
     if (regex_match(str, re)) {
         parseVariables(str);
-        str = regex_replace(str, std::regex(R"(\bvar\b)"), "LOCAL");
         parsed = true;
     }
     
