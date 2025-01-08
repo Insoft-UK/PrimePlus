@@ -26,6 +26,7 @@
 #include "preprocessor.hpp"
 #include "singleton.hpp"
 #include "common.hpp"
+#include "calc.hpp"
 
 #include <regex>
 #include <sstream>
@@ -102,6 +103,9 @@ bool Preprocessor::parse(std::string& str) {
             
             identity.scope = Aliases::Scope::Global;
             identity.type = Aliases::Type::Macro;
+            
+            identity.real = _singleton->aliases.resolveAllAliasesInText(identity.real);
+            Calc::evaluateMathExpression(identity.real);
             
             _singleton->aliases.append(identity);
             if (verbose) std::cout << MessageType::Verbose << "#define: " << identity.identifier << '\n';

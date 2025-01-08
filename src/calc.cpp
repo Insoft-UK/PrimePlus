@@ -42,6 +42,13 @@ static bool isOperator(char c) {
     return (c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '^');
 }
 
+static bool isExpresionValid(const std::string& expression) {
+    std::regex re;
+    
+    re = R"([\d+\-*\/ πe%&|()]+)";
+    return regex_match(expression, re);
+}
+
 // Function to get the precedence of an operator
 static int precedence(char op) {
     if (op == '+' || op == '-') return 1;
@@ -268,7 +275,7 @@ static std::string convertPPLIntegerNumberToBase10(const std::string& str) {
 }
 
 // Function to convert a string with PPL-style integer number to a plain base 10 number
-static void convertPPLStyleNumberToBase10(std::string& str) {
+static void convertPPLStyleNumbersToBase10(std::string& str) {
     std::regex re;
     std::smatch match;
     std::string s;
@@ -286,7 +293,37 @@ static void convertPPLStyleNumberToBase10(std::string& str) {
 }
 
 
-// MARK: -
+// MARK: - Public Methods
+
+bool Calc::evaluateMathExpression(std::string& str)
+{
+    std::regex re;
+    std::smatch match;
+    
+    if (!isExpresionValid(str)) return false;
+    
+    std::string expression = str;
+    convertPPLStyleNumbersToBase10(expression);
+    
+    expression = regex_replace(expression, std::regex(R"(e)"), "2.71828182845904523536028747135266250");
+    expression = regex_replace(expression, std::regex(R"(π|pi)"), "3.14159265358979323846264338327950288");
+    
+    strip(expression);
+    
+    expression = separateExpression(expression);
+    double result = evaluateExpression(expression);
+    
+    std::stringstream ss;
+    ss << std::fixed << std::setprecision(10) << result;
+    expression = ss.str();
+    expression.erase ( expression.find_last_not_of('0') + 1, std::string::npos );
+    if (expression.at(expression.length() - 1) == '.') {
+        expression.resize(expression.length() - 1);
+    }
+    str = expression;
+    
+    return true;
+}
 
 bool Calc::parse(std::string& str)
 {
@@ -294,12 +331,13 @@ bool Calc::parse(std::string& str)
     std::smatch match;
     
     
-    re = R"(\\( *\d{1,2})?\[(.*)\])";
+    
+    re = R"(\\( *\d{1,2})?(?:\[|`)(.*)(?:\]|`))";
     while (regex_search(str, match, re)) {
         
         std::string matched = match.str();
         
-        convertPPLStyleNumberToBase10(matched);
+        convertPPLStyleNumbersToBase10(matched);
         
         std::string expression;
         int scale = 0;

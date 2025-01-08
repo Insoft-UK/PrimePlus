@@ -210,6 +210,7 @@ begin
     end;
 end;
 
+#define SEVEN 7
 PreCalc()
 begin
     var ppl_numbers = \[320 / #2d];
@@ -218,6 +219,10 @@ begin
 #endif
 #if __VERSION >= 202
     var new = \ 2 [ 1 + pi * 4 / 2 & 2 % 7 ];
+#endif
+#if __VERSION >= 304
+    var new = \` 1 + pi * 4 / 2 & 2 % SEVEN `;
+    LOCAL new = \` 10.0 + SEVEN `;
 #endif
 end;
 

@@ -146,7 +146,7 @@ bool Def::parse(std::string& str) {
     }
     
     if (match[1] == "dictionary") {
-        re = R"(([a-zA-Z]\w*(?:(?:[a-zA-Z_]\w*)|(?:::)|\.)*)(?:(\[#?[\dA-F]+(?::\d{0,2}[bodh])?(?:,#?[\dA-F]+(?::\d{0,2}[bodh])?)*\])|(?:=(#?[\dA-F]+(?::\d{0,2}[bodh])?)))?)";
+        re = R"(([a-zA-Z]\w*(?:(?:[a-zA-Z_]\w*)|(?:::)|\.)*)(?:(\[#?[\dA-F]+(?::-?\d{0,2}[bodh])?(?:,#?[\dA-F]+(?::-?\d{0,2}[bodh])?)*\])|(?:=(#?[\dA-F]+(?::-?\d{0,2}[bodh])?)))?)";
         s = match[3];
         for (auto it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); it++) {
             identity.identifier = match[4].str() + "." + it->str(1);

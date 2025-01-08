@@ -36,6 +36,7 @@
 namespace pp {
     class Calc {
     public:
+        static bool evaluateMathExpression(std::string& str);
         static bool parse(std::string& str);
     };
 }

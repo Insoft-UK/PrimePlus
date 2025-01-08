@@ -97,16 +97,13 @@ uint32_t utf8_to_utf16(const char *str) {
 std::string removeWhitespaceAroundOperators(const std::string& str) {
     // Regular expression pattern to match spaces around the specified operators
     // Operators: {}[]()≤≥≠<>=*/+-▶.,;:!^
-    std::regex re(R"(\s*([{}[\]()≤≥≠<>=*\/+\-▶.,;:!^&|%])\s*)");
+    std::regex re(R"(\s*([{}[\]()≤≥≠<>=*\/+\-▶.,;:!^&|%`])\s*)");
     
     // Replace matches with the operator and no surrounding spaces
     std::string result = std::regex_replace(str, re, "$1");
     
     return result;
 }
-
-
-
 
 // MARK: - P+ To PPL Translater...
 void reformatPPLLine(std::string& str) {
@@ -188,6 +185,7 @@ void reformatPPLLine(std::string& str) {
     }
     
     str = regex_replace(str, std::regex(R"( +:)"), " :");
+    str = regex_replace(str, std::regex(R"(FROM)"), ":=");
     
     strings.restoreStrings(str);
 }
@@ -377,7 +375,8 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
         
         
         IFTE::parse(ln);
-        ln = regex_replace(ln, std::regex(R"(\.{3})"), " TO ");
+        ln = regex_replace(ln, std::regex(R"(\.{3}|…)"), " TO ");
+        ln = regex_replace(ln, std::regex(R"(\bdown TO\b)"), "DOWNTO");
     }
     
     
@@ -488,6 +487,11 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile) {
     if (!infile.is_open()) exit(2);
     
     while (getline(infile, utf8)) {
+        if (preprocessor.disregard == true) {
+            preprocessor.parse(utf8);
+            continue;
+        }
+        
         if (isPythonBlock(utf8)) {
             writePythonBlock(infile, outfile);
             continue;
@@ -498,13 +502,9 @@ void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile) {
             continue;
         }
         
-        if (preprocessor.disregard == true) {
-            preprocessor.parse(utf8);
-            continue;
-        }
-        
         re = R"(\#pragma mode *\(.*\)$)";
         if (std::regex_match(utf8, re)) {
+            writeUTF16Line(utf8 + "\n", outfile);
             continue;
         }
         
