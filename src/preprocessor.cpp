@@ -35,10 +35,10 @@
 
 using namespace pp;
 
-static Singleton* _singleton  = Singleton::shared();
+static Singleton *_singleton  = Singleton::shared();
 
 
-bool Preprocessor::parse(std::string& str) {
+bool Preprocessor::parse(std::string &str) {
     std::string s;
     std::regex re;
     std::smatch match;

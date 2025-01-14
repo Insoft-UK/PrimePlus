@@ -27,7 +27,7 @@
 
 using namespace pp;
 
-void Strings::preserveStrings(const std::string& str) {
+void Strings::preserveStrings(const std::string &str) {
     std::regex re;
     
     re = R"("[^"]*")";
@@ -43,7 +43,7 @@ void Strings::blankOutStrings(std::string &str) {
     str = regex_replace(str, re, R"("")");
 }
 
-void Strings::restoreStrings(std::string& str) {
+void Strings::restoreStrings(std::string &str) {
     const std::regex re(R"("[^"]*")");
 
     // If there are no preserved strings, return early
@@ -81,7 +81,7 @@ void Strings::restoreStrings(std::string& str) {
     str = result;
 }
 
-void Strings::restoreStringsAndRetain(std::string& str) {
+void Strings::restoreStringsAndRetain(std::string &str) {
     const std::regex re(R"("[^"]*")");
 
     // If there are no preserved strings, return early

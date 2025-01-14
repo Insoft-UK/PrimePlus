@@ -33,6 +33,7 @@
 #include "switch.hpp"
 #include "comments.hpp"
 #include "common.hpp"
+#include "regexp.hpp"
 
 using namespace pp;
 
@@ -43,6 +44,7 @@ public:
     Auto autoname;
     Switch switches;
     Comments comments;
+    Regexp regexp;
     
     typedef struct {
         std::string endCode;
@@ -61,10 +63,10 @@ public:
     // returns the pathname of
     std::string getPath(void);
     
-    void pushPathname(const std::string& pathname);
+    void pushPathname(const std::string &pathname);
     void popPathname(void);
     
-    void increaseScopeDepth(const std::string& endCode = "") {
+    void increaseScopeDepth(const std::string &endCode = "") {
         TScopeDepth scopeDepth = {
             .endCode = endCode
         };
@@ -82,7 +84,7 @@ public:
 private:
     std::vector<std::string> _pathnames;
     std::vector<long> _lines;
-    static Singleton* _shared;
+    static Singleton *_shared;
     
     std::vector<TScopeDepth> _scopeDepth;
     
@@ -91,7 +93,7 @@ private:
         
     }
     Singleton(const Singleton &);
-    Singleton& operator=(const Singleton &);
+    Singleton &operator=(const Singleton &);
     
 protected:
     long _currentline;

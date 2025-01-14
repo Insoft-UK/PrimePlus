@@ -68,21 +68,21 @@ namespace pp {
         
         bool verbose = false;
         
-        bool append(const TIdentity& identity);
+        bool append(const TIdentity &identity);
         void removeAllLocalAliases();
         void removeAllAliasesOfType(const Type type);
-        std::string resolveAllAliasesInText(const std::string& str);
-        void remove(const std::string& identifier);
+        std::string resolveAllAliasesInText(const std::string &str);
+        void remove(const std::string &identifier);
         
-        bool identifierExists(const std::string& identifier);
-        bool realExists(const std::string& real);
+        bool identifierExists(const std::string &identifier);
+        bool realExists(const std::string &real);
         
         void dumpIdentities();
-        const TIdentity getIdentity(const std::string& identifier);
+        const TIdentity getIdentity(const std::string &identifier);
         
         //MARK: - namespaces
-        void addNamespace(const std::string& name);
-        void removeNamespace(const std::string& name);
+        void addNamespace(const std::string &name);
+        void removeNamespace(const std::string &name);
         
     private:
         std::vector<TIdentity> _identities;

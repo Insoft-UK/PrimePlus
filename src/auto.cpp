@@ -66,7 +66,7 @@ static bool isValidPPLName(const std::string name) {
 }
 
 // This function will examine any variable name thats not a valid PPL variable name and asign an auto: prefix to it.
-static void inferredAutoForVariableName(std::string& ln) {
+static void inferredAutoForVariableName(std::string &ln) {
     std::regex re;
     
     re = std::regex(R"(\b((?:LOCAL|CONST) +)(.*)(?=;))", std::regex_constants::icase);
@@ -97,7 +97,7 @@ static void inferredAutoForVariableName(std::string& ln) {
     }
 }
 
-bool Auto::parse(std::string& str) {
+bool Auto::parse(std::string &str) {
     std::smatch match;
     std::regex re;
     size_t pos;

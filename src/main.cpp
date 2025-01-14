@@ -65,7 +65,7 @@ void terminator() {
 void (*old_terminate)() = std::set_terminate(terminator);
 
 
-void translatePPlusToPPL(const std::string& pathname, std::ofstream &outfile);
+void translatePPlusToPPL(const std::string &pathname, std::ofstream &outfile);
 
 // MARK: - Utills
 
@@ -94,7 +94,7 @@ uint32_t utf8_to_utf16(const char *str) {
 }
 
 // Function to remove whitespaces around specific operators using regular expressions
-std::string removeWhitespaceAroundOperators(const std::string& str) {
+std::string removeWhitespaceAroundOperators(const std::string &str) {
     // Regular expression pattern to match spaces around the specified operators
     // Operators: {}[]()≤≥≠<>=*/+-▶.,;:!^
     std::regex re(R"(\s*([{}[\]()≤≥≠<>=*\/+\-▶.,;:!^&|%`])\s*)");
@@ -106,7 +106,7 @@ std::string removeWhitespaceAroundOperators(const std::string& str) {
 }
 
 // MARK: - P+ To PPL Translater...
-void reformatPPLLine(std::string& str) {
+void reformatPPLLine(std::string &str) {
     std::regex re;
     
     Strings strings = Strings();
@@ -184,13 +184,14 @@ void reformatPPLLine(std::string& str) {
         str = regex_replace(str, std::regex(R"(LOCAL )"), "");
     }
     
-    str = regex_replace(str, std::regex(R"( +:)"), " :");
+    str = regex_replace(str, std::regex(R"( +(:|-))"), " $1");
+    str = regex_replace(str, std::regex(R"(([^\d]) +- +)"), "$1 -");
     str = regex_replace(str, std::regex(R"(FROM)"), ":=");
     
     strings.restoreStrings(str);
 }
 
-void capitalizeKeywords(std::string& str) {
+void capitalizeKeywords(std::string &str) {
     std::string result = str;
     std::regex re;
     
@@ -204,7 +205,7 @@ void capitalizeKeywords(std::string& str) {
 }
 
 
-void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
+void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     std::regex re;
     std::smatch match;
     std::ifstream infile;
@@ -233,6 +234,9 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
         return;
     }
     
+    if (singleton->regexp.parse(ln)) return;
+    singleton->regexp.resolveAllRegularExpression(ln);
+    
     /*
      While parsing the contents, strings may inadvertently undergo parsing, leading
      to potential disruptions in the string's content.
@@ -253,6 +257,8 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     // Remove any comments.
     singleton->comments.preserveComment(ln);
     singleton->comments.removeComment(ln);
+    
+
     
     ln = singleton->aliases.resolveAllAliasesInText(ln);
     capitalizeKeywords(ln);
@@ -338,6 +344,7 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
             ln += '\n';
         }
        
+        singleton->regexp.removeAllOutOfScopeRegexps();
     }
     
     
@@ -391,7 +398,7 @@ void translatePPlusLine(std::string& ln, std::ofstream& outfile) {
     ln += '\n';
 }
 
-void writeUTF16Line(const std::string& ln, std::ofstream& outfile) {
+void writeUTF16Line(const std::string &ln, std::ofstream &outfile) {
     for ( int n = 0; n < ln.length(); n++) {
         uint8_t *ascii = (uint8_t *)&ln.at(n);
         if (ln.at(n) == '\r') continue;
@@ -435,7 +442,7 @@ bool isPPLBlock(const std::string str) {
     return std::regex_search(str, re);
 }
 
-void writePPLBlock(std::ifstream& infile, std::ofstream& outfile) {
+void writePPLBlock(std::ifstream &infile, std::ofstream &outfile) {
     std::regex re(R"(^ *# *(END) *(?:\/\/.*)?$)");
     std::string str;
     
@@ -453,7 +460,7 @@ void writePPLBlock(std::ifstream& infile, std::ofstream& outfile) {
     }
 }
 
-void writePythonBlock(std::ifstream& infile, std::ofstream& outfile) {
+void writePythonBlock(std::ifstream &infile, std::ofstream &outfile) {
     std::regex re(R"(^ *# *(END) *(?:\/\/.*)?$)");
     std::string str;
     
@@ -473,8 +480,8 @@ void writePythonBlock(std::ifstream& infile, std::ofstream& outfile) {
     }
 }
 
-void translatePPlusToPPL(const std::string& pathname, std::ofstream& outfile) {
-    Singleton& singleton = *Singleton::shared();
+void translatePPlusToPPL(const std::string &pathname, std::ofstream &outfile) {
+    Singleton &singleton = *Singleton::shared();
     std::ifstream infile;
     std::regex re;
     std::string utf8;

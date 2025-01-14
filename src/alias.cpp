@@ -33,7 +33,7 @@ using namespace pp;
 
 static Singleton *singleton = Singleton::shared();
 
-static void parseAlias(const std::string& str, Aliases::TIdentity& identity) {
+static void parseAlias(const std::string &str, Aliases::TIdentity &identity) {
     std::regex re;
     std::smatch matches;
     
@@ -52,7 +52,7 @@ static void parseAlias(const std::string& str, Aliases::TIdentity& identity) {
     }
 }
 
-static void parseAliases(const std::string& str, Aliases::TIdentity& identity) {
+static void parseAliases(const std::string &str, Aliases::TIdentity &identity) {
     std::regex re(R"((?:[^\x00-\x7F]|\w)+\w*:[A-Za-z_][\w.]*((?:::)?[A-Za-z_][\w.]*)*)");
     
     for(std::sregex_iterator it = std::sregex_iterator(str.begin(), str.end(), re); it != std::sregex_iterator(); ++it) {
@@ -60,28 +60,28 @@ static void parseAliases(const std::string& str, Aliases::TIdentity& identity) {
     }
 }
 
-static void parseFunctionName(const std::string& str) {
+static void parseFunctionName(const std::string &str) {
     Aliases::TIdentity identity;
     identity.scope = Aliases::Scope::Global;
     identity.type = Aliases::Type::Function;
     parseAlias(str, identity);
 }
 
-static void parseParameters(const std::string& str) {
+static void parseParameters(const std::string &str) {
     Aliases::TIdentity identity;
     identity.scope = Aliases::Scope::Local;
     identity.type = Aliases::Type::Unknown;
     parseAliases(str, identity);
 }
 
-static void parseVariables(const std::string& str) {
+static void parseVariables(const std::string &str) {
     Aliases::TIdentity identity;
     identity.scope = Aliases::Scope::Auto;
     identity.type = Aliases::Type::Variable;
     parseAliases(str, identity);
 }
 
-bool Alias::parse(std::string& str) {
+bool Alias::parse(std::string &str) {
     std::string s;
     std::regex re;
     std::smatch matches;

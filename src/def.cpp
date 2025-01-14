@@ -35,11 +35,11 @@ using namespace pp;
 
 static Singleton *singleton = Singleton::shared();
 
-static void eval(std::string& str) {
+static void eval(std::string &str) {
     str = singleton->aliases.resolveAllAliasesInText(str);
 }
 
-static std::string shell(std::string& cmd) {
+static std::string shell(std::string &cmd) {
     FILE *fp;
     std::string out;
     
@@ -58,7 +58,7 @@ static std::string shell(std::string& cmd) {
     return out;
 }
 
-static std::ifstream openAsBinary(const std::string& filename) {
+static std::ifstream openAsBinary(const std::string &filename) {
     std::ifstream infile;
     Singleton *singleton = Singleton::shared();
     std::string pathname = filename;
@@ -71,7 +71,7 @@ static std::ifstream openAsBinary(const std::string& filename) {
     return infile;
 }
 
-static std::string load(std::string& filename) {
+static std::string load(std::string &filename) {
     std::ifstream infile;
     std::string str;
     
@@ -94,7 +94,7 @@ static std::string load(std::string& filename) {
     return str;
 }
 
-static void removeUnnecessaryWhitespace(std::string& str) {
+static void removeUnnecessaryWhitespace(std::string &str) {
     // Regular expression pattern to match spaces around the specified operators
     // Operators: {}[]()≤≥≠<>=*/+-▶.,;:!^
     std::regex re(R"(\s*([{}[\]()≤≥≠<>=*\/+\-▶.,;:!^&|%])\s*)");
@@ -108,14 +108,14 @@ static void removeUnnecessaryWhitespace(std::string& str) {
     return;
 }
 
-static bool isDef(const std::string& str) {
+static bool isDef(const std::string &str) {
     return regex_search(str, std::regex("^def (.*);"));
 }
 
 
 
 
-bool Def::parse(std::string& str) {
+bool Def::parse(std::string &str) {
     std::regex re;
     std::smatch match;
     std::string s;

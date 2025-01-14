@@ -33,7 +33,7 @@
 
 using namespace pp;
 
-bool Switch::parse(std::string& str) {
+bool Switch::parse(std::string &str) {
     std::regex re;
     std::smatch match;
     

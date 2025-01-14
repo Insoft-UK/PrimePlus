@@ -31,7 +31,7 @@
 
 using namespace pp;
 
-void Comments::preserveComment(const std::string& str)
+void Comments::preserveComment(const std::string &str)
 {
     size_t pos;
     
@@ -50,7 +50,7 @@ void Comments::preserveComment(const std::string& str)
     }
 }
 
-std::string& Comments::removeComment(std::string& str)
+std::string &Comments::removeComment(std::string &str)
 {
     size_t pos = str.find("//");
     if (pos != std::string::npos) {
@@ -62,7 +62,7 @@ std::string& Comments::removeComment(std::string& str)
     
     return str;
 }
-std::string& Comments::restoreComment(std::string& str)
+std::string &Comments::restoreComment(std::string &str)
 {
     if (!_preservedComment.empty()) {
         /*

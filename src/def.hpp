@@ -35,7 +35,7 @@ namespace pp {
 
 class Def {
 public:
-    static bool parse(std::string& str);
+    static bool parse(std::string &str);
 };
 
 }

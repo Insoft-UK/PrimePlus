@@ -26,9 +26,9 @@
 #include "singleton.hpp"
 
 // Define the static Singleton pointer
-Singleton* Singleton::_shared = NULL;
+Singleton *Singleton::_shared = NULL;
 
-Singleton* Singleton::shared() {
+Singleton *Singleton::shared() {
     if (_shared == NULL) {
         _shared = new Singleton();
     }
@@ -55,7 +55,7 @@ std::string Singleton::getPath(void) {
     return pathname;
 }
 
-void Singleton::pushPathname(const std::string& pathname) {
+void Singleton::pushPathname(const std::string &pathname) {
     _pathnames.push_back(pathname);
     _lines.push_back(_currentline);
     _currentline = 1;

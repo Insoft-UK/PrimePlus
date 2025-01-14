@@ -24,8 +24,10 @@
  
 #pragma mode( separator(.,,) integer(h64) )
 
+#include <integer>
 #include <dictionary>
 #include <prime>
+
 
 
 @disregard
@@ -35,6 +37,13 @@
  for the third, and so on. This ensures the macro arguments remain uniquely
  identifiable and avoid issues, note that $0 is the identifier.
 @end
+
+myRegex()
+begin
+  regex `\bloop\b` WHILE 1 DO
+  loop
+  end;
+end;
 
 #define MacroList(L)      L$1
 
@@ -89,6 +98,7 @@ PPL()
 BEGIN
     // PPL & P+
     LOCAL a;
+    a = Int8(a);
     var b:beta;
     
     

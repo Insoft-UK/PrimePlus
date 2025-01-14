@@ -42,7 +42,7 @@ static bool isOperator(char c) {
     return (c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '^');
 }
 
-static bool isExpresionValid(const std::string& expression) {
+static bool isExpresionValid(const std::string &expression) {
     std::regex re;
     
     re = R"([\d+\-*\/ πe%&|()]+)";
@@ -78,7 +78,7 @@ static double applyOperator(const double a, const double b, const char op) {
     }
 }
 
-static std::string separateExpression(const std::string& expression) {
+static std::string separateExpression(const std::string &expression) {
     std::stringstream separated;
     for (size_t i = 0; i < expression.length(); ++i) {
         if (expression[i] == '(' || expression[i] == ')' || expression[i] == '+' || expression[i] == '-' || expression[i] == '*' || expression[i] == '/' || expression[i] == '%' || expression[i] == '^') {
@@ -96,7 +96,7 @@ static std::string separateExpression(const std::string& expression) {
 }
 
 // Function to convert infix expression to postfix (RPN)
-static std::vector<std::string> infixToPostfix(const std::string& expression) {
+static std::vector<std::string> infixToPostfix(const std::string &expression) {
     std::vector<std::string> output;
     std::stack<char> operators;
     
@@ -163,7 +163,7 @@ static std::vector<std::string> infixToPostfix(const std::string& expression) {
 static double evaluatePostfix(const std::vector<std::string>& postfix) {
     std::stack<double> values;
 
-    for (const std::string& token : postfix) {
+    for (const std::string &token : postfix) {
         if (isdigit(token[0]) || (token.length() > 1 && token[0] == '-')) {
             values.push(std::stod(token));
             continue;
@@ -179,7 +179,7 @@ static double evaluatePostfix(const std::vector<std::string>& postfix) {
 }
 
 // Function to evaluate an infix expression
-static double evaluateExpression(const std::string& expression) {
+static double evaluateExpression(const std::string &expression) {
     std::vector<std::string> postfix = infixToPostfix(expression);
     return evaluatePostfix(postfix);
 }
@@ -247,7 +247,7 @@ static std::string decimalUnsignedNumber(int64_t num, int bitWidth) {
 }
 
 // Function to convert a string with PPL-style integer number to return a base 10 number
-static std::string convertPPLIntegerNumberToBase10(const std::string& str) {
+static std::string convertPPLIntegerNumberToBase10(const std::string &str) {
     std::regex re;
     std::smatch match;
     
@@ -275,7 +275,7 @@ static std::string convertPPLIntegerNumberToBase10(const std::string& str) {
 }
 
 // Function to convert a string with PPL-style integer number to a plain base 10 number
-static void convertPPLStyleNumbersToBase10(std::string& str) {
+static void convertPPLStyleNumbersToBase10(std::string &str) {
     std::regex re;
     std::smatch match;
     std::string s;
@@ -295,7 +295,7 @@ static void convertPPLStyleNumbersToBase10(std::string& str) {
 
 // MARK: - Public Methods
 
-bool Calc::evaluateMathExpression(std::string& str)
+bool Calc::evaluateMathExpression(std::string &str)
 {
     std::regex re;
     std::smatch match;
@@ -325,7 +325,7 @@ bool Calc::evaluateMathExpression(std::string& str)
     return true;
 }
 
-bool Calc::parse(std::string& str)
+bool Calc::parse(std::string &str)
 {
     std::regex re;
     std::smatch match;

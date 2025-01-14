@@ -32,7 +32,7 @@
 using namespace pp;
 
 
-bool IFTE::parse(std::string& str) {
+bool IFTE::parse(std::string &str) {
     std::smatch match;
     std::regex re;
     

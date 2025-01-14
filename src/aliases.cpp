@@ -40,7 +40,7 @@ static bool compareInterval(Aliases::TIdentity i1, Aliases::TIdentity i2) {
 
 //MARK: - Public Methods
 
-bool Aliases::append(const TIdentity& idty) {
+bool Aliases::append(const TIdentity &idty) {
     TIdentity identity = idty;
     Singleton *singleton = Singleton::shared();
     
@@ -140,7 +140,7 @@ void Aliases::removeAllAliasesOfType(const Type type) {
     }
 }
 
-static std::string resolveMacroFunction(const std::string& str, const std::string& parameters, const std::string& identifier, const std::string& real) {
+static std::string resolveMacroFunction(const std::string &str, const std::string &parameters, const std::string &identifier, const std::string &real) {
     std::string result;
     std::regex re;
     std::smatch match;
@@ -178,7 +178,7 @@ static std::string resolveMacroFunction(const std::string& str, const std::strin
     return result;
 }
 
-std::string Aliases::resolveAllAliasesInText(const std::string& str) {
+std::string Aliases::resolveAllAliasesInText(const std::string &str) {
     std::string s = str;
     std::regex re;
     std::smatch match;
@@ -236,7 +236,7 @@ std::string Aliases::resolveAllAliasesInText(const std::string& str) {
     return s;
 }
 
-void Aliases::remove(const std::string& identifier) {
+void Aliases::remove(const std::string &identifier) {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if (it->identifier == identifier) {
             if (verbose) std::cout
@@ -259,7 +259,7 @@ void Aliases::remove(const std::string& identifier) {
 
 
 
-bool Aliases::identifierExists(const std::string& identifier) {
+bool Aliases::identifierExists(const std::string &identifier) {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if (it->identifier == identifier) {
             return true;
@@ -269,7 +269,7 @@ bool Aliases::identifierExists(const std::string& identifier) {
     return false;
 }
 
-bool Aliases::realExists(const std::string& real) {
+bool Aliases::realExists(const std::string &real) {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if (it->real == real) {
             return true;
@@ -285,7 +285,7 @@ void Aliases::dumpIdentities() {
     }
 }
 
-const Aliases::TIdentity Aliases::getIdentity(const std::string& identifier) {
+const Aliases::TIdentity Aliases::getIdentity(const std::string &identifier) {
     TIdentity identity;
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if (it->identifier == identifier) {
@@ -297,7 +297,7 @@ const Aliases::TIdentity Aliases::getIdentity(const std::string& identifier) {
 
 //MARK: namespace
 
-void Aliases::addNamespace(const std::string& name) {
+void Aliases::addNamespace(const std::string &name) {
     // We check to see if namespace allready exists, if it dose we just return.
     for (auto it = _namespaces.begin(); it != _namespaces.end(); ++it) {
         if (name == *it) return;
@@ -309,7 +309,7 @@ void Aliases::addNamespace(const std::string& name) {
     }
 }
 
-void Aliases::removeNamespace(const std::string& name) {
+void Aliases::removeNamespace(const std::string &name) {
     int index = 0;
     for (auto it = _namespaces.begin(); it != _namespaces.end(); ++it, ++index) {
         if (name != *it) continue;
