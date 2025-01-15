@@ -37,16 +37,8 @@ def STARTVIEW   start.view;
 #define ceil    CEILING
 #define floor   FLOOR
 #define round   ROUND
-#define pi      π
-#define true    1
-#define false   0
-#define loop    WHILE 1 DO
-#define try     IFERR
-#define catch   THEN
-#define endif   END
-#define wend    END
-#define next    END
-#define var     LOCAL
+
+
 
 #define SCREEN_WIDTH        320
 #define SCREEN_HEIGHT       240

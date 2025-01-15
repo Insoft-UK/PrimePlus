@@ -378,9 +378,6 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     Alias::parse(ln);
     
     if (singleton->scopeDepth.size() > 0) {
-        singleton->switches.parse(ln);
-        
-        
         IFTE::parse(ln);
         ln = regex_replace(ln, std::regex(R"(\.{3}|…)"), " TO ");
         ln = regex_replace(ln, std::regex(R"(\bdown TO\b)"), "DOWNTO");
@@ -496,22 +493,26 @@ void translatePPlusToPPL(const std::string &pathname, std::ofstream &outfile) {
     while (getline(infile, utf8)) {
         if (preprocessor.disregard == true) {
             preprocessor.parse(utf8);
+            Singleton::shared()->incrementLineNumber();
             continue;
         }
         
         if (isPythonBlock(utf8)) {
             writePythonBlock(infile, outfile);
+            Singleton::shared()->incrementLineNumber();
             continue;
         }
         
         if (isPPLBlock(utf8)) {
             writePPLBlock(infile, outfile);
+            Singleton::shared()->incrementLineNumber();
             continue;
         }
         
         re = R"(\#pragma mode *\(.*\)$)";
         if (std::regex_match(utf8, re)) {
             writeUTF16Line(utf8 + "\n", outfile);
+            Singleton::shared()->incrementLineNumber();
             continue;
         }
         
@@ -520,10 +521,10 @@ void translatePPlusToPPL(const std::string &pathname, std::ofstream &outfile) {
                 // Flagged with #include preprocessor for file inclusion, we process it before continuing.
                 translatePPlusToPPL(preprocessor.pathname, outfile);
             }
-            
+            Singleton::shared()->incrementLineNumber();
             continue;
         }
-        
+    
         /*
          We first need to perform pre-parsing to ensure that, in lines such
          as if condition then statement/s end;, the statement/s and end; are
@@ -590,6 +591,7 @@ void help(void) {
     std::cout << "  Verbose Flags:\n";
     std::cout << "     a                    Aliases\n";
     std::cout << "     p                    Preprocessor\n";
+    std::cout << "     r                    Regular Expression\n";
     std::cout << "\n";
     std::cout << "Additional Commands:\n";
     std::cout << "  ansiart {--version | --help}\n";
@@ -648,6 +650,7 @@ int main(int argc, char **argv) {
             
             if (args.find("a") != std::string::npos) Singleton::shared()->aliases.verbose = true;
             if (args.find("p") != std::string::npos) preprocessor.verbose = true;
+            if (args.find("r") != std::string::npos) Singleton::shared()->regexp.verbose = true;
             
             continue;
         }

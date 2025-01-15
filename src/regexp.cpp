@@ -23,6 +23,7 @@
 #include "regexp.hpp"
 #include "common.hpp"
 #include "singleton.hpp"
+#include "calc.hpp"
 
 using namespace pp;
 
@@ -40,6 +41,7 @@ bool Regexp::parse(std::string &str) {
             .pathname = Singleton::shared()->currentPathname()
         };
         
+    
         if (regularExpressionExists(regexp.regularExpression)) return true;
         
         _regexps.push_back(regexp);
@@ -47,6 +49,7 @@ bool Regexp::parse(std::string &str) {
         
         if (verbose) std::cout
             << MessageType::Verbose
+            << "scope-level " << regexp.scopeLevel << ": "
             << "regex"
             << " '" << ANSI::Green << regexp.regularExpression << ANSI::Default << "' for '" << ANSI::Green << regexp.replacement << ANSI::Default << "' defined\n";
         return true;
@@ -57,7 +60,7 @@ bool Regexp::parse(std::string &str) {
 
 void Regexp::removeAllOutOfScopeRegexps() {
     for (auto it = _regexps.begin(); it != _regexps.end(); ++it) {
-        if (it->scopeLevel < Singleton::shared()->scopeDepth.size()) {
+        if (it->scopeLevel > Singleton::shared()->scopeDepth.size()) {
             if (verbose) std::cout
                 << MessageType::Verbose
                 << "regex"
@@ -71,8 +74,14 @@ void Regexp::removeAllOutOfScopeRegexps() {
 }
 
 void Regexp::resolveAllRegularExpression(std::string &str) {
+    std::smatch match;
+    
     for (auto it = _regexps.begin(); it != _regexps.end(); ++it) {
-        str = regex_replace(str, std::regex(it->regularExpression), it->replacement);
+        if (std::regex_search(str, match, std::regex(it->regularExpression))) {
+            str = regex_replace(str, std::regex(it->regularExpression), it->replacement);
+            str = std::regex_replace(str, std::regex("__SCOPE__"), std::to_string(Singleton::shared()->scopeDepth.size()));
+            Calc::evaluateMathExpression(str);
+        }
     }
 }
 

@@ -1,17 +1,18 @@
+@disregard
 // The MIT License (MIT)
-// 
-// Copyright (c) 2023 Insoft. All rights reserved.
-// 
+//
+// Copyright (c) 2023-2025 Insoft. All rights reserved.
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,36 +20,23 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
+@end
 
-#ifndef regexp_hpp
-#define regexp_hpp
+#ifndef PPLANG_PPLIB
+#define PPLANG_PPLIB
 
-#include <iostream>
-#include <vector>
-#include <regex>
+#define true    1
+#define false   0
+#define try     IFERR
+#define catch   THEN
+#define endif   END
+#define wend    END
+#define next    END
+#define var     LOCAL
+#define pi      π
 
-namespace pp {
-    class Regexp {
-    public:
-        bool verbose = false;
-        
-        typedef struct TRegexp {
-            std::string regularExpression;
-            std::string replacement;
-            size_t scopeLevel;
-            long line;              // line that definition accoured;
-            std::string pathname;   // path and filename that definition accoured
-        } TRegexp;
-        
-        bool parse(std::string &str);
-        void removeAllOutOfScopeRegexps(void);
-        void resolveAllRegularExpression(std::string &str);
-        
-    private:
-        std::vector<TRegexp> _regexps;
-        
-        bool regularExpressionExists(const std::string &regularExpression);
-    };
-}
-
-#endif /* regexp_hpp */
+regex `\bloop\b` WHILE 1 DO
+regex `\bswitch +([a-zA-Z_]\w*)` LOCAL sw__SCOPE__ := $1;CASE
+regex `\bcase +(\-?\d+) +do *$` IF sw\`__SCOPE__-1` == $1 THEN
+  
+#endif

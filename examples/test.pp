@@ -28,7 +28,7 @@
 #include <dictionary>
 #include <prime>
 
-
+#include <pplang>
 
 @disregard
  When defining a macro with parameters, issues can arise if an argument
@@ -40,8 +40,17 @@
 
 myRegex()
 begin
-  regex `\bloop\b` WHILE 1 DO
+  
   loop
+  end;
+  
+  switch y
+    case 4 do
+      switch y
+        case 4 do
+        end;
+      end;
+    end;
   end;
 end;
 
@@ -224,12 +233,8 @@ end;
 PreCalc()
 begin
     var ppl_numbers = \[320 / #2d];
-#if __VERSION < 303
-    var old = #[ 1 + 2 * 4 / 2 ]:2;
-#endif
-#if __VERSION >= 202
-    var new = \ 2 [ 1 + pi * 4 / 2 & 2 % 7 ];
-#endif
+
+
 #if __VERSION >= 304
     var new = \` 1 + pi * 4 / 2 & 2 % SEVEN `;
     LOCAL new = \` 10.0 + SEVEN `;

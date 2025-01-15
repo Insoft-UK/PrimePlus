@@ -30,7 +30,6 @@
 #include <vector>
 #include "aliases.hpp"
 #include "auto.hpp"
-#include "switch.hpp"
 #include "comments.hpp"
 #include "common.hpp"
 #include "regexp.hpp"
@@ -42,7 +41,6 @@ class Singleton {
 public:
     Aliases aliases;
     Auto autoname;
-    Switch switches;
     Comments comments;
     Regexp regexp;
     
