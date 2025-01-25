@@ -25,16 +25,16 @@
 #ifndef IO_PPLIB
 #define IO_PPLIB
 
-def CHOOSE     io::choose;
-def EDITLIST   io::editList;
-def GETKEY     io::getKey;
-def INPUT      io::input;
-def ISKEYDOWN  io::isKeyDown;
-def MOUSE      io::mouse;
-def MSGBOX     io::messageBox;
-def DRAWMENU   io::drawMenu;
-def PRINT      io::print;
-def WAIT       io::wait;
-def AFiles     io::appFiles;
+@global def CHOOSE     io::choose;
+@global def EDITLIST   io::editList;
+@global def GETKEY     io::getKey;
+@global def INPUT      io::input;
+@global def ISKEYDOWN  io::isKeyDown;
+@global def MOUSE      io::mouse;
+@global def MSGBOX     io::messageBox;
+@global def DRAWMENU   io::drawMenu;
+@global def PRINT      io::print;
+@global def WAIT       io::wait;
+@global def AFiles     io::appFiles;
 
 #endif /// IO_PPLIB

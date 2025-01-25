@@ -191,7 +191,7 @@ bool Preprocessor::parse(std::string &str) {
     
     if (regex_search(str, std::regex(R"(^ *#)"))) {
         str = "";
-        std::cout << MessageType::Error << "invalid preprocessor\n";
+//        std::cout << MessageType::Error << "invalid preprocessor\n";
     }
 
     return false;

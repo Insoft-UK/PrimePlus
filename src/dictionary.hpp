@@ -20,17 +20,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-
-#ifndef IFTE_HPP
-#define IFTE_HPP
+#ifndef dictionary_hpp
+#define dictionary_hpp
 
 #include <iostream>
+#include <vector>
+#include <regex>
+
+#include "singleton.hpp"
 
 namespace pp {
-    class IFTE {
+    class Dictionary {
     public:
-        static bool parse(std::string &str);
+        static bool isDictionary(const std::string &str);
+        static bool proccessDictionary(const std::string &str);
+        
+    private:
     };
 }
 
-#endif /* IFTE_HPP */
+#endif /* dictionary_hpp */

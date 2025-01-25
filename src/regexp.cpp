@@ -31,16 +31,19 @@ bool Regexp::parse(std::string &str) {
     std::regex re;
     std::smatch match;
     
-    re = R"(^ *regex +`([^`]*)` +(.*)$)";
+    re = R"(^ *(?:@(global|local) )?\bregex +`([^`]*)` +(.*)$)";
     if (regex_search(str, match, re)) {
         TRegexp regexp = {
-            .regularExpression = match[1].str(),
-            .replacement = match[2].str(),
+            .regularExpression = match[2].str(),
+            .replacement = match[3].str(),
             .scopeLevel = Singleton::shared()->scopeDepth.size(),
             .line = Singleton::shared()->currentLineNumber(),
             .pathname = Singleton::shared()->currentPathname()
         };
         
+        if (match[1].matched) {
+            regexp.scopeLevel = match[1].str() == "global" ? 0 : 1;
+        }
     
         if (regularExpressionExists(regexp.regularExpression)) return true;
         
@@ -81,6 +84,7 @@ void Regexp::resolveAllRegularExpression(std::string &str) {
             str = regex_replace(str, std::regex(it->regularExpression), it->replacement);
             str = std::regex_replace(str, std::regex("__SCOPE__"), std::to_string(Singleton::shared()->scopeDepth.size()));
             Calc::evaluateMathExpression(str);
+            resolveAllRegularExpression(str);
         }
     }
 }

@@ -35,8 +35,34 @@
 #define var     LOCAL
 #define pi      π
 
-regex `\bloop\b` WHILE 1 DO
-regex `\bswitch +([a-zA-Z_]\w*)` LOCAL sw__SCOPE__ := $1;CASE
-regex `\bcase +(\-?\d+) +do *$` IF sw\`__SCOPE__-1` == $1 THEN
+@global regex `\bloop\b` WHILE 1 DO
+@global regex `\bswitch +([a-zA-Z_]\w*)` LOCAL sw__SCOPE__ := $1;CASE
+@global regex `\bcase +(\-?\d+) +do *$` IF sw\`__SCOPE__-1` == $1 THEN
+@global regex `\(([^?]+)\?(.+):(.+)\)` IFTE($1, $2, $3)
+@global regex `\.{3}|…` TO
+@global regex `\bdown +TO\b` DOWN TO
+@global regex `< *int *> *\((.*)\)` IP($1)
+@global regex `< *int *> *([a-zA-Z_]\w*)\b` IP($1)
+@global regex `< *string *> *\((.*)\)` STRING($1)
+@global regex `< *string *> *([a-zA-Z_]\w*)\b` STRING($1)
+@global regex `\bguard +(.*)\belse\b` IF NOT($1) THEN
+
+@global regex `\b([\w:.]+) *([\+\-\*\/])\= *([\w:.]+)\b` $1 := $1 $2 $3
+
+@global regex `0x([\dA-F]+)` #$1:h
+@global regex `0b([0-1]+)` #$1:b
+
+@global regex `&{2}` AND
+@global regex `\|{2}` OR
+@global regex `\^\^{2}` XOR
+@global regex `!(^=)` NOT$1
+@global regex `%{1}` MOD
+
+@global regex `\b(if .*)\{` $1 THEN
+@global regex `\b(while .*)\{` $1 DO
+@global regex `\bdo *\{` REPEAT
+@global regex `\} *while (.*); *$` UNTIL NOT($1);
+@global regex `\} *$` END;
+@global regex ` *\{ *$` BEGIN
   
 #endif

@@ -25,37 +25,21 @@
 #ifndef PIXEL_PPLIB
 #define PIXEL_PPLIB
 
-def ARC_P       arc;
-def BLIT_P      blit;
-def DIMGROB_P   dimGROB;
-def GETPIX_P    getPixel;
-def INVERT_P    invert;
-def LINE_P      line;
-def PIXOFF_P    pixelOff;
-def PIXON_P     pixelOn;
-def RECT_P      rect;
-def FILLPOLY_P  fillPoly;
-def SUBGROB_P   subGROB;
-def TEXTOUT_P   textOut;
-def TEXTSIZE    textSize;
+@global def ARC_P       arc;
+@global def BLIT_P      blit;
+@global def DIMGROB_P   dimGROB;
+@global def GETPIX_P    getPixel;
+@global def INVERT_P    invert;
+@global def LINE_P      line;
+@global def PIXOFF_P    pixelOff;
+@global def PIXON_P     pixelOn;
+@global def RECT_P      rect;
+@global def FILLPOLY_P  fillPoly;
+@global def SUBGROB_P   subGROB;
+@global def TEXTOUT_P   textOut;
+@global def TEXTSIZE    textSize;
 
-def GROBW_P(G1) G1.width;
-def GROBH_P(G1) G1.height;
-def GROBW_P(G2) G2.width;
-def GROBH_P(G2) G2.height;
-def GROBW_P(G3) G3.width;
-def GROBH_P(G3) G3.height;
-def GROBW_P(G4) G4.width;
-def GROBH_P(G4) G4.height;
-def GROBW_P(G5) G5.width;
-def GROBH_P(G5) G5.height;
-def GROBW_P(G6) G6.width;
-def GROBH_P(G6) G6.height;
-def GROBW_P(G7) G7.width;
-def GROBH_P(G7) G7.height;
-def GROBW_P(G8) G8.width;
-def GROBH_P(G8) G8.height;
-def GROBW_P(G9) G9.width;
-def GROBH_P(G9) G9.height;
+@global regex `\b(G\d)\.width\b` GROBW_P($1)
+@global regex `\b(G\d)\.height\b` GROBH_P($1)
 
 #endif /// PIXEL_PPLIB

@@ -25,18 +25,18 @@
 #ifndef STRING_PPLIB
 #define STRING_PPLIB
 
-def ASC             string::asc;
-def CHAR            string::char;
-def DIM             string::dim;
-def STRING          string::toString;
-def INSTRING        string::inString;
-def LEFT            string::left;
-def RIGHT           string::right;
-def MID             string::mid;
-def ROTATE          string::rotate;
-def STRINGFROMID    string::stringFromId;
-def REPLACE         string::replace;
+@global def ASC             string::asc;
+@global def CHAR            string::char;
+@global def DIM             string::dim;
+@global def STRING          string::toString;
+@global def INSTRING        string::inString;
+@global def LEFT            string::left;
+@global def RIGHT           string::right;
+@global def MID             string::mid;
+@global def ROTATE          string::rotate;
+@global def STRINGFROMID    string::stringFromId;
+@global def REPLACE         string::replace;
 
-def 0               string::npos;
+@global def 0               string::npos;
 
 #endif /// STRING_PPLIB

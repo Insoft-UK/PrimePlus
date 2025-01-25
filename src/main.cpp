@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2023-2025 Insoft. All rights reserved.
+// Copyright (c) 2023 Insoft. All rights reserved.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -37,9 +37,9 @@
 
 #include "preprocessor.hpp"
 #include "def.hpp"
+#include "dictionary.hpp"
 #include "alias.hpp"
 #include "strings.hpp"
-#include "ifte.hpp"
 #include "calc.hpp"
 
 #include "version_code.h"
@@ -185,6 +185,7 @@ void reformatPPLLine(std::string &str) {
     str = regex_replace(str, std::regex(R"( +(:|-))"), " $1");
     str = regex_replace(str, std::regex(R"(([^\d]) +- +)"), "$1 -");
     str = regex_replace(str, std::regex(R"(FROM)"), ":=");
+    str = regex_replace(str, std::regex(R"(([)};])([A-Z]))"), "$1 $2");
     
     strings.restoreStrings(str);
 }
@@ -255,13 +256,22 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     // Remove any comments.
     singleton->comments.preserveComment(ln);
     singleton->comments.removeComment(ln);
-    
 
     
     ln = singleton->aliases.resolveAllAliasesInText(ln);
     capitalizeKeywords(ln);
     
-    if (Def::parse(ln)) return;
+    if (Def::isDefine(ln)) {
+        Def::processDefine(ln);
+        ln = "";
+        return;
+    }
+    
+    if (Dictionary::isDictionary(ln)) {
+        Dictionary::proccessDictionary(ln);
+        ln = "";
+        return;
+    }
     
     ln = removeWhitespaceAroundOperators(ln);
     
@@ -369,18 +379,9 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
         ln = regex_replace(ln, re, "auto:$0");
     }
     
-    ln = regex_replace(ln, std::regex(R"(<int>\((.*)\))"), "IP($1)");
-    ln = regex_replace(ln, std::regex(R"(<string>\((.*)\))"), "STRING($1)");
     
     singleton->autoname.parse(ln);
     Alias::parse(ln);
-    
-    if (singleton->scopeDepth.size() > 0) {
-        IFTE::parse(ln);
-        ln = regex_replace(ln, std::regex(R"(\.{3}|…)"), " TO ");
-        ln = regex_replace(ln, std::regex(R"(\bdown TO\b)"), "DOWNTO");
-    }
-    
     
     Calc::parse(ln);
     
@@ -571,9 +572,7 @@ void error(void) {
 
 void info(void) {
     std::cout << "Copyright (C) 2023-" << YEAR << " Insoft. All rights reserved.\n";
-    std::cout << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << VERSION_CODE << ")\n";
-    std::cout << "Built on: " << DATE << "\n";
-    std::cout << "Licence: MIT License\n\n";
+    std::cout << "Insoft "<< NAME << " version, " << VERSION_NUMBER << "\n\n";
 }
 
 void help(void) {

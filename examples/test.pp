@@ -24,11 +24,20 @@
  
 #pragma mode( separator(.,,) integer(h64) )
 
-#include <integer>
+#include <cartesian>
+#include <cspace>
 #include <dictionary>
+#include <hp>
+#include <integer>
+#include <io>
+#include <matrix>
+#include <pixel>
+#include <pplang>
 #include <prime>
+#include <string>
 
 #include <pplang>
+
 
 @disregard
  When defining a macro with parameters, issues can arise if an argument
@@ -38,69 +47,65 @@
  identifiable and avoid issues, note that $0 is the identifier.
 @end
 
-myRegex()
-begin
-  
-  loop
-  end;
-  
-  switch y
-    case 4 do
-      switch y
-        case 4 do
-        end;
-      end;
-    end;
-  end;
-end;
-
 #define MacroList(L)      L$1
-
 #define COPYWRITE "Copyright (c) 2023-2025 Insoft. All rights reserved."
 
 #PYTHON
 #END
 
 
-#if __VERSION >= 300
-    var text = {"P+ 3.x"};
-#else
-    var text = {"P+ 2.x"}
-#endif
 
+NAME:Very_Long_Name()
+{
+    A := 0x0;
+    
+    do {
+        A += 1;
+    } while A < 10;
+    
+    A *= B;
 
-fn1:Function1()
+    if A == 100 && (C <= 10 || C == 100) {
+        A /= C;
+    }
+    
+    while A > 0 {
+        A -= 1;
+    }
+
+    auto copywriteText;
+    copywriteText = COPYWRITE;
+    auto mt;
+    mt = MouseType.LongClick;
+    mt = integer::Base.Decimal;
+}
+
+auto:Function_Name_Uknown()
 begin
-    auto copywriteText = COPYWRITE;
-end;
-
-auto:Function2()
-begin
-    Function1();
+    Very_Long_Name();
 end;
 
 Implied::AutoNameBecauseNotValidInPPL()
 begin
-    return 0;
 end;
 
 ValidPPLFunctionName()
 begin
+    // Very_Long_Name()
+    Very_Long_Name();
+    NAME();
+        
+    // Function_Name_Uknown()
+    Function_Name_Uknown();
+    
+    // Implied::AutoNameBecauseNotValidInPPL()
     Implied::AutoNameBecauseNotValidInPPL();
 end;
 
 export Parameters(auto:a, b:beta)
 begin
-    def L$1 DefList(n);
-    
     auto alpha;
-    var auto:beta;
-    const z:zero;
-    
-    alpha += beta + zero;
-    
-    MacroList(1) = 0;
-    DefList(1) = 0;
+    alpha = beta + a;
 end;
 
 PPL()
@@ -137,8 +142,8 @@ end;
 
 Parameter(a:alpha, auto:iAmUknown)
 begin
-    alpha += iAmUknown;
-    a += iAmUknown;
+    alpha = alpha + iAmUknown;
+    a = alpha + iAmUknown;
 end;
 
 
@@ -187,47 +192,6 @@ begin
     iWasAVeryLongName *= letYouDecideMyShortName;
 end;
 
-Switch()
-begin
-    var a = 0;
-    
-    switch a
-        case 0 do
-            a += 1;
-        end;
-        
-        case 1 do
-            a -= 1;
-        end;
-        
-        default
-            switch b
-                case 0 do
-                    b =1;
-                end;
-            end;
-    end;
-    
-    case
-        if a == 0 then a += 1; end;
-        if a == 1 then a -= 1; end;
-    end;
-end;
-
-
-
-Try()
-begin
-    local a, b = 0;
-    try
-        a += 1;
-        a /= b;
-    catch
-        return -1;
-    else
-        return 0;
-    end;
-end;
 
 #define SEVEN 7
 PreCalc()

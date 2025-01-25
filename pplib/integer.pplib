@@ -25,14 +25,14 @@
 #ifndef INTEGER_PPLIB
 #define INTEGER_PPLIB
 
-def B→R     integer::toReal;
-def GETBASE integer::getBase;
-def GETBITS integer::getBits;
-def R→B     integer::toBase;
-def SETBITS integer::setBits;
-def SETBASE integer::setBase;
+@global def B→R     integer::toReal;
+@global def GETBASE integer::getBase;
+@global def GETBITS integer::getBits;
+@global def R→B     integer::toBase;
+@global def SETBITS integer::setBits;
+@global def SETBASE integer::setBase;
 
-def dictionary<global>: System = 0, Binary = 1, Octal = 2, Decimal = 3, Hexadecimal = 4 integer::Base;
+@global dict System = 0, Binary = 1, Octal = 2, Decimal = 3, Hexadecimal = 4 integer::Base;
 
 #define Int8(integer)     integer::setBits($1, -7)
 #define Int16(integer)    integer::setBits($1, -15)
