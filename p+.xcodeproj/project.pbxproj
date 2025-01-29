@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -72,6 +72,10 @@
 		13F1D8822AB6185400EF623A /* aliases.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = aliases.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		13CDCDDF2D499BE30005D2EA /* python */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = python; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		137FB2822A03B06500AEFDF2 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -90,6 +94,7 @@
 				1351CC552BFC0E180073FEDF /* README.md */,
 				136E64472D2877660054E0CC /* version.txt */,
 				137FB2942A046E8E00AEFDF2 /* p+.entitlements */,
+				13CDCDDF2D499BE30005D2EA /* python */,
 				13166E852BA12E5E00D1E6F0 /* examples */,
 				13166E842BA12E1D00D1E6F0 /* hpprgm */,
 				13166E822BA12DE100D1E6F0 /* pplib */,
