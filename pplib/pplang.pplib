@@ -54,8 +54,8 @@
 
 @global regex `&{2}` AND
 @global regex `\|{2}` OR
-@global regex `\^\^{2}` XOR
-@global regex `!(^=)` NOT$1
+@global regex `\^{2}` XOR
+
 @global regex `%{1}` MOD
 
 @global regex `\b(if .*)\{` $1 THEN
