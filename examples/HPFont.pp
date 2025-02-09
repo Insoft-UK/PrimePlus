@@ -1,4 +1,6 @@
 #include <pplang>
+#include <clang>
+
 GLYPH_P(trgt, ascii, x, y, auto:font, color)
 {
     var g:glyph, btm:bitmap, os:bitmapOffset;
