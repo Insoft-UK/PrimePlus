@@ -529,13 +529,17 @@ void translatePPlusToPPL(const std::string &pathname, std::ofstream &outfile) {
          as if condition then statement/s end;, the statement/s and end; are
          not on the same line. This ensures proper indentation can be applied
          during the reformatting stage of PPL code.
+         
+         But we must ignore the line if it's a def, undef or regex and all @
         */
-        re = std::regex(R"(\b(THEN|ELSE)\b)", std::regex_constants::icase);
-        utf8 = std::regex_replace(utf8, re, "$1\n");
         
-        re = std::regex(R"(; *(END|ENDIF|UNTIL|ELSE|LOCAL|CONST|var|auto)?;)", std::regex_constants::icase);
-        utf8 = std::regex_replace(utf8, re, ";\n$1;");
-        
+        if (!std::regex_search(utf8, std::regex(R"(^ *(@[a-z]+ )? *(def|undef|regex) )"))) {
+            re = std::regex(R"(\b(THEN|ELSE)\b)", std::regex_constants::icase);
+            utf8 = std::regex_replace(utf8, re, "$1\n");
+            
+            re = std::regex(R"(; *(END|ENDIF|UNTIL|ELSE|LOCAL|CONST|var|auto)?;)", std::regex_constants::icase);
+            utf8 = std::regex_replace(utf8, re, ";\n$1;");
+        }
         
         
         std::istringstream iss;
