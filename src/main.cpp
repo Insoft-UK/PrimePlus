@@ -30,6 +30,7 @@
 #include <sys/time.h>
 #include <ctime>
 #include <vector>
+#include <iterator>
 
 #include "timer.hpp"
 #include "singleton.hpp"
@@ -248,11 +249,11 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     it = ln.cbegin();
     while (std::regex_search(it, ln.cend(), match, re)) {
         stack.push_back(match.str(1));
-        ln = ln.erase(match.position(), match.length());
         
-        // Reset the iterator to the beginning : HACK
-        it = ln.cbegin();
+        // Erase only the matched portion and update the iterator correctly
+        it = ln.erase(it + match.position(), it + match.position() + match.length());
     }
+
     
     re = R"(__POP__)";
     it = ln.cbegin();
@@ -260,11 +261,15 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
         if (stack.empty()) {
             break;
         }
-        ln = ln.replace(match.position(), match.length(), stack.back());
+
+        // Get an iterator to the match position
+        auto match_start = it + match.position();
+        auto match_end = match_start + match.length();
+
+        // Replace the match with the last value from the stack
+        it = ln.erase(match_start, match_end);
+        it = ln.insert(it, stack.back().begin(), stack.back().end());
         stack.pop_back();
-        
-        // Reset the iterator to the beginning : HACK
-        it = ln.cbegin();
     }
     
     /*
@@ -332,10 +337,8 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
         if (s == "<>") s = "≠";
         if (s == "<=") s = "≤";
         if (s == "=>") s = "▶";
-        
-        ln = ln.replace(match.position(1), match.length(1), s);
-        
-        // Reset the iterator to the beginning : HACK
+       
+        ln = ln.replace(match.position(), match.length(), s);
         it = ln.cbegin();
     }
     
