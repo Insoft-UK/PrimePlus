@@ -188,6 +188,16 @@ void reformatPPLLine(std::string &str) {
     str = regex_replace(str, std::regex(R"(FROM)"), ":=");
     str = regex_replace(str, std::regex(R"(([)};])([A-Z]))"), "$1 $2");
     
+    re = R"(([^a-zA-Z ])(BEGIN|END|RETURN|KILL|IF|THEN|ELSE|XOR|OR|AND|NOT|CASE|DEFAULT|IFERR|IFTE|FOR|FROM|STEP|DOWNTO|TO|DO|WHILE|REPEAT|UNTIL|BREAK|CONTINUE|EXPORT|CONST|LOCAL|KEY))";
+    str = regex_replace(str, re, "$1 $2");
+    
+    re = R"((BEGIN|END|RETURN|KILL|IF|THEN|ELSE|XOR|OR|AND|NOT|CASE|DEFAULT|IFERR|IFTE|FOR|FROM|STEP|DOWNTO|TO|DO|WHILE|REPEAT|UNTIL|BREAK|CONTINUE|EXPORT|CONST|LOCAL|KEY)([^a-zA-Z ;]))";
+    str = regex_replace(str, re, "$1 $2");
+    
+    re = R"(([a-zA-Z]) +([{(]))";
+    str = regex_replace(str, re, "$1$2");
+    
+    
     strings.restoreStrings(str);
 }
 
@@ -258,6 +268,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     it = ln.cbegin();
     while (std::regex_search(it, ln.cend(), match, re)) {
         if (stack.empty()) {
+            ln = regex_replace(ln, re, "");
             break;
         }
 

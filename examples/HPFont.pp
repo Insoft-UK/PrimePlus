@@ -1,10 +1,5 @@
 #include <pplang>
 
-GLYPH_P(trgt, c:charactor, x, y, auto:font, color, sX:sizeX, sY:sizeY)
-begin
-    var os:bitmapOffset;
-    var w:width, h:height, bP, d, xx;
- 
     regex `\bfont.bitmap\b` font[1]
     regex `\bfont.glyphs\[(ascii)\]` font[2,$1]
     regex `\bfont.first\b` font[3]
@@ -17,8 +12,12 @@ begin
     regex `\bglyph.dY\b` BITAND(BITSR(glyph, 48), 255) - 256
     regex `\bglyph.bitmapOffset\b` BITAND(glyph, 65535)
 
+GLYPH_P(trgt, c:charactor, x, y, font, color, sX:sizeX, sY:sizeY)
+begin
+    var os:bitmapOffset;
+    var w:width, h:height, bP, d, xx;
+ 
     auto glyph = font.glyphs[charactor - font.first];
-    
     
     var h = glyph.height;
     var w = glyph.width;
@@ -52,20 +51,20 @@ begin
             bits >> 1;
         next;
 
-        y += ySize;
-        h -= 1;
+        y = y + ySize;
+        h = h - 1;
     wend;
   
     return glyph.xAdvance;
 end;
 
-EXPORT FONT_P(trgt, text, x, y, fnt, color)
-BEGIN
- LOCAL i, l := ASC(text);
+export FONT_P(trgt, text, x, y, auto:font, color)
+begin
+    var i, l := ASC(text);
  
- FOR i := 1 TO SIZE(l) DO
-  IF x >= 320 THEN BREAK; END;
-  IF l[i] < fnt[3] OR l[i] > fnt[4] THEN CONTINUE; END;
-  x := x + GLYPH_P(trgt, l[i] - fnt[3] + 1, x, y, fnt, color);
- END;
-END;
+    for i := 1 ... SIZE(l) do
+        if x >= 320 then break; end;
+        if l[i] < font.first or l[i] > font.last then continue; endif;
+        x := x + GLYPH_P(trgt, l[i] - font.first + 1, x, y, font, color);
+    next;
+end;
