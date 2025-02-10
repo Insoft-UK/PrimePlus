@@ -61,8 +61,8 @@ static std::ifstream openAsBinary(const std::string &filename) {
     Singleton *singleton = Singleton::shared();
     std::string pathname = filename;
     
-    if (filename.rfind("/") == std::string::npos) {
-        pathname.insert(0, singleton->getPath());
+    if (std::filesystem::path(filename).parent_path().empty()) {
+        pathname.insert(0, singleton->getProjectPath());
     }
     infile.open(pathname, std::ios::in | std::ios::binary);
     
@@ -125,9 +125,9 @@ bool Def::processDefine(const std::string &str) {
     }
 
     if (std::regex_search(str, match, re)) {
-        identity.real = match[2].str();
-        identity.identifier = match[3].str();
-        identity.parameters = match[4].str();
+        identity.real = match.str(2);
+        identity.identifier = match.str(3);
+        identity.parameters = match.str(4);
         
         strip(identity.parameters);
         identity.type = Aliases::Type::Def;

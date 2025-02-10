@@ -520,7 +520,7 @@ void writePythonBlock(std::ifstream &infile, std::ofstream &outfile) {
     }
 }
 
-void translatePPlusToPPL(const std::string &pathname, std::ofstream &outfile) {
+void translatePPlusToPPL(const std::string &path, std::ofstream &outfile) {
     Singleton &singleton = *Singleton::shared();
     std::ifstream infile;
     std::regex re;
@@ -528,9 +528,9 @@ void translatePPlusToPPL(const std::string &pathname, std::ofstream &outfile) {
     std::string str;
     std::smatch match;
     
-    singleton.pushPathname(pathname);
+    singleton.pushPath(path);
     
-    infile.open(pathname,std::ios::in);
+    infile.open(path,std::ios::in);
     if (!infile.is_open()) exit(2);
     
     while (getline(infile, utf8)) {
@@ -560,9 +560,9 @@ void translatePPlusToPPL(const std::string &pathname, std::ofstream &outfile) {
         }
         
         if (preprocessor.parse(utf8)) {
-            if (!preprocessor.pathname.empty()) {
+            if (!preprocessor.filename.empty()) {
                 // Flagged with #include preprocessor for file inclusion, we process it before continuing.
-                translatePPlusToPPL(preprocessor.pathname, outfile);
+                translatePPlusToPPL(preprocessor.filename, outfile);
             }
             Singleton::shared()->incrementLineNumber();
             continue;
@@ -600,7 +600,7 @@ void translatePPlusToPPL(const std::string &pathname, std::ofstream &outfile) {
     
     
     infile.close();
-    singleton.popPathname();
+    singleton.popPath();
 }
 
 
@@ -706,7 +706,7 @@ int main(int argc, char **argv) {
                 return 0;
             }
             preprocessor.path = std::string(argv[n]);
-            if (preprocessor.path.at(preprocessor.path.length() - 1) != '/') preprocessor.path.append("/");
+            if (preprocessor.path.at(preprocessor.path.length() - 1) == '/') preprocessor.path.resize(preprocessor.path.length() - 1);
             continue;
         }
         

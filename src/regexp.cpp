@@ -38,7 +38,7 @@ bool Regexp::parse(std::string &str) {
             .replacement = match[3].str(),
             .scopeLevel = Singleton::shared()->scopeDepth.size(),
             .line = Singleton::shared()->currentLineNumber(),
-            .pathname = Singleton::shared()->currentPathname()
+            .pathname = Singleton::shared()->currentPath()
         };
         
         if (match[1].matched) {
@@ -95,7 +95,7 @@ bool Regexp::regularExpressionExists(const std::string &regularExpression) {
             std::cout
             << MessageType::Warning
             << "redefinition of: " << ANSI::Bold << regularExpression << ANSI::Default << ", ";
-            if (basename(Singleton::shared()->currentPathname()) == basename(it->pathname)) {
+            if (basename(Singleton::shared()->currentPath()) == basename(it->pathname)) {
                 std::cout << "previous definition on line " << it->line << "\n";
             }
             else {

@@ -37,8 +37,8 @@ bool hasErrors(void) {
 std::ostream &operator<<(std::ostream &os, MessageType type) {
     Singleton *singlenton = Singleton::shared();
 
-    if (!singlenton->currentPathname().empty()) {
-        os << ANSI::Blue << basename(singlenton->currentPathname()) << ANSI::Default << " on line " << ANSI::Bold;
+    if (!singlenton->currentPath().empty()) {
+        os << ANSI::Blue << basename(singlenton->currentPath()) << ANSI::Default << " on line " << ANSI::Bold;
         os << singlenton->currentLineNumber() << ANSI::Default << " ";
     }
 

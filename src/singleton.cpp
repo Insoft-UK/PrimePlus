@@ -41,25 +41,23 @@ long Singleton::currentLineNumber(void) {
     return _currentline;
 }
 
-std::string Singleton::currentPathname(void) {
-    if (_pathnames.empty()) return "";
-    return _pathnames.back();
+std::string Singleton::currentPath(void) {
+    if (_paths.empty()) return "";
+    return _paths.back();
 }
 
-std::string Singleton::getPath(void) {
-    std::string pathname = _pathnames.front();
-    if (pathname.empty()) return "";
-    pathname.resize(pathname.rfind('/') + 1);
-    return pathname;
+std::string Singleton::getProjectPath(void) {
+    std::string path = std::filesystem::path(_paths.front()).parent_path();
+    return path;
 }
 
-void Singleton::pushPathname(const std::string &pathname) {
-    _pathnames.push_back(pathname);
+void Singleton::pushPath(const std::string &path) {
+    _paths.push_back(path);
     _lines.push_back(_currentline);
     _currentline = 1;
 }
-void Singleton::popPathname(void) {
+void Singleton::popPath(void) {
     _currentline = _lines.back();
-    _pathnames.pop_back();
+    _paths.pop_back();
     _lines.pop_back();
 }

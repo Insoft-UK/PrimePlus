@@ -43,7 +43,7 @@ bool Preprocessor::parse(std::string &str) {
     std::sregex_token_iterator it;
     std::sregex_token_iterator end;
     Aliases::TIdentity  identity;
-    pathname = std::string("");
+    filename = std::string("");
 
     
     
@@ -63,10 +63,17 @@ bool Preprocessor::parse(std::string &str) {
                 str.begin(), str.end(), re, {1}
             };
             if (it != end) {
-                pathname = *it++;
-                pathname = path + pathname;
-                if (std::string::npos == pathname.rfind('.')) pathname += ".pplib";
-                if (verbose) std::cout << MessageType::Verbose << "#include: file named '" << pathname << "'\n";
+                filename = *it++;
+                
+                if (std::filesystem::path(filename).parent_path().empty()) {
+                    filename.insert(0, path + "/");
+                }
+                
+                if (std::filesystem::path(filename).extension().empty()) {
+                    filename.append(".pplib");
+                }
+                
+                if (verbose) std::cout << MessageType::Verbose << "#include: file named '" << filename << "'\n";
                 return true;
             }
             
@@ -75,11 +82,15 @@ bool Preprocessor::parse(std::string &str) {
                 str.begin(), str.end(), re, {1}
             };
             if (it != end) {
-                pathname = *it++;
-                if (!file_exists(pathname)) {
-                    pathname = _singleton->currentPathname().substr(0, _singleton->currentPathname().rfind("/") + 1) + pathname;
+                filename = *it++;
+                if (!file_exists(filename) && std::filesystem::path(filename).parent_path().empty()) {
+                    filename = _singleton->currentPath().substr(0, _singleton->currentPath().rfind("/") + 1) + filename;
+                    if (!file_exists(filename)) {
+                        std::cout << MessageType::Error << "file " << std::filesystem::path(filename).filename() << " not found.\n";
+                        return false;
+                    }
                 }
-                if (verbose) std::cout << MessageType::Verbose << "#include: file named '" << pathname << "'\n";
+                if (verbose) std::cout << MessageType::Verbose << "#include: file named '" << filename << "'\n";
                 return true;
             }
             return false;

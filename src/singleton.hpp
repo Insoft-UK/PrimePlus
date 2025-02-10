@@ -52,15 +52,10 @@ public:
     
     void incrementLineNumber(void);
     long currentLineNumber(void);
-    
-    
-    std::string currentPathname(void);
-    
-    // returns the pathname of
-    std::string getPath(void);
-    
-    void pushPathname(const std::string &pathname);
-    void popPathname(void);
+    std::string currentPath(void);
+    std::string getProjectPath(void);
+    void pushPath(const std::string &path);
+    void popPath(void);
     
     void increaseScopeDepth(const std::string &endCode = "") {
         TScopeDepth scopeDepth = {
@@ -78,7 +73,7 @@ public:
     }
     
 private:
-    std::vector<std::string> _pathnames;
+    std::vector<std::string> _paths;
     std::vector<long> _lines;
     static Singleton *_shared;
     

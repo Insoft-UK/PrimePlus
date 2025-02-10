@@ -46,7 +46,7 @@ bool Aliases::append(const TIdentity &idty) {
     
     trim(identity.identifier);
     trim(identity.real);
-    identity.pathname = singleton->currentPathname();
+    identity.pathname = singleton->currentPath();
     identity.line = singleton->currentLineNumber();
     
     if (!identity.message.empty()) {
@@ -64,7 +64,7 @@ bool Aliases::append(const TIdentity &idty) {
                 std::cout
                 << MessageType::Warning
                 << "redefinition of: " << ANSI::Bold << identity.identifier << ANSI::Default << ", ";
-                if (basename(Singleton::shared()->currentPathname()) == basename(it.pathname)) {
+                if (basename(Singleton::shared()->currentPath()) == basename(it.pathname)) {
                     std::cout << "previous definition on line " << it.line << "\n";
                 }
                 else {

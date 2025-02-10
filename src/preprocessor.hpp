@@ -30,7 +30,7 @@ namespace pp {
     class Preprocessor {
     public:
         std::string path;       // path for #include <‘filename‘>
-        std::string pathname;
+        std::string filename;
         
         bool verbose = false;
         
@@ -39,9 +39,6 @@ namespace pp {
         bool logicalOperators = true;
         
         bool parse(std::string &str);
-        
-    private:
-//        std::list<std::string> _nesting;
     };
     
 }

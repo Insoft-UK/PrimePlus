@@ -139,7 +139,6 @@
 				1308E8F72AC6FCC5001EEC82 /* comments.cpp */,
 				13B13C2F2B66C2F000F9BCBB /* strings.cpp */,
 				136E64532D35B0980054E0CC /* regexp.cpp */,
-				136E64592D3964A90054E0CC /* dictionary.hpp */,
 				136E645A2D3964A90054E0CC /* dictionary.cpp */,
 			);
 			name = Classes;
@@ -157,6 +156,7 @@
 				1308E8F82AC6FCC5001EEC82 /* comments.hpp */,
 				13B13C302B66C2F000F9BCBB /* strings.hpp */,
 				136E64522D35B0980054E0CC /* regexp.hpp */,
+				136E64592D3964A90054E0CC /* dictionary.hpp */,
 			);
 			name = include;
 			sourceTree = "<group>";
