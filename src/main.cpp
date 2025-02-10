@@ -46,7 +46,7 @@
 #include "version_code.h"
 
 #define NAME "P+ Pre-Processor"
-#define COMMAND_NAME "p+"
+#define COMMAND_NAME "ppl+"
 
 using namespace pp;
 
@@ -240,7 +240,6 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     singleton->regexp.resolveAllRegularExpression(ln);
     
     std::string::const_iterator it;
-    
     /*
      A code stack provides a convenient way to store code snippets
      that can be retrieved and used later.

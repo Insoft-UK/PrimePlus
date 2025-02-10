@@ -14,9 +14,9 @@ echo "Code Signing... Please wait!"
 IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Application" | awk '{print $2}')
 codesign -s "$IDENTITY" ./build/*
 
-lipo -info build/p+
+lipo -info build/ppl+
 
-zip macos.zip build/p+ -x "*/.DS_Store"
+zip macos.zip build/ppl+ -x "*/.DS_Store"
 
 read -p "Press Enter to exit!"
 

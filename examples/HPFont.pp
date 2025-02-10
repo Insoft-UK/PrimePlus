@@ -1,5 +1,4 @@
 #include <pplang>
-#include <clang>
 
 GLYPH_P(trgt, c:charactor, x, y, auto:font, color, sX:sizeX, sY:sizeY)
 begin
@@ -20,6 +19,7 @@ begin
 
     auto glyph = font.glyphs[charactor - font.first];
     
+    
     var h = glyph.height;
     var w = glyph.width;
     
@@ -33,7 +33,7 @@ begin
     var p:bitPosition = glyph->bitmapOffset & 7 * 8;
     
     bits >> bitPosition;
-    while h {
+    while h do
         var xx;
         for xx = 0; xx < w; xx := xx + 1 do
             if bitPosition & 63 == 0 then

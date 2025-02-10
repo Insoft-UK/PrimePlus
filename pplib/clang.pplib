@@ -36,21 +36,16 @@
 
 @global regex `%{1}` MOD
 
-@global regex `\b(if .*)\{` $1 THEN
+@global regex `\bif *\((.*)\) *\{ *$` IF $1 THEN
 @global regex `\} *else *\{` ELSE
-@global regex `\b(while .*)\{` $1 DO
+@global regex `\bwhile *\((.*)\) *\{ *$` WHILE $1 DO
 @global regex `\bdo *\{` REPEAT
-@global regex `\} *while (.*); *$` UNTIL NOT($1);
-@global regex `\b(for .*)\{` $1 DO
+@global regex `\} *while *\((.*)\) *; *$` UNTIL NOT($1);
+@global regex `\bfor *\(([^;]+);([^;]+);([^;]+)\) *\{ *$` $1; WHILE $2 DO__PUSH__`$3;`
 
   
-@global regex `^ *\} *$` END;
+@global regex `^ *\} *$` __POP__END;
 @global regex `^ *\{ *$` BEGIN
 
-@global regex `\b((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b) *& *((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b)` BITAND($1,$2)
-@global regex `\b((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b) *\| *((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b)` BITOR($1,$2)
-@global regex `\b((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b) *>> *((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b)` BITSR($1,$2)
-@global regex `\b((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b) *<< *((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b)` BITSL($1,$2)
 
-  
 #endif
