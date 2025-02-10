@@ -241,8 +241,8 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     std::string::const_iterator it;
     
     /*
-     Stack is used as a conveient way of storing snipets of code that
-     can be pulled back off the stack later to use.
+     A code stack provides a convenient way to store code snippets
+     that can be retrieved and used later.
      */
     re = R"(__PUSH__`([^`]+)`)";
     it = ln.cbegin();
