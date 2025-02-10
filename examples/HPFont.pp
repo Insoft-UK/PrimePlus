@@ -1,9 +1,9 @@
 #include <pplang>
 #include <clang>
 
-GLYPH_P(trgt, ascii, x, y, auto:font, color)
-{
-    var g:glyph, btm:bitmap, os:bitmapOffset;
+GLYPH_P(trgt, c:charactor, x, y, auto:font, color, sX:sizeX, sY:sizeY)
+begin
+    var os:bitmapOffset;
     var w:width, h:height, bP, d, xx;
  
     regex `\bfont.bitmap\b` font[1]
@@ -17,51 +17,47 @@ GLYPH_P(trgt, ascii, x, y, auto:font, color)
     regex `\bglyph.dX\b` BITAND(BITSR(glyph, 40), 255)
     regex `\bglyph.dY\b` BITAND(BITSR(glyph, 48), 255) - 256
     regex `\bglyph.bitmapOffset\b` BITAND(glyph, 65535)
+
+    auto glyph = font.glyphs[charactor - font.first];
     
-
-    glyph := font.glyphs[ascii];
- 
-    if BITAND(g, #FFFFFFFFh) == 0 {
-        return xA;
-    }
- 
-    bitmap = font.bitmap;
- 
-    bitmapOffset = glyph.bitmapOffset;
-    width = glyph.width;
-    height = glyph.height;
-
+    var h = glyph.height;
+    var w = glyph.width;
+    
     x = x + glyph.dX;
-    y = y + glyph.dY + font.yAdvance;
-  
-    bP = bitmapOffset & 7 * 8;
-    os = bitmapOffset >> 3 + 1;
-    d = bitmap[bitmapOffset];
+    y = y + (glyph->dY + font.yAdvance) * sizeY;
     
-    d = d >> bP;
-  
-    do {
-        for xx = 1 ... width {
-            if bP == 64 {
-                bP = 0;
-                bitmapOffset = bitmapOffset + 1;
-                d = bitmap[bitmapOffset];
-            }
+    var BM:bitmap = font.bitmap;
+    var o:bitmapOffset = glyph->bitmapOffset >> 3 + 1
+    
+    var b:bits = bitmap[bitmapOffset];
+    var p:bitPosition = glyph->bitmapOffset & 7 * 8;
+    
+    bits >> bitPosition;
+    while h {
+        var xx;
+        for xx = 0; xx < w; xx := xx + 1 do
+            if bitPosition & 63 == 0 then
+                bits = bitmap[bitmapOffset];
+                bitmapOffset += 1;
+            endif;
 
-            if d & 1 == 1 {
-                PIXON_P(trgt, x + xx,y, color);
-            }
+            if bits & 1 then
+                if (sizeX == 1 && sizeY == 1) {
+                    PIXON_P(trgt, x + xx, y, color);
+                else
+                    //RECT_P(trgt, x + xx * sizeX, y, sizeX, sizeY, color);
+                endif;
+            endif;
 
-            bP = bP + 1;
-            d = d >> 1;
-        }
+            bits >> 1;
+        next;
 
-        y := y + 1;
-        height--;
-    } while height;
+        y += ySize;
+        h -= 1;
+    wend;
   
     return glyph.xAdvance;
-}
+end;
 
 EXPORT FONT_P(trgt, text, x, y, fnt, color)
 BEGIN

@@ -43,6 +43,7 @@
 @global regex `\} *while (.*); *$` UNTIL NOT($1);
 @global regex `\b(for .*)\{` $1 DO
 
+  
 @global regex `^ *\} *$` END;
 @global regex `^ *\{ *$` BEGIN
 
@@ -51,7 +52,5 @@
 @global regex `\b((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b) *>> *((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b)` BITSR($1,$2)
 @global regex `\b((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b) *<< *((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b)` BITSL($1,$2)
 
-@global regex `\b([a-zA-Z][\w.]*)\-{2}` $1 := $1 - 1
-@global regex `\b([a-zA-Z][\w.]*)\+{2}` $1 := $1 + 1
   
 #endif

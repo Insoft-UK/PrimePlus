@@ -209,6 +209,8 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     std::smatch match;
     std::ifstream infile;
     
+    static std::vector<std::string> stack;
+    
     Singleton *singleton = Singleton::shared();
     
     static int consecutiveBlankLines = 0;
@@ -235,6 +237,35 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     
     if (singleton->regexp.parse(ln)) return;
     singleton->regexp.resolveAllRegularExpression(ln);
+    
+    std::string::const_iterator it;
+    
+    /*
+     Stack is used as a conveient way of storing snipets of code that
+     can be pulled back off the stack later to use.
+     */
+    re = R"(__PUSH__`([^`]+)`)";
+    it = ln.cbegin();
+    while (std::regex_search(it, ln.cend(), match, re)) {
+        stack.push_back(match.str(1));
+        ln = ln.erase(match.position(), match.length());
+        
+        // Reset the iterator to the beginning : HACK
+        it = ln.cbegin();
+    }
+    
+    re = R"(__POP__)";
+    it = ln.cbegin();
+    while (std::regex_search(it, ln.cend(), match, re)) {
+        if (stack.empty()) {
+            break;
+        }
+        ln = ln.replace(match.position(), match.length(), stack.back());
+        stack.pop_back();
+        
+        // Reset the iterator to the beginning : HACK
+        it = ln.cbegin();
+    }
     
     /*
      While parsing the contents, strings may inadvertently undergo parsing, leading
@@ -288,9 +319,9 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
      it can be effective for simpler cases where a limited lookbehind is
      required.
      */
-    std::string::const_iterator it(ln.cbegin());
+//    std::string::const_iterator it(ln.cbegin());
     re = R"((?:[^<>=]|^)(>=|!=|<>|<=|=>)(?!=[<>=]))";
-    
+    it = ln.cbegin();
     while (std::regex_search(it, ln.cend(), match, re)) {
         // We will convert any >= != <= or => to PPLs ≥ ≠ ≤ and ▶
         std::string s = match.str(1);
