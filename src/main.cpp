@@ -46,7 +46,7 @@
 #include "version_code.h"
 
 #define NAME "P+ Pre-Processor"
-#define COMMAND_NAME "ppl+"
+#define COMMAND_NAME "p+"
 
 using namespace pp;
 
