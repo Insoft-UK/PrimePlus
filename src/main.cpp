@@ -186,7 +186,6 @@ void reformatPPLLine(std::string &str) {
     str = regex_replace(str, std::regex(R"( +(:|-))"), " $1");
     str = regex_replace(str, std::regex(R"(([^\d]) +- +)"), "$1 -");
     str = regex_replace(str, std::regex(R"(([^-]) *-(?!= ))"), "$1 - ");
-    str = regex_replace(str, std::regex(R"(FROM)"), ":=");
     str = regex_replace(str, std::regex(R"(([)};])([A-Z]))"), "$1 $2");
     
     re = R"(([^a-zA-Z ])(BEGIN|END|RETURN|KILL|IF|THEN|ELSE|XOR|OR|AND|NOT|CASE|DEFAULT|IFERR|IFTE|FOR|FROM|STEP|DOWNTO|TO|DO|WHILE|REPEAT|UNTIL|BREAK|CONTINUE|EXPORT|CONST|LOCAL|KEY))";
