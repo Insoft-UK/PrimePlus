@@ -1,3 +1,5 @@
+#pragma mode( separator(.,,) integer(h64) )
+
 #include <pplang>
 
     regex `\bfont.bitmap\b` font[1]

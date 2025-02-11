@@ -24,20 +24,6 @@
  
 #pragma mode( separator(.,,) integer(h64) )
 
-#include <cartesian>
-#include <cspace>
-#include <dictionary>
-#include <hp>
-#include <integer>
-#include <io>
-#include <matrix>
-#include <pixel>
-#include <pplang>
-#include <prime>
-#include <string>
-
-#include <pplang>
-
 
 @disregard
  When defining a macro with parameters, issues can arise if an argument
@@ -53,59 +39,32 @@
 #PYTHON
 #END
 
-
-
-NAME:Very_Long_Name()
-{
-    A := 0x0;
-    
-    do {
-        A += 1;
-    } while A < 10;
-    
-    A *= B;
-
-    if A == 100 && (C <= 10 || C == 100) {
-        A /= C;
-    }
-    
-    while A > 0 {
-        A -= 1;
-    }
-
-    auto copywriteText;
-    copywriteText = COPYWRITE;
-    auto mt;
-    mt = MouseType.LongClick;
-    mt = integer::Base.Decimal;
-}
-
-auto:Function_Name_Uknown()
+PascalCase:displayCopyriteText()
 begin
-    Very_Long_Name();
+    TEXTOUT_P(COPYWRITE, 0, 0);
 end;
 
-Implied::AutoNameBecauseNotValidInPPL()
+auto:automaticName()
 begin
+    displayCopyriteText();
 end;
 
-ValidPPLFunctionName()
+automaticName::BecauseNotValidInPPL()
 begin
-    // Very_Long_Name()
-    Very_Long_Name();
-    NAME();
-        
-    // Function_Name_Uknown()
-    Function_Name_Uknown();
-    
-    // Implied::AutoNameBecauseNotValidInPPL()
-    Implied::AutoNameBecauseNotValidInPPL();
+    WAIT;
+end;
+
+PacalCaseName()
+begin
+    automaticName();
+    BecauseNotValidInPPL();
 end;
 
 export Parameters(auto:a, b:beta)
 begin
     auto alpha;
     alpha = beta + a;
+    return alpha;
 end;
 
 PPL()
@@ -126,24 +85,21 @@ END;
 
 // Namespace
 using namespace std;
+
+def RECT std::cartesian::rect;
+
 Namespace()
 begin
-    def RECT std::cartesian::rect;
-    std::cartesian::rect(0);
-    cartesian::rect(0);
+    std::cartesian::rect();
+    cartesian::rect();
 end;
+
 remove namespace std;
 
 Var()
 begin
-    var a, b; var c, d;
+    var a:alpha, b; var c, d;
     auto iAmVerryLong;
-end;
-
-Parameter(a:alpha, auto:iAmUknown)
-begin
-    alpha = alpha + iAmUknown;
-    a = alpha + iAmUknown;
 end;
 
 
@@ -156,8 +112,7 @@ begin
     endif;
     
     if a <= b and b > 10 then a = a + 1; endif;
-    if a != b and b > 10 then
-    a = a + 1; endif;
+    if a != b and b > 10 then a = a + 1; endif;
     if a <> b and b > 10 then a = a + 1; endif;
     if a >= b or b < 20 then a = a + 1; endif;
     if a == b or b < 20 then a = a + 1; endif;
@@ -178,37 +133,19 @@ begin
     repeat
         a = a + 1;
     until a == b;
-    
 end;
-
-Auto()
-begin
-    auto iWasAVeryLongName, b;
-    auto iWas::Invalid = 0; // invalid because it's asigning a value.
-    var a:thisIsMyLongName, auto:letYouDecideMyShortName;
-    
-    iWasAVeryLongName = thisIsMyLongName + b;
-    a = thisIsMyLongName + b;
-    iWasAVeryLongName *= letYouDecideMyShortName;
-end;
-
 
 #define SEVEN 7
 PreCalc()
 begin
-    var ppl_numbers = \[320 / #2d];
-
-
-#if __VERSION >= 304
     var new = \` 1 + pi * 4 / 2 & 2 % SEVEN `;
     LOCAL new = \` 10.0 + SEVEN `;
-#endif
 end;
 
 #PPL
 I_AM_PPL_CODE()
 BEGIN
     LOCAL a; LOCAL b;
-    var b; // I am not PPL Code!
+    var b; // I am not PPL Code so ERROR!
 END;
 #END
