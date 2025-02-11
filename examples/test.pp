@@ -122,7 +122,7 @@ Loop()
 begin
     var a, b = 10;
     
-    for a from 0 ... 9 step 1 do
+    for a from 0 to 9 step 1 do
         b - 1 ▶ b;
     end;
     
