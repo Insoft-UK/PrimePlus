@@ -59,7 +59,7 @@ public:
     
     void decreaseScopeDepth() {
         if (_scopeDepth == 0) {
-            std::cout << MessageType::Error << "unexpected '" << "END;" << "'\n";
+            std::cout << "Error: Unexpected '" << "END;" << "'\n";
             return;
         }
         _scopeDepth--;

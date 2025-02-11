@@ -38,7 +38,7 @@
 @global regex `\b([a-zA-Z_]\w*) *([*\/+-])\= *` $1 := $1 $2
 
 
-@global regex `\bfor ([^;]+);([^;]+);([^;]+)do` $1; WHILE $2 DO__PUSH__`$3;`
+@global regex `\bfor ([^;]+);([^;]+); *([^;]+)do` $1; WHILE $2 DO__PUSH__`__INDENT__$3;`
 @global regex `\b(next|end)\b` __POP__END
 @global regex `\bloop\b` WHILE 1 DO
 @global regex `\bswitch +([a-zA-Z_]\w*)` LOCAL sw__SCOPE__ := $1;CASE

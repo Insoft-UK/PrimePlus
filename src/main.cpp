@@ -258,7 +258,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     re = R"(__PUSH__`([^`]+)`)";
     it = ln.cbegin();
     while (std::regex_search(it, ln.cend(), match, re)) {
-        stack.push_back(match.str(1));
+        stack.push_back(trim_copy(match.str(1)));
         
         // Erase only the matched portion and update the iterator correctly
         it = ln.erase(it + match.position(), it + match.position() + match.length());
@@ -278,7 +278,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
 
         stack.pop_back();
     }
-    
+
     /*
      While parsing the contents, strings may inadvertently undergo parsing, leading
      to potential disruptions in the string's content.
@@ -429,6 +429,10 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     
     reformatPPLLine(ln);
     
+    ln = regex_replace(ln, std::regex(R"(__NL__)"), "\n");
+    ln = regex_replace(ln, std::regex(R"(__CR__)"), "\r");
+    ln = regex_replace(ln, std::regex(R"(__INDENT__)"), std::string(INDENT_WIDTH, ' '));
+   
     strings.restoreStrings(ln);
     singleton->comments.restoreComment(ln);
     
