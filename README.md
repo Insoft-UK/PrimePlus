@@ -13,6 +13,27 @@ Please view the test <a href="https://github.com/Insoft-UK/PrimePlus/blob/main/e
 
 <b><a href="https://github.com/Insoft-UK/GROB">GROB</a> to be intergrated in the future.</b>
 
+```
+#pragma mode( separator(.,,) integer(h64) )
+#include <pplang>
+
+auto:displayCopyright()
+begin
+  TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
+end;
+
+EXPORT START()
+BEGIN
+  displayCopyright();
+  WAIT;
+  var a:alpha = 0;
+  alpha += 10;
+  RETURN a;
+END;
+```
+
+`p+ project.pp -l pplib`
+
 >[!IMPORTANT]
 In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
 
