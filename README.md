@@ -20,9 +20,16 @@ begin
   TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
 end;
 
+#PYTHON
+#END
+
 EXPORT START()
 BEGIN
   displayCopyright();
+#PPL
+  // In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
+  // So only PPL code in this section.
+#END
   WAIT;
   var a:alpha = 0;
   alpha += 10;
@@ -44,7 +51,9 @@ END;
 EXPORT START()
 BEGIN
   fn1;
+#PPL
   WAIT;
+#END
   LOCAL a := 0;
   a := a + 10;
   RETURN a;
