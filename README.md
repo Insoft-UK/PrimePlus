@@ -34,6 +34,23 @@ END;
 
 `p+ project.pp -l pplib`
 
+```
+#pragma mode( separator(.,,) integer(h64) )
+fn1()
+BEGIN
+  TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
+END;
+
+EXPORT START()
+BEGIN
+  fn1;
+  WAIT;
+  LOCAL a := 0;
+  a := a + 10;
+  RETURN a;
+END;
+```
+
 >[!IMPORTANT]
 In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
 
