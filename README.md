@@ -48,12 +48,14 @@ BEGIN
   TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
 END;
 
+#PYTHON
+#END
 EXPORT START()
 BEGIN
   fn1;
-#PPL
+  // In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
+  // So only PPL code in this section.
   WAIT;
-#END
   LOCAL a := 0;
   a := a + 10;
   RETURN a;
