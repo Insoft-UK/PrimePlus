@@ -67,19 +67,13 @@ begin
     return alpha;
 end;
 
-PPL()
+PPLwithPrimePlus(a, b:beta)
 BEGIN
-    // PPL & P+
-    LOCAL a;
-    a = Int8(a);
-    var b:beta;
-    
-    
     IF a==beta THEN
         a ▶ beta;
         if a==1 then
             a = a + 1;
-        endif;
+        end;
     END;
 END;
 
@@ -107,10 +101,6 @@ Branch()
 begin
     var a, b;
     
-    if a == b then
-        a = a + 1; else 10 := a;
-    endif;
-    
     if a <= b and b > 10 then a = a + 1; endif;
     if a != b and b > 10 then a = a + 1; endif;
     if a <> b and b > 10 then a = a + 1; endif;
@@ -118,22 +108,6 @@ begin
     if a == b or b < 20 then a = a + 1; endif;
 end;
 
-Loop()
-begin
-    var a, b = 10;
-    
-    for a from 0 to 9 step 1 do
-        b - 1 ▶ b;
-    end;
-    
-    while a != b do
-        a = b;
-    wend;
-    
-    repeat
-        a = a + 1;
-    until a == b;
-end;
 
 #define SEVEN 7
 PreCalc()
