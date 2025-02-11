@@ -9,8 +9,6 @@ P+ is a proprietary programming language designed to mitigate the challenges ass
 P+ is essentially the PPL language with additional features, such as substitution capabilities, and requires all keywords to be in lowercase.
 <br/><br/>
 
-Please view the test <a href="https://github.com/Insoft-UK/PrimePlus/blob/main/examples/test.pp">code</a> to see what additional features P+ adds to the Prime Programming Language (PPL).
-
 <b><a href="https://github.com/Insoft-UK/GROB">GROB</a> to be intergrated in the future.</b>
 
 ```
@@ -22,15 +20,24 @@ begin
   TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
 end;
 
+#PYTHON
+#END
+
 EXPORT START()
 BEGIN
   displayCopyright();
+#PPL
+  // In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
+  // So only PPL code in this section.
+#END
   WAIT;
   var a:alpha = 0;
   alpha += 10;
   RETURN a;
 END;
 ```
+
+>PPL and P+ code can co-exist as P+ is just an extension of PPL.
 
 `p+ project.pp -l pplib`
 
@@ -41,9 +48,13 @@ BEGIN
   TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
 END;
 
+#PYTHON
+#END
 EXPORT START()
 BEGIN
   fn1;
+  // In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
+  // So only PPL code in this section.
   WAIT;
   LOCAL a := 0;
   a := a + 10;
