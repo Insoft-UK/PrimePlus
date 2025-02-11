@@ -73,7 +73,7 @@ bool Preprocessor::parse(std::string &str) {
                     filename.append(".pplib");
                 }
                 
-                if (verbose) std::cout << MessageType::Verbose << "#include: file named '" << filename << "'\n";
+                if (verbose) std::cout << MessageType::Verbose << "#include: file named '" << std::filesystem::path(filename).filename() << "'\n";
                 return true;
             }
             
@@ -83,14 +83,15 @@ bool Preprocessor::parse(std::string &str) {
             };
             if (it != end) {
                 filename = *it++;
-                if (!file_exists(filename) && std::filesystem::path(filename).parent_path().empty()) {
-                    filename = _singleton->currentPath().substr(0, _singleton->currentPath().rfind("/") + 1) + filename;
+                
+                if (!file_exists(filename)) {
+                    filename.insert(0, _singleton->getProjectDir() + "/");
                     if (!file_exists(filename)) {
                         std::cout << MessageType::Error << "file " << std::filesystem::path(filename).filename() << " not found.\n";
                         return false;
                     }
                 }
-                if (verbose) std::cout << MessageType::Verbose << "#include: file named '" << filename << "'\n";
+                if (verbose) std::cout << MessageType::Verbose << "#include: file named '" << std::filesystem::path(filename).filename() << "'\n";
                 return true;
             }
             return false;

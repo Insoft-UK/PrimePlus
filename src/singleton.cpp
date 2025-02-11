@@ -46,7 +46,7 @@ std::string Singleton::currentPath(void) {
     return _paths.back();
 }
 
-std::string Singleton::getProjectPath(void) {
+std::string Singleton::getProjectDir(void) {
     std::string path = std::filesystem::path(_paths.front()).parent_path();
     return path;
 }

@@ -1,7 +1,7 @@
 #include <pplang>
 
     regex `\bfont.bitmap\b` font[1]
-    regex `\bfont.glyphs\[(ascii)\]` font[2,$1]
+    regex `\bfont.glyphs\[([\w\d.:])\]` font[2,$1+1]
     regex `\bfont.first\b` font[3]
     regex `\bfont.last\b` font[4]
     regex `\bfont.yAdvance\b` font[5]
@@ -12,36 +12,35 @@
     regex `\bglyph.dY\b` BITAND(BITSR(glyph, 48), 255) - 256
     regex `\bglyph.bitmapOffset\b` BITAND(glyph, 65535)
 
-GLYPH_P(trgt, c:charactor, x, y, font, color, sX:sizeX, sY:sizeY)
+GLYPH_P:drawGlyph(trgt, g:glyph, x, y, font, color, sX:sizeX, sY:sizeY)
 begin
-    var os:bitmapOffset;
-    var w:width, h:height, bP, d, xx;
+    auto bitmapOffset;
  
-    auto glyph = font.glyphs[charactor - font.first];
+    var auto:glyph = font.glyphs[glyph];
     
     var h = glyph.height;
     var w = glyph.width;
     
     x = x + glyph.dX;
-    y = y + (glyph->dY + font.yAdvance) * sizeY;
+    y = y + (glyph.dY + font.yAdvance) * sizeY;
     
-    var BM:bitmap = font.bitmap;
-    var o:bitmapOffset = glyph->bitmapOffset >> 3 + 1
+    var auto:bitmap = font.bitmap;
+    var auto:bitmapOffset = glyph.bitmapOffset >> 3 + 1
     
-    var b:bits = bitmap[bitmapOffset];
-    var p:bitPosition = glyph->bitmapOffset & 7 * 8;
+    var auto:bits = bitmap[bitmapOffset];
+    var auto:bitPosition = glyph.bitmapOffset & 7 * 8;
     
     bits >> bitPosition;
     while h do
-        var xx;
-        for xx = 0; xx < w; xx := xx + 1 do
+        auto xx;
+        for xx = 0; xx < w; xx += 1 do
             if bitPosition & 63 == 0 then
                 bits = bitmap[bitmapOffset];
-                bitmapOffset += 1;
+                bitmapOffset = bitmapOffset + 1;
             endif;
 
-            if bits & 1 then
-                if (sizeX == 1 && sizeY == 1) {
+            if bits & -1 then
+                if sizeX == 1 and sizeY == 1 then
                     PIXON_P(trgt, x + xx, y, color);
                 else
                     //RECT_P(trgt, x + xx * sizeX, y, sizeX, sizeY, color);
@@ -51,8 +50,8 @@ begin
             bits >> 1;
         next;
 
-        y = y + ySize;
-        h = h - 1;
+        y += sizeY;
+        h -= 1;
     wend;
   
     return glyph.xAdvance;
@@ -60,11 +59,17 @@ end;
 
 export FONT_P(trgt, text, x, y, auto:font, color)
 begin
-    var i, l := ASC(text);
+    var i, auto:asciiList := ASC(text);
  
     for i := 1 ... SIZE(l) do
-        if x >= 320 then break; end;
-        if l[i] < font.first or l[i] > font.last then continue; endif;
-        x := x + GLYPH_P(trgt, l[i] - font.first + 1, x, y, font, color);
+        if x >= 320 then
+            break;
+        endif;
+        
+        if asciiList[i] < font.first or asciiList[i] > font.last then
+            continue;
+        endif;
+        
+        x := x + drawGlyph(trgt, l[i] - font.first + 1, x, y, font, color, 1, 1);
     next;
 end;

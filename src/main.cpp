@@ -151,12 +151,12 @@ void reformatPPLLine(std::string &str) {
     }
     
     
-    if (Singleton::shared()->scopeDepth.size() > 0) {
+    if (Singleton::shared()->scopeDepth > 0) {
         try {
             if (!regex_search(str, std::regex(R"(\b(BEGIN|IF|CASE|REPEAT|WHILE|FOR|ELSE|IFERR)\b)"))) {
-                str.insert(0, std::string(Singleton::shared()->scopeDepth.size() * INDENT_WIDTH, ' '));
+                str.insert(0, std::string(Singleton::shared()->scopeDepth * INDENT_WIDTH, ' '));
             } else {
-                str.insert(0, std::string((Singleton::shared()->scopeDepth.size() - 1) * INDENT_WIDTH, ' '));
+                str.insert(0, std::string((Singleton::shared()->scopeDepth - 1) * INDENT_WIDTH, ' '));
             }
         }
         catch (...) {
@@ -166,25 +166,26 @@ void reformatPPLLine(std::string &str) {
         
         
         re = std::regex(R"(^ *(THEN)\b)", std::regex_constants::icase);
-        str = regex_replace(str, re, std::string((Singleton::shared()->scopeDepth.size() - 1) * INDENT_WIDTH, ' ') + "$1");
+        str = regex_replace(str, re, std::string((Singleton::shared()->scopeDepth - 1) * INDENT_WIDTH, ' ') + "$1");
         
         
         str = regex_replace(str, std::regex(R"(\(\s*\))"), "");
         
         if (regex_search(str, std::regex(R"(\bEND;$)"))) {
-            str = regex_replace(str, std::regex(R"(;(.+))"), ";\n" + std::string(Singleton::shared()->scopeDepth.size() * INDENT_WIDTH, ' ') + "$1");
+            str = regex_replace(str, std::regex(R"(;(.+))"), ";\n" + std::string(Singleton::shared()->scopeDepth * INDENT_WIDTH, ' ') + "$1");
         } else {
-            str = regex_replace(str, std::regex(R"(;(.+))"), ";\n" + std::string((Singleton::shared()->scopeDepth.size() - 1) * INDENT_WIDTH, ' ') + "$1");
+            str = regex_replace(str, std::regex(R"(;(.+))"), ";\n" + std::string((Singleton::shared()->scopeDepth - 1) * INDENT_WIDTH, ' ') + "$1");
         }
     }
     
-    if (Singleton::shared()->scopeDepth.size() == 0) {
+    if (Singleton::shared()->scopeDepth == 0) {
         str = regex_replace(str, std::regex(R"(END;)"), "$0\n");
         str = regex_replace(str, std::regex(R"(LOCAL )"), "");
     }
     
     str = regex_replace(str, std::regex(R"( +(:|-))"), " $1");
     str = regex_replace(str, std::regex(R"(([^\d]) +- +)"), "$1 -");
+    str = regex_replace(str, std::regex(R"(([^-]) *-(?!= ))"), "$1 - ");
     str = regex_replace(str, std::regex(R"(FROM)"), ":=");
     str = regex_replace(str, std::regex(R"(([)};])([A-Z]))"), "$1 $2");
     
@@ -241,7 +242,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     
     
     if (ln.substr(0,2) == "//") {
-        ln = ln.insert(0, std::string(singleton->scopeDepth.size() * INDENT_WIDTH, ' '));
+        ln = ln.insert(0, std::string(singleton->scopeDepth * INDENT_WIDTH, ' '));
         ln += '\n';
         return;
     }
@@ -263,7 +264,6 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
         it = ln.erase(it + match.position(), it + match.position() + match.length());
     }
 
-    
     re = R"(__POP__)";
     it = ln.cbegin();
     while (std::regex_search(it, ln.cend(), match, re)) {
@@ -272,13 +272,10 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
             break;
         }
 
-        // Get an iterator to the match position
-        auto match_start = it + match.position();
-        auto match_end = match_start + match.length();
-
         // Replace the match with the last value from the stack
-        it = ln.erase(match_start, match_end);
+        it = ln.erase(it + match.position(), it + match.position() +  match.length());
         it = ln.insert(it, stack.back().begin(), stack.back().end());
+
         stack.pop_back();
     }
     
@@ -334,7 +331,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
      it can be effective for simpler cases where a limited lookbehind is
      required.
      */
-//    std::string::const_iterator it(ln.cbegin());
+    
     re = R"((?:[^<>=]|^)(>=|!=|<>|<=|=>)(?!=[<>=]))";
     it = ln.cbegin();
     while (std::regex_search(it, ln.cend(), match, re)) {
@@ -391,7 +388,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     re = R"(\b(END|UNTIL)\b)";
     for(auto it = std::sregex_iterator(ln.begin(), ln.end(), re); it != std::sregex_iterator(); ++it) {
         singleton->decreaseScopeDepth();
-        if (singleton->scopeDepth.size() == 0) {
+        if (singleton->scopeDepth == 0) {
             singleton->aliases.removeAllLocalAliases();
             ln += '\n';
         }
@@ -400,7 +397,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     }
     
     
-    if (singleton->scopeDepth.size() == 0) {
+    if (singleton->scopeDepth == 0) {
         re = R"(^ *(KS?A?_[A-Z\d][a-z]*) *$)";
         std::sregex_token_iterator it = std::sregex_token_iterator {
             ln.begin(), ln.end(), re, {1}

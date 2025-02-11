@@ -41,35 +41,28 @@ public:
     Auto autoname;
     Comments comments;
     Regexp regexp;
-    
-    typedef struct {
-        std::string endCode;
-    } TScopeDepth;
-    
-    const std::vector<TScopeDepth>& scopeDepth;
+
+    const int &scopeDepth;
     
     static Singleton *shared();
     
     void incrementLineNumber(void);
     long currentLineNumber(void);
     std::string currentPath(void);
-    std::string getProjectPath(void);
+    std::string getProjectDir(void);
     void pushPath(const std::string &path);
     void popPath(void);
     
     void increaseScopeDepth(const std::string &endCode = "") {
-        TScopeDepth scopeDepth = {
-            .endCode = endCode
-        };
-        _scopeDepth.push_back(scopeDepth);
+        _scopeDepth++;
     }
     
     void decreaseScopeDepth() {
-        if (_scopeDepth.size() == 0) {
-            //std::cout << MessageType::Error << "unexpected '" << "..." << "'\n";
+        if (_scopeDepth == 0) {
+            std::cout << MessageType::Error << "unexpected '" << "END;" << "'\n";
             return;
         }
-        _scopeDepth.pop_back();
+        _scopeDepth--;
     }
     
 private:
@@ -77,11 +70,11 @@ private:
     std::vector<long> _lines;
     static Singleton *_shared;
     
-    std::vector<TScopeDepth> _scopeDepth;
+    int _scopeDepth;
     
     Singleton() : scopeDepth(_scopeDepth) {
         _currentline = 1;
-        
+        _scopeDepth = 0;
     }
     Singleton(const Singleton &);
     Singleton &operator=(const Singleton &);

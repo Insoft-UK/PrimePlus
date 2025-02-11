@@ -62,7 +62,7 @@ static std::ifstream openAsBinary(const std::string &filename) {
     std::string pathname = filename;
     
     if (std::filesystem::path(filename).parent_path().empty()) {
-        pathname.insert(0, singleton->getProjectPath());
+        pathname.insert(0, singleton->getProjectDir());
     }
     infile.open(pathname, std::ios::in | std::ios::binary);
     

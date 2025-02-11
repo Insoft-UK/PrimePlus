@@ -35,8 +35,11 @@
 #define var     LOCAL
 #define pi      π
 
+@global regex `\b([a-zA-Z_]\w*) *([*\/+-])\= *` $1 := $1 $2
+
+
 @global regex `\bfor ([^;]+);([^;]+);([^;]+)do` $1; WHILE $2 DO__PUSH__`$3;`
-@global regex `\bnext\b` __POP__END
+@global regex `\b(next|end)\b` __POP__END
 @global regex `\bloop\b` WHILE 1 DO
 @global regex `\bswitch +([a-zA-Z_]\w*)` LOCAL sw__SCOPE__ := $1;CASE
 @global regex `\bcase +(\-?\d+) +do *$` IF sw\`__SCOPE__-1` == $1 THEN
@@ -48,6 +51,7 @@
 @global regex `< *string *> *\((.*)\)` STRING($1)
 @global regex `< *string *> *([a-zA-Z_]\w*)\b` STRING($1)
 @global regex `\bguard +(.*)\belse\b` IF NOT($1) THEN
+
 
 @global regex `\b((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b) *& *((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b)` BITAND($1,$2)
 @global regex `\b((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b) *\| *((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b)` BITOR($1,$2)

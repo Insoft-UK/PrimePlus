@@ -36,7 +36,7 @@ bool Regexp::parse(std::string &str) {
         TRegexp regexp = {
             .regularExpression = match[2].str(),
             .replacement = match[3].str(),
-            .scopeLevel = Singleton::shared()->scopeDepth.size(),
+            .scopeLevel = static_cast<size_t>(Singleton::shared()->scopeDepth),
             .line = Singleton::shared()->currentLineNumber(),
             .pathname = Singleton::shared()->currentPath()
         };
@@ -63,7 +63,7 @@ bool Regexp::parse(std::string &str) {
 
 void Regexp::removeAllOutOfScopeRegexps() {
     for (auto it = _regexps.begin(); it != _regexps.end(); ++it) {
-        if (it->scopeLevel > Singleton::shared()->scopeDepth.size()) {
+        if (it->scopeLevel > Singleton::shared()->scopeDepth) {
             if (verbose) std::cout
                 << MessageType::Verbose
                 << "regex"
@@ -82,7 +82,7 @@ void Regexp::resolveAllRegularExpression(std::string &str) {
     for (auto it = _regexps.begin(); it != _regexps.end(); ++it) {
         if (std::regex_search(str, match, std::regex(it->regularExpression))) {
             str = regex_replace(str, std::regex(it->regularExpression), it->replacement);
-            str = std::regex_replace(str, std::regex("__SCOPE__"), std::to_string(Singleton::shared()->scopeDepth.size()));
+            str = std::regex_replace(str, std::regex("__SCOPE__"), std::to_string(Singleton::shared()->scopeDepth));
             Calc::evaluateMathExpression(str);
             resolveAllRegularExpression(str);
         }

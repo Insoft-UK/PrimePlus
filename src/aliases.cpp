@@ -55,7 +55,7 @@ bool Aliases::append(const TIdentity &idty) {
     }
     
     if (Scope::Auto == identity.scope) {
-        identity.scope = singleton->scopeDepth.size() == 0 ? Aliases::Scope::Global : Aliases::Scope::Local;
+        identity.scope = singleton->scopeDepth == 0 ? Aliases::Scope::Global : Aliases::Scope::Local;
     }
     
     if (identifierExists(identity.identifier)) {
@@ -302,7 +302,7 @@ void Aliases::addNamespace(const std::string &name) {
     }
     _namespaces.push_back(name);
     
-    if (Singleton::shared()->scopeDepth.size() == 0) {
+    if (Singleton::shared()->scopeDepth == 0) {
         _namespaseCheckpoint = _namespaces.size();
     }
 }
