@@ -1,6 +1,7 @@
 *.xcworkspace/xcuserdata/
 xcuserdata/
 .DS_Store
+build
 *.sh
 *.psd
 bin/*
