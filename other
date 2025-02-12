@@ -10,5 +10,6 @@ echo "Archiving..."
 zip pplib.zip pplib/* -x "*/.DS_Store"
 zip hpprgm.zip hpprgm/* -x "*/.DS_Store"
 
+
 # Close the Terminal window
 osascript -e 'tell application "Terminal" to close window 1' & exit

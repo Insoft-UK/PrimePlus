@@ -1,0 +1,38 @@
+#!/bin/bash
+DIR=$(dirname "$0")
+printf '\e[1;40;92m'
+clear
+
+cd $DIR
+
+# Read version information from a text file (version.txt).
+# Example: "12399" represents v1.2.3 build 99
+version_file="version.txt"
+version=$(cat "$version_file")
+
+# Increment version information and update file (version.txt).
+version=$((version + 1))
+echo "$version" > "$version_file"
+
+# Extract Major, Minor, Patch, and Build from the version number
+if [[ ${#version} -eq 5 ]]; then
+    major=$(echo "$version" | cut -c1)           # 1 digit Major version
+    minor=$(echo "$version" | cut -c2)           # Minor version
+    patch=$(echo "$version" | cut -c3)           # Patch version
+    build=$(echo "$version" | cut -c4-5)         # Build number
+elif [[ ${#version} -eq 6 ]]; then
+    major=$(echo "$version" | cut -c1-2)         # 2 digit Major version
+    minor=$(echo "$version" | cut -c3)           # Minor version
+    patch=$(echo "$version" | cut -c4)           # Patch version
+    build=$(echo "$version" | cut -c5-6)         # Build number
+else
+    echo "Invalid version format in version.txt"
+    exit 1
+fi
+
+version_number="$major.$minor.$patch"
+
+zip p+_$version_number.zip src/* pplib/* hpprgm/* LICENSE.txt Makefile -x "src/setdate" -x "src/date.txt"
+
+# Close the Terminal window
+osascript -e 'tell application "Terminal" to close window 1' & exit
