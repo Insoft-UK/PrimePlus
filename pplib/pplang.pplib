@@ -54,9 +54,9 @@
 @global regex `\bguard +(.*)\belse\b` IF NOT($1) THEN
 
 
-@global regex `\b((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b) *& *((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b)` BITAND($1,$2)
-@global regex `\b((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b) *\| *((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b)` BITOR($1,$2)
-@global regex `\b((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b) *>> *((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b)` BITSR($1,$2)
-@global regex `\b((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b) *<< *((?:#[\dA-F]+(?::-?\d+)?[bodh]?)|\b[a-zA-Z0-9][\w.]*\b)` BITSL($1,$2)
+@global regex `\b((?:#?[\dA-F]+(?::-?\d+)?[bodh]?)|[[:alpha:]][\w.:]*\b|\([^()]+\)) *& *((?:#?[\dA-F]+(?::-?\d+)?[bodh]?)|[[:alpha:]][\w.:]*\b|\([^()]+\))` BITAND($1,$2)
+@global regex `\b((?:#?[\dA-F]+(?::-?\d+)?[bodh]?)|[[:alpha:]][\w.:]*\b|\([^()]+\)) *\| *((?:#?[\dA-F]+(?::-?\d+)?[bodh]?)|[[:alpha:]][\w.:]*\b|\([^()]+\))` BITOR($1,$2)
+@global regex `\b((?:#?[\dA-F]+(?::-?\d+)?[bodh]?)|[[:alpha:]][\w.:]*\b|\([^()]+\)) *>> *((?:#?[\dA-F]+(?::-?\d+)?[bodh]?)|[[:alpha:]][\w.:]*\b|\([^()]+\))` BITSR($1,$2)
+@global regex `\b((?:#?[\dA-F]+(?::-?\d+)?[bodh]?)|[[:alpha:]][\w.:]*\b|\([^()]+\)) *<< *((?:#?[\dA-F]+(?::-?\d+)?[bodh]?)|[[:alpha:]][\w.:]*\b|\([^()]+\))` BITSL($1,$2)
 
 #endif

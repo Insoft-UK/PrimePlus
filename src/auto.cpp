@@ -129,6 +129,7 @@ bool Auto::parse(std::string &str) {
         }
         
         _paramCount = 0;
+        _varCount = 0;
         while ((pos = str.find("auto:")) != std::string::npos) {
             while (singleton->aliases.realExists("p" + base10ToBase32(++_paramCount)));
             str.replace(pos, 4, "p" + base10ToBase32(_paramCount));

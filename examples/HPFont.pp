@@ -3,7 +3,7 @@
 #include <pplang>
 
     regex `\bfont.bitmap\b` font[1]
-    regex `\bfont.glyphs\[([\w\d.:])\]` font[2,$1+1]
+    regex `\bfont.glyphs\[([\w\d.:]+)\]` font[2,$1+1]
     regex `\bfont.first\b` font[3]
     regex `\bfont.last\b` font[4]
     regex `\bfont.yAdvance\b` font[5]
@@ -32,7 +32,7 @@ begin
     var auto:bits = bitmap[bitmapOffset];
     var auto:bitPosition = glyph.bitmapOffset & 7 * 8;
     
-    bits >> bitPosition;
+    bits = bits >> (64 - bitPosition);
     while h do
         auto xx;
         for xx = 0; xx < w; xx += 1 do
@@ -41,7 +41,7 @@ begin
                 bitmapOffset = bitmapOffset + 1;
             endif;
 
-            if bits & -1 then
+            if bits & 1 == 1 then
                 if sizeX == 1 and sizeY == 1 then
                     PIXON_P(trgt, x + xx, y, color);
                 else
@@ -49,7 +49,7 @@ begin
                 endif;
             endif;
 
-            bits >> 1;
+            bits = bits >> 1;
         next;
 
         y += sizeY;
