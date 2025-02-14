@@ -41,8 +41,6 @@
 		1308E8F52AC48F20001EEC82 /* singleton.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = singleton.hpp; sourceTree = "<group>"; };
 		1308E8F72AC6FCC5001EEC82 /* comments.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = comments.cpp; sourceTree = "<group>"; };
 		1308E8F82AC6FCC5001EEC82 /* comments.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = comments.hpp; sourceTree = "<group>"; };
-		13166E822BA12DE100D1E6F0 /* pplib */ = {isa = PBXFileReference; lastKnownFileType = folder; path = pplib; sourceTree = "<group>"; };
-		13166E842BA12E1D00D1E6F0 /* hpprgm */ = {isa = PBXFileReference; lastKnownFileType = folder; path = hpprgm; sourceTree = "<group>"; };
 		13166E852BA12E5E00D1E6F0 /* examples */ = {isa = PBXFileReference; lastKnownFileType = folder; path = examples; sourceTree = "<group>"; };
 		1351CC512BF530CE0073FEDF /* calc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = calc.cpp; sourceTree = "<group>"; };
 		1351CC522BF530CE0073FEDF /* calc.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = calc.hpp; sourceTree = "<group>"; };
@@ -96,8 +94,6 @@
 				137FB2942A046E8E00AEFDF2 /* p+.entitlements */,
 				13CDCDDF2D499BE30005D2EA /* python */,
 				13166E852BA12E5E00D1E6F0 /* examples */,
-				13166E842BA12E1D00D1E6F0 /* hpprgm */,
-				13166E822BA12DE100D1E6F0 /* pplib */,
 				137FB2872A03B06500AEFDF2 /* src */,
 				137FB2862A03B06500AEFDF2 /* Products */,
 			);
