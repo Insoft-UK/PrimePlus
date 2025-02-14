@@ -8,7 +8,6 @@ IDENTITY=$(security find-identity -v -p codesigning | grep "Developer ID Applica
 
 make -j$(sysctl -n hw.ncpu) all
 codesign -s "$IDENTITY" ./$BUILD/*
-make install
 
 read -p "Press Enter to exit!"
 
