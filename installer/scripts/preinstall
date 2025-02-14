@@ -22,9 +22,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-if [ -d "/usr/local/bin" ]; then
-    rm -p /usr/local/bin/p+
-fi
 
 exit 0
 

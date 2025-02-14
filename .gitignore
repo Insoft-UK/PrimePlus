@@ -2,13 +2,11 @@
 xcuserdata/
 .DS_Store
 build
+*.pkg
 *.sh
 *.psd
-bin/*
 examples/Kelvin.*
 examples/Celsius.*
 examples/Grob.*
 examples/HSV.*
 examples/*.hpprgm
-*.zip
-www
