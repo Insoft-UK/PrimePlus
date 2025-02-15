@@ -1,5 +1,6 @@
 #pragma mode( separator(.,,) integer(h64) )
 
+
 #include <pplang>
 
     regex `\bfont.bitmap\b` font[1]
@@ -17,7 +18,6 @@
 GLYPH_P:drawGlyph(trgt, g:glyph, x, y, font, color, sX:sizeX, sY:sizeY)
 begin
     auto bitmapOffset;
- 
     var auto:glyph = font.glyphs[glyph];
     
     var h = glyph.height;

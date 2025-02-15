@@ -18,6 +18,7 @@
 		13C21F9A2A7829C80067CE22 /* preprocessor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13C21F982A7829C80067CE22 /* preprocessor.cpp */; };
 		13C21F9D2A783D8D0067CE22 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13C21F9B2A783D8D0067CE22 /* common.cpp */; };
 		13C21FB42A7892540067CE22 /* alias.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13C21FB22A7892540067CE22 /* alias.cpp */; };
+		13CD08252D60D9880005D2EA /* code_stack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13CD08242D60D9880005D2EA /* code_stack.cpp */; };
 		13EBE2ED2B2216E500302F26 /* def.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13EBE2EC2B2216E500302F26 /* def.cpp */; };
 		13F1D8832AB6185400EF623A /* aliases.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13F1D8812AB6185400EF623A /* aliases.cpp */; };
 /* End PBXBuildFile section */
@@ -64,6 +65,8 @@
 		13C21F9C2A783D8D0067CE22 /* common.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = common.hpp; sourceTree = "<group>"; };
 		13C21FB22A7892540067CE22 /* alias.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = alias.cpp; sourceTree = "<group>"; };
 		13C21FB32A7892540067CE22 /* alias.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = alias.hpp; sourceTree = "<group>"; };
+		13CD08232D60D9880005D2EA /* code_stack.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = code_stack.hpp; sourceTree = "<group>"; };
+		13CD08242D60D9880005D2EA /* code_stack.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = code_stack.cpp; sourceTree = "<group>"; };
 		13EBE2EC2B2216E500302F26 /* def.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = def.cpp; sourceTree = "<group>"; };
 		13EBE2EE2B2216F300302F26 /* def.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = def.hpp; sourceTree = "<group>"; };
 		13F1D8812AB6185400EF623A /* aliases.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = aliases.cpp; sourceTree = "<group>"; };
@@ -71,6 +74,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		13CD08322D60E5900005D2EA /* pplib */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = pplib; path = "installer/package-root/Applications/HP/PrimeSDK/pplib"; sourceTree = "<group>"; };
 		13CDCDDF2D499BE30005D2EA /* python */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = python; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -93,6 +97,7 @@
 				136E64472D2877660054E0CC /* version.txt */,
 				137FB2942A046E8E00AEFDF2 /* p+.entitlements */,
 				13CDCDDF2D499BE30005D2EA /* python */,
+				13CD08322D60E5900005D2EA /* pplib */,
 				13166E852BA12E5E00D1E6F0 /* examples */,
 				137FB2872A03B06500AEFDF2 /* src */,
 				137FB2862A03B06500AEFDF2 /* Products */,
@@ -136,6 +141,8 @@
 				13B13C2F2B66C2F000F9BCBB /* strings.cpp */,
 				136E64532D35B0980054E0CC /* regexp.cpp */,
 				136E645A2D3964A90054E0CC /* dictionary.cpp */,
+				13CD08232D60D9880005D2EA /* code_stack.hpp */,
+				13CD08242D60D9880005D2EA /* code_stack.cpp */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -214,7 +221,7 @@
 		1352EC5D2B40B72B003130E4 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
-			buildActionMask = 8;
+			buildActionMask = 12;
 			files = (
 			);
 			inputFileListPaths = (
@@ -225,7 +232,7 @@
 			);
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "./version_code\nmv version_code.h src/version_code.h\n";
 		};
@@ -241,6 +248,7 @@
 				136E645B2D3964A90054E0CC /* dictionary.cpp in Sources */,
 				137FB2892A03B06500AEFDF2 /* main.cpp in Sources */,
 				13C21F9D2A783D8D0067CE22 /* common.cpp in Sources */,
+				13CD08252D60D9880005D2EA /* code_stack.cpp in Sources */,
 				136E64542D35B0980054E0CC /* regexp.cpp in Sources */,
 				13C21FB42A7892540067CE22 /* alias.cpp in Sources */,
 				1351CC532BF530CE0073FEDF /* calc.cpp in Sources */,

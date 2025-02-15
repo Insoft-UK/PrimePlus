@@ -220,7 +220,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     std::smatch match;
     std::ifstream infile;
     
-    static std::vector<std::string> stack;
+//    static std::vector<std::string> stack;
     
     Singleton *singleton = Singleton::shared();
     
@@ -249,34 +249,13 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     if (singleton->regexp.parse(ln)) return;
     singleton->regexp.resolveAllRegularExpression(ln);
     
-    std::string::const_iterator it;
+    
     /*
      A code stack provides a convenient way to store code snippets
      that can be retrieved and used later.
      */
-    re = R"(__PUSH__`([^`]+)`)";
-    it = ln.cbegin();
-    while (std::regex_search(it, ln.cend(), match, re)) {
-        stack.push_back(trim_copy(match.str(1)));
-        
-        // Erase only the matched portion and update the iterator correctly
-        it = ln.erase(it + match.position(), it + match.position() + match.length());
-    }
+    singleton->codeStack.parse(ln);
 
-    re = R"(__POP__)";
-    it = ln.cbegin();
-    while (std::regex_search(it, ln.cend(), match, re)) {
-        if (stack.empty()) {
-            ln = regex_replace(ln, re, "");
-            break;
-        }
-
-        // Replace the match with the last value from the stack
-        it = ln.erase(it + match.position(), it + match.position() +  match.length());
-        it = ln.insert(it, stack.back().begin(), stack.back().end());
-
-        stack.pop_back();
-    }
 
     /*
      While parsing the contents, strings may inadvertently undergo parsing, leading
@@ -332,7 +311,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
      */
     
     re = R"((?:[^<>=]|^)(>=|!=|<>|<=|=>)(?!=[<>=]))";
-    it = ln.cbegin();
+    std::string::const_iterator it = ln.cbegin();
     while (std::regex_search(it, ln.cend(), match, re)) {
         // We will convert any >= != <= or => to PPLs ≥ ≠ ≤ and ▶
         std::string s = match.str(1);

@@ -31,6 +31,7 @@
 #include "comments.hpp"
 #include "common.hpp"
 #include "regexp.hpp"
+#include "code_stack.hpp"
 
 using namespace pp;
 
@@ -41,6 +42,7 @@ public:
     Auto autoname;
     Comments comments;
     Regexp regexp;
+    CodeStack codeStack;
 
     const int &scopeDepth;
     
