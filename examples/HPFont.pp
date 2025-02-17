@@ -39,7 +39,7 @@ begin
             if bitPosition & 63 == 0 then
                 bits = bitmap[bitmapOffset];
                 bitmapOffset = bitmapOffset + 1;
-            endif;
+            end;
 
             if bits & 1 == 1 then
                 if sizeX == 1 and sizeY == 1 then
@@ -47,14 +47,14 @@ begin
                 else
                     //RECT_P(trgt, x + xx * sizeX, y, sizeX, sizeY, color);
                 endif;
-            endif;
+            end;
 
             bits = bits >> 1;
-        next;
+        end;
 
         y += sizeY;
         h -= 1;
-    wend;
+    end;
   
     return glyph.xAdvance;
 end;
@@ -66,12 +66,12 @@ begin
     for i := 1 ... SIZE(l) do
         if x >= 320 then
             break;
-        endif;
+        end;
         
         if asciiList[i] < font.first or asciiList[i] > font.last then
             continue;
-        endif;
+        end;
         
         x := x + drawGlyph(trgt, l[i] - font.first + 1, x, y, font, color, 1, 1);
-    next;
+    end;
 end;
