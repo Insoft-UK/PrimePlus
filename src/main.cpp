@@ -220,8 +220,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     std::smatch match;
     std::ifstream infile;
     
-//    static std::vector<std::string> stack;
-    
+
     Singleton *singleton = Singleton::shared();
     
     static int consecutiveBlankLines = 0;
@@ -247,14 +246,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     }
     
     if (singleton->regexp.parse(ln)) return;
-    singleton->regexp.resolveAllRegularExpression(ln);
     
-    
-    /*
-     A code stack provides a convenient way to store code snippets
-     that can be retrieved and used later.
-     */
-    singleton->codeStack.parse(ln);
 
 
     /*
@@ -280,7 +272,16 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
 
     
     ln = singleton->aliases.resolveAllAliasesInText(ln);
-    capitalizeKeywords(ln);
+    
+    
+    singleton->regexp.resolveAllRegularExpression(ln);
+    
+    
+    /*
+     A code stack provides a convenient way to store code snippets
+     that can be retrieved and used later.
+     */
+    singleton->codeStack.parse(ln);
     
     if (Def::isDefine(ln)) {
         Def::processDefine(ln);
@@ -294,6 +295,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
         return;
     }
     
+    capitalizeKeywords(ln);
     ln = removeWhitespaceAroundOperators(ln);
     
     /*

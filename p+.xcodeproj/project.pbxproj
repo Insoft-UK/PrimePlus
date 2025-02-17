@@ -75,6 +75,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		13CD08322D60E5900005D2EA /* pplib */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = pplib; path = "installer/package-root/Applications/HP/PrimeSDK/pplib"; sourceTree = "<group>"; };
+		13CD08542D629DB20005D2EA /* Projects */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {Colors/src/main.pp = sourcecode.c; }; explicitFolders = (); name = Projects; path = "../PrimeSDK/installer/package-root/Users/Shared/Projects"; sourceTree = SOURCE_ROOT; };
 		13CDCDDF2D499BE30005D2EA /* python */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = python; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -96,6 +97,7 @@
 				1351CC552BFC0E180073FEDF /* README.md */,
 				136E64472D2877660054E0CC /* version.txt */,
 				137FB2942A046E8E00AEFDF2 /* p+.entitlements */,
+				13CD08542D629DB20005D2EA /* Projects */,
 				13CDCDDF2D499BE30005D2EA /* python */,
 				13CD08322D60E5900005D2EA /* pplib */,
 				13166E852BA12E5E00D1E6F0 /* examples */,
@@ -221,7 +223,7 @@
 		1352EC5D2B40B72B003130E4 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
-			buildActionMask = 12;
+			buildActionMask = 8;
 			files = (
 			);
 			inputFileListPaths = (
@@ -232,7 +234,7 @@
 			);
 			outputPaths = (
 			);
-			runOnlyForDeploymentPostprocessing = 0;
+			runOnlyForDeploymentPostprocessing = 1;
 			shellPath = /bin/sh;
 			shellScript = "./version_code\nmv version_code.h src/version_code.h\n";
 		};
