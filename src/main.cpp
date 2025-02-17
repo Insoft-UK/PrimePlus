@@ -325,7 +325,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
         if (s == "<=") s = "≤";
         if (s == "=>") s = "▶";
        
-        ln = ln.replace(match.position(), match.length(), s);
+        ln = ln.replace(match.position(1), match.length(1), s);
         it = ln.cbegin();
     }
     
@@ -515,10 +515,25 @@ void translatePPlusToPPL(const std::string &path, std::ofstream &outfile) {
     if (!infile.is_open()) exit(2);
     
     while (getline(infile, utf8)) {
-        if (preprocessor.disregard == true) {
+        /*
+         Handle any escape lines `\` by continuing to read line joining them all up as one long line.
+         */
+        
+        if (!utf8.empty()) {
+            while (utf8.at(utf8.length() - 1) == '\\' && !utf8.empty()) {
+                utf8.resize(utf8.length() - 1);
+                std::string s;
+                getline(infile, s);
+                utf8.append(s);
+                Singleton::shared()->incrementLineNumber();
+                if (s.empty()) break;
+            }
+        }
+        
+        while (preprocessor.disregard == true) {
             preprocessor.parse(utf8);
             Singleton::shared()->incrementLineNumber();
-            continue;
+            getline(infile, utf8);
         }
         
         if (isPythonBlock(utf8)) {
@@ -540,6 +555,8 @@ void translatePPlusToPPL(const std::string &path, std::ofstream &outfile) {
             continue;
         }
         
+        
+        
         if (preprocessor.parse(utf8)) {
             if (!preprocessor.filename.empty()) {
                 // Flagged with #include preprocessor for file inclusion, we process it before continuing.
@@ -548,6 +565,9 @@ void translatePPlusToPPL(const std::string &path, std::ofstream &outfile) {
             Singleton::shared()->incrementLineNumber();
             continue;
         }
+        
+        
+        
     
         /*
          We first need to perform pre-parsing to ensure that, in lines such

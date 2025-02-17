@@ -25,6 +25,7 @@
 #include "common.hpp"
 
 #include "singleton.hpp"
+#include "strings.hpp"
 #include <regex>
 #include <sstream>
 
@@ -184,10 +185,12 @@ std::string Aliases::resolveAllAliasesInText(const std::string &str) {
     
     if (s.empty()) return s;
     
-    
     namespaces = namespacePattern();
-    
         
+    Strings strings;
+    strings.preserveStrings(s);
+    strings.blankOutStrings(s);
+    
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if ('`' == it->identifier.at(0) && '`' == it->identifier.at(it->identifier.length() - 1)) {
             pattern = it->identifier;
@@ -217,22 +220,21 @@ std::string Aliases::resolveAllAliasesInText(const std::string &str) {
             continue;
         }
         
-        if (regex_search(s, re) && it->deprecated)
-            std::cout << MessageType::Deprecated << it->identifier << it->message << "\n";
+        if (!regex_search(s, re)) continue;
         s = regex_replace(s, re, it->real);
     }
+    strings.restoreStrings(s);
     
-    //TODO: Rework to remove this hack!
-    /*
-     To ensures proper resolution in cases where one alias refers to another.
-     It nessasary to perform another check, only if the first check was an alias.
-     */
     if (s != str) {
         s = resolveAllAliasesInText(s);
     }
     
+    
+    
     return s;
 }
+
+
 
 void Aliases::remove(const std::string &identifier) {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {

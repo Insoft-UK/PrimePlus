@@ -1,7 +1,7 @@
 #pragma mode( separator(.,,) integer(h64) )
 
-
-#include <pplang>
+def BITAND    bit::and;
+def BITSR     bit::shift::right;
 
     regex `\bfont.bitmap\b` font[1]
     regex `\bfont.glyphs\[([\w\d.:]+)\]` font[2,$1+1]
@@ -26,13 +26,13 @@ begin
     x = x + glyph.dX;
     y = y + (glyph.dY + font.yAdvance) * sizeY;
     
-    var auto:bitmap = font.bitmap;
-    var auto:bitmapOffset = glyph.bitmapOffset >> 3 + 1
+    var bitmap = font.bitmap;
+    var bitmapOffset = bit::shift::right(glyph.bitmapOffset, 3) + 1
     
-    var auto:bits = bitmap[bitmapOffset];
-    var auto:bitPosition = glyph.bitmapOffset & 7 * 8;
+    var bits = bitmap[bitmapOffset];
+    var bitPosition = glyph.bitmapOffset & 7 * 8;
     
-    bits = bits >> (64 - bitPosition);
+    bits = bit::shift::right(bits, (64 - bitPosition));
     while h do
         auto xx;
         for xx = 0; xx < w; xx += 1 do

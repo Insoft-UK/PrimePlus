@@ -195,7 +195,7 @@ bool Preprocessor::parse(std::string &str) {
         return true;
     }
     
-    if (regex_search(str, std::regex(R"(^ *@end *$)"))) {
+    if (regex_search(str, std::regex(R"(^ *@end|END *$)"))) {
         disregard = false;
         if (verbose) std::cout << MessageType::Verbose << "@end: " << disregard << '\n';
         return true;
