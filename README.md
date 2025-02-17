@@ -1,5 +1,3 @@
-<img src="../../../Insoft-UK/blob/main/assets/logo.svg" width="80" height="80" />
-
 # P+ for HP Prime
 
 <br />
@@ -67,3 +65,7 @@ In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
 
 >[!NOTE]
 The P+ proprietary programming language is susceptible to change, while also maintaining some compatibility with previous versions.
+
+>[!WARNING]
+Version 4.0 will not be updated to this github but be bundled with PrimeSDK.
+
