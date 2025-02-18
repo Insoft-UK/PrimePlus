@@ -10,7 +10,7 @@ P+ is essentially the PPL language with additional features, such as substitutio
 <b><a href="https://github.com/Insoft-UK/GROB">GROB</a> to be intergrated in the future.</b>
 
 ```
-#pragma mode( separator(.,,) integer(h64) )
+#pragma mode( separator(.,;) integer(h64) )
 #include <pplang>
 
 auto:displayCopyright()
@@ -40,7 +40,7 @@ END;
 `p+ project.pp -l pplib`
 
 ```
-#pragma mode( separator(.,,) integer(h64) )
+#pragma mode( separator(.,;) integer(h64) )
 fn1()
 BEGIN
   TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
