@@ -271,10 +271,10 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     singleton->comments.removeComment(ln);
 
     
+    singleton->regexp.resolveAllRegularExpression(ln);
     ln = singleton->aliases.resolveAllAliasesInText(ln);
     
     
-    singleton->regexp.resolveAllRegularExpression(ln);
     
     
     /*
