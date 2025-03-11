@@ -67,4 +67,4 @@ In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
 The P+ proprietary programming language is susceptible to change, while also maintaining some compatibility with previous versions.
 
 >[!WARNING]
-Version 4.0 will not be uploaded to this GitHub repository but will be bundled with PrimeSDK.
+Version 4.0 binary files will not be uploaded to this GitHub repository but will be bundled with PrimeSDK.
