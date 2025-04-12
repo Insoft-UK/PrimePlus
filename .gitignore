@@ -3,7 +3,6 @@ xcuserdata/
 .DS_Store
 build
 *.pkg
-*.sh
 *.psd
 examples/Kelvin.*
 examples/Celsius.*

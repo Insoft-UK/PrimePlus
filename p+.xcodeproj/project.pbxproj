@@ -75,7 +75,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		13CD08322D60E5900005D2EA /* pplib */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = pplib; path = "installer/package-root/Applications/HP/PrimeSDK/pplib"; sourceTree = "<group>"; };
-		13CD08542D629DB20005D2EA /* Projects */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {Colors/src/main.pp = sourcecode.c; }; explicitFolders = (); name = Projects; path = "../PrimeSDK/installer/package-root/Users/Shared/Projects"; sourceTree = SOURCE_ROOT; };
+		13CD08542D629DB20005D2EA /* Projects */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); name = Projects; path = "../PrimeSDK/installer/package-root/Users/Shared/Projects"; sourceTree = SOURCE_ROOT; };
 		13CDCDDF2D499BE30005D2EA /* python */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = python; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 

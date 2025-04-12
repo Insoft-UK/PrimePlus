@@ -768,6 +768,5 @@ int main(int argc, char **argv) {
     std::cout << "Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e9 << " seconds\n";
     std::cout << "UTF-16LE File '" << out_filename << "' Succefuly Created.\n";
     
-    
     return 0;
 }
