@@ -14,4 +14,4 @@ In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
 The P+ proprietary programming language is susceptible to change, while also maintaining some compatibility with previous versions.
 
 >[!WARNING]
-Version 4.x and future updates will no longer be uploaded to this GitHub repository. Instead, all future updates to P+ and other components of PrimeSDK will be available in the PrimeSDK repository.
+Version 4.x and future updates will no longer be uploaded to this GitHub repository. Instead, all future updates to P+ and other components of PrimeSDK will be available in the <a href="https://github.com/Insoft-UK/PrimeSDK">PrimeSDK</a> repository.
