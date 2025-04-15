@@ -26,8 +26,8 @@
 #ifndef PPLIB
 #define PPLIB
 
-@global def STARTAPP    start.app;
-@global def STARTVIEW   start.view;
+namespace start := STARTAPP.app;
+namespace start := STARTVIEW.view;
 
 #define view    VIEW
 #define freeze  FREEZE

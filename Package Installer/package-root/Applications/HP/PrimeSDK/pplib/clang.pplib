@@ -34,12 +34,14 @@
 
 @global regex `%{1}` MOD
 
+@global regex `void `
+
 @global regex `\bif *\((.*)\) *\{ *$` IF $1 THEN
 @global regex `\} *else *\{` ELSE
 @global regex `\bwhile *\((.*)\) *\{ *$` WHILE $1 DO
 @global regex `\bdo *\{` REPEAT
 @global regex `\} *while *\((.*)\) *; *$` UNTIL NOT($1);
-@global regex `\bfor *\(([^;]+);([^;]+);([^;]+)\) *\{ *$` $1; WHILE $2 DO__PUSH__`$3;`
+@global regex `\bfor *\(([^;]+);([^;]+);([^;]+)\) *\{ *$` $1; WHILE$2 DO__PUSH__`__SPACE__$3;`
 
   
 @global regex `^ *\} *$` __POP__END;

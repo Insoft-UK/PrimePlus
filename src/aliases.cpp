@@ -37,6 +37,10 @@ static bool compareInterval(Aliases::TIdentity i1, Aliases::TIdentity i2) {
     return (i1.identifier.length() > i2.identifier.length());
 }
 
+static bool compareIntervalString(std::string i1, std::string i2) {
+    return (i1.length() > i2.length());
+}
+
 //MARK: - Public Methods
 
 bool Aliases::append(const TIdentity &idty) {
@@ -113,9 +117,7 @@ void Aliases::removeAllLocalAliases() {
         }
     }
     
-    while (_namespaseCheckpoint != _namespaces.size()) {
-        _namespaces.resize(_namespaseCheckpoint);
-    }
+    removeAllLocalNamespace();
 }
 
 void Aliases::removeAllAliasesOfType(const Type type) {
@@ -298,15 +300,31 @@ const Aliases::TIdentity Aliases::getIdentity(const std::string &identifier) {
 //MARK: namespace
 
 void Aliases::addNamespace(const std::string &name) {
+    std::regex re;
+    
+    if (Singleton::shared()->scopeDepth == 0) return;
+    
+    re = R"([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)";
+    if (!regex_match(name, re)) {
+        std::cout
+        << MessageType::Verbose
+        << "namespace alias: '" << ANSI::Green << name << ANSI::Default << "' invalid\n";
+        return;
+    }
+    
     // We check to see if namespace allready exists, if it dose we just return.
     for (auto it = _namespaces.begin(); it != _namespaces.end(); ++it) {
         if (name == *it) return;
     }
     _namespaces.push_back(name);
     
-    if (Singleton::shared()->scopeDepth == 0) {
-        _namespaseCheckpoint = _namespaces.size();
-    }
+    // Resort in descending order
+    std::sort(_namespaces.begin(), _namespaces.end(), compareIntervalString);
+    
+    if (verbose) std::cout
+        << MessageType::Verbose
+        << "namespace alias: '" << ANSI::Green << name << ANSI::Default << "' defined\n";
+   
 }
 
 void Aliases::removeNamespace(const std::string &name) {
@@ -314,8 +332,18 @@ void Aliases::removeNamespace(const std::string &name) {
     for (auto it = _namespaces.begin(); it != _namespaces.end(); ++it, ++index) {
         if (name != *it) continue;
         _namespaces.erase(it);
-        if (index < _namespaseCheckpoint) _namespaseCheckpoint--;
         break;
+    }
+}
+
+void Aliases::removeAllLocalNamespace(void) {
+    if (Singleton::shared()->scopeDepth > 0) return;
+    
+    while (!_namespaces.empty()) {
+        if (verbose) std::cout
+            << MessageType::Verbose
+            << "namespace alias: '" << ANSI::Green << _namespaces.back() << ANSI::Default << "' removed❗\n";
+        _namespaces.pop_back();
     }
 }
 
@@ -335,7 +363,7 @@ const std::string Aliases::namespacePattern(void) {
         }
         pattern += *it;
     }
-    pattern += ")(?:::|.))";
-    
+    pattern += ")(?:::))";
+
     return pattern;
 }

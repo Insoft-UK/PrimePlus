@@ -37,7 +37,6 @@
 #include "common.hpp"
 
 #include "preprocessor.hpp"
-#include "def.hpp"
 #include "dictionary.hpp"
 #include "alias.hpp"
 #include "strings.hpp"
@@ -168,9 +167,7 @@ void reformatPPLLine(std::string &str) {
         re = std::regex(R"(^ *(THEN)\b)", std::regex_constants::icase);
         str = regex_replace(str, re, std::string((Singleton::shared()->scopeDepth - 1) * INDENT_WIDTH, ' ') + "$1");
         
-        
-        str = regex_replace(str, std::regex(R"(\(\s*\))"), "");
-        
+      
         if (regex_search(str, std::regex(R"(\bEND;$)"))) {
             str = regex_replace(str, std::regex(R"(;(.+))"), ";\n" + std::string(Singleton::shared()->scopeDepth * INDENT_WIDTH, ' ') + "$1");
         } else {
@@ -282,12 +279,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
      that can be retrieved and used later.
      */
     singleton->codeStack.parse(ln);
-    
-    if (Def::isDefine(ln)) {
-        Def::processDefine(ln);
-        ln = "";
-        return;
-    }
+
     
     if (Dictionary::isDictionary(ln)) {
         Dictionary::proccessDictionary(ln);
@@ -337,16 +329,22 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     
     //MARK: - namespace parsing
     
-    re = R"(^using namespace ([A-Za-z](?:\w+|::[A-Za-z]+)*);$)";
-    if (regex_search(ln, match, re)) {
-        singleton->aliases.addNamespace(match[1].str());
+    re = R"(^namespace ([A-Za-z](?:\w+|::[A-Za-z]+)*):=([A-Za-z](?:\w+|::[A-Za-z]+)*);$)";
+    if (regex_search(ln, match, re) && singleton->scopeDepth == 0) {
+        Aliases::TIdentity identity;
+        identity.identifier = match[1].str();
+        identity.real = match[2].str();
+        identity.type = Aliases::Type::Def;
+        identity.scope = Aliases::Scope::Auto;
+        
+        singleton->aliases.append(identity);
         ln = "";
         return;
     }
     
-    re = R"(^remove namespace ([A-Za-z](?:\w+|::[A-Za-z]+)*);$)";
-    if (regex_search(ln, match, re)) {
-        singleton->aliases.removeNamespace(match[1].str());
+    re = R"(^using ([A-Za-z](?:\w+|::[A-Za-z]+)*);$)";
+    if (regex_search(ln, match, re) && singleton->scopeDepth > 0) {
+        singleton->aliases.addNamespace(match[1].str());
         ln = "";
         return;
     }
@@ -412,6 +410,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     ln = regex_replace(ln, std::regex(R"(__NL__)"), "\n");
     ln = regex_replace(ln, std::regex(R"(__CR__)"), "\r");
     ln = regex_replace(ln, std::regex(R"(__INDENT__)"), std::string(INDENT_WIDTH, ' '));
+    ln = regex_replace(ln, std::regex(R"(__SPACE__)"), " ");
    
     strings.restoreStrings(ln);
     singleton->comments.restoreComment(ln);

@@ -21,9 +21,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 @end
- 
 #pragma mode( separator(.,,) integer(h64) )
 
+#include <cartesian>
+#include <cspace>
+#include <dictionary>
+#include <hp>
+#include <integer>
+#include <io>
+#include <matrix>
+#include <pixel>
+#include <prime>
+#include <string>
+#include <clang>
+#include <pplang>
 
 @disregard
  When defining a macro with parameters, issues can arise if an argument
@@ -33,93 +44,68 @@
  identifiable and avoid issues, note that $0 is the identifier.
 @end
 
-#define MacroList(L)      L$1
+#define MacroList(i)      L$1
 #define COPYWRITE "Copyright (c) 2023-2025 Insoft. All rights reserved."
 
 #PYTHON
 #END
 
-PascalCase:displayCopyriteText()
-begin
-    TEXTOUT_P(COPYWRITE, 0, 0);
-end;
-
-auto:automaticName()
-begin
-    displayCopyriteText();
-end;
-
-automaticName::BecauseNotValidInPPL()
-begin
-    WAIT;
-end;
-
-PacalCaseName()
-begin
-    automaticName();
-    BecauseNotValidInPPL();
-end;
-
-export Parameters(auto:a, b:beta)
-begin
-    auto alpha;
-    alpha = beta + a;
-    return alpha;
-end;
-
-PPLwithPrimePlus(a, b:beta)
-BEGIN
-    IF a==beta THEN
-        a ▶ beta;
-        if a==1 then
-            a = a + 1;
-        end;
-    END;
-END;
-
 // Namespace
-using namespace std;
+namespace std::cartesian::rect:=RECT;
 
-def RECT std::cartesian::rect;
-
-Namespace()
+Example:AVeryLongName(p:first, q:second)
 begin
-    std::cartesian::rect();
-    cartesian::rect();
-end;
-
-remove namespace std;
-
-Var()
-begin
-    var a:alpha, b; var c, d;
-    auto iAmVerryLong;
-end;
-
-
-Branch()
-begin
-    var a, b;
+    // Local Variables with aliases
+    local a:alpha, b:beta;
     
-    if a <= b and b > 10 then a = a + 1; endif;
-    if a != b and b > 10 then a = a + 1; endif;
-    if a <> b and b > 10 then a = a + 1; endif;
-    if a >= b or b < 20 then a = a + 1; endif;
-    if a == b or b < 20 then a = a + 1; endif;
-end;
-
-
-#define SEVEN 7
-PreCalc()
-begin
-    var new = \` 1 + pi * 4 / 2 & 2 % SEVEN `;
-    LOCAL new = \` 10.0 + SEVEN `;
-end;
+    // Macro
+    alpha := MacroList(1);
+    
+    // b
+    beta := first + second;
+    
+    if a <= b and b > 10 then a = a + 1; end;
+    if a != b and b > 10 then a = a + 1; end;
+    if a <> b and b > 10 then a = a + 1; end;
+    if a >= b or b < 20 then a = a + 1; end;
+    if a == b or b < 20 then a = a + 1; end;
+    
+    // Pre-Calculate
+    #define VALUE 5
+    local pre_calculated := \2`10.0 + VALUE + #Ah`;
+    local hex := \`#A:2h`;
+    local bin := \`#1111:3b`;
+    local oct := \`#1111:3o`;
+    local dec := \`#15:3d`;
+    
+    // LOCAL auto variable name
+    auto iAmVerryLong;
 
 #PPL
-I_AM_PPL_CODE()
-BEGIN
-    LOCAL a; LOCAL b;
-    var b; // I am not PPL Code so ERROR!
-END;
+  LOCAL a; LOCAL b;
 #END
+
+    using std::cartesian;
+    std::cartesian::rect();
+    rect();
+end;
+
+auto:myFunction()
+begin
+    AVeryLongName(2,5);
+end;
+
+myFunction();
+
+void clang()
+{
+    for (local A:=0; A <= 10; A := A + 1) {
+        B := B + A;
+    }
+    
+    while (A > 0) {
+        A := 0;
+    }
+}
+
+
