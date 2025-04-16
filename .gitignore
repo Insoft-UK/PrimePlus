@@ -1,11 +1,3 @@
 *.xcworkspace/xcuserdata/
 xcuserdata/
 .DS_Store
-build
-*.pkg
-*.psd
-examples/Kelvin.*
-examples/Celsius.*
-examples/Grob.*
-examples/HSV.*
-examples/*.hpprgm
