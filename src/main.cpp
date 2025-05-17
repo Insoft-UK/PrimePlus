@@ -37,6 +37,7 @@
 #include "common.hpp"
 
 #include "preprocessor.hpp"
+#include "def.hpp"
 #include "dictionary.hpp"
 #include "alias.hpp"
 #include "strings.hpp"
@@ -167,7 +168,9 @@ void reformatPPLLine(std::string &str) {
         re = std::regex(R"(^ *(THEN)\b)", std::regex_constants::icase);
         str = regex_replace(str, re, std::string((Singleton::shared()->scopeDepth - 1) * INDENT_WIDTH, ' ') + "$1");
         
-      
+        
+        str = regex_replace(str, std::regex(R"(\(\s*\))"), "");
+        
         if (regex_search(str, std::regex(R"(\bEND;$)"))) {
             str = regex_replace(str, std::regex(R"(;(.+))"), ";\n" + std::string(Singleton::shared()->scopeDepth * INDENT_WIDTH, ' ') + "$1");
         } else {
@@ -268,10 +271,10 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     singleton->comments.removeComment(ln);
 
     
-    singleton->regexp.resolveAllRegularExpression(ln);
     ln = singleton->aliases.resolveAllAliasesInText(ln);
     
     
+    singleton->regexp.resolveAllRegularExpression(ln);
     
     
     /*
@@ -279,7 +282,12 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
      that can be retrieved and used later.
      */
     singleton->codeStack.parse(ln);
-
+    
+    if (Def::isDefine(ln)) {
+        Def::processDefine(ln);
+        ln = "";
+        return;
+    }
     
     if (Dictionary::isDictionary(ln)) {
         Dictionary::proccessDictionary(ln);
@@ -317,7 +325,7 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
         if (s == "<=") s = "≤";
         if (s == "=>") s = "▶";
        
-        ln = ln.replace(match.position(1), match.length(1), s);
+        ln = ln.replace(match.position(), match.length(), s);
         it = ln.cbegin();
     }
     
@@ -329,22 +337,16 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     
     //MARK: - namespace parsing
     
-    re = R"(^namespace ([A-Za-z](?:\w+|::[A-Za-z]+)*):=([A-Za-z](?:\w+|::[A-Za-z]+)*);$)";
-    if (regex_search(ln, match, re) && singleton->scopeDepth == 0) {
-        Aliases::TIdentity identity;
-        identity.identifier = match[1].str();
-        identity.real = match[2].str();
-        identity.type = Aliases::Type::Def;
-        identity.scope = Aliases::Scope::Auto;
-        
-        singleton->aliases.append(identity);
+    re = R"(^using namespace ([A-Za-z](?:\w+|::[A-Za-z]+)*);$)";
+    if (regex_search(ln, match, re)) {
+        singleton->aliases.addNamespace(match[1].str());
         ln = "";
         return;
     }
     
-    re = R"(^using ([A-Za-z](?:\w+|::[A-Za-z]+)*);$)";
-    if (regex_search(ln, match, re) && singleton->scopeDepth > 0) {
-        singleton->aliases.addNamespace(match[1].str());
+    re = R"(^remove namespace ([A-Za-z](?:\w+|::[A-Za-z]+)*);$)";
+    if (regex_search(ln, match, re)) {
+        singleton->aliases.removeNamespace(match[1].str());
         ln = "";
         return;
     }
@@ -410,7 +412,6 @@ void translatePPlusLine(std::string &ln, std::ofstream &outfile) {
     ln = regex_replace(ln, std::regex(R"(__NL__)"), "\n");
     ln = regex_replace(ln, std::regex(R"(__CR__)"), "\r");
     ln = regex_replace(ln, std::regex(R"(__INDENT__)"), std::string(INDENT_WIDTH, ' '));
-    ln = regex_replace(ln, std::regex(R"(__SPACE__)"), " ");
    
     strings.restoreStrings(ln);
     singleton->comments.restoreComment(ln);
@@ -514,25 +515,10 @@ void translatePPlusToPPL(const std::string &path, std::ofstream &outfile) {
     if (!infile.is_open()) exit(2);
     
     while (getline(infile, utf8)) {
-        /*
-         Handle any escape lines `\` by continuing to read line joining them all up as one long line.
-         */
-        
-        if (!utf8.empty()) {
-            while (utf8.at(utf8.length() - 1) == '\\' && !utf8.empty()) {
-                utf8.resize(utf8.length() - 1);
-                std::string s;
-                getline(infile, s);
-                utf8.append(s);
-                Singleton::shared()->incrementLineNumber();
-                if (s.empty()) break;
-            }
-        }
-        
-        while (preprocessor.disregard == true) {
+        if (preprocessor.disregard == true) {
             preprocessor.parse(utf8);
             Singleton::shared()->incrementLineNumber();
-            getline(infile, utf8);
+            continue;
         }
         
         if (isPythonBlock(utf8)) {
@@ -554,8 +540,6 @@ void translatePPlusToPPL(const std::string &path, std::ofstream &outfile) {
             continue;
         }
         
-        
-        
         if (preprocessor.parse(utf8)) {
             if (!preprocessor.filename.empty()) {
                 // Flagged with #include preprocessor for file inclusion, we process it before continuing.
@@ -564,9 +548,6 @@ void translatePPlusToPPL(const std::string &path, std::ofstream &outfile) {
             Singleton::shared()->incrementLineNumber();
             continue;
         }
-        
-        
-        
     
         /*
          We first need to perform pre-parsing to ensure that, in lines such
@@ -766,6 +747,7 @@ int main(int argc, char **argv) {
     // Display elasps time in secononds.
     std::cout << "Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e9 << " seconds\n";
     std::cout << "UTF-16LE File '" << out_filename << "' Succefuly Created.\n";
+    
     
     return 0;
 }

@@ -36,12 +36,12 @@ static void parseAlias(const std::string &str, Aliases::TIdentity &identity) {
     std::smatch matches;
     
     /*
-     eg. name:aliasname
-     Group  0 name:aliasname
+     eg. name:alias
+     Group  0 name:alias
             1 name
-            2 aliasname
+            2 alias
      */
-    re = R"(([a-zA-Z]\w*):([a-zA-Z_]\w*))";
+    re = R"(((?:[^\x00-\x7F]|\w)+):([A-Za-z_][\w.]*((?:::)?[A-Za-z_][\w.]*)*))";
     
     if (regex_search(str, matches, re)) {
         identity.real = matches[1].str();
@@ -51,7 +51,7 @@ static void parseAlias(const std::string &str, Aliases::TIdentity &identity) {
 }
 
 static void parseAliases(const std::string &str, Aliases::TIdentity &identity) {
-    std::regex re(R"([a-zA-Z]\w*:[a-zA-Z_]\w*)");
+    std::regex re(R"((?:[^\x00-\x7F]|\w)+\w*:[A-Za-z_][\w.]*((?:::)?[A-Za-z_][\w.]*)*)");
     
     for(std::sregex_iterator it = std::sregex_iterator(str.begin(), str.end(), re); it != std::sregex_iterator(); ++it) {
         parseAlias(it->str(), identity);
@@ -94,7 +94,7 @@ bool Alias::parse(std::string &str) {
          1 name:alias
          2 p1, p2:alias, auto:alias
          */
-        re = R"((?:export )?([a-zA-Z]\w*(?::[a-zA-Z_]\w*))?\((.*)\))";
+        re = R"((?:export )?((?:(?:[^\x00-\x7F]|\w)+:)?(?:(?:[A-Za-z_]\w*::)*?)[A-Za-z_][\w.]*)\((.*)\))";
         
         if (regex_search(str, matches, re)) {
             parseFunctionName(matches[1].str());
@@ -113,7 +113,7 @@ bool Alias::parse(std::string &str) {
     }
     
     if (!parsed) return false;
-    str = regex_replace(str, std::regex(R"(:[a-zA-Z_]\w*)"), "");
+    str = regex_replace(str, std::regex(R"(:[A-Za-z_][\w.]*((?:::)?[A-Za-z_][\w.]*)*)"), "");
     
     return true;
 }

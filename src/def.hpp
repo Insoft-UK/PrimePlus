@@ -1,18 +1,18 @@
 // The MIT License (MIT)
-// 
-// Copyright (c) 2023 Insoft. All rights reserved.
-// 
+//
+// Copyright (c) 2023-2025 Insoft. All rights reserved.
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the Software), to deal
+// of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -20,9 +20,23 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#define VERSION_NUMBER        "3.1.3"
-#define VERSION_CODE          "C1D17-25BG"
-#define NUMERIC_BUILD          31317
-#define INTERNAL_BUILD_CODE   "C1D17"
-#define DATE                  "2025 February 17"
-#define YEAR                  "2025"
+
+#ifndef DEF_HPP
+#define DEF_HPP
+
+#include "singleton.hpp"
+#include <iostream>
+#include <vector>
+#include <list>
+
+namespace pp {
+
+class Def {
+public:
+    static bool isDefine(const std::string &str);
+    static bool processDefine(const std::string &str);
+};
+
+}
+
+#endif /* DEF_HPP */

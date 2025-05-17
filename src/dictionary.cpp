@@ -36,10 +36,6 @@ static void removeUnnecessaryWhitespace(std::string &str) {
     return;
 }
 
-static bool isGlobalDictionary(const std::string &str) {
-    return regex_search(str, std::regex("^@global +dict (.*); *$"));
-}
-
 bool Dictionary::isDictionary(const std::string &str) {
     return regex_search(str, std::regex("^(@global )? *dict (.*); *$"));
 }
@@ -48,8 +44,6 @@ bool Dictionary::proccessDictionary(const std::string &str) {
     std::regex re;
     std::smatch match;
     std::string s1, s2;
-    
-    
     
     s1 = str;
     removeUnnecessaryWhitespace(s1);

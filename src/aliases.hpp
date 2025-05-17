@@ -81,11 +81,11 @@ namespace pp {
         //MARK: - namespaces
         void addNamespace(const std::string &name);
         void removeNamespace(const std::string &name);
-        void removeAllLocalNamespace(void);
         
     private:
         std::vector<TIdentity> _identities;
         std::vector<std::string> _namespaces;
+        size_t _namespaseCheckpoint = _namespaces.size();
         
         const std::string namespacePattern(void);
     };

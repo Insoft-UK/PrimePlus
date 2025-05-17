@@ -31,7 +31,7 @@ bool Regexp::parse(std::string &str) {
     std::regex re;
     std::smatch match;
     
-    re = R"(^ *(?:@(global|local) )?\bregex +`([^`]*)` *(.*)$)";
+    re = R"(^ *(?:@(global|local) )?\bregex +`([^`]*)` +(.*)$)";
     if (regex_search(str, match, re)) {
         TRegexp regexp = {
             .regularExpression = match[2].str(),
