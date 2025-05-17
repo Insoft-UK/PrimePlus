@@ -10,5 +10,5 @@
 >[!IMPORTANT]
 In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
 
->>[!WARNING]
+>[!WARNING]
 Future updates will no longer be uploaded to this GitHub repository. Instead, all future updates will be available at the <a href="https://github.com/Insoft-UK/PrimeSDK">PrimeSDK</a> repository.
