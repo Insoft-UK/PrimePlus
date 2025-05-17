@@ -1,5 +1,3 @@
-<img src="../../../Insoft-UK/blob/main/assets/logo.svg" width="80" height="80" />
-
 # P+ for HP Prime
 <img src="https://github.com/Insoft-UK/PrimePlus/blob/main/assets/P%2B_Logo.svg" style="width: 128px" />
 
