@@ -8,4 +8,4 @@
 In P+ `=` is treated as `:=` were in PPL `=` is treated as `==`
 
 >[!WARNING]
-Future major updates will no longer be uploaded to this GitHub repository. Instead, all future updates to 4.x and lator will be available at the <a href="https://github.com/Insoft-UK/PrimeSDK">PrimeSDK</a> repository.
+Future major updates will no longer be uploaded to this GitHub repository. Instead, all future updates to 4.x and lator will be available at the <a href="https://github.com/Insoft-UK/PrimeSDK">PrimeSDK</a> repository known as PPL+.
