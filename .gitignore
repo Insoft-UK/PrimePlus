@@ -1,5 +1,7 @@
 *.xcworkspace/xcuserdata/
 xcuserdata/
+*.xcodeproj
+version.txt
 .DS_Store
 build
 make
