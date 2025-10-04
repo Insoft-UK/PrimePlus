@@ -28,37 +28,35 @@
 #include <list>
 #include <vector>
 #include <stdint.h>
+#include <fstream>
 
-namespace pp {
+namespace pplplus {
     class Aliases {
     public:
         enum class Type {
             Unknown,
-            Eenum,
-            Struct,
-            Member,
-            Variable,
             Macro,
-            Def,
+            Alias,
             Function,
-            Property,
-            Method
+            Argument,
+            Variable
         };
         
-        enum class Scope {
-            Auto   = 0,
-            Global = 1,
-            Local  = 2
-        };
+//        enum class Scope {
+//            Auto   = 0,
+//            Global = 1,
+//            Local  = 2
+//        };
         
         typedef struct TIdentity {
             std::string identifier;
             std::string real;
             std::string parameters; // used by macros
             Type type;
-            Scope scope;
+//            Scope scope;
+            int scope;
             long line;              // line that definition accoured;
-            std::string pathname;   // path and filename that definition accoured
+            std::filesystem::path path;   // path and filename that definition accoured
             bool deprecated = false;
             std::string message;    // Used by deprecated, holds the message for deprecated.
         } TIdentity;
@@ -67,7 +65,7 @@ namespace pp {
         bool verbose = false;
         
         bool append(const TIdentity &identity);
-        void removeAllLocalAliases();
+        void removeAllOutOfScopeAliases();
         void removeAllAliasesOfType(const Type type);
         std::string resolveAllAliasesInText(const std::string &str);
         void remove(const std::string &identifier);
@@ -78,16 +76,10 @@ namespace pp {
         void dumpIdentities();
         const TIdentity getIdentity(const std::string &identifier);
         
-        //MARK: - namespaces
-        void addNamespace(const std::string &name);
-        void removeNamespace(const std::string &name);
+        
         
     private:
         std::vector<TIdentity> _identities;
-        std::vector<std::string> _namespaces;
-        size_t _namespaseCheckpoint = _namespaces.size();
-        
-        const std::string namespacePattern(void);
     };
 }
 #endif // ALIASES_HPP

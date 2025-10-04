@@ -20,23 +20,29 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#ifndef utf_hpp
+#define utf_hpp
 
-#ifndef STRINGS_HPP
-#define STRINGS_HPP
+#include <sstream>
+#include <fstream>
+#include <cstdlib>
 
-#include <iostream>
-#include <list>
+namespace utf {
+    std::string to_utf8(const std::wstring& wstr);
+    std::wstring to_utf16(const std::string& str);
+    
+    uint16_t utf16(const char *str);
+    
+    std::wstring read_as_utf16(std::ifstream& is);
+    std::wstring read_utf16(std::ifstream& is);
+    std::wstring load_utf16(const std::string& filepath);
+    
+    size_t write_utf8(std::ofstream& os, const std::string& str);
+    bool save_as_utf8(const std::string& filepath, const std::string& str);
+    
+    size_t write_as_utf16(std::ofstream& os, const std::string& str);
+    size_t write_utf16(std::ofstream& os, const std::string& str);
+    bool save_as_utf16(const std::string& filepath, const std::string& str);
+};
 
-namespace pp {
-    class Strings {
-    public:
-        void preserveStrings(const std::string &str);
-        void blankOutStrings(std::string &str);
-        void restoreStrings(std::string &str);
-        void restoreStringsAndRetain(std::string &str);
-    private:
-        std::list<std::string> _preservedStrings;
-    };
-}
-
-#endif /* STRINGS_HPP */
+#endif /* utf_hpp */

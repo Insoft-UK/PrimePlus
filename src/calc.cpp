@@ -31,7 +31,8 @@
 #include <iomanip>
 #include <cmath>
 
-using namespace pp;
+using pplplus::Calc;
+
 
 static bool _verbose = false;
 
@@ -40,7 +41,7 @@ static bool isOperator(char c) {
     return (c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '^');
 }
 
-static bool isExpresionValid(const std::string &expression) {
+static bool isExpresionValid(const std::string& expression) {
     std::regex re;
     
     re = R"([\d+\-*\/ πe%&|()]+)";
@@ -76,7 +77,7 @@ static double applyOperator(const double a, const double b, const char op) {
     }
 }
 
-static std::string separateExpression(const std::string &expression) {
+static std::string separateExpression(const std::string& expression) {
     std::stringstream separated;
     for (size_t i = 0; i < expression.length(); ++i) {
         if (expression[i] == '(' || expression[i] == ')' || expression[i] == '+' || expression[i] == '-' || expression[i] == '*' || expression[i] == '/' || expression[i] == '%' || expression[i] == '^') {
@@ -94,7 +95,7 @@ static std::string separateExpression(const std::string &expression) {
 }
 
 // Function to convert infix expression to postfix (RPN)
-static std::vector<std::string> infixToPostfix(const std::string &expression) {
+static std::vector<std::string> infixToPostfix(const std::string& expression) {
     std::vector<std::string> output;
     std::stack<char> operators;
     
@@ -163,7 +164,7 @@ static double evaluatePostfix(const std::vector<std::string>& postfix) {
 
     for (const std::string &token : postfix) {
         if (isdigit(token[0]) || (token.length() > 1 && token[0] == '-')) {
-            values.push(std::stod(token));
+            values.push(stod(token));
             continue;
         }
         if (isOperator(token[0])) {
@@ -177,7 +178,7 @@ static double evaluatePostfix(const std::vector<std::string>& postfix) {
 }
 
 // Function to evaluate an infix expression
-static double evaluateExpression(const std::string &expression) {
+static double evaluateExpression(const std::string& expression) {
     std::vector<std::string> postfix = infixToPostfix(expression);
     return evaluatePostfix(postfix);
 }
@@ -245,7 +246,7 @@ static std::string decimalUnsignedNumber(int64_t num, int bitWidth) {
 }
 
 // Function to convert a string with PPL-style integer number to return a base 10 number
-static std::string convertPPLIntegerNumberToBase10(const std::string &str) {
+static std::string convertPPLIntegerNumberToBase10(const std::string& str) {
     std::regex re;
     std::smatch match;
     
@@ -263,7 +264,7 @@ static std::string convertPPLIntegerNumberToBase10(const std::string &str) {
     if (match.str(4) == "h") base = 16;
     if (match.str(4) == "o") base = 8;
     
-    int64_t num = std::stol(match.str(1), nullptr, base);
+    int64_t num = stol(match.str(1), nullptr, base);
     int bitWidth = match.str(3).empty() ? 64 : atoi(match.str(3).c_str());
     
     if (match.str(2).empty())
@@ -273,7 +274,7 @@ static std::string convertPPLIntegerNumberToBase10(const std::string &str) {
 }
 
 // Function to convert a string with PPL-style integer number to a plain base 10 number
-static void convertPPLStyleNumbersToBase10(std::string &str) {
+static void convertPPLStyleNumbersToBase10(std::string& str) {
     std::regex re;
     std::smatch match;
     std::string s;
@@ -293,12 +294,11 @@ static void convertPPLStyleNumbersToBase10(std::string &str) {
 
 // MARK: - Public Methods
 
-bool Calc::evaluateMathExpression(std::string &str)
-{
+std::string Calc::evaluateMathExpression(const std::string& str) {
     std::regex re;
     std::smatch match;
     
-    if (!isExpresionValid(str)) return false;
+    if (!isExpresionValid(str)) return str;
     
     std::string expression = str;
     convertPPLStyleNumbersToBase10(expression);
@@ -318,19 +318,27 @@ bool Calc::evaluateMathExpression(std::string &str)
     if (expression.at(expression.length() - 1) == '.') {
         expression.resize(expression.length() - 1);
     }
-    str = expression;
     
-    return true;
+    return expression;
 }
 
-bool Calc::parse(std::string &str)
-{
+std::string Calc::parse(const std::string& str) {
     std::regex re;
     std::smatch match;
+    std::string newstr = str;
     
     
+//    re = R"(\\( *\d{1,2}|F|C|R)?(?:\[|`)(.*)(?:\]|`))";
     
-    re = R"(\\( *\d{1,2})?(?:\[|`)(.*)(?:\]|`))";
+    /*
+     \`1+2*3/4`:1
+     \`1+2*3/4`:f
+     \`1+2*3/4`:c
+     \`1+2*3/4`:r
+     \`1+2*3`:32h
+     \`1+2*3`:-32d
+     */
+    re = R"(\\`([^`]+)`(?::(?:(-)?(\d+)([bodh])?|([fcr])))?)";
     while (regex_search(str, match, re)) {
         
         std::string matched = match.str();
@@ -338,48 +346,83 @@ bool Calc::parse(std::string &str)
         convertPPLStyleNumbersToBase10(matched);
         
         std::string expression;
-        int scale = 0;
+        int scale = -1;
         
         matched = regex_replace(matched, std::regex(R"(e)"), "2.71828182845904523536028747135266250");
         matched = regex_replace(matched, std::regex(R"(π)"), "3.14159265358979323846264338327950288");
         
         strip(matched);
+  
+        expression = match.str(1);
         
-        auto it = std::sregex_token_iterator {
-            matched.begin(), matched.end(), re, {1, 2}
-        };
-        if (it != std::sregex_token_iterator()) {
-            if (it->matched) {
-                scale = atoi(it->str().c_str());
-            }
-            else {
-                scale = -1; // -1 means auto scale
-            }
-            it++;
-            expression = *it;
-        }
         
+
         parse(expression);
-        
         
         expression = separateExpression(expression);
         double result = evaluateExpression(expression);
         
-        std::stringstream ss;
-        ss << std::fixed << std::setprecision(scale > -1 ? scale : 10) << result;
-        std::string s = ss.str();
+        if (match[5].matched) {
+            switch (*match.str(5).c_str()) {
+                case 'f':
+                    result = floor(result);
+                    break;
+                    
+                case 'c':
+                    result = ceil(result);
+                    break;
+                    
+                case 'r':
+                    result = round(result);
+                    break;
+                    
+                default:
+                    break;
+            }
+        }
         
-        if (scale < 0) {
-            s.erase ( s.find_last_not_of('0') + 1, std::string::npos );
-            s.erase ( s.find_last_not_of('.') + 1, std::string::npos );
+        if (match[4].matched) {
+            scale = 0;
+        }
+    
+        if (match.str(2).empty() && match.str(4).empty() && match[3].matched) {
+            scale = atoi(match.str(3).c_str());
+        }
+        
+        std::stringstream ss;
+        std::string s;
+        
+        if (match[4].matched) {
+            ss << "#" << std::uppercase;
+            
+            if (match.str(4) == "h") {
+                ss << std::hex << std::setfill('0') << std::setw(atoi(match.str(3).c_str()) / 4);
+            }
+            if (match.str(4) == "d") {
+                ss << std::dec;
+            }
+            if (match.str(4) == "o") {
+                ss << std::oct;
+            }
+            
+            ss << (int)result << ":" << match.str(2) << match.str(3) << match.str(4);
+            s = ss.str();
+        } else {
+            ss << std::fixed << std::setprecision(scale > -1 ? scale : 10) << result;
+            s = ss.str();
+            
+            if (scale < 0) {
+                s.erase ( s.find_last_not_of('0') + 1, std::string::npos );
+                s.erase ( s.find_last_not_of('.') + 1, std::string::npos );
+            }
         }
         
         
-        str = str.replace(match.position(), match.length(), s);
-        return true;
+        newstr = newstr.replace(match.position(), match.length(), s);
+        return newstr;
     }
 
-    return false;
+    return str;
 }
 
 

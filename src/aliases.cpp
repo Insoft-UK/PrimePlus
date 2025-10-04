@@ -28,12 +28,125 @@
 #include <regex>
 #include <sstream>
 
-using namespace pp;
+using pplplus::Aliases;
 
 //MARK: - Functions
 
 static bool compareInterval(Aliases::TIdentity i1, Aliases::TIdentity i2) {
     return (i1.identifier.length() > i2.identifier.length());
+}
+
+static bool compareIntervalString(std::string i1, std::string i2) {
+    return (i1.length() > i2.length());
+}
+
+/**
+ * @brief Extracts and preserves all double-quoted substrings from the input string.
+ *
+ * Handles escaped quotes (e.g., \" inside quoted text) and does not use regex.
+ *
+ * @param str The input string.
+ * @return std::list<std::string> A list of quoted substrings, including the quote characters.
+ */
+static std::list<std::string> preserveStrings(const std::string& str) {
+    std::list<std::string> strings;
+    bool inQuotes = false;
+    std::string current;
+    
+    for (size_t i = 0; i < str.size(); ++i) {
+        char c = str[i];
+
+        if (!inQuotes) {
+            if (c == '"') {
+                inQuotes = true;
+                current.clear();
+                current += c;  // start quote
+            }
+        } else {
+            current += c;
+
+            if (c == '"' && (i == 0 || str[i - 1] != '\\')) {
+                // End of quoted string (unescaped quote)
+                inQuotes = false;
+                strings.push_back(current);
+            }
+        }
+    }
+
+    return strings;
+}
+/**
+ * @brief Replaces all double-quoted substrings in the input string with "".
+ *
+ * Handles escaped quotes (e.g., \" inside strings) and does not use regex.
+ *
+ * @param str The input string to process.
+ * @return std::string A new string with quoted substrings replaced by "".
+ */
+static std::string blankOutStrings(const std::string& str) {
+    std::string result;
+    bool inQuotes = false;
+    size_t start = 0;
+
+    for (size_t i = 0; i < str.length(); ++i) {
+        // Start of quoted string
+        if (!inQuotes && str[i] == '"') {
+            inQuotes = true;
+            result.append(str, start, i - start);  // Append text before quote
+            start = i; // mark quote start
+        }
+        // Inside quoted string
+        else if (inQuotes && str[i] == '"' && (i == 0 || str[i - 1] != '\\')) {
+            // End of quoted string
+            inQuotes = false;
+            result += "\"\"";  // Replace quoted string with empty quotes
+            start = i + 1;     // Next copy chunk starts after closing quote
+        }
+    }
+
+    // Append remaining text after last quoted section
+    if (start < str.size()) {
+        result.append(str, start, str.size() - start);
+    }
+
+    return result;
+}
+
+/**
+ * @brief Restores quoted strings into a string that had them blanked out.
+ *
+ * @param str The string with blanked-out quoted substrings (e.g., `""`).
+ * @param strings A list of original quoted substrings, in the order they appeared.
+ * @return std::string A new string with the original quoted substrings restored.
+ */
+static std::string restoreStrings(const std::string& str, std::list<std::string>& strings) {
+    static const std::regex re(R"("[^"]*")");
+
+    if (strings.empty()) return str;
+
+    std::string result;
+    std::size_t lastPos = 0;
+
+    auto stringIt = strings.begin();
+    for (auto it = std::sregex_iterator(str.begin(), str.end(), re);
+         it != std::sregex_iterator() && stringIt != strings.end(); ++it, ++stringIt)
+    {
+        const std::smatch& match = *it;
+
+        // Append the part before the match
+        result.append(str, lastPos, match.position() - lastPos);
+
+        // Append the preserved quoted string
+        result.append(*stringIt);
+
+        // Update the last position
+        lastPos = match.position() + match.length();
+    }
+
+    // Append the remaining part of the string after the last match
+    result.append(str, lastPos, std::string::npos);
+
+    return result;
 }
 
 //MARK: - Public Methods
@@ -46,7 +159,7 @@ bool Aliases::append(const TIdentity &idty) {
     
     trim(identity.identifier);
     trim(identity.real);
-    identity.pathname = singleton->currentPath();
+    identity.path = singleton->currentSourceFilePath();
     identity.line = singleton->currentLineNumber();
     
     if (!identity.message.empty()) {
@@ -54,9 +167,14 @@ bool Aliases::append(const TIdentity &idty) {
         identity.message.insert(0, ", ");
     }
     
-    if (Scope::Auto == identity.scope) {
-        identity.scope = singleton->scopeDepth == 0 ? Aliases::Scope::Global : Aliases::Scope::Local;
+    if (identity.scope == -1) {
+        identity.scope = Singleton::shared()->scopeDepth;
     }
+    
+    if (identity.type == Type::Argument) identity.scope = 1;
+    
+    std::string filename = Singleton::shared()->currentSourceFilePath().filename().string();
+    
     
     if (identifierExists(identity.identifier)) {
         for (const auto &it : _identities) {
@@ -64,11 +182,11 @@ bool Aliases::append(const TIdentity &idty) {
                 std::cout
                 << MessageType::Warning
                 << "redefinition of: " << ANSI::Bold << identity.identifier << ANSI::Default << ", ";
-                if (basename(Singleton::shared()->currentPath()) == basename(it.pathname)) {
+                if (filename == it.path.filename()) {
                     std::cout << "previous definition on line " << it.line << "\n";
                 }
                 else {
-                    std::cout << "previous definition in '" << ANSI::Green << basename(it.pathname) << ANSI::Default << "' on line " << it.line << "\n";
+                    std::cout << "previous definition in " << ANSI::Green << it.path.filename() << ANSI::Default << " on line " << it.line << "\n";
                 }
                 break;
             }
@@ -83,37 +201,37 @@ bool Aliases::append(const TIdentity &idty) {
     
     if (verbose) std::cout
         << MessageType::Verbose
-        << (Scope::Local == identity.scope && Type::Macro != identity.type ? ANSI::Default + ANSI::Bold + "local" + ANSI::Default + ":" : "")
-        << (Scope::Global == identity.scope && Type::Macro != identity.type ? ANSI::Yellow + "global" + ANSI::Default + ":" : "")
-        << (Type::Eenum == identity.type ? " enumerator" : "")
-        << (Type::Struct == identity.type ? " structure" : "")
-        << (Type::Macro == identity.type ? "macro" : "")
-        << (Type::Def == identity.type ? " def" : "")
-        << (Type::Unknown == identity.type ? " identifier" : "")
-        << " '" << ANSI::Green << identity.identifier << ANSI::Default << "' for '" << ANSI::Green << identity.real << ANSI::Default << "' defined\n";
+        << "defined "
+        << (identity.scope > 0 ? ANSI::Default + ANSI::Bold + "local" + ANSI::Default + " " : "")
+        << (Type::Unknown == identity.type ? "alias " : "")
+        << (Type::Macro == identity.type ? "macro " : "")
+        << (Type::Alias == identity.type ? "alias " : "")
+        << (Type::Function == identity.type ? "function alias " : "")
+        << (Type::Argument == identity.type ? "argument alias " : "")
+        << (Type::Variable == identity.type ? "variable alias" : "")
+        << "'" << ANSI::Green << identity.identifier << ANSI::Default << "' "
+        << (identity.real.empty() ? "\n" : (identity.type == Type::Macro ? "as '" : "for '") + ANSI::Green + identity.real + ANSI::Default + "'\n");
+    
     return true;
 }
 
-void Aliases::removeAllLocalAliases() {
+void Aliases::removeAllOutOfScopeAliases() {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
-        if (it->scope == Scope::Local) {
+        if (it->scope > Singleton::shared()->scopeDepth) {
             if (verbose) std::cout
                 << MessageType::Verbose
-                << ANSI::Default << ANSI::Bold << "local" << ANSI::Default << ":"
-                << (Type::Eenum == it->type ? " enumerator" : "")
-                << (Type::Struct == it->type ? " structure" : "")
-                << (Type::Def == it->type ? " def" : "")
-                << (Type::Member == it->type ? " identifier" : "")
-                << (Type::Unknown == it->type ? " identifier" : "")
-                << " '" << ANSI::Green << it->identifier << ANSI::Default << "' removed❗\n";
+                << "removed " << ANSI::Default << ANSI::Bold << "local" << ANSI::Default << " "
+                << (Type::Unknown == it->type ? "alias " : "")
+                << (Type::Macro == it->type ? "macro " : "")
+                << (Type::Alias == it->type ? "alias " : "")
+                << (Type::Function == it->type ? "function alias " : "")
+                << (Type::Argument == it->type ? "argument alias " : "")
+                << (Type::Variable == it->type ? "variable alias " : "")
+                << "'" << ANSI::Green << it->identifier << ANSI::Default << "'\n";
             _identities.erase(it);
-            removeAllLocalAliases();
+            removeAllOutOfScopeAliases();
             break;
         }
-    }
-    
-    while (_namespaseCheckpoint != _namespaces.size()) {
-        _namespaces.resize(_namespaseCheckpoint);
     }
 }
 
@@ -122,15 +240,14 @@ void Aliases::removeAllAliasesOfType(const Type type) {
         if (it->type == type) {
             if (verbose) std::cout
                 << MessageType::Verbose
-                << (Scope::Local == it->scope && Type::Macro != it->type ? ANSI::Default + ANSI::Bold + "local" + ANSI::Default + ": " : "")
-                << (Scope::Global == it->scope && Type::Macro != it->type ? ANSI::Yellow + "global" + ANSI::Default + ": " : "")
-                << (Type::Macro == it->type ? "macro" : "")
-                << (Type::Eenum == it->type ? "enumerator" : "")
-                << (Type::Struct == it->type ? "structure" : "")
-                << (Type::Def == it->type ? " def" : "")
-                << (Type::Member == it->type ? "identifier" : "")
-                << (Type::Unknown == it->type ? "identifier" : "")
-                << " '" << ANSI::Green << it->identifier << ANSI::Default << "' removed❗\n";
+                << "removed " << ANSI::Default << ANSI::Bold << "local" << ANSI::Default << " "
+                << (Type::Unknown == it->type ? "alias " : "")
+                << (Type::Macro == it->type ? "macro " : "")
+                << (Type::Alias == it->type ? "alias " : "")
+                << (Type::Function == it->type ? "function alias " : "")
+                << (Type::Argument == it->type ? "argument alias " : "")
+                << (Type::Variable == it->type ? "variable alias " : "")
+                << "'" << ANSI::Green << it->identifier << ANSI::Default << "'\n";
             _identities.erase(it);
             removeAllAliasesOfType(type);
             break;
@@ -185,19 +302,15 @@ std::string Aliases::resolveAllAliasesInText(const std::string &str) {
     if (s.empty()) return s;
     
     
-    namespaces = namespacePattern();
-    
         
+    auto strings = preserveStrings(s);
+    s = blankOutStrings(s);
+    
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if ('`' == it->identifier.at(0) && '`' == it->identifier.at(it->identifier.length() - 1)) {
             pattern = it->identifier;
         } else {
-            if (!namespaces.empty()) {
-                pattern = R"(\b)" + namespaces + "?" + regex_replace(it->identifier, std::regex(namespaces), "") + R"(\b)";
-            }
-            else {
-                pattern = R"(\b)" + it->identifier + R"(\b)";
-            }
+            pattern = R"(\b)" + it->identifier + R"(\b)";
         }
         
         re = pattern;
@@ -217,37 +330,36 @@ std::string Aliases::resolveAllAliasesInText(const std::string &str) {
             continue;
         }
         
-        if (regex_search(s, re) && it->deprecated)
-            std::cout << MessageType::Deprecated << it->identifier << it->message << "\n";
+        if (!regex_search(s, re)) continue;
         s = regex_replace(s, re, it->real);
     }
+    s = restoreStrings(s, strings);
     
-    //TODO: Rework to remove this hack!
-    /*
-     To ensures proper resolution in cases where one alias refers to another.
-     It nessasary to perform another check, only if the first check was an alias.
-     */
     if (s != str) {
         s = resolveAllAliasesInText(s);
     }
     
+    
+    
     return s;
 }
+
+
 
 void Aliases::remove(const std::string &identifier) {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if (it->identifier == identifier) {
             if (verbose) std::cout
                 << MessageType::Verbose
-                << (Scope::Local == it->scope && Type::Macro != it->type ? ANSI::Default + ANSI::Bold + "local" + ANSI::Default + ": " : "")
-                << (Scope::Global == it->scope && Type::Macro != it->type ? ANSI::Yellow + "global" + ANSI::Default + ": " : "")
-                << (Type::Macro == it->type ? "macro" : "")
-                << (Type::Eenum == it->type ? "enumerator" : "")
-                << (Type::Struct == it->type ? "structure" : "")
-                << (Type::Def == it->type ? "def" : "")
-                << (Type::Member == it->type ? "identifier" : "")
-                << (Type::Unknown == it->type ? "identifier" : "")
-                << " '" << ANSI::Green << it->identifier << ANSI::Default << "' removed❗\n";
+                << "removed "
+                << (it->scope > 0 ? ANSI::Default + ANSI::Bold + "local " + ANSI::Default : "")
+                << (Type::Unknown == it->type ? "alias " : "")
+                << (Type::Macro == it->type ? "macro " : "")
+                << (Type::Alias == it->type ? "alias " : "")
+                << (Type::Function == it->type ? "function alias " : "")
+                << (Type::Argument == it->type ? "argument alias " : "")
+                << (Type::Variable == it->type ? "variable alias " : "")
+                << "'" << ANSI::Green << it->identifier << ANSI::Default << "'\n";
             
             _identities.erase(it);
             break;
@@ -293,47 +405,5 @@ const Aliases::TIdentity Aliases::getIdentity(const std::string &identifier) {
     return identity;
 }
 
-//MARK: namespace
 
-void Aliases::addNamespace(const std::string &name) {
-    // We check to see if namespace allready exists, if it dose we just return.
-    for (auto it = _namespaces.begin(); it != _namespaces.end(); ++it) {
-        if (name == *it) return;
-    }
-    _namespaces.push_back(name);
-    
-    if (Singleton::shared()->scopeDepth == 0) {
-        _namespaseCheckpoint = _namespaces.size();
-    }
-}
 
-void Aliases::removeNamespace(const std::string &name) {
-    int index = 0;
-    for (auto it = _namespaces.begin(); it != _namespaces.end(); ++it, ++index) {
-        if (name != *it) continue;
-        _namespaces.erase(it);
-        if (index < _namespaseCheckpoint) _namespaseCheckpoint--;
-        break;
-    }
-}
-
-//MARK: - Private Methods
-
-const std::string Aliases::namespacePattern(void) {
-    if (_namespaces.size() == 0) {
-        return std::string("");
-    }
-    
-    std::string pattern;
-    
-    pattern = "((";
-    for (auto it = _namespaces.begin(); it != _namespaces.end(); ++it) {
-        if (it != _namespaces.begin()) {
-            pattern += "|";
-        }
-        pattern += *it;
-    }
-    pattern += ")(?:::|.))";
-    
-    return pattern;
-}

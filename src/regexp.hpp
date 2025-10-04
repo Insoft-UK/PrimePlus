@@ -27,27 +27,31 @@
 #include <vector>
 #include <regex>
 
-namespace pp {
+namespace pplplus {
     class Regexp {
     public:
         bool verbose = false;
         
         typedef struct TRegexp {
-            std::string regularExpression;
+            std::string pattern;
             std::string replacement;
+            bool insensitive;
             size_t scopeLevel;
+            std::string compare;
+            
             long line;              // line that definition accoured;
             std::string pathname;   // path and filename that definition accoured
         } TRegexp;
         
-        bool parse(std::string &str);
+        bool parse(const std::string &str);
         void removeAllOutOfScopeRegexps(void);
         void resolveAllRegularExpression(std::string &str);
+        
         
     private:
         std::vector<TRegexp> _regexps;
         
-        bool regularExpressionExists(const std::string &regularExpression);
+        bool regularExpressionExists(const std::string &pattern);
     };
 }
 

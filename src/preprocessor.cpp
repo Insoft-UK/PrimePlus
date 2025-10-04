@@ -31,12 +31,143 @@
 #include <fstream>
 #include <cctype>
 
-using namespace pp;
+using pplplus::Preprocessor;
+using pplplus::Singleton;
 
 static Singleton *_singleton  = Singleton::shared();
 
+bool Preprocessor::isIncludeLine(const std::string &str)
+{
+    size_t i = 0;
 
-bool Preprocessor::parse(std::string &str) {
+    // Skip leading whitespace
+    while (i < str.size() && std::isspace(static_cast<unsigned char>(str[i]))) ++i;
+
+    // Match "#include"
+    const std::string keyword = "#include";
+    if (str.compare(i, keyword.size(), keyword) != 0)
+        return false;
+
+    i += keyword.size();
+
+    // Must be at least one space after "#include"
+    if (i >= str.size() || !std::isspace(static_cast<unsigned char>(str[i])))
+        return false;
+
+    // Skip whitespace after #include
+    while (i < str.size() && std::isspace(static_cast<unsigned char>(str[i]))) ++i;
+
+    // Check for opening delimiter: < or "
+    if (i >= str.size()) return false;
+
+    char opener = str[i];
+    char closer = (opener == '<') ? '>' : (opener == '"') ? '"' : '\0';
+
+    if (closer == '\0') return false;
+
+    ++i;
+    while (i < str.size() && str[i] != closer) ++i;
+
+    return i < str.size() && str[i] == closer;
+}
+
+bool Preprocessor::isQuotedInclude(const std::string &str)
+{
+    size_t i = 0;
+
+    // Skip leading whitespace
+    while (i < str.size() && std::isspace(static_cast<unsigned char>(str[i]))) ++i;
+
+    // Match "#include"
+    const std::string keyword = "#include";
+    if (str.compare(i, keyword.size(), keyword) != 0)
+        return false;
+
+    i += keyword.size();
+
+    // Must have at least one space
+    if (i >= str.size() || !std::isspace(static_cast<unsigned char>(str[i])))
+        return false;
+
+    // Skip spaces after #include
+    while (i < str.size() && std::isspace(static_cast<unsigned char>(str[i]))) ++i;
+
+    // Check for opening quote
+    if (i >= str.size() || str[i] != '"') return false;
+
+    ++i;
+    while (i < str.size() && str[i] != '"') ++i;
+
+    return i < str.size() && str[i] == '"';
+}
+
+bool Preprocessor::isAngleInclude(const std::string &str)
+{
+    size_t i = 0;
+
+    // Skip leading whitespace
+    while (i < str.size() && std::isspace(static_cast<unsigned char>(str[i]))) ++i;
+
+    // Match "#include"
+    const std::string keyword = "#include";
+    if (str.compare(i, keyword.size(), keyword) != 0)
+        return false;
+
+    i += keyword.size();
+
+    // Must be at least one space after "#include"
+    if (i >= str.size() || !std::isspace(static_cast<unsigned char>(str[i])))
+        return false;
+
+    // Skip spaces between #include and filename
+    while (i < str.size() && std::isspace(static_cast<unsigned char>(str[i]))) ++i;
+
+    // Must start with '<' and end with '>'
+    if (i >= str.size() || str[i] != '<') return false;
+
+    ++i;
+    while (i < str.size() && str[i] != '>') ++i;
+
+    return i < str.size() && str[i] == '>';
+}
+
+std::filesystem::path Preprocessor::extractIncludePath(const std::string &str)
+{
+    size_t i = 0;
+
+    // Skip leading whitespace
+    while (i < str.size() && std::isspace(static_cast<unsigned char>(str[i]))) ++i;
+
+    const std::string keyword = "#include";
+    if (str.compare(i, keyword.size(), keyword) != 0)
+        return "";
+
+    i += keyword.size();
+
+    // Skip whitespace after "#include"
+    while (i < str.size() && std::isspace(static_cast<unsigned char>(str[i]))) ++i;
+
+    if (i >= str.size()) return "";
+
+    char opener = str[i];
+    char closer = (opener == '<') ? '>' : (opener == '"') ? '"' : '\0';
+
+    if (closer == '\0') return "";  // Invalid format
+
+    ++i; // move past opener
+    size_t start = i;
+
+    while (i < str.size() && str[i] != closer) ++i;
+
+    if (i >= str.size()) return ""; // No closing delimiter
+
+    std::filesystem::path path;
+    path = str.substr(start, i - start);
+    
+    return path;
+}
+
+std::string Preprocessor::parse(const std::string& str) {
     std::string s;
     std::regex re;
     std::smatch match;
@@ -48,55 +179,6 @@ bool Preprocessor::parse(std::string &str) {
     
     
     if (disregard == false) {
-        if (regex_search(str, std::regex(R"(^ *@disregard *$)"))) {
-            disregard = true;
-            return true;
-        }
-        
-        re = R"(^ *#include +)";
-        if (regex_search(str, re)) {
-            std::sregex_token_iterator it;
-            const std::sregex_token_iterator end;
-            
-            re = R"(^ *#include +<([^<>:"\|\?\*]*)>)";
-            it = std::sregex_token_iterator {
-                str.begin(), str.end(), re, {1}
-            };
-            if (it != end) {
-                filename = *it++;
-                
-                if (std::filesystem::path(filename).parent_path().empty()) {
-                    filename.insert(0, path + "/");
-                }
-                
-                if (std::filesystem::path(filename).extension().empty()) {
-                    filename.append(".pplib");
-                }
-                
-                if (verbose) std::cout << MessageType::Verbose << "#include: file named '" << std::filesystem::path(filename).filename() << "'\n";
-                return true;
-            }
-            
-            re = R"(^ *#include +"([^<>:"\|\?\*]*)\")";
-            it = std::sregex_token_iterator {
-                str.begin(), str.end(), re, {1}
-            };
-            if (it != end) {
-                filename = *it++;
-                
-                if (!file_exists(filename)) {
-                    filename.insert(0, _singleton->getProjectDir() + "/");
-                    if (!file_exists(filename)) {
-                        std::cout << MessageType::Error << "file " << std::filesystem::path(filename).filename() << " not found.\n";
-                        return false;
-                    }
-                }
-                if (verbose) std::cout << MessageType::Verbose << "#include: file named '" << std::filesystem::path(filename).filename() << "'\n";
-                return true;
-            }
-            return false;
-        }
-        
         /*
          eg. #define NAME(a,b,c) c := a+b
          Group  0 #define NAME(a,b,c) c := a+b
@@ -111,15 +193,15 @@ bool Preprocessor::parse(std::string &str) {
             strip(identity.parameters);
             identity.real = match[3].str();
             
-            identity.scope = Aliases::Scope::Global;
+            identity.scope = 0;
             identity.type = Aliases::Type::Macro;
             
             identity.real = _singleton->aliases.resolveAllAliasesInText(identity.real);
-            Calc::evaluateMathExpression(identity.real);
+            identity.real = Calc::evaluateMathExpression(identity.real);
             
+            if (verbose) std::cout << MessageType::Verbose << "#define '" << identity.identifier << (identity.real.empty() ? "" : "' as '" + identity.real + "'") << "'\n";
             _singleton->aliases.append(identity);
-            if (verbose) std::cout << MessageType::Verbose << "#define: " << identity.identifier << '\n';
-            return true;
+            return "";
         }
  
         /*
@@ -129,9 +211,9 @@ bool Preprocessor::parse(std::string &str) {
          */
         re = R"(^ *#undef +([A-Za-z_][\w]*) *$)";
         if (std::regex_search(str, match, re)) {
+            if (verbose) std::cout << MessageType::Verbose << "#undef '" << *it << "'\n";
             _singleton->aliases.remove(match[1].str());
-            if (verbose) std::cout << MessageType::Verbose << "#undef: " << *it << '\n';
-            return true;
+            return "";
         }
         
 
@@ -144,9 +226,9 @@ bool Preprocessor::parse(std::string &str) {
         re = R"(^ *#ifdef +([A-Za-z_]\w*) *$)";
         if (std::regex_search(str, match, re)) {
             identity.identifier = match[1].str();
+            if (verbose) std::cout << MessageType::Verbose << "#ifdef '" << identity.identifier << "' result was " << (!disregard ? "true" : "false") << '\n';
             disregard = !_singleton->aliases.identifierExists(identity.identifier);
-            if (verbose) std::cout << MessageType::Verbose << "#ifdef: " << identity.identifier << " is " << (!disregard ? "true" : "false") << '\n';
-            return true;
+            return "";
         }
         
         /*
@@ -158,16 +240,16 @@ bool Preprocessor::parse(std::string &str) {
         if (std::regex_search(str, match, re)) {
             identity.identifier = match[1].str();
             
+            if (verbose) std::cout << MessageType::Verbose << "#ifndef '" << identity.identifier << "' result was " << (!disregard ? "true" : "false") << '\n';
             disregard = _singleton->aliases.identifierExists(identity.identifier);
-            if (verbose) std::cout << MessageType::Verbose << "#ifndef: " << identity.identifier << " is " << (!disregard ? "true" : "false") << '\n';
-            return true;
+            return "";
         }
         
         
         re = R"(^ *#if +([A-Za-z_]\w*) *(==|!=|>=|<=|>|<) *(.+)$)";
         if (std::regex_search(str, match, re)) {
             identity = _singleton->aliases.getIdentity(match[1].str());
-            if (identity.identifier.empty()) return true;
+            if (identity.identifier.empty()) return "";
             std::string op = match[2].str();
             std::string real = match[3].str();
             
@@ -179,34 +261,25 @@ bool Preprocessor::parse(std::string &str) {
             if (op == ">" && op >= identity.real) disregard = false;
             if (op == "<" && op <= identity.real) disregard = false;
             
-            return true;
+            return "";
         }
     }
     
     if (regex_search(str, std::regex(R"(^ *#else\b *((\/\/.*)|)$)"))) {
         disregard = !disregard;
-        if (verbose) std::cout << MessageType::Verbose << "#else: " << disregard << '\n';
-        return true;
+        return "";
     }
     
-    if (regex_search(str, std::regex(R"(^ *#endif\b *((\/\/.*)|)$)"))) {
+    if (regex_search(str, std::regex(R"(#end(if)?\b)"))) {
         disregard = false;
-        if (verbose) std::cout << MessageType::Verbose << "#endif: " << disregard << '\n';
-        return true;
+        return "";
     }
     
-    if (regex_search(str, std::regex(R"(^ *@end *$)"))) {
-        disregard = false;
-        if (verbose) std::cout << MessageType::Verbose << "@end: " << disregard << '\n';
-        return true;
-    }
-    
-    if (regex_search(str, std::regex(R"(^ *#)"))) {
-        str = "";
-//        std::cout << MessageType::Error << "invalid preprocessor\n";
+    if (regex_search(str, std::regex(R"(# *[a-zA-Z]+\b)"))) {
+        return "";
     }
 
-    return false;
+    return str;
 }
 
 

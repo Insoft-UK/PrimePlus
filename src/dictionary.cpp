@@ -22,47 +22,37 @@
 
 #include "dictionary.hpp"
 
-static void removeUnnecessaryWhitespace(std::string &str) {
-    // Regular expression pattern to match spaces around the specified operators
-    // Operators: {}[]()≤≥≠<>=*/+-▶.,;:!^
-    std::regex re(R"(\s*([{}[\]()≤≥≠<>=*\/+\-▶.,;:!^&|%])\s*)");
-    
-    // Replace matches with the operator and no surrounding spaces
-    str = std::regex_replace(str, re, "$1");
-    
-    auto pos = str.find_last_of("]");
-    if (pos != std::string::npos) str.insert(pos + 1, " ");
-    
-    return;
+using pplplus::Dictionary;
+
+bool Dictionary::isDictionaryDefinition(const std::string &str) {
+    return regex_search(str, std::regex(R"(\bdict +([\w[\],:=#\- ]+) *@?\b([A-Za-z_]\w*(?:::[A-Za-z_]\w*)*);)"));
 }
 
-bool Dictionary::isDictionary(const std::string &str) {
-    return regex_search(str, std::regex("^(@global )? *dict (.*); *$"));
+std::string Dictionary::removeDictionaryDefinition(const std::string& str) {
+    return std::regex_replace(str, std::regex(R"(\bdict +([\w[\],:=#\- ]+) *@?\b([A-Za-z_]\w*(?:::[A-Za-z_]\w*)*);)"), "");
 }
 
-bool Dictionary::proccessDictionary(const std::string &str) {
+bool Dictionary::proccessDictionaryDefinition(const std::string &str) {
     std::regex re;
     std::smatch match;
-    std::string s1, s2;
+    std::string code;
     
-    s1 = str;
-    removeUnnecessaryWhitespace(s1);
+    code = str;
     
     Aliases::TIdentity identity;
-    identity.scope = Aliases::Scope::Auto;
-    identity.type = Aliases::Type::Def;
+    identity.scope = Singleton::shared()->scopeDepth;
+    identity.type = Aliases::Type::Alias;
     
-    
-    re = R"(^(@global )?dict +(.+) ((?:`[\w.:]+`)|[\w.:]+)(?:\(([A-Za-z_ ,]+)\))?;$)";
-    if (regex_search(s1, match, re)) {
-        identity.scope = match[1].matched ? Aliases::Scope::Global : Aliases::Scope::Auto;
+    re = R"(\bdict +([\w[\],:=#\- ]+) *(@)?\b([A-Za-z_]\w*(?:::[A-Za-z_]\w*)*);)";
+    if (regex_search(code, match, re)) {
         
-        re = R"(([a-zA-Z]\w*(?:(?:[a-zA-Z_]\w*)|(?:::)|\.)*)(?:(\[#?[\dA-F]+(?::-?\d{0,2}[bodh])?(?:,#?[\dA-F]+(?::-?\d{0,2}[bodh])?)*\])|(?:=(#?[\dA-F]+(?::-?\d{0,2}[bodh])?)))?)";
-        s2 = match[2].str();
-        for (auto it = std::sregex_iterator(s2.begin(), s2.end(), re); it != std::sregex_iterator(); it++) {
+        identity.scope = match[2].matched ? 0 : Singleton::shared()->scopeDepth;
+
+        re = R"(([a-zA-Z]\w*(?:(?:[a-zA-Z_]\w*)|(?:::)|\.)*)(?:(\[#?[\dA-F]+(?::-?\d{0,2}[bodh])?(?:,#?[\dA-F]+(?::-?\d{0,2}[bodh])?)*\])|(?::=(#?[\dA-F]+(?::-?\d{0,2}[bodh])?)))?)";
+        std::string s = match[1].str();
+        for (auto it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); it++) {
             identity.identifier = match[3].str() + "." + it->str(1);
             
-        
             if (!it->str(2).empty()) {
                 // List
                 identity.real = match[3].str() + it->str(2);

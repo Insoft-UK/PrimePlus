@@ -29,11 +29,12 @@
 
 #include "singleton.hpp"
 
-namespace pp {
+namespace pplplus {
     class Dictionary {
     public:
-        static bool isDictionary(const std::string &str);
-        static bool proccessDictionary(const std::string &str);
+        static bool isDictionaryDefinition(const std::string& str);
+        static std::string removeDictionaryDefinition(const std::string& str);
+        static bool proccessDictionaryDefinition(const std::string& str);
         
     private:
     };

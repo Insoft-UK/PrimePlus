@@ -34,9 +34,10 @@
 
 #include "singleton.hpp"
 
-#define INDENT_WIDTH 2
 
 #define basename(path)  path.substr(path.find_last_of("/") + 1)
+
+
 
 enum class MessageType {
     Warning,
@@ -64,7 +65,7 @@ namespace ANSI {
     const std::string Green = "\e[38;5;34m";
     const std::string Red = "\e[38;5;160m";
     const std::string Orange = "\e[38;5;208m";
-    const std::string Yellow = "\e[38;5;220";
+    const std::string Yellow = "\e[38;5;220m";
     const std::string Purpel = "\e[38;5;125m";
     const std::string Blue = "\e[38;5;38m";
 #endif
@@ -83,10 +84,9 @@ std::string trim_copy(const std::string &str);
 std::string &strip(std::string &str);
 std::string strip_copy(const std::string &str);
 
-std::ifstream::pos_type file_size(const std::string &filename);
-bool file_exists(const char *filename);
-bool file_exists(const std::string &filename);
+std::string normalizeWhitespace(const std::string& input);
 
 int countLeadingCharacters(const std::string &str, const char character);
+
 
 #endif /* common_hpp */

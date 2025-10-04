@@ -21,22 +21,21 @@
 // SOFTWARE.
 
 
-#ifndef Calc_hpp
-#define Calc_hpp
+#ifndef calc_hpp
+#define calc_hpp
 
 #include <iostream>
 #include <vector>
 #include <string>
 #include <unordered_map>
-#include <deque>
 #include <stdint.h>
 
-namespace pp {
+namespace pplplus {
     class Calc {
     public:
-        static bool evaluateMathExpression(std::string &str);
-        static bool parse(std::string &str);
+        static std::string evaluateMathExpression(const std::string& str);
+        static std::string parse(const std::string& str);
     };
 }
 
-#endif /* Calc_hpp */
+#endif /* calc_hpp */

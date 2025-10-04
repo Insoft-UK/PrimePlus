@@ -20,21 +20,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#ifndef base_hpp
+#define base_hpp
 
-#ifndef AUTO_HPP
-#define AUTO_HPP
-
-#include <iostream>
+#include <string>
 
 namespace pplplus {
-
-class Auto {
-public:
-    std::string parse(const std::string &str);
-private:
-    unsigned _count = 0;
-};
-
+    class Base {
+    public:
+        static std::string parse(const std::string &str);
+    };
 }
 
-#endif /* AUTO_HPP */
+#endif /* base_hpp */

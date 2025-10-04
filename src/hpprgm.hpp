@@ -20,23 +20,15 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#ifndef hpprgm_hpp
+#define hpprgm_hpp
 
-#ifndef DEF_HPP
-#define DEF_HPP
+#include <fstream>
+#include <sstream>
 
-#include "singleton.hpp"
-#include <iostream>
-#include <vector>
-#include <list>
-
-namespace pp {
-
-class Def {
-public:
-    static bool isDefine(const std::string &str);
-    static bool processDefine(const std::string &str);
-};
-
+namespace hpprgm {
+    std::wstring load(const std::string& filepath);
+    bool save(const std::string& filepath, const std::string& str);
 }
 
-#endif /* DEF_HPP */
+#endif /* hpprgm_hpp */

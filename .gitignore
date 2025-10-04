@@ -1,3 +1,6 @@
 *.xcworkspace/xcuserdata/
 xcuserdata/
 .DS_Store
+build
+make
+examples
