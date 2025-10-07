@@ -149,6 +149,7 @@ void (*old_terminate)() = std::set_terminate(terminator);
  * @note This is useful for normalizing input for parsers, code formatters, or text display
  *       where compact and readable word separation is desired.
  */
+
 std::string cleanWhitespace(const std::string& input) {
     std::string output;
     char current = '\0';
@@ -1234,6 +1235,7 @@ void loadRegexLib(const fs::path path, const bool verbose) {
 }
 
 void loadRegexLibs(const std::string path, const bool verbose) {
+    if (path.empty()) return;
     loadRegexLib(path + "/base.re", verbose);
     
     try {
@@ -1602,7 +1604,7 @@ void info(void) {
     << "      ************        \n"
     << "    ************          \n\n"
     << "Copyright (C) 2023-" << YEAR << " Insoft. All rights reserved.\n"
-    << "Insoft PPL+" << std::string(YEAR).substr(2) << " Pre-Processor for PPL\n\n";
+    << "Insoft " << NAME << "\n\n";
 }
 
 void help(void) {
@@ -1633,7 +1635,6 @@ void help(void) {
 int main(int argc, char **argv) {
     
     std::string in_filename, out_filename;
-    fs::path libPath;
     
     if (argc == 1) {
         error();
@@ -1671,7 +1672,6 @@ int main(int argc, char **argv) {
             return 0;
         }
         
-        
         if (args.starts_with("-v=")) {
             if (args.find("a") != std::string::npos) Singleton::shared()->aliases.verbose = true;
             if (args.find("p") != std::string::npos) preprocessor.verbose = true;
@@ -1690,7 +1690,7 @@ int main(int argc, char **argv) {
         
         if (args.starts_with("-L")) {
             fs::path path = fs::path(args.substr(2)).has_filename() ? fs::path(args.substr(2)) : fs::path(args.substr(2)).parent_path();
-            libPath = fs::expand_tilde(path);
+            loadRegexLibs(fs::expand_tilde(path), verbose);
             continue;
         }
         
@@ -1708,7 +1708,7 @@ int main(int argc, char **argv) {
         return 0;
     }
     
-    if (fs::path(in_filename).extension() == ".ppl" || fs::path(in_filename).extension() == ".prgm" || fs::path(in_filename).extension() == ".hpprgm") {
+    if (fs::path(in_filename).extension() == ".prgm" || fs::path(in_filename).extension() == ".hpprgm") {
         std::cout << "Error: " << fs::path(in_filename).extension() << " files are not supported.\n";
         return 0;
     }
@@ -1765,27 +1765,7 @@ int main(int argc, char **argv) {
     str = R"(#define __NUMERIC_BUILD )" + std::to_string(NUMERIC_BUILD);
     preprocessor.parse(str);
     
-#ifdef DEBUG
-    loadRegexLibs(fs::expand_tilde("~/GitHub/PrimeSDK/Xprime/Developer/usr/lib"), true);
-    preprocessor.systemIncludePath.push_front(fs::path(fs::expand_tilde("~/GitHub/PrimeSDK/Xprime/Developer/usr/include")));
-#else
-    if (libPath.empty()) {
-        if (fs::exists(fs::path("/Applications/Xprime.app/Contents/Developer/usr/lib"))) {
-            libPath = "//Applications/Xprime.app/Contents/Developer/usr/lib";
-        } else if (fs::exists(fs::path("/Applications/HP/PrimeSDK/lib"))) {
-            libPath = "/Applications/HP/PrimeSDK/lib";
-        }
-    }
-    loadRegexLibs(libPath, verbose);
     
-    if (preprocessor.systemIncludePath.empty()) {
-        if (fs::exists(fs::path("/Applications/Xprime.app/Contents/Developer/usr/inclue"))) {
-            preprocessor.systemIncludePath.push_front(fs::path("/Applications/Xprime.app/Contents/Developer/usr/inclue"));
-        } else if (fs::exists(fs::path("/Applications/HP/PrimeSDK/include"))) {
-            preprocessor.systemIncludePath.push_front(fs::path("/Applications/HP/PrimeSDK/include"));
-        }
-    }
-#endif
     
     std::string output = translatePPLPlusToPPL(in_filename);
     
