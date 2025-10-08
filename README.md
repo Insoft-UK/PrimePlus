@@ -1,8 +1,10 @@
-# PPL+ for HP Prime Programming Language
-
-<br />
 <img src="https://raw.githubusercontent.com/Insoft-UK/PrimeSDK/main/assets/PPL+.png" style="width: 128px" />
-<b>PPL+</b> is a preprocessor utility designed to improve code maintainability and readability in the HP Prime Programming Language (PPL). PPL+ also allows one to define regular expressions to assist in the preprocessing workflow. The final output is a compact, optimized PPL program file tailored to the HP Prime’s limited storage capacity.
+
+
+## PPL+ for HP Prime Programming Language
+**Command Line Tool**
+
+<b>PPL+</b> is a preprocessor command line tool designed to improve code maintainability and readability in the HP Prime Programming Language (PPL). PPL+ also allows one to define regular expressions to assist in the preprocessing workflow. The final output is a compact, optimized PPL program file tailored to the HP Prime’s limited storage capacity.
 <br/><br/>
 
 **PPL+**
@@ -59,11 +61,8 @@ BEGIN
 END;
 ```
 
-## Regular Expressions
-
-### switch
-
-
+### Regular Expressions
+#### switch
 **PPL+**
 ```
 regex `\bswitch +([a-zA-Z_]\w*)` LOCAL sw__SCOPE__ := $1;CASE
@@ -84,7 +83,7 @@ CASE
 END;
 ```
 
-## Code Stack
+### Code Stack
 
 A code stack provides a convenient way to store code snippets that can be retrieved and used later.
 
@@ -100,7 +99,7 @@ LOCAL i := 8;
 i := i + 1;
 ```
 
-## Assignment Style
+### Assignment Style
 
 In <b>PPL+</b>, the = operator is treated as := (assignment) by default, whereas in standard <b>PPL</b>, = is interpreted as == (equality). This behavior in PPL+ can be explicitly controlled using the directive:
 
