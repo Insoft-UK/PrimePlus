@@ -62,8 +62,9 @@ END;
 ```
 
 ### Regular Expressions
-#### switch
-**PPL+**
+**Example: Extending PPL with Switch-Case Functionality Using Regex**
+This example demonstrates how to use **regex** (regular expressions) to add **switch-case** control flow to the PPL language, similar to the switch statements found in other programming languages.
+
 ```
 regex `\bswitch +([a-zA-Z_]\w*)` LOCAL sw__SCOPE__ := $1;CASE
 regex `\bcase +(\-?\d+) +do *$` IF sw\`__SCOPE__-1` == $1 THEN
@@ -73,8 +74,9 @@ switch X
     end;
 end;
 ```
+**PPL+ Preprocessor: Switch-Case to PPL Conversion**
+The PPL+ preprocessor generates valid PPL code by transforming switch-case statements into standard PPL case statements. This preprocessing step allows you to write more intuitive switch-case syntax while maintaining full compatibility with the PPL language, as the output is pure, valid PPL code.
 
-**PPL**
 ```
 LOCAL sw0 := X;
 CASE
