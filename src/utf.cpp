@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2023-2025 Insoft. All rights reserved.
+// Copyright (c) 2023-2025 Insoft.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,6 @@
 // SOFTWARE.
 
 #include "utf.hpp"
-
 
 std::string utf::to_utf8(const std::wstring& wstr) {
     std::string utf8;

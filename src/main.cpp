@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2023 Insoft. All rights reserved.
+// Copyright (c) 2023-2025 Insoft.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -1708,8 +1708,8 @@ int main(int argc, char **argv) {
         return 0;
     }
     
-    if (fs::path(in_filename).extension() == ".prgm" || fs::path(in_filename).extension() == ".hpprgm") {
-        std::cout << "Error: " << fs::path(in_filename).extension() << " files are not supported.\n";
+    if (fs::path(in_filename).extension() != ".prgm+") {
+        std::cout << "Error: " << fs::path(in_filename).extension() << " file are not supported.\n";
         return 0;
     }
     
@@ -1717,33 +1717,28 @@ int main(int argc, char **argv) {
         in_filename.insert(0, "./");
     }
     
-    /*
-     If the specified input file doesn’t exist and no extension
-     is provided, append the default .prgm+ extension.
-     */
-    if (!fs::exists(in_filename)) {
-        if (fs::path(in_filename).extension().empty()) {
-            in_filename += ".prgm+";
-        }
-    }
-    
     if (!fs::exists(in_filename)) {
         std::cout << "File " << fs::path(in_filename).filename() << " not found at " << fs::path(in_filename).parent_path() << " location.\n";
         return 0;
     }
-    
-    /*
-     If the user did not specify an output filename, use the input
-     filename with a .hpprgm extension.
-     */
+   
     if (out_filename.empty()) {
+        // User did not specify specify an output filename, use the input filename with a .prgm extension.
         out_filename = in_filename;
-        out_filename = fs::path(out_filename).replace_extension(".hpprgm");
-    } else {
-        if (fs::path(out_filename).extension().empty()) out_filename += ".hpprgm"; // Default extension if none given.
-        if (fs::path(out_filename).parent_path().empty()) {
-            out_filename = fs::path(in_filename).parent_path().string() + "/" + out_filename;
-        }
+        out_filename = fs::path(out_filename).replace_extension(".prgm");
+    }
+    
+    if (fs::is_directory(out_filename)) {
+        /* User did not specify specify an output filename but has specified a path, so append
+         with the input filename and subtitute the extension with .prgm
+         */
+        out_filename = fs::path(out_filename).append(fs::path(in_filename).stem().string() + ".prgm");
+    }
+    
+    if (fs::path(out_filename).extension().empty())
+        out_filename += ".prgm"; // Default extension if none given.
+    if (fs::path(out_filename).parent_path().empty()) {
+        out_filename = fs::path(in_filename).parent_path().string() + "/" + out_filename;
     }
     
     info();
