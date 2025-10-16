@@ -1258,7 +1258,7 @@ std::string embedPPLCode(const std::string& filepath) {
     if (!is.is_open()) return str;
     
     if (path.extension() == ".prgm") {
-        std::wstring wstr = utf::load_utf16(filepath);
+        std::wstring wstr = utf::load(filepath);
         
         if (!wstr.empty()) {
             str = utf::utf8(wstr);

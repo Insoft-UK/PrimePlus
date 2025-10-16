@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2023-2025 Insoft.
+// Copyright (c) 2024-2025 Insoft.
 //
 // Created: 2025-05-27
 //
@@ -42,9 +42,13 @@ namespace utf {
     [[deprecated("Use utf16 instead")]]
     std::wstring to_utf16(const std::string& str);
     
+    [[deprecated]]
     std::wstring read_as_utf16(std::ifstream& is);
     
+    [[deprecated("Use read instead")]]
     std::wstring read_utf16(std::ifstream& is);
+    
+    [[deprecated("Use load instead")]]
     std::wstring load_utf16(const std::string& filepath);
     
     [[deprecated("Use write instead")]]
@@ -64,6 +68,8 @@ namespace utf {
     
     std::string utf8(const std::wstring& wstr);
     std::wstring utf16(const std::string& str);
+    std::wstring read(std::ifstream& is, BOM bom = BOMle);
+    std::wstring load(const std::string& filepath, BOM bom = BOMle);
     size_t write(std::ofstream& os, const std::string& str);
     size_t write(std::ofstream& os, const std::wstring& wstr, BOM bom = BOMle);
     bool save(const std::string& filepath, const std::string& str);

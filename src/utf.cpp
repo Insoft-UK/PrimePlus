@@ -1,6 +1,6 @@
 // The MIT License (MIT)
 //
-// Copyright (c) 2023-2025 Insoft.
+// Copyright (c) 2024-2025 Insoft.
 //
 // Created: 2025-05-27
 //
@@ -121,48 +121,69 @@ static uint16_t convertUTF8ToUTF16(const char* str) {
     return utf16;
 }
 
-std::wstring utf::read_as_utf16(std::ifstream& is) {
-    std::wstring output;
+std::wstring utf::read(std::ifstream& is, BOM bom) {
+    std::wstring wstr;
+    uint16_t byte_order_mark;
+    
+    is.read(reinterpret_cast<char*>(&byte_order_mark), sizeof(byte_order_mark));
+    
+#ifdef __BIG_ENDIAN__
+    if (bom == BOMle && byte_order_mark != 0xFFFE) {
+        utf16 = utf16 >> 8 | utf16 << 8;
+    }
+    if (bom == BOMbe && byte_order_mark != 0xFEFF) {
+        utf16 = utf16 >> 8 | utf16 << 8;
+    }
+#else
+    if (bom == BOMle && byte_order_mark != 0xFEFF) {
+        return wstr;
+    }
+    if (bom == BOMbe && byte_order_mark != 0xFFFE) {
+        return wstr;
+    }
+#endif
     
     while (true) {
         char16_t ch;
-        // Read 2 bytes (UTF-16LE)
+        // Read 2 bytes (UTF-16)
         is.read(reinterpret_cast<char*>(&ch), sizeof(ch));
         
         if (!is || ch == 0x0000) {
             break; // EOF or null terminator
         }
         
-        output += static_cast<wchar_t>(ch);
+        wstr += static_cast<wchar_t>(ch);
         is.peek();
         if (is.eof()) break;
     }
     
-    return output;
-}
-
-std::wstring utf::read_utf16(std::ifstream& is) {
-    std::wstring wstr;
-    uint16_t byte_order_mark;
-    
-    is.read(reinterpret_cast<char*>(&byte_order_mark), sizeof(byte_order_mark));
-    if (byte_order_mark != 0xFEFF) return wstr;
-    
-    wstr = read_as_utf16(is);
     return wstr;
 }
 
-std::wstring utf::load_utf16(const std::string& filepath) {
-    std::wstring output;
+std::wstring utf::load(const std::string& filepath, BOM bom) {
+    std::wstring wstr;
     std::ifstream is;
     
     is.open(filepath, std::ios::in | std::ios::binary);
-    if(!is.is_open()) return output;
+    if(!is.is_open()) return wstr;
 
-    output = read_utf16(is);
+    wstr = read(is, bom);
     
     is.close();
-    return output;
+    return wstr;
+}
+
+
+std::wstring utf::read_as_utf16(std::ifstream& is) {
+    return read(is, BOMnone);
+}
+
+std::wstring utf::read_utf16(std::ifstream& is) {
+    return read(is);
+}
+
+std::wstring utf::load_utf16(const std::string& filepath) {
+    return load(filepath, BOMle);
 }
 
 size_t utf::write_utf8(std::ofstream& os, const std::string& str) {
