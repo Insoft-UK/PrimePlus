@@ -2,6 +2,8 @@
 //
 // Copyright (c) 2023-2025 Insoft.
 //
+// Created: 2025-05-27
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
@@ -28,21 +30,44 @@
 #include <cstdlib>
 
 namespace utf {
+    enum BOM {
+        BOMle,
+        BOMbe,
+        BOMnone
+    };
+    
+    [[deprecated("Use utf8 instead")]]
     std::string to_utf8(const std::wstring& wstr);
+    
+    [[deprecated("Use utf16 instead")]]
     std::wstring to_utf16(const std::string& str);
     
-    uint16_t utf16(const char *str);
-    
     std::wstring read_as_utf16(std::ifstream& is);
+    
     std::wstring read_utf16(std::ifstream& is);
     std::wstring load_utf16(const std::string& filepath);
     
+    [[deprecated("Use write instead")]]
     size_t write_utf8(std::ofstream& os, const std::string& str);
+    
+    [[deprecated("Use save instead")]]
     bool save_as_utf8(const std::string& filepath, const std::string& str);
     
+    [[deprecated("Use write instead")]]
     size_t write_as_utf16(std::ofstream& os, const std::string& str);
-    size_t write_utf16(std::ofstream& os, const std::string& str);
+    
+    [[deprecated("Use write instead")]]
+    size_t write_utf16(std::ofstream& os, const std::wstring& wstr);
+    
+    [[deprecated("Use save instead")]]
     bool save_as_utf16(const std::string& filepath, const std::string& str);
+    
+    std::string utf8(const std::wstring& wstr);
+    std::wstring utf16(const std::string& str);
+    size_t write(std::ofstream& os, const std::string& str);
+    size_t write(std::ofstream& os, const std::wstring& wstr, BOM bom = BOMle);
+    bool save(const std::string& filepath, const std::string& str);
+    bool save(const std::string& filepath, const std::wstring& wstr, BOM bom = BOMle);
 };
 
 #endif /* utf_hpp */

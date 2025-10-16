@@ -43,6 +43,7 @@ namespace pplplus {
         CodeStack codeStack;
         
         const int &scopeDepth;
+        const int &count;
         
         static Singleton *shared();
         
@@ -66,6 +67,7 @@ namespace pplplus {
         
         void increaseScopeDepth(const std::string &endCode = "")
         {
+            if (_scopeDepth == 0) _count = 0;
             _scopeDepth++;
         }
         
@@ -78,16 +80,23 @@ namespace pplplus {
             _scopeDepth--;
         }
         
+        void increaseCount(void)
+        {
+            _count++;
+        }
+        
     private:
         std::vector<std::filesystem::path> _paths;
         std::vector<long> _lines;
         static Singleton *_shared;
         
         int _scopeDepth;
+        int _count;
         
-        Singleton() : scopeDepth(_scopeDepth) {
+        Singleton() : scopeDepth(_scopeDepth), count(_count) {
             _currentline = 1;
             _scopeDepth = 0;
+            _count = 0;
         }
         Singleton(const Singleton &);
         Singleton &operator=(const Singleton &);

@@ -3,7 +3,7 @@ BUILD := build
 
 all:
 	mkdir -p $(BUILD)
-	g++ -arch x86_64 -arch arm64 -std=c++20 src/*.cpp -o $(BUILD)/$(NAME) -Os -fno-ident -fno-asynchronous-unwind-tables
+	g++ -arch x86_64 -arch arm64 -std=c++23 src/*.cpp -o $(BUILD)/$(NAME) -Os -fno-ident -fno-asynchronous-unwind-tables
 	
 install:
 	cp $(BUILD)/$(NAME) /usr/local/bin/$(NAME)

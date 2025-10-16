@@ -44,7 +44,6 @@
 #include "alias.hpp"
 #include "base.hpp"
 #include "calc.hpp"
-#include "hpprgm.hpp"
 #include "utf.hpp"
 
 #include "../version_code.h"
@@ -1258,11 +1257,11 @@ std::string embedPPLCode(const std::string& filepath) {
     is.open(filepath, std::ios::in);
     if (!is.is_open()) return str;
     
-    if (path.extension() == ".hpprgm" || path.extension() == ".prgm") {
-        std::wstring wstr = hpprgm::load(filepath);
+    if (path.extension() == ".prgm") {
+        std::wstring wstr = utf::load_utf16(filepath);
         
         if (!wstr.empty()) {
-            str = utf::to_utf8(wstr);
+            str = utf::utf8(wstr);
             str = regex_replace(str, std::regex(R"(^ *#pragma mode *\(.+\) *\n+)"), "");
             is.close();
             return str;
@@ -1735,8 +1734,13 @@ int main(int argc, char **argv) {
         out_filename = fs::path(out_filename).append(fs::path(in_filename).stem().string() + ".prgm");
     }
     
-    if (fs::path(out_filename).extension().empty())
+    
+    if (fs::path(out_filename).extension().empty()) {
         out_filename += ".prgm"; // Default extension if none given.
+    } else if (fs::path(out_filename).extension() != ".prgm") {
+        out_filename = fs::path(out_filename).replace_extension(".prgm");
+    }
+    
     if (fs::path(out_filename).parent_path().empty()) {
         out_filename = fs::path(in_filename).parent_path().string() + "/" + out_filename;
     }
@@ -1764,18 +1768,10 @@ int main(int argc, char **argv) {
     
     std::string output = translatePPLPlusToPPL(in_filename);
     
-    if (fs::path(out_filename).extension() != ".hpprgm") {
-        if (!utf::save_as_utf16(out_filename, output)) {
-            std::cout << "Unable to create file " << fs::path(out_filename).filename() << ".\n";
-            return 0;
-        }
-    }
-    
-    if (fs::path(out_filename).extension() == ".hpprgm") {
-        if (!hpprgm::save(out_filename, output)) {
-            std::cout << "Unable to create file " << fs::path(out_filename).filename() << ".\n";
-            return 0;
-        }
+    std::wstring wstr = utf::utf16(output);
+    if (!utf::save(out_filename, wstr)) {
+        std::cout << "Unable to create file " << fs::path(out_filename).filename() << ".\n";
+        return 0;
     }
     
     if (hasErrors() == true) {

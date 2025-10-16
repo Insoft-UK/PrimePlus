@@ -104,13 +104,30 @@ void Regexp::resolveAllRegularExpression(std::string &str) {
         
         if (std::regex_search(str, match, re)) {
             str = regex_replace(str, re, it->replacement);
-            
+           
             std::string key = "__SCOPE__";
             std::string value = std::to_string(Singleton::shared()->scopeDepth);
 
             size_t pos;
             while ((pos = str.find(key)) != std::string::npos) {
                 str.replace(pos, key.length(), value);
+            }
+            
+            key = "__++COUNT__";
+            while ((pos = str.find(key)) != std::string::npos) {
+                Singleton::shared()->increaseCount();
+                str.replace(pos, key.length(), std::to_string(Singleton::shared()->count));
+            }
+            
+            key = "__COUNT__";
+            while ((pos = str.find(key)) != std::string::npos) {
+                str.replace(pos, key.length(), std::to_string(Singleton::shared()->count));
+            }
+            
+            key = "__COUNT++__";
+            while ((pos = str.find(key)) != std::string::npos) {
+                str.replace(pos, key.length(), std::to_string(Singleton::shared()->count));
+                Singleton::shared()->increaseCount();
             }
             
             Calc::evaluateMathExpression(str);
