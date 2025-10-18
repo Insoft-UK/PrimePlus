@@ -1573,7 +1573,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
 void version(void) {
     using namespace std;
     std::cout
-    << "Copyright (C) 2023-" << YEAR << " Insoft. All rights reserved.\n"
+    << "Copyright (C) 2023-" << YEAR << " Insoft.\n"
     << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << VERSION_CODE << ")\n"
     << "Built on: " << DATE << "\n"
     << "Licence: MIT License\n\n"
@@ -1602,14 +1602,14 @@ void info(void) {
     << "        ************      \n"
     << "      ************        \n"
     << "    ************          \n\n"
-    << "Copyright (C) 2023-" << YEAR << " Insoft. All rights reserved.\n"
+    << "Copyright (C) 2023-" << YEAR << " Insoft.\n"
     << "Insoft " << NAME << "\n\n";
 }
 
 void help(void) {
     using namespace std;
     std::cout
-    << "Copyright (C) 2023-" << YEAR << " Insoft. All rights reserved.\n"
+    << "Copyright (C) 2023-" << YEAR << " Insoft.\n"
     << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << VERSION_CODE << ")\n"
     << "\n"
     << "Usage: " << COMMAND_NAME << " <input-file> [-o <output-file>] [-v <flags>]\n"
@@ -1653,6 +1653,11 @@ int main(int argc, char **argv) {
             if ( n + 1 >= argc ) {
                 error();
                 exit(101);
+            }
+            if (out_filename == "-") out_filename = "/dev/stdout";
+            if (out_filename == "/dev/stdout") {
+                n++;
+                continue;
             }
             out_filename = fs::expand_tilde(argv[n + 1]);
             n++;
@@ -1726,27 +1731,33 @@ int main(int argc, char **argv) {
         out_filename = in_filename;
         out_filename = fs::path(out_filename).replace_extension(".prgm");
     }
-    
-    if (fs::is_directory(out_filename)) {
-        /* User did not specify specify an output filename but has specified a path, so append
-         with the input filename and subtitute the extension with .prgm
-         */
-        out_filename = fs::path(out_filename).append(fs::path(in_filename).stem().string() + ".prgm");
+    if (out_filename == "/dev/stdout") {
+        Singleton::shared()->aliases.verbose = false;
+        preprocessor.verbose = false;
+        Singleton::shared()->regexp.verbose = false;
+        verbose = false;
+    } else {
+        if (fs::is_directory(out_filename)) {
+            /* User did not specify specify an output filename but has specified a path, so append
+             with the input filename and subtitute the extension with .prgm
+             */
+            out_filename = fs::path(out_filename).append(fs::path(in_filename).stem().string() + ".prgm");
+        }
+        
+        
+        if (fs::path(out_filename).extension().empty()) {
+            out_filename += ".prgm"; // Default extension if none given.
+        } else if (fs::path(out_filename).extension() != ".prgm") {
+            out_filename = fs::path(out_filename).replace_extension(".prgm");
+        }
+        
+        if (fs::path(out_filename).parent_path().empty()) {
+            out_filename = fs::path(in_filename).parent_path().string() + "/" + out_filename;
+        }
+        
+        info();
     }
     
-    
-    if (fs::path(out_filename).extension().empty()) {
-        out_filename += ".prgm"; // Default extension if none given.
-    } else if (fs::path(out_filename).extension() != ".prgm") {
-        out_filename = fs::path(out_filename).replace_extension(".prgm");
-    }
-    
-    if (fs::path(out_filename).parent_path().empty()) {
-        out_filename = fs::path(in_filename).parent_path().string() + "/" + out_filename;
-    }
-    
-    info();
-
     // Start measuring time
     Timer timer;
     
@@ -1764,10 +1775,12 @@ int main(int argc, char **argv) {
     str = R"(#define __NUMERIC_BUILD )" + std::to_string(NUMERIC_BUILD);
     preprocessor.parse(str);
     
-    
-    
     std::string output = translatePPLPlusToPPL(in_filename);
     
+    if (out_filename == "/dev/stdout") {
+        std::cout << output;
+        return 0;
+    }
     std::wstring wstr = utf::utf16(output);
     if (!utf::save(out_filename, wstr)) {
         std::cout << "Unable to create file " << fs::path(out_filename).filename() << ".\n";
