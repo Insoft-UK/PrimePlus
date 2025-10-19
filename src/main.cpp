@@ -1783,12 +1783,12 @@ int main(int argc, char **argv) {
     }
     std::wstring wstr = utf::utf16(output);
     if (!utf::save(out_filename, wstr)) {
-        std::cout << "Unable to create file " << fs::path(out_filename).filename() << ".\n";
+        std::cout << "❌ Unable to create file " << fs::path(out_filename).filename() << ".\n";
         return 0;
     }
     
     if (hasErrors() == true) {
-        std::cout << ANSI::Red << "ERRORS!" << ANSI::Default << "\n";
+        std::cout << "🛑 ERRORS!" << "\n";
         remove(out_filename.c_str());
         return 0;
     }
@@ -1802,7 +1802,7 @@ int main(int argc, char **argv) {
     } else {
         std::cout << "Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e9 << " seconds\n";
     }
-    std::cout << "File ";
+    std::cout << "✅ File ";
     if (showpath)
         std::cout << "at \"" << out_filename << "\" succefuly created.\n";
     else
