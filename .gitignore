@@ -6,4 +6,4 @@ version.txt
 .DS_Store
 build
 make
-examples
+*.prgm
