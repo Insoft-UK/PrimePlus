@@ -91,7 +91,7 @@ END;
 
 A code stack provides a convenient way to store code snippets that can be retrieved and used later.
 
-**Example: how code stack can be used when for a regular expresion to bring a bit of C style to PPL**
+**Example: how code stack can be used for a regular expresion to bring a bit of C style to PPL**
 
 ```
 regex >`\bfor *([^;]+); *([^;]+); *([^;]+) +do\b`i $1; WHILE $2 DO__PUSH__`\t$3;`
