@@ -91,16 +91,21 @@ END;
 
 A code stack provides a convenient way to store code snippets that can be retrieved and used later.
 
-**PPL+**
+**Example: how code stack can be used when for a regular expresion to bring a bit of C style to PPL**
+
 ```
-__PUSH__`i := i + 1;`
-local i := 8;
-__POP__
+regex @`\bfor *\(([^;]+); *([^;]+); *([^;]+)\) *do\b` $1; WHILE $2 DO__PUSH__`\t$3;`
+regex @`\bnext\b` __POP__END;
+
+for i=0; i<2; i=i+1 do
+next
 ```
-**PPL**
+
+**PPL+ Preprocessor: PPL Converstion**
+
 ```
-LOCAL i := 8;
-i := i + 1;
+i=0; WHILE i<2;
+i=i+1;END;
 ```
 
 ### Assignment Style
