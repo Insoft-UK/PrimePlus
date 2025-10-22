@@ -11,7 +11,7 @@
 
 ```
 #pragma mode( separator(.,;) integer(h64) )
-auto: displayCopyright()
+fn: displayCopyright()
 begin
   TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
 end;
@@ -29,7 +29,7 @@ BEGIN
 #END
   WAIT;
   LOCAL a: alpha = 0;
-  LOCAL _beta = 1;
+  LOCAL b: _beta = 1;
   alpha = alpha + _beta;
   RETURN a;
 END;
@@ -40,7 +40,7 @@ END;
 
 ```
 #pragma mode( separator(.,;) integer(h64) )
-fn1()
+fn()
 BEGIN
   TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
 END;
@@ -49,14 +49,14 @@ END;
 #END
 EXPORT START()
 BEGIN
-  fn1;
+  fn();
   // In PPL+ `=` is treated as `:=` were in PPL `=` is treated as `==`
   // So only PPL code in this section.
   A := B;
   WAIT;
   LOCAL a := 0;
-  LOCAL v1 := 1;
-  a := a + v1;
+  LOCAL b := 1;
+  a := a + b;
   RETURN a;
 END;
 ```
@@ -91,16 +91,29 @@ END;
 
 A code stack provides a convenient way to store code snippets that can be retrieved and used later.
 
-**PPL+**
+**Example: how code stack can be used when for a regular expresion to bring a bit of C style to PPL**
+
 ```
-__PUSH__`i := i + 1;`
-local i := 8;
-__POP__
+regex >`\bfor *([^;]+); *([^;]+); *([^;]+) +do\b`i $1; WHILE $2 DO__PUSH__`\t$3;`
+regex >`\bend;`i __POP__END;
+
+function()
+begin
+    for i=0; i<2; i=i+1 do
+        A := A+1;
+    end;
+end;
 ```
-**PPL**
+
+**PPL+ Preprocessor: PPL Converstion**
+
 ```
-LOCAL i := 8;
-i := i + 1;
+function()
+BEGIN
+  i := 0; WHILE i<2 DO
+    A := A + 1;
+  i := i + 1; END;
+END;
 ```
 
 ### Assignment Style
