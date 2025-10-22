@@ -130,6 +130,8 @@ void Regexp::resolveAllRegularExpression(std::string &str) {
                 Singleton::shared()->increaseCount();
             }
             
+            // TODO: resolve \t
+            
             Calc::evaluateMathExpression(str);
             resolveAllRegularExpression(str);
         }

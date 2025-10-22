@@ -1014,6 +1014,117 @@ std::string restoreStrings(const std::string& str, std::list<std::string>& strin
     return result;
 }
 
+
+/**
+ * @brief Extracts and preserves all backtick substrings from the input string.
+ *
+ * Handles escaped quotes (e.g., \` inside backtick text) and does not use regex.
+ *
+ * @param str The input string.
+ * @return std::list<std::string> A list of backtick substrings, including the backtick characters.
+ */
+std::list<std::string> preserveBacktick(const std::string& str) {
+    std::list<std::string> strings;
+    bool inQuotes = false;
+    std::string current;
+    
+    for (size_t i = 0; i < str.size(); ++i) {
+        char c = str[i];
+
+        if (!inQuotes) {
+            if (c == '`') {
+                inQuotes = true;
+                current.clear();
+                current += c;  // start backtick
+            }
+        } else {
+            current += c;
+
+            if (c == '`' && (i == 0 || str[i - 1] != '\\')) {
+                // End of backtick string (unescaped backtick)
+                inQuotes = false;
+                strings.push_back(current);
+            }
+        }
+    }
+
+    return strings;
+}
+
+/**
+ * @brief Replaces all backtick substrings in the input string with ``.
+ *
+ * Handles escaped quotes (e.g., \` inside strings) and does not use regex.
+ *
+ * @param str The input string to process.
+ * @return std::string A new string with backtick substrings replaced by ``.
+ */
+std::string blankOutBacktick(const std::string& str) {
+    std::string result;
+    bool inQuotes = false;
+    size_t start = 0;
+
+    for (size_t i = 0; i < str.length(); ++i) {
+        // Start of quoted string
+        if (!inQuotes && str[i] == '`') {
+            inQuotes = true;
+            result.append(str, start, i - start);  // Append text before quote
+            start = i; // mark backtick start
+        }
+        // Inside backtick string
+        else if (inQuotes && str[i] == '`' && (i == 0 || str[i - 1] != '\\')) {
+            // End of backtick string
+            inQuotes = false;
+            result += "``";  // Replace backtick string with empty backtick
+            start = i + 1;     // Next copy chunk starts after closing backtick
+        }
+    }
+
+    // Append remaining text after last backtick section
+    if (start < str.size()) {
+        result.append(str, start, str.size() - start);
+    }
+
+    return result;
+}
+
+/**
+ * @brief Restores backtick strings into a string that had them blanked out.
+ *
+ * @param str The string with blanked-out backtick substrings (e.g., ``).
+ * @param strings A list of original backtick substrings, in the order they appeared.
+ * @return std::string A new string with the original backtick substrings restored.
+ */
+std::string restoreBacktick(const std::string& str, std::list<std::string>& strings) {
+    static const std::regex re(R"(`[^`]*`)");
+
+    if (strings.empty()) return str;
+
+    std::string result;
+    std::size_t lastPos = 0;
+
+    auto stringIt = strings.begin();
+    for (auto it = std::sregex_iterator(str.begin(), str.end(), re);
+         it != std::sregex_iterator() && stringIt != strings.end(); ++it, ++stringIt)
+    {
+        const std::smatch& match = *it;
+
+        // Append the part before the match
+        result.append(str, lastPos, match.position() - lastPos);
+
+        // Append the preserved backtick string
+        result.append(*stringIt);
+
+        // Update the last position
+        lastPos = match.position() + match.length();
+    }
+
+    // Append the remaining part of the string after the last match
+    result.append(str, lastPos, std::string::npos);
+
+    return result;
+}
+
 // MARK: - PPL+ To PPL Translater...
 void reformatPPLLine(std::string& str) {
     std::regex re;
@@ -1047,7 +1158,7 @@ void reformatPPLLine(std::string& str) {
         str = regex_replace(str, re, std::string((Singleton::shared()->scopeDepth - 1) * INDENT_WIDTH, ' ') + "$1");
         
       
-        if (regex_search(str, std::regex(R"(\bEND;$)"))) {
+        if (regex_search(str, std::regex(R"(^ *END;$)"))) {
             str = regex_replace(str, std::regex(R"(;(.+))"), ";\n" + std::string((Singleton::shared()->scopeDepth - 1) * INDENT_WIDTH, ' ') + "$1");
         } else {
             str = regex_replace(str, std::regex(R"(; *(.+))"), "; $1");
@@ -1353,9 +1464,9 @@ std::string processPythonBlock(std::ifstream& infile, const std::string& input) 
             output.append(argument);
         }
         output.append(")\n");
+    } else {
+        output = "#PYTHON\n";
     }
-        
-    
 
     while(getline(infile, str)) {
         if (str.find("#END") != std::string::npos) {
@@ -1484,7 +1595,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
             if (path.parent_path().empty() && fs::exists(path) == false) {
                 path = singleton.getMainSourceDir().string() + "/" + path.filename().string();
             }
-            if (path.extension() == ".hpprgm" || path.extension() == ".prgm") {
+            if (path.extension() == ".prgm") {
                 output += embedPPLCode(path.string());
                 continue;
             }
@@ -1524,16 +1635,11 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
         auto strings = preserveStrings(input);
         input = blankOutStrings(input);
         Singleton::shared()->regexp.resolveAllRegularExpression(input);
+        input = processEscapes(input);
         input = restoreStrings(input, strings);
         
-        
-        /*
-         We need to perform pre-parsing to ensure that, in lines using subtitued
-         PPL+ keywords for likes of END, IFERR and THEN are resolved.
-         */
-        input = replaceWords(input, {"endif", "wend", "next"}, "END");
-        input = replaceWords(input, {"try"}, "IFERR");
-        input = replaceWords(input, {"catch"}, "THEN");
+        auto backtick = preserveBacktick(input);
+        input = blankOutBacktick(input);
   
         /*
          We need to perform pre-parsing to ensure that, in lines such as if
@@ -1548,6 +1654,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
         input = regex_replace(input, std::regex(R"(; *(END|UNTIL|ELSE|LOCAL|CONST)\b;)", rc::icase), ";\n$1;");
         input = regex_replace(input, std::regex(R"((.+)\bBEGIN\b)", rc::icase), "$1\nBEGIN");
         
+        input = restoreBacktick(input, backtick);
         
         std::istringstream iss;
         iss.str(input);
@@ -1704,6 +1811,10 @@ int main(int argc, char **argv) {
         }
         
         in_filename = fs::expand_tilde(argv[n]);
+        if (fs::path(in_filename).extension().empty()) in_filename += ".prgm+";
+        if (fs::path(in_filename).parent_path().empty()) {
+            in_filename.insert(0, "./");
+        }
         std::regex re(R"(.\w*$)");
     }
     
@@ -1713,16 +1824,13 @@ int main(int argc, char **argv) {
     }
     
     if (fs::path(in_filename).extension() != ".prgm+") {
-        std::cout << "Error: " << fs::path(in_filename).extension() << " file are not supported.\n";
+        std::cout << "❌ Error: " << fs::path(in_filename).extension() << " file are not supported.\n";
         return 0;
     }
     
-    if (fs::path(in_filename).parent_path().empty()) {
-        in_filename.insert(0, "./");
-    }
     
     if (!fs::exists(in_filename)) {
-        std::cout << "File " << fs::path(in_filename).filename() << " not found at " << fs::path(in_filename).parent_path() << " location.\n";
+        std::cout << "❓File " << fs::path(in_filename).filename() << " not found at " << fs::path(in_filename).parent_path() << " location.\n";
         return 0;
     }
    
