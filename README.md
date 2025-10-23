@@ -116,21 +116,21 @@ BEGIN
 END;
 ```
 
-### Implimenting Auto
-Since **regex** is so versitile the **auto** feture in PPL+ has been removed in favore of reimplimened it with **regex**
 
-Implimenting **auto**, now removed from PPL+ as it can be reimplimened with regex with support for `::`.
+### Implimenting Variable Aliases
+Since **regex** is so versitile the **alias** feture when defining variables in PPL+ has been removed in favore of reimplimened it with **regex**
+
+Implimenting **LOCAL a: aliasLongName**, now removed from PPL+ as it can be reimplimened with regex with support for `::`.
 
 ```
-regex >`\bauto\b`i v__++COUNT__
 regex >`\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
 
 test()
 begin
-    local auto: myLongName, auto: my::superlong::beta, v;
-    myLongName := myLongName + my::superlong::beta;
-    
+    local a: aliasLongName, b: long::name, v;
     alias aliasName := v;
+    
+    aliasLongName := long::name + v;
     v := aliasName + 1;
 end;
 ```
@@ -139,9 +139,35 @@ end;
 ```
 test()
 BEGIN
-  LOCAL v1, v2, v;
-  v1 := v1 + v2;
+  LOCAL a, b, v;
   
+  a := b + v;
+  v := v + 1;
+END;
+```
+
+### Implimenting Auto
+```
+regex >`\bauto\b`i v__++COUNT__
+regex >`\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
+
+test()
+begin
+    local auto: aliasLongName, b: long::name, v;
+    alias aliasName := v;
+    
+    aliasLongName := long::name + v;
+    v := aliasName + 1;
+end;
+```
+
+**PPL+ Preprocessor: PPL Converstion**
+```
+test()
+BEGIN
+  LOCAL v1, b, v;
+  
+  v1 := b + v;
   v := v + 1;
 END;
 ```
