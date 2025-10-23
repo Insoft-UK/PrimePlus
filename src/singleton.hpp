@@ -67,7 +67,6 @@ namespace pplplus {
         
         void increaseScopeDepth(const std::string &endCode = "")
         {
-            if (_scopeDepth == 0) _count = 0;
             _scopeDepth++;
         }
         
@@ -80,9 +79,20 @@ namespace pplplus {
             _scopeDepth--;
         }
         
-        void increaseCount(void)
-        {
+        void advanceCount(void) {
             _count++;
+        }
+        
+        void resetCount(void) {
+            _count = 0;
+        }
+        
+        void storeCount(void) {
+            _store = _count;
+        }
+        
+        void restoreCount(void) {
+            _count = _store;
         }
         
     private:
@@ -103,6 +113,7 @@ namespace pplplus {
         
     protected:
         long _currentline;
+        int _store = 0;
     };
 }
 

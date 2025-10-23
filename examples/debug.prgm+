@@ -1,13 +1,16 @@
 #pragma mode( separator(.,;) integer(h64) )
 
 // Implimenting the auto keyword, now removed from PPL+ as it can be reimplimened with regex.
-regex >`\bauto\b`i v__++COUNT__
+//regex >`\bauto\b`i v__ADVANCE____COUNT__
+//regex =`\bauto *(\: *[a-zA-Z]\w*(?:::[a-zA-Z]\w*)* *\()`i __ADVANCE__fn__COUNT__$1
+//regex =`\bauto\b`i p__ADVANCE____COUNT__
+//regex =`\bbegin\b` __STORE____RESET__BEGIN
+//regex =`\bend;` __RESTORE__END;
 
 // Variables, Arguments and Function Names Aliases
-regex @`\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
+//regex `\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
 
-
-fn: displayCopyright()
+App::DisplayCopyright()
 begin
   TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
 end;
@@ -17,7 +20,7 @@ end;
 
 EXPORT START()
 BEGIN
-  displayCopyright();
+  App::DisplayCopyright();
 #PPL
   // In PPL+ `=` is treated as `:=` were in PPL `=` is treated as `==`
   // So only PPL code in this section.
@@ -91,15 +94,17 @@ begin
     end;
 end;
 
-
-fnc:myFunctionName(d: delta)
+auto: too = 4;
+export auto: My::Function::Name(d: delta, auto: myArg, auto: third)
 begin
-    local auto: aliasLongName, b: long::name, v;
-    alias aliasName := v;
+    local auto: aliasLongName, b: long::name, v, auto:long;
+    alias aliasName = v;
     
-    aliasLongName := long::name + v;
-    v := aliasName + delta;
+    aliasLongName = long::name + v;
+    v = aliasName + delta * long;
+    myArg = 0;
 end;
 
-myFunctionName();
+auto: maxy = 700;
+My::Function::Name();
 

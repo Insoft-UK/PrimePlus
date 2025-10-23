@@ -55,7 +55,7 @@ bool Regexp::parse(const std::string &str) {
                 }
             }
         }
-    
+        
         if (regularExpressionExists(regexp.pattern, regexp.compare)) return true;
         
         _regexps.push_back(regexp);
@@ -83,6 +83,58 @@ void Regexp::removeAllOutOfScopeRegexps() {
     }
 }
 
+static std::string resolve(const std::string &str) {
+    std::regex re;
+    std::smatch match;
+    std::string::const_iterator it;
+    std::string output = str;
+    
+    re = R"(__SCOPE__|__LINE__|__COUNT__|__ADVANCE__|__RESET__|__STORE__|__RESTORE__)";
+    it = output.cbegin();
+    while (std::regex_search(it, output.cend(), match, re)) {
+
+        if (match.str() == "__SCOPE__") {
+            output.replace(match.position(), match.length(), std::to_string(pplplus::Singleton::shared()->scopeDepth));
+            it = output.cbegin();
+            continue;
+        }
+        
+        if (match.str() == "__COUNT__") {
+            output.replace(match.position(), match.length(), std::to_string(pplplus::Singleton::shared()->count));
+            it = output.cbegin();
+            continue;
+        }
+        
+        if (match.str() == "__LINE__") {
+            output.replace(match.position(), match.length(), std::to_string(pplplus::Singleton::shared()->currentLineNumber()));
+            it = output.cbegin();
+            continue;
+        }
+        
+        if (match.str() == "__ADVANCE__") {
+            pplplus::Singleton::shared()->advanceCount();
+        }
+        
+        if (match.str() == "__RESET__") {
+            pplplus::Singleton::shared()->resetCount();
+        }
+        
+        if (match.str() == "__STORE__") {
+            pplplus::Singleton::shared()->storeCount();
+        }
+        
+        if (match.str() == "__RESTORE__") {
+            pplplus::Singleton::shared()->restoreCount();
+        }
+        
+        // Erase only the matched portion and update the iterator correctly
+        it = output.erase(it + match.position(), it + match.position() + match.length());
+        it = output.cbegin();
+    }
+    
+    return output;
+}
+
 void Regexp::resolveAllRegularExpression(std::string &str) {
     std::smatch match;
     std::regex re;
@@ -104,34 +156,10 @@ void Regexp::resolveAllRegularExpression(std::string &str) {
         
         if (std::regex_search(str, match, re)) {
             str = regex_replace(str, re, it->replacement);
-           
-            std::string key = "__SCOPE__";
-            std::string value = std::to_string(Singleton::shared()->scopeDepth);
-
-            size_t pos;
-            while ((pos = str.find(key)) != std::string::npos) {
-                str.replace(pos, key.length(), value);
-            }
             
-            key = "__++COUNT__";
-            while ((pos = str.find(key)) != std::string::npos) {
-                Singleton::shared()->increaseCount();
-                str.replace(pos, key.length(), std::to_string(Singleton::shared()->count));
-            }
-            
-            key = "__COUNT__";
-            while ((pos = str.find(key)) != std::string::npos) {
-                str.replace(pos, key.length(), std::to_string(Singleton::shared()->count));
-            }
-            
-            key = "__COUNT++__";
-            while ((pos = str.find(key)) != std::string::npos) {
-                str.replace(pos, key.length(), std::to_string(Singleton::shared()->count));
-                Singleton::shared()->increaseCount();
-            }
-            
-            // TODO: resolve \t
-            
+            str = resolve(str);
+//            while (resolve(str)) ;
+        
             Calc::evaluateMathExpression(str);
             resolveAllRegularExpression(str);
         }
