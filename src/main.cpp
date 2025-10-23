@@ -1263,8 +1263,8 @@ std::string translatePPLPlusLine(const std::string& input) {
     
     //MARK: User Define Alias Parsing
     
-    re = R"(^alias\b *(@)?([A-Za-z_]\w*(?:::[a-zA-Z]\w*)*):=([a-zA-Z→][\w→]*(?:\.[a-zA-Z→][\w→]*)*);$)";
-    if (regex_search(output, match, re)) {
+    re = R"(\balias\b *(@)?([A-Za-z_]\w*(?:::[a-zA-Z]\w*)*):=([a-zA-Z→][\w→]*(?:\.[a-zA-Z→][\w→]*)*);)";
+    while (regex_search(output, match, re)) {
         Aliases::TIdentity identity;
         identity.identifier = match[2].str();
         identity.real = match[3].str();
@@ -1272,11 +1272,9 @@ std::string translatePPLPlusLine(const std::string& input) {
         identity.scope = match[1].matched ? 0 : Singleton::shared()->scopeDepth;
         
         Singleton::shared()->aliases.append(identity);
-        output = "";
-        return output;
+        output.replace(match.position(), match.length(), "");
     }
     
-   
     
     re = R"(\b(BEGIN|IF|FOR|CASE|REPEAT|WHILE|IFERR)\b)";
     for(auto it = sregex_iterator(output.begin(), output.end(), re); it != sregex_iterator(); ++it) {

@@ -82,3 +82,17 @@ begin
         A := A+1;
     end;
 end;
+
+// Implimenting the auto keyword, now removed from PPL+ as it can be reimplimened with regex.
+regex >`\bauto\b`i v__++COUNT__
+regex >`\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
+
+test()
+begin
+    local auto: aliasLongName, b: long::name, v;
+    alias aliasName := v;
+    
+    aliasLongName := long::name + v;
+    v := aliasName + 1;
+end;
+

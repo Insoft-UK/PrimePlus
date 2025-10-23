@@ -75,12 +75,7 @@ static void parseParameters(const std::string &str) {
     parseAliases(str, identity);
 }
 
-static void parseVariables(const std::string &str) {
-    Aliases::TIdentity identity;
-    identity.scope = Singleton::shared()->scopeDepth;
-    identity.type = Aliases::Type::Variable;
-    parseAliases(str, identity);
-}
+
 
 std::string Alias::parse(const std::string &str) {
     std::string s;
@@ -106,18 +101,6 @@ std::string Alias::parse(const std::string &str) {
             if (!matches[2].str().empty()) {
                 parseParameters(matches[2].str());
             }
-            parsed = true;
-        } else {
-            re = R"(\b[a-zA-Z]\w*:[a-zA-Z_]\w*(?:::[a-zA-Z]\w*)*\b)";
-            if (regex_search(str, re)) {
-                parseVariables(str);
-                parsed = true;
-            }
-        }
-    } else {
-        re = std::regex(R"(^ *(LOCAL|CONST) +.*)", std::regex_constants::icase);
-        if (regex_match(str, re)) {
-            parseVariables(str);
             parsed = true;
         }
     }
