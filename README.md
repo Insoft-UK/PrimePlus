@@ -117,8 +117,9 @@ END;
 ```
 
 ### Implimenting Auto
+Since **regex** is so versitile the **auto** feture in PPL+ has been removed in favore of reimplimened it with **regex**
 
-Implimenting the auto keyword, now removed from PPL+ as it can be reimplimened with regex with support for `::`.
+Implimenting **auto**, now removed from PPL+ as it can be reimplimened with regex with support for `::`.
 
 ```
 regex >`\bauto\b`i v__++COUNT__
