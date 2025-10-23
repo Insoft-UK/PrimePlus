@@ -1,4 +1,12 @@
 #pragma mode( separator(.,;) integer(h64) )
+
+// Implimenting the auto keyword, now removed from PPL+ as it can be reimplimened with regex.
+regex >`\bauto\b`i v__++COUNT__
+
+// Variables, Arguments and Function Names Aliases
+regex @`\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
+
+
 fn: displayCopyright()
 begin
   TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
@@ -83,16 +91,15 @@ begin
     end;
 end;
 
-// Implimenting the auto keyword, now removed from PPL+ as it can be reimplimened with regex.
-regex >`\bauto\b`i v__++COUNT__
-regex >`\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
 
-test()
+fnc:myFunctionName(d: delta)
 begin
     local auto: aliasLongName, b: long::name, v;
     alias aliasName := v;
     
     aliasLongName := long::name + v;
-    v := aliasName + 1;
+    v := aliasName + delta;
 end;
+
+myFunctionName();
 

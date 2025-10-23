@@ -56,7 +56,7 @@ bool Regexp::parse(const std::string &str) {
             }
         }
     
-        if (regularExpressionExists(regexp.pattern)) return true;
+        if (regularExpressionExists(regexp.pattern, regexp.compare)) return true;
         
         _regexps.push_back(regexp);
         if (verbose) std::cout
@@ -138,9 +138,9 @@ void Regexp::resolveAllRegularExpression(std::string &str) {
     }
 }
 
-bool Regexp::regularExpressionExists(const std::string &pattern) {
+bool Regexp::regularExpressionExists(const std::string &pattern, const std::string &compare) {
     for (auto it = _regexps.begin(); it != _regexps.end(); ++it) {
-        if (it->pattern == pattern) {
+        if (it->pattern == pattern && it->compare == compare) {
             std::cout
             << MessageType::Warning
             << "regular expresion already defined. previous definition at " << basename(it->pathname) << ":" << it->line << "\n";

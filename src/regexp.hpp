@@ -50,7 +50,7 @@ namespace pplplus {
         
     private:
         std::vector<TRegexp> _regexps;
-        bool regularExpressionExists(const std::string &pattern);
+        bool regularExpressionExists(const std::string &pattern, const std::string &compare);
     };
 }
 
