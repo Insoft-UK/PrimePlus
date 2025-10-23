@@ -118,7 +118,7 @@ END;
 
 
 ### Implimenting Variable Aliases
-Since **regex** is so versitile the **alias** feture when defining variables in PPL+ has been removed in favore of reimplimened it with **regex**
+Since **regex** is so versitile, the **variable alias** feture when defining variables in PPL+ has been removed in favore of reimplimened it with **regex**
 
 Implimenting **LOCAL a: aliasLongName**, now removed from PPL+ as it can be reimplimened with regex with support for `::`.
 
