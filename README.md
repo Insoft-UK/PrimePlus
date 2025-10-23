@@ -123,7 +123,7 @@ Since **regex** is so versitile, the **variable alias** feture when defining var
 Implimenting **LOCAL a: aliasLongName**, now removed from PPL+ as it can be reimplimened with regex with support for `::`.
 
 ```
-regex >`\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
+regex >`\b([a-zA-Z]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
 
 test()
 begin
@@ -149,7 +149,7 @@ END;
 ### Implimenting Auto
 ```
 regex >`\bauto\b`i v__++COUNT__
-regex >`\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
+regex >`\b([a-zA-Z]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
 
 test()
 begin
