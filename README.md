@@ -116,6 +116,35 @@ BEGIN
 END;
 ```
 
+### Implimenting Auto
+
+Implimenting the auto keyword, now removed from PPL+ as it can be reimplimened with regex with support for `::`.
+
+```
+regex >`\bauto\b`i v__++COUNT__
+regex >`\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
+
+test()
+begin
+    local auto: myLongName, auto: my::superlong::beta, v;
+    myLongName := myLongName + my::superlong::beta;
+    
+    alias aliasName := v;
+    v := aliasName + 1;
+end;
+```
+
+**PPL+ Preprocessor: PPL Converstion**
+```
+test()
+BEGIN
+  LOCAL v1, v2, v;
+  v1 := v1 + v2;
+  
+  v := v + 1;
+END;
+```
+
 ### Assignment Style
 
 In <b>PPL+</b>, the = operator is treated as := (assignment) by default, whereas in standard <b>PPL</b>, = is interpreted as == (equality). This behavior in PPL+ can be explicitly controlled using the directive:
