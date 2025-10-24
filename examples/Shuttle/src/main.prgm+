@@ -7,8 +7,11 @@
 // Converted to P+ by Richie Hughes <developer@insoft.uk>
 // http://calc.fjk.ch
 
-Data := {
-  -2, 1, 1155, 879, 1123, 906, 
+regex `\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
+regex >`\bauto\b`i v__ADVANCE____COUNT__
+
+sd: Shuttle::Data := {
+  -2, 1, 1155, 879, 1123, 906,
   -2, 2, 2005, 2, 2005, 58, 
   -2, 3, 1899, 489, 1936, 92, 
   -2, 2, 2166, 519, 2076, 582, 
@@ -950,7 +953,7 @@ Data := {
   0
 };
 
-local GetPenColor(Pen)
+local gpc: Shuttle::GetPenColor(Pen)
 begin
   local C := RGB(0, 0, 0);
   case
@@ -965,9 +968,9 @@ begin
   return C;
 end;
 
-local GetPt(I)
+local gpt: Shuttle::GetPoint(I)
 begin
-  return { Data(I) / 9.375, Data(I+1) / 9.375 };
+  return { Shuttle::Data(I) / 9.375, Data(I+1) / 9.375 };
 end;
 
 export SHUTTLE()
@@ -978,23 +981,23 @@ begin
   RECT_P(Color);
   
   I := 1;
-  N := Data(I);
+  N := Shuttle::Data(I);
   
   while N <> 0 do
     I := I+1;
     
     if N < 0 then
       N := -N;
-      Color := GetPenColor(Data(I));
+      Color := Shuttle::GetPenColor(Data(I));
       I := I+1;
     end;
     
     if N > 0 then
-      Pt1 := GetPt(I);
+      Pt1 := Shuttle::GetPoint(I);
       I := I+2;
       N := N-1;
       while N > 0 do
-        Pt2 := GetPt(I);
+        Pt2 := Shuttle::GetPoint(I);
         I := I+2;
         N := N-1;
         LINE_P(Pt1(1), Pt1(2), Pt2(1), Pt2(2), Color);
@@ -1002,9 +1005,10 @@ begin
       end;
     end;
     
-    N := Data(I);
+    N := Shuttle::Data(I);
   end;
   
   repeat until ISKEYDOWN(4);
   return 0;
 end;
+

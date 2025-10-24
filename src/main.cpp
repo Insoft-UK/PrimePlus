@@ -1514,6 +1514,9 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
                 Singleton::shared()->incrementLineNumber();
                 if (s.empty()) break;
             }
+        } else {
+            Singleton::shared()->incrementLineNumber();
+            continue;
         }
         
         input = removeTripleSlashComment(input);

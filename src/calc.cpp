@@ -404,8 +404,8 @@ std::string Calc::parse(const std::string& str) {
             if (match.str(4) == "o") {
                 ss << std::oct;
             }
-            
             ss << (int)result << ":" << match.str(2) << match.str(3) << match.str(4);
+            
             s = ss.str();
         } else {
             ss << std::fixed << std::setprecision(scale > -1 ? scale : 10) << result;

@@ -270,12 +270,12 @@ std::string Preprocessor::parse(const std::string& str) {
         return "";
     }
     
-    if (regex_search(str, std::regex(R"(#end(if)?\b)"))) {
+    if (regex_search(str, std::regex(R"(^ *#end(if)?\b)"))) {
         disregard = false;
         return "";
     }
     
-    if (regex_search(str, std::regex(R"(# *[a-zA-Z]+\b)"))) {
+    if (regex_search(str, std::regex(R"(^ *# *[a-zA-Z]+\b)"))) {
         return "";
     }
 

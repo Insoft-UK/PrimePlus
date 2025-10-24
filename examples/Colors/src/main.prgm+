@@ -22,26 +22,40 @@
 // SOFTWARE.
 #endif
 
-#pragma mode( separator(.,;) integer(h64) )
-#include <pplang>
-#include <cplang>
-#include <hp>
-#include <dictionary>
+#pragma mode( separator(.,;) integer(h64) indentation(2) operators(▶) )
 
 #define HUE G2
 #define BLACK_TO_TRANSPARENT_OVERLAY G3
 #define TRANSPARENT_TO_WHITE_OVERLAY G4
 #define ROUND G1
 
+#define Event key, type[1], x[2], y[3], dx[4], dy[5]
+#define Size width[1], height[2]
+
+dict White := #FFFFFF:32h, Silver := #C0C0C0:32h, Gray := #808080:32h, Black := #000000:32h, Red := #FF0000:32h, Magenta := #FF00FF:32h, Cardinal := #D03020:32h, Coral := #F08070:32h, Pink := #FFC0C0:32h, Indigo := #400080:32h, Purple := #800080:32h, Violet := #8000FF:32h, Lavender := #C0C0FF:32h, NavyBlue := #000080:32h, Blue := #0000FF:32h, Denim := #1060C0:32h, Lochmara := #0070C0:32h, SkyBlue := #80D0FF:32h, PacificBlue := #00A0C0:32h, Teal := #008080:32h, Cyan := #00FFFF:32h, Aqua := #00FFFF:32h, FirGreen := #003000:32h, OfficeGreen := #008000:32h, Shamrock := #00A060:32h, Apple := #50B040:32h, LimeGreen := #00FF00:32h, Chocolate := #400808:32h, Brown := #905000:32h, Orange := #FF8000:32h, Olive := #808000:32h, Tangerine := #FFD000:32h, Yellow := #FFFF00:32h, Khaki := #F0E090:32h, Tan := #D0B090:32h, Maroon := #800000:32h, SnowWhite := #FFF0F0:32h, Clear := #FF000000:32h @Color;
+    Color.White
 dict Percentage = 0, Decimal = 1 UnitType;
 dict HSV = 0, HSL = 1 ColorSpace;
+dict System := 0, Bin := 1, Oct := 2, Dec := 3, Hex := 4 @Base;
+dict MouseDown := 0, MouseMove := 1, MouseUp := 2, MouseClick := 3, MouseStretch := 5, MouseRotate := 6, MouseLongClick := 7 @EventType;
+dict Apps := 0, Symb := 1, Up := 2, Help := 3, Esc := 4, Home := 5, Plot := 6, Left := 7, Right := 8, View := 9, Cas := 10, Num := 11, Down := 12, Menu := 13, Vars := 14, Mem := 15, Unit := 16, Xttn := 17, Abc := 18, Bksp := 19, Power := 20, Sin := 21, Cos := 22, Tan := 23, Ln := 24, Log := 25, Sq := 26, Neg := 27, N := 28, Comma := 29, Enter := 30, Eex := 31, 7 := 32, 8 := 33, 9 := 34, Div := 35, Alpha := 36, 4 := 37, 5 := 38, 6 := 39, Mult := 40, Shift := 41, 1 := 42, 2 := 43, 3 := 44, Minus := 45, On := 46, 0 := 47, Dot := 48, Space := 49, Plus := 50 @KeyCode;
 
-channel: colorsChannel = 0;
 
-colorsH := 0, colorsS := 100, colorsV := 100;
-colorsR := 255, colorsG := 0, colorsB := 0;
-colorsUT: colorsUnitType := UnitType.Decimal;
-colorsCS: colorsColorSpace := ColorSpace.HSV;
+regex `\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
+regex >`\bauto\b`i v__ADVANCE____COUNT__
+regex @`\bhp::isKeyPressed *\(([\w.:]+)\)` IFTE(SIZE($1)==1,1,0)
+regex @`\bhp::isMouseEvent *\(([\w.:]+)\)` IFTE(SIZE($1)>1,1,0)
+regex @`\bhp::screen::clear *\((.*)?\)` RECT($1)
+regex @`&{2}` AND
+regex @`\b([a-zA-Z_]\w*) *([*\/+-])\= *` $1 := $1 $2
+regex @`\(([^?]+)\?(.+):(.+)\)` IFTE($1, $2, $3)
+
+chl: colorsChannel = 0;
+
+cH: colorsH := 0, cS: colorsS := 100, cV: colorsV := 100;
+cR: colorsR := 255, cG: colorsG := 0, cB: colorsB := 0;
+cUT: colorsUnitType := UnitType.Decimal;
+cCS: colorsColorSpace := ColorSpace.HSV;
 
 HEX(d:decimal)
 begin
@@ -60,9 +74,9 @@ begin
     TEXTOUT_P(string, G9, atX - size.width / 2, ofY, fontSize, Color.White);
 end;
 
-Colors::Setup()
+Setup: Colors::Setup()
 begin
-    local n, data;
+    local n, auto: data;
     DIMGROB_P(G9, 320, 240, 0);
     
     RECT(Color.Black);
@@ -88,7 +102,7 @@ begin
     DIMGROB_P(TRANSPARENT_TO_WHITE_OVERLAY, 256, 1, data);
 end;
 
-Colors::DrawMenu()
+DrawMenu: Colors::DrawMenu()
 begin
     /// 0-51, 53-104, (106-157, 159-210), 212-263, 265-319
     RECT_P(G9, 0, 220, 51, 239, #666666:32h);
@@ -116,7 +130,7 @@ begin
     end;
 end;
 
-Colors::DrawHue(h)
+DrawHue: Colors::DrawHue(h)
 begin
     BLIT_P(G9, 10, 148, 310, 168, HUE);
     
@@ -138,7 +152,7 @@ begin
     RECT_P(G9, X-2, Y-2, X+1, Y+1, Color.White, Color.Clear);
 end;
 
-Colors::Update()
+Update: Colors::Update()
 begin
     RECT(G9,#222222:32h);
 
@@ -146,7 +160,7 @@ begin
     Colors::DrawHue(colorsH);
     Colors::DrawSV(colorsH, colorsS, colorsV);
     
-    // Color Picked
+    /// Color Picked
     RECT_P(G9, 154, 10, 309, 42, HSV(colorsH, colorsS, colorsV));
     
     local hsl, rgb, cmyk, hex;
@@ -240,7 +254,7 @@ begin
     BLIT_P(__SCREEN, G9);
 end;
 
-Colors::UpdateRGB()
+UpdateRGB: Colors::UpdateRGB()
 begin
     local rgb;
     rgb = HSVtoRGB(colorsH, colorsS, colorsV);
@@ -249,9 +263,9 @@ begin
     colorsB = rgb[3];
 end;
 
-Colors::DoMenu()
+DoMenu: Colors::DoMenu()
 begin
-    local menu = (Y<220? 0: IP(X / (320/6)+0.025) + 1);
+    local auto: menu = (Y<220? 0: IP(X / (320/6)+0.025) + 1);
     case
         if menu == 1 then
             colorsUnitType = UnitType.Percentage;
@@ -283,8 +297,9 @@ begin
     end;
 end;
 
-Colors::AdjRGB(delta)
+AdjRGB: Colors::AdjRGB(d)
 begin
+    alias delta := d;
     case
         if colorsChannel == 1 then
             colorsR = colorsR + delta;
@@ -302,7 +317,7 @@ begin
         end;
     end;
     
-    // Update HSV values.
+    /// Update HSV values.
     local hsv;
     hsv = RGBtoHSV(colorsR, colorsG, colorsB);
     colorsH = hsv[1];
@@ -310,7 +325,7 @@ begin
     colorsV = hsv[3];
 end;
 
-Colors::AdjHue(d: delta)
+AdjH: Colors::AdjHue(d: delta)
 begin
     colorsH = colorsH + delta;
     colorsH = IP(MIN(MAX(colorsH, 0), 360));
@@ -318,30 +333,32 @@ begin
     Colors::UpdateRGB;
 end;
 
-Colors::AdjSaturation(d: delta)
+AdjS: Colors::AdjSaturation(d)
 begin
+    alias delta := d;
     colorsS = colorsS + delta;
     colorsS = IP(MIN(MAX(colorsS, 0), 100));
     
     Colors::UpdateRGB;
 end;
 
-Colors::AdjBrightness(d:delta)
+AdjB: Colors::AdjBrightness(d)
 begin
+    alias delta := d;
     colorsV = colorsV + delta;
     colorsV = IP(MIN(MAX(colorsV, 0), 100));
     
     Colors::UpdateRGB;
 end;
 
-Colors::Loop()
+Loop: Colors::Loop()
 begin
-    local focus = "";
+    local auto: focus = "";
 
     while 1 do
         Colors::Update();
 
-        local event = WAIT(-1);
+        local auto: event = WAIT(-1);
         dict Event event;
         if hp::isKeyPressed(event) then
             focus = "";
