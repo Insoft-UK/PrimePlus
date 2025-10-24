@@ -65,8 +65,8 @@ namespace pplplus {
         void pushPath(const std::filesystem::path &path);
         void popPath(void);
         
-        void increaseScopeDepth(const std::string &endCode = "")
-        {
+        void increaseScopeDepth(const std::string &endCode = "") {
+            if (_scopeDepth == 0) _count = 0;
             _scopeDepth++;
         }
         
