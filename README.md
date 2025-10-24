@@ -11,7 +11,7 @@
 
 ```
 #pragma mode( separator(.,;) integer(h64) )
-fn: displayCopyright()
+fn1: App::DisplayCopyright()
 begin
   TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
 end;
@@ -21,7 +21,7 @@ end;
 
 EXPORT START()
 BEGIN
-  displayCopyright();
+  App::DisplayCopyright();
 #PPL
   // In PPL+ `=` is treated as `:=` were in PPL `=` is treated as `==`
   // So only PPL code in this section.
@@ -29,8 +29,8 @@ BEGIN
 #END
   WAIT;
   LOCAL a: alpha = 0;
-  LOCAL b: _beta = 1;
-  alpha = alpha + _beta;
+  LOCAL b: beta = 1;
+  alpha = alpha + beta;
   RETURN a;
 END;
 ```
@@ -40,7 +40,7 @@ END;
 
 ```
 #pragma mode( separator(.,;) integer(h64) )
-fn()
+fn1()
 BEGIN
   TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
 END;
@@ -49,7 +49,7 @@ END;
 #END
 EXPORT START()
 BEGIN
-  fn();
+  fn1();
   // In PPL+ `=` is treated as `:=` were in PPL `=` is treated as `==`
   // So only PPL code in this section.
   A := B;
@@ -117,59 +117,33 @@ END;
 ```
 
 
-### Implimenting Variable Aliases
-Since **regex** is so versitile, the **variable alias** feture when defining variables in PPL+ has been removed in favore of reimplimened it with **regex**
-
-Implimenting **LOCAL a: aliasLongName**, now removed from PPL+ as it can be reimplimened with regex with support for `::`.
-
+### Implimenting Variable Aliases and Auto
 ```
-regex >`\b([a-zA-Z]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
+regex >`\bauto\b`i v__ADVANCE____COUNT__
+regex `\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
 
-test()
+function: My::Function()
 begin
-    local a: aliasLongName, b: long::name, v;
-    alias aliasName := v;
-    
-    aliasLongName := long::name + v;
-    v := aliasName + 1;
+    var auto: i, a: Alpha;
+    for i=0; i<2; i=i+1 do
+        Alpha := Alpha+1;
+    end;
 end;
+
+My::Function();
 ```
 
 **PPL+ Preprocessor: PPL Converstion**
 ```
-test()
+function()
 BEGIN
-  LOCAL a, b, v;
-  
-  a := b + v;
-  v := v + 1;
+  LOCAL v1, a;
+  v1 := 0; WHILE v1<2 DO
+    a := a + 1;
+  v1 := v1 + 1; END;
 END;
-```
 
-### Implimenting Auto
-```
-regex >`\bauto\b`i v__++COUNT__
-regex >`\b([a-zA-Z]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
-
-test()
-begin
-    local auto: aliasLongName, b: long::name, v;
-    alias aliasName := v;
-    
-    aliasLongName := long::name + v;
-    v := aliasName + 1;
-end;
-```
-
-**PPL+ Preprocessor: PPL Converstion**
-```
-test()
-BEGIN
-  LOCAL v1, b, v;
-  
-  v1 := b + v;
-  v := v + 1;
-END;
+function();
 ```
 
 ### Assignment Style
