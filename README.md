@@ -7,60 +7,6 @@
 <b>PPL+</b> is a preprocessor command line tool designed to improve code maintainability and readability in the HP Prime Programming Language (PPL). PPL+ also allows one to define regular expressions to assist in the preprocessing workflow. The final output is a compact, optimized PPL program file tailored to the HP Prime’s limited storage capacity.
 <br/><br/>
 
-**PPL+**
-
-```
-#pragma mode( separator(.,;) integer(h64) )
-fn1: App::DisplayCopyright()
-begin
-  TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
-end;
-
-#PYTHON
-#END
-
-EXPORT START()
-BEGIN
-  App::DisplayCopyright();
-#PPL
-  // In PPL+ `=` is treated as `:=` were in PPL `=` is treated as `==`
-  // So only PPL code in this section.
-  A := B;
-#END
-  WAIT;
-  LOCAL a: alpha = 0;
-  LOCAL b: beta = 1;
-  alpha = alpha + beta;
-  RETURN a;
-END;
-```
-
-
-**PPL**
-
-```
-#pragma mode( separator(.,;) integer(h64) )
-fn1()
-BEGIN
-  TEXTOUT_P("Copyright (c) 2023-2025 Insoft. All rights reserved.", 0, 0);
-END;
-
-#PYTHON
-#END
-EXPORT START()
-BEGIN
-  fn1();
-  // In PPL+ `=` is treated as `:=` were in PPL `=` is treated as `==`
-  // So only PPL code in this section.
-  A := B;
-  WAIT;
-  LOCAL a := 0;
-  LOCAL b := 1;
-  a := a + b;
-  RETURN a;
-END;
-```
-
 ### Regular Expressions
 **Example: Extending PPL with Switch-Case Functionality Using Regex**
 
