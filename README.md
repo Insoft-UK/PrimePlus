@@ -78,7 +78,7 @@ begin
     end;
     
 end;
-auto: anotherGlobal := 9;
+auto: anotherGlobal := 2;
 
 My::Function();
 ```
