@@ -83,13 +83,28 @@ void Regexp::removeAllOutOfScopeRegexps() {
     }
 }
 
+/*
+ * Custom parser macros:
+ *
+ *  __COUNTER__  – Substituted with the current running counter value.
+ *                The counter increments each time this token is processed.
+ *
+ *  __LINE__   – Replaced with the current line number being parsed.
+ *                Useful for debugging or generated code tracking.
+ *
+ *  __RESET__  – Resets the internal counter to zero and removes itself
+ *                from the output (produces a blank value).
+ *
+ * These macros are handled by the parser during preprocessing and are not
+ * part of standard C++ preprocessor behavior.
+ */
 static std::string resolve(const std::string &str) {
     std::regex re;
     std::smatch match;
     std::string::const_iterator it;
     std::string output = str;
     
-    re = R"(__SCOPE__|__LINE__|__COUNT__|__ADVANCE__|__RESET__|__STORE__|__RESTORE__)";
+    re = R"(__SCOPE__|__LINE__|__COUNTER__|__RESET__)";
     it = output.cbegin();
     while (std::regex_search(it, output.cend(), match, re)) {
 
@@ -99,8 +114,9 @@ static std::string resolve(const std::string &str) {
             continue;
         }
         
-        if (match.str() == "__COUNT__") {
+        if (match.str() == "__COUNTER__") {
             output.replace(match.position(), match.length(), std::to_string(pplplus::Singleton::shared()->count));
+            pplplus::Singleton::shared()->advanceCount();
             it = output.cbegin();
             continue;
         }
@@ -111,20 +127,9 @@ static std::string resolve(const std::string &str) {
             continue;
         }
         
-        if (match.str() == "__ADVANCE__") {
-            pplplus::Singleton::shared()->advanceCount();
-        }
         
         if (match.str() == "__RESET__") {
             pplplus::Singleton::shared()->resetCount();
-        }
-        
-        if (match.str() == "__STORE__") {
-            pplplus::Singleton::shared()->storeCount();
-        }
-        
-        if (match.str() == "__RESTORE__") {
-            pplplus::Singleton::shared()->restoreCount();
         }
         
         // Erase only the matched portion and update the iterator correctly
@@ -135,9 +140,11 @@ static std::string resolve(const std::string &str) {
     return output;
 }
 
-void Regexp::resolveAllRegularExpression(std::string &str) {
+void Regexp::resolveAllRegularExpression(std::string &str, const size_t index) {
     std::smatch match;
     std::regex re;
+    
+    // index is used to prevent the function from entering a recursive loop.
     
     for (auto it = _regexps.begin(); it != _regexps.end(); ++it) {
         if (!it->compare.empty()) {
@@ -155,13 +162,18 @@ void Regexp::resolveAllRegularExpression(std::string &str) {
             re = std::regex(it->pattern);
         
         if (std::regex_search(str, match, re)) {
-            str = regex_replace(str, re, it->replacement);
+            size_t i = std::distance(_regexps.begin(), it);
             
+            // If the function encounters the same index again, it means recursion is repeating.
+            // Reset prev_index and exit to stop an infinite recursive loop.
+            if (index == i) {
+                return;
+            }
+            str = regex_replace(str, re, it->replacement);
             str = resolve(str);
-//            while (resolve(str)) ;
-        
             Calc::evaluateMathExpression(str);
-            resolveAllRegularExpression(str);
+            
+            resolveAllRegularExpression(str, i);
         }
     }
 }

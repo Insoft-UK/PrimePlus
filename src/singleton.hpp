@@ -66,7 +66,10 @@ namespace pplplus {
         void popPath(void);
         
         void increaseScopeDepth(const std::string &endCode = "") {
-            if (_scopeDepth == 0) _count = 0;
+            if (_scopeDepth == 0) {
+                _store = _count;
+                _count = 0;
+            }
             _scopeDepth++;
         }
         
@@ -76,7 +79,11 @@ namespace pplplus {
                 std::cout << "Error: Unexpected '" << "END; at line:" << _currentline << "'\n";
                 return;
             }
+            if (_scopeDepth == 1) {
+                _count = _store;
+            }
             _scopeDepth--;
+            
         }
         
         void advanceCount(void) {
@@ -86,14 +93,7 @@ namespace pplplus {
         void resetCount(void) {
             _count = 0;
         }
-        
-        void storeCount(void) {
-            _store = _count;
-        }
-        
-        void restoreCount(void) {
-            _count = _store;
-        }
+
         
     private:
         std::vector<std::filesystem::path> _paths;

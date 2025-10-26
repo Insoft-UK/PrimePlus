@@ -7,8 +7,9 @@
 // Converted to P+ by Richie Hughes <developer@insoft.uk>
 // http://calc.fjk.ch
 
+regex >`\bauto\b`i v\`__COUNTER__+1`
+regex =`^ *\bauto *: *([a-z]\w*)` g\`__COUNTER__+1`:$1
 regex `\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
-regex >`\bauto\b`i v__ADVANCE____COUNT__
 
 sd: Shuttle::Data := {
   -2, 1, 1155, 879, 1123, 906,

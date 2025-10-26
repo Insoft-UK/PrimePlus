@@ -67,3 +67,4 @@ begin
     MAD::Draw;
     WAIT;
 end;
+

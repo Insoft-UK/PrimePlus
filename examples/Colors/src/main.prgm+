@@ -41,8 +41,9 @@ dict MouseDown := 0, MouseMove := 1, MouseUp := 2, MouseClick := 3, MouseStretch
 dict Apps := 0, Symb := 1, Up := 2, Help := 3, Esc := 4, Home := 5, Plot := 6, Left := 7, Right := 8, View := 9, Cas := 10, Num := 11, Down := 12, Menu := 13, Vars := 14, Mem := 15, Unit := 16, Xttn := 17, Abc := 18, Bksp := 19, Power := 20, Sin := 21, Cos := 22, Tan := 23, Ln := 24, Log := 25, Sq := 26, Neg := 27, N := 28, Comma := 29, Enter := 30, Eex := 31, 7 := 32, 8 := 33, 9 := 34, Div := 35, Alpha := 36, 4 := 37, 5 := 38, 6 := 39, Mult := 40, Shift := 41, 1 := 42, 2 := 43, 3 := 44, Minus := 45, On := 46, 0 := 47, Dot := 48, Space := 49, Plus := 50 @KeyCode;
 
 
+regex >`\bauto\b`i v\`__COUNTER__+1`
+regex =`^ *\bauto *: *([a-z]\w*)` g\`__COUNTER__+1`:$1
 regex `\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
-regex >`\bauto\b`i v__ADVANCE____COUNT__
 regex @`\bhp::isKeyPressed *\(([\w.:]+)\)` IFTE(SIZE($1)==1,1,0)
 regex @`\bhp::isMouseEvent *\(([\w.:]+)\)` IFTE(SIZE($1)>1,1,0)
 regex @`\bhp::screen::clear *\((.*)?\)` RECT($1)

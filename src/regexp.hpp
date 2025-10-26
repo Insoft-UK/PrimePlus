@@ -45,7 +45,7 @@ namespace pplplus {
         
         bool parse(const std::string &str);
         void removeAllOutOfScopeRegexps(void);
-        void resolveAllRegularExpression(std::string &str);
+        void resolveAllRegularExpression(std::string &str, const size_t index = -1);
         
         
     private:
