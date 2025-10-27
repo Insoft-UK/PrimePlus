@@ -125,7 +125,7 @@ namespace std::filesystem {
 // MARK: - Other
 
 void terminator() {
-    std::cout << MessageType::CriticalError << "An internal pre-processing problem occurred. Please review the syntax before this point.\n";
+    std::cerr << MessageType::CriticalError << "An internal pre-processing problem occurred. Please review the syntax before this point.\n";
     exit(0);
 }
 void (*old_terminate)() = std::set_terminate(terminator);
@@ -1149,7 +1149,7 @@ void reformatPPLLine(std::string& str) {
             }
         }
         catch (...) {
-            std::cout << MessageType::CriticalError << "'" << str << "'\n";
+            std::cerr << MessageType::CriticalError << "'" << str << "'\n";
             exit(0);
         }
         
@@ -1320,7 +1320,7 @@ void loadRegexLib(const fs::path path, const bool verbose) {
         return;
     }
     
-    if (verbose) std::cout << "Library " << (path.filename() == ".base.re" ? "base" : path.stem()) << " successfully loaded.\n";
+    if (verbose) std::cerr << "Library " << (path.filename() == ".base.re" ? "base" : path.stem()) << " successfully loaded.\n";
     
     while (getline(infile, utf8)) {
         utf8.insert(0, "regex ");
@@ -1554,7 +1554,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
             for(auto it = sregex_iterator(s.begin(), s.end(), re); it != sregex_iterator(); ++it) {
                 if (it->str(1) == "assignment") {
                     if (it->str(2) != ":=" && it->str(2) != "=") {
-                        std::cout << MessageType::Warning << "#pragma mode: for '" << it->str() << "' invalid.\n";
+                        std::cerr << MessageType::Warning << "#pragma mode: for '" << it->str() << "' invalid.\n";
                     }
                     if (it->str(2) == ":=") assignment = ":=";
                     if (it->str(2) == "=") assignment = "=";
@@ -1589,7 +1589,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
                 continue;
             }
             if (!(fs::exists(path))) {
-                std::cout << MessageType::Verbose << path.filename() << " file not found\n";
+                std::cerr << MessageType::Verbose << path.filename() << " file not found\n";
             } else {
                 output += translatePPLPlusToPPL(path.string());
             }
@@ -1609,7 +1609,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
                 }
             }
             if (!(fs::exists(path))) {
-                std::cout << MessageType::Verbose << path.filename() << " file not found\n";
+                std::cerr << MessageType::Verbose << path.filename() << " file not found\n";
             } else {
                 output += translatePPLPlusToPPL(path.string());
             }
@@ -1668,7 +1668,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
 // MARK: - Command Line
 void version(void) {
     using namespace std;
-    std::cout
+    std::cerr
     << "Copyright (C) 2023-" << YEAR << " Insoft.\n"
     << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << VERSION_CODE << ")\n"
     << "Built on: " << DATE << "\n"
@@ -1677,13 +1677,13 @@ void version(void) {
 }
 
 void error(void) {
-    std::cout << COMMAND_NAME << ": try '" << COMMAND_NAME << " --help' for more information\n";
+    std::cerr << COMMAND_NAME << ": try '" << COMMAND_NAME << " --help' for more information\n";
     exit(0);
 }
 
 void info(void) {
     using namespace std;
-    std::cout
+    std::cerr
     << "          ***********     \n"
     << "        ************      \n"
     << "      ************        \n"
@@ -1704,7 +1704,7 @@ void info(void) {
 
 void help(void) {
     using namespace std;
-    std::cout
+    std::cerr
     << "Copyright (C) 2023-" << YEAR << " Insoft.\n"
     << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << VERSION_CODE << ")\n"
     << "\n"
@@ -1813,13 +1813,13 @@ int main(int argc, char **argv) {
     }
     
     if (fs::path(in_filename).extension() != ".prgm+") {
-        std::cout << "❌ Error: " << fs::path(in_filename).extension() << " file are not supported.\n";
+        std::cerr << "❌ Error: " << fs::path(in_filename).extension() << " file are not supported.\n";
         return 0;
     }
     
     
     if (!fs::exists(in_filename)) {
-        std::cout << "❓File " << fs::path(in_filename).filename() << " not found at " << fs::path(in_filename).parent_path() << " location.\n";
+        std::cerr << "❓File " << fs::path(in_filename).filename() << " not found at " << fs::path(in_filename).parent_path() << " location.\n";
         return 0;
     }
    
@@ -1828,6 +1828,7 @@ int main(int argc, char **argv) {
         out_filename = in_filename;
         out_filename = fs::path(out_filename).replace_extension(".prgm");
     }
+    
     if (out_filename == "/dev/stdout") {
         Singleton::shared()->aliases.verbose = false;
         preprocessor.verbose = false;
@@ -1851,9 +1852,9 @@ int main(int argc, char **argv) {
         if (fs::path(out_filename).parent_path().empty()) {
             out_filename = fs::path(in_filename).parent_path().string() + "/" + out_filename;
         }
-        
-        info();
     }
+    
+    info();
     
     // Start measuring time
     Timer timer;
@@ -1874,20 +1875,17 @@ int main(int argc, char **argv) {
     
     std::string output = translatePPLPlusToPPL(in_filename);
     
-    if (out_filename == "/dev/stdout") {
-        std::cout << output;
-        return 0;
-    }
+   
+    utf::BOM bom = (out_filename == "/dev/stdout") ? utf::BOMnone : utf::BOMle;
+    
     std::wstring wstr = utf::utf16(output);
-    if (!utf::save(out_filename, wstr)) {
-        std::cout << "❌ Unable to create file " << fs::path(out_filename).filename() << ".\n";
+    if (!utf::save(out_filename, wstr, bom)) {
+        std::cerr << "❌ Unable to create file " << fs::path(out_filename).filename() << ".\n";
         return 0;
     }
     
     if (hasErrors() == true) {
-        std::cout << "🛑 ERRORS!" << "\n";
-        remove(out_filename.c_str());
-        return 0;
+        std::cerr << "🛑 ERRORS!" << "\n";
     }
     
     // Stop measuring time and calculate the elapsed time.
@@ -1895,15 +1893,17 @@ int main(int argc, char **argv) {
     
     // Display elasps time in secononds.
     if (elapsed_time / 1e9 < 1.0) {
-        std::cout << "Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e6 << " milliseconds\n";
+        std::cerr << "✅ Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e6 << " milliseconds\n";
     } else {
-        std::cout << "Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e9 << " seconds\n";
+        std::cerr << "✅ Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e9 << " seconds\n";
     }
-    std::cout << "✅ File ";
-    if (showpath)
-        std::cout << "at \"" << out_filename << "\" succefuly created.\n";
-    else
-        std::cout << fs::path(out_filename).filename() << " succefuly created.\n";
-            
+    
+    if (out_filename != "/dev/stdout") {
+        std::cerr << "✅ File ";
+        if (showpath)
+            std::cerr << "at \"" << out_filename << "\" succefuly created.\n";
+        else
+            std::cerr << fs::path(out_filename).filename() << " succefuly created.\n";
+    }
     return 0;
 }

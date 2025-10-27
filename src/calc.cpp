@@ -64,7 +64,7 @@ static double applyOperator(const double a, const double b, const char op) {
         case '*': return a * b;
         case '/':
             if (b == 0) {
-                std::cout << MessageType::Error << "#[]: division by zero\n";
+                std::cerr << MessageType::Error << "#[]: division by zero\n";
                 return 0;
             }
             return a / b;
@@ -72,7 +72,7 @@ static double applyOperator(const double a, const double b, const char op) {
         case '^': return pow(a, b);
             
         default:
-            std::cout << MessageType::Error << "#[]: unknown '" << op << "' operator\n";
+            std::cerr << MessageType::Error << "#[]: unknown '" << op << "' operator\n";
             return 0;
     }
 }
@@ -128,7 +128,7 @@ static std::vector<std::string> infixToPostfix(const std::string& expression) {
                 operators.pop();
             }
             if (operators.empty()) {
-                std::cout << MessageType::Error << "#[]: missing '(' in expression '" << expression << "'\n";
+                std::cerr << MessageType::Error << "#[]: missing '(' in expression '" << expression << "'\n";
                 continue;
             }
                 
@@ -136,7 +136,7 @@ static std::vector<std::string> infixToPostfix(const std::string& expression) {
             continue;
         }
         
-        std::cout << MessageType::Error << "#[]: uknown '" << result << "' in expression '" << expression << "'\n";
+        std::cerr << MessageType::Error << "#[]: uknown '" << result << "' in expression '" << expression << "'\n";
     }
 
     while (!operators.empty()) {
@@ -145,14 +145,14 @@ static std::vector<std::string> infixToPostfix(const std::string& expression) {
     }
     
     if (_verbose) {
-        std::cout << MessageType::Verbose << "calc: RPN: ";
+        std::cerr << MessageType::Verbose << "calc: RPN: ";
         for (auto it = output.begin(); it != output.end(); ) {
-            std::cout << *it;
+            std::cerr << *it;
             if (++it != output.end()) {
-                std::cout << ",";
+                std::cerr << ",";
             }
         }
-        std::cout << "\n";
+        std::cerr << "\n";
     }
 
     return output;

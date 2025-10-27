@@ -41,28 +41,27 @@ std::ostream &operator<<(std::ostream &os, MessageType type) {
     Singleton *singlenton = Singleton::shared();
 
     if (!singlenton->currentSourceFilePath().empty()) {
-        os << ANSI::Blue << singlenton->currentSourceFilePath().filename().string() << ANSI::Default << ":" << ANSI::Bold;
-        os << singlenton->currentLineNumber() << ANSI::Default << " ";
+        os << "📄 " << singlenton->currentSourceFilePath().filename().string() << ":";
+        os << singlenton->currentLineNumber() << " ";
     }
-
 
     switch (type) {
         case MessageType::Error:
-            os << ANSI::Red << "error" << ANSI::Default << ": ";
+            os << "❌ error: ";
             _failed = true;
             break;
             
         case MessageType::CriticalError:
-            os << ANSI::Bold << ANSI::Red << "critical error" << ANSI::Default << ": ";
+            os << "🛑 critical error: ";
             _failed = true;
             break;
 
         case MessageType::Warning:
-            os << ANSI::Yellow << "warning" << ANSI::Default << ": ";
+            os << "⚠️ warning: ";
             break;
             
         case MessageType::Deprecated:
-            os << ANSI::Blue << "deprecated" << ANSI::Default << ": ";
+            os << "🪦 deprecated: ";
             break;
 
         default:

@@ -180,14 +180,14 @@ bool Aliases::append(const TIdentity &idty) {
     if (identifierExists(identity.identifier)) {
         for (const auto &it : _identities) {
             if (it.identifier == identity.identifier) {
-                std::cout
+                std::cerr
                 << MessageType::Warning
-                << "redefinition of: " << ANSI::Bold << identity.identifier << ANSI::Default << ", ";
+                << "redefinition of: " << identity.identifier << ", ";
                 if (filename == it.path.filename()) {
-                    std::cout << "previous definition on line " << it.line << "\n";
+                    std::cerr << "previous definition on line " << it.line << "\n";
                 }
                 else {
-                    std::cout << "previous definition in " << ANSI::Green << it.path.filename() << ANSI::Default << " on line " << it.line << "\n";
+                    std::cerr << "previous definition in " << it.path.filename() << " on line " << it.line << "\n";
                 }
                 break;
             }
@@ -200,18 +200,18 @@ bool Aliases::append(const TIdentity &idty) {
     // Resort in descending order
     std::sort(_identities.begin(), _identities.end(), compareInterval);
     
-    if (verbose) std::cout
+    if (verbose) std::cerr
         << MessageType::Verbose
         << "defined "
-        << (identity.scope > 0 ? ANSI::Default + ANSI::Bold + "local" + ANSI::Default + " " : "")
+        << (identity.scope > 0 ? "local " : "")
         << (Type::Unknown == identity.type ? "alias " : "")
         << (Type::Macro == identity.type ? "macro " : "")
         << (Type::Alias == identity.type ? "alias " : "")
         << (Type::Function == identity.type ? "function alias " : "")
         << (Type::Argument == identity.type ? "argument alias " : "")
         << (Type::Variable == identity.type ? "variable alias" : "")
-        << "'" << ANSI::Green << identity.identifier << ANSI::Default << "' "
-        << (identity.real.empty() ? "\n" : (identity.type == Type::Macro ? "as '" : "for '") + ANSI::Green + identity.real + ANSI::Default + "'\n");
+        << "'" << identity.identifier << "' "
+        << (identity.real.empty() ? "\n" : (identity.type == Type::Macro ? "as '" : "for '") + identity.real + "'\n");
     
     return true;
 }
@@ -219,16 +219,16 @@ bool Aliases::append(const TIdentity &idty) {
 void Aliases::removeAllOutOfScopeAliases() {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if (it->scope > Singleton::shared()->scopeDepth) {
-            if (verbose) std::cout
+            if (verbose) std::cerr
                 << MessageType::Verbose
-                << "removed " << ANSI::Default << ANSI::Bold << "local" << ANSI::Default << " "
+                << "removed " << "local" << " "
                 << (Type::Unknown == it->type ? "alias " : "")
                 << (Type::Macro == it->type ? "macro " : "")
                 << (Type::Alias == it->type ? "alias " : "")
                 << (Type::Function == it->type ? "function alias " : "")
                 << (Type::Argument == it->type ? "argument alias " : "")
                 << (Type::Variable == it->type ? "variable alias " : "")
-                << "'" << ANSI::Green << it->identifier << ANSI::Default << "'\n";
+                << "'" << it->identifier << "'\n";
             _identities.erase(it);
             removeAllOutOfScopeAliases();
             break;
@@ -239,16 +239,16 @@ void Aliases::removeAllOutOfScopeAliases() {
 void Aliases::removeAllAliasesOfType(const Type type) {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if (it->type == type) {
-            if (verbose) std::cout
+            if (verbose) std::cerr
                 << MessageType::Verbose
-                << "removed " << ANSI::Default << ANSI::Bold << "local" << ANSI::Default << " "
+                << "removed " << "local" << " "
                 << (Type::Unknown == it->type ? "alias " : "")
                 << (Type::Macro == it->type ? "macro " : "")
                 << (Type::Alias == it->type ? "alias " : "")
                 << (Type::Function == it->type ? "function alias " : "")
                 << (Type::Argument == it->type ? "argument alias " : "")
                 << (Type::Variable == it->type ? "variable alias " : "")
-                << "'" << ANSI::Green << it->identifier << ANSI::Default << "'\n";
+                << "'" << it->identifier << "'\n";
             _identities.erase(it);
             removeAllAliasesOfType(type);
             break;
@@ -276,7 +276,7 @@ static std::string resolveMacroFunction(const std::string &str, const std::strin
         size_t i = 0;
         for (auto it = std::sregex_iterator(parameters.begin(), parameters.end(), re); it != std::sregex_iterator(); ++it, ++i) {
             if (arguments.empty()) {
-                std::cout << MessageType::Error << ANSI::Red << "macro parameters mismatched" << ANSI::Default << '\n';
+                std::cerr << MessageType::Error << "macro parameters mismatched" << '\n';
                 break;
             }
             
@@ -324,7 +324,7 @@ std::string Aliases::resolveAllAliasesInText(const std::string &str) {
                 re = R"(\b)" + namespaces + "?" + it->identifier + R"(\([^()]*\))";
             }
             while (regex_search(s, match, re)) {
-                if (it->deprecated) std::cout << MessageType::Deprecated << it->identifier << it->message << "\n";
+                if (it->deprecated) std::cerr << MessageType::Deprecated << it->identifier << it->message << "\n";
                 std::string result = resolveMacroFunction(match.str(), it->parameters, it->identifier, it->real);
                 s.replace(match.position(), match.length(), result);
             }
@@ -350,17 +350,17 @@ std::string Aliases::resolveAllAliasesInText(const std::string &str) {
 void Aliases::remove(const std::string &identifier) {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
         if (it->identifier == identifier) {
-            if (verbose) std::cout
+            if (verbose) std::cerr
                 << MessageType::Verbose
                 << "removed "
-                << (it->scope > 0 ? ANSI::Default + ANSI::Bold + "local " + ANSI::Default : "")
+                << (it->scope > 0 ? "local " : "")
                 << (Type::Unknown == it->type ? "alias " : "")
                 << (Type::Macro == it->type ? "macro " : "")
                 << (Type::Alias == it->type ? "alias " : "")
                 << (Type::Function == it->type ? "function alias " : "")
                 << (Type::Argument == it->type ? "argument alias " : "")
                 << (Type::Variable == it->type ? "variable alias " : "")
-                << "'" << ANSI::Green << it->identifier << ANSI::Default << "'\n";
+                << "'" << it->identifier << "'\n";
             
             _identities.erase(it);
             break;
@@ -392,7 +392,7 @@ bool Aliases::realExists(const std::string &real) {
 
 void Aliases::dumpIdentities() {
     for (auto it = _identities.begin(); it != _identities.end(); ++it) {
-        if (verbose) std::cout << "_identities : " << it->identifier << " = " << it->real << "\n";
+        if (verbose) std::cerr << "_identities : " << it->identifier << " = " << it->real << "\n";
     }
 }
 

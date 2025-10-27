@@ -49,29 +49,6 @@ enum class MessageType {
 };
 
 
-namespace ANSI {
-#ifdef DEBUG
-    const std::string Default = "";
-    const std::string Bold = "";
-    const std::string Green = "";
-    const std::string Red = "";
-    const std::string Orange = "";
-    const std::string Yellow = "";
-    const std::string Purpel = "";
-    const std::string Blue = "";
-#else
-    const std::string Default = "\e[0;m";
-    const std::string Bold = "\e[1m";
-    const std::string Green = "\e[38;5;34m";
-    const std::string Red = "\e[38;5;160m";
-    const std::string Orange = "\e[38;5;208m";
-    const std::string Yellow = "\e[38;5;220m";
-    const std::string Purpel = "\e[38;5;125m";
-    const std::string Blue = "\e[38;5;38m";
-#endif
-};
-
-
 bool hasErrors(void);
 std::ostream &operator<<(std::ostream &os, MessageType type);
 

@@ -199,7 +199,7 @@ std::string Preprocessor::parse(const std::string& str) {
             identity.real = _singleton->aliases.resolveAllAliasesInText(identity.real);
             identity.real = Calc::evaluateMathExpression(identity.real);
             
-            if (verbose) std::cout << MessageType::Verbose << "#define '" << identity.identifier << (identity.real.empty() ? "" : "' as '" + identity.real + "'") << "'\n";
+            if (verbose) std::cerr << MessageType::Verbose << "#define '" << identity.identifier << (identity.real.empty() ? "" : "' as '" + identity.real + "'") << "'\n";
             _singleton->aliases.append(identity);
             return "";
         }
@@ -211,7 +211,7 @@ std::string Preprocessor::parse(const std::string& str) {
          */
         re = R"(^ *#undef +([A-Za-z_][\w]*) *$)";
         if (std::regex_search(str, match, re)) {
-            if (verbose) std::cout << MessageType::Verbose << "#undef '" << *it << "'\n";
+            if (verbose) std::cerr << MessageType::Verbose << "#undef '" << *it << "'\n";
             _singleton->aliases.remove(match[1].str());
             return "";
         }
@@ -226,7 +226,7 @@ std::string Preprocessor::parse(const std::string& str) {
         re = R"(^ *#ifdef +([A-Za-z_]\w*) *$)";
         if (std::regex_search(str, match, re)) {
             identity.identifier = match[1].str();
-            if (verbose) std::cout << MessageType::Verbose << "#ifdef '" << identity.identifier << "' result was " << (!disregard ? "true" : "false") << '\n';
+            if (verbose) std::cerr << MessageType::Verbose << "#ifdef '" << identity.identifier << "' result was " << (!disregard ? "true" : "false") << '\n';
             disregard = !_singleton->aliases.identifierExists(identity.identifier);
             return "";
         }
@@ -240,7 +240,7 @@ std::string Preprocessor::parse(const std::string& str) {
         if (std::regex_search(str, match, re)) {
             identity.identifier = match[1].str();
             
-            if (verbose) std::cout << MessageType::Verbose << "#ifndef '" << identity.identifier << "' result was " << (!disregard ? "true" : "false") << '\n';
+            if (verbose) std::cerr << MessageType::Verbose << "#ifndef '" << identity.identifier << "' result was " << (!disregard ? "true" : "false") << '\n';
             disregard = _singleton->aliases.identifierExists(identity.identifier);
             return "";
         }
