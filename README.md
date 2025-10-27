@@ -65,31 +65,37 @@ END;
 
 ### Implimenting Variable Aliases and Auto
 ```
-regex >`\bauto\b`i v__ADVANCE____COUNT__
+regex >`\bauto\b`i v__COUNTER__
+regex =`^ *\bauto *: *([a-z]\w*)` g__COUNTER__:$1
 regex `\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
 
-function: My::Function()
+auto : myGlobal := 1;
+fnc1: My::Function(p1: argumentOne)
 begin
     var auto: i, a: Alpha;
     for i=0; i<2; i=i+1 do
-        Alpha := Alpha+1;
+        Alpha := Alpha + 1 * myGlobal * argumentOne;
     end;
+    
 end;
+auto: anotherGlobal := 2;
 
 My::Function();
 ```
 
 **PPL+ Preprocessor: PPL Converstion**
 ```
-function()
+g0 := 1;
+fnc1(p1)
 BEGIN
-  LOCAL v1, a;
-  v1 := 0; WHILE v1<2 DO
-    a := a + 1;
-  v1 := v1 + 1; END;
+  var v0, a;
+  v0 := 0; WHILE v0<2 DO
+    a := a + 1 * g0 * p1;
+  v0 := v0 + 1; END;
 END;
 
-function();
+g1 := 2;
+fnc1();
 ```
 
 ### Assignment Style
