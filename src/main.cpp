@@ -1670,7 +1670,7 @@ void version(void) {
     using namespace std;
     std::cerr
     << "Copyright (C) 2023-" << YEAR << " Insoft.\n"
-    << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << VERSION_CODE << ")\n"
+    << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << BUNDLE_VERSION << ")\n"
     << "Built on: " << DATE << "\n"
     << "Licence: MIT License\n\n"
     << "For more information, visit: http://www.insoft.uk\n";
@@ -1706,7 +1706,7 @@ void help(void) {
     using namespace std;
     std::cerr
     << "Copyright (C) 2023-" << YEAR << " Insoft.\n"
-    << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << VERSION_CODE << ")\n"
+    << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << BUNDLE_VERSION << ")\n"
     << "\n"
     << "Usage: " << COMMAND_NAME << " <input-file> [-o <output-file>] [-v <flags>]\n"
     << "\n"
@@ -1854,7 +1854,7 @@ int main(int argc, char **argv) {
         }
     }
     
-    info();
+    if (in_filename != "/dev/stdout") info();
     
     // Start measuring time
     Timer timer;

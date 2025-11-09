@@ -6,3 +6,4 @@ version.txt
 .DS_Store
 build
 make
+*.pkg

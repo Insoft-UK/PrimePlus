@@ -24,14 +24,6 @@
 
 #include "utf.hpp"
 
-std::string utf::to_utf8(const std::wstring& wstr) {
-    return utf8(wstr);
-}
-
-std::wstring utf::to_utf16(const std::string& str) {
-    return utf16(str);
-}
-
 std::string utf::utf8(const std::wstring& wstr) {
     std::string utf8;
     uint16_t utf16 = 0;
@@ -56,6 +48,7 @@ std::string utf::utf8(const std::wstring& wstr) {
 
     return utf8;
 }
+
 
 std::wstring utf::utf16(const std::string& str) {
     std::wstring utf16;
@@ -97,6 +90,7 @@ std::wstring utf::utf16(const std::string& str) {
     return utf16;
 }
 
+
 static uint16_t convertUTF8ToUTF16(const char* str) {
     uint8_t *utf8 = (uint8_t *)str;
     uint16_t utf16 = *utf8;
@@ -120,6 +114,7 @@ static uint16_t convertUTF8ToUTF16(const char* str) {
     
     return utf16;
 }
+
 
 std::wstring utf::read(std::ifstream& is, BOM bom) {
     std::wstring wstr;
@@ -174,22 +169,6 @@ std::wstring utf::load(const std::string& filepath, BOM bom) {
 }
 
 
-std::wstring utf::read_as_utf16(std::ifstream& is) {
-    return read(is, BOMnone);
-}
-
-std::wstring utf::read_utf16(std::ifstream& is) {
-    return read(is);
-}
-
-std::wstring utf::load_utf16(const std::string& filepath) {
-    return load(filepath, BOMle);
-}
-
-size_t utf::write_utf8(std::ofstream& os, const std::string& str) {
-    return write(os, str);
-}
-
 size_t utf::write(std::ofstream& os, const std::string& str) {
     if (str.empty()) return 0;
 
@@ -197,26 +176,6 @@ size_t utf::write(std::ofstream& os, const std::string& str) {
     return os.tellp();
 }
 
-bool utf::save_as_utf8(const std::string& filepath, const std::string& str) {
-    std::ofstream os;
-    
-    os.open(filepath, std::ios::out | std::ios::binary);
-    if(!os.is_open()) return false;
-    
-    write_utf8(os, str);
-    
-    os.close();
-    return true;
-}
-
-size_t utf::write_as_utf16(std::ofstream& os, const std::string& str) {
-    std::wstring wstr = to_utf16(str);
-    return write(os, wstr, BOMnone);
-}
-
-size_t utf::write_utf16(std::ofstream& os, const std::wstring& wstr) {
-    return write(os, wstr);
-}
 
 size_t utf::write(std::ofstream& os, const std::wstring& wstr, BOM bom) {
     if (wstr.empty()) return 0;
@@ -264,11 +223,6 @@ size_t utf::write(std::ofstream& os, const std::wstring& wstr, BOM bom) {
     return size;
 }
 
-bool utf::save_as_utf16(const std::string& filepath, const std::string& str) {
-    std::wstring wstr = to_utf16(str);
-    return save(filepath, wstr);
-}
-
 bool utf::save(const std::string& filepath, const std::string& str) {
     std::ofstream os;
     
@@ -280,6 +234,7 @@ bool utf::save(const std::string& filepath, const std::string& str) {
     os.close();
     return true;
 }
+
 
 bool utf::save(const std::string& filepath, const std::wstring& wstr, BOM bom) {
     std::ofstream os;

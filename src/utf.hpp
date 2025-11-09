@@ -36,36 +36,6 @@ namespace utf {
         BOMnone
     };
     
-    [[deprecated("Use utf8 instead")]]
-    std::string to_utf8(const std::wstring& wstr);
-    
-    [[deprecated("Use utf16 instead")]]
-    std::wstring to_utf16(const std::string& str);
-    
-    [[deprecated]]
-    std::wstring read_as_utf16(std::ifstream& is);
-    
-    [[deprecated("Use read instead")]]
-    std::wstring read_utf16(std::ifstream& is);
-    
-    [[deprecated("Use load instead")]]
-    std::wstring load_utf16(const std::string& filepath);
-    
-    [[deprecated("Use write instead")]]
-    size_t write_utf8(std::ofstream& os, const std::string& str);
-    
-    [[deprecated("Use save instead")]]
-    bool save_as_utf8(const std::string& filepath, const std::string& str);
-    
-    [[deprecated("Use write instead")]]
-    size_t write_as_utf16(std::ofstream& os, const std::string& str);
-    
-    [[deprecated("Use write instead")]]
-    size_t write_utf16(std::ofstream& os, const std::wstring& wstr);
-    
-    [[deprecated("Use save instead")]]
-    bool save_as_utf16(const std::string& filepath, const std::string& str);
-    
     std::string utf8(const std::wstring& wstr);
     std::wstring utf16(const std::string& str);
     std::wstring read(std::ifstream& is, BOM bom = BOMle);
