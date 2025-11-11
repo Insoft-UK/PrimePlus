@@ -32,7 +32,6 @@
 #include <vector>
 #include <iterator>
 #include <cstdlib>
-#include <iconv.h>
 #include <unordered_set>
 
 #include "timer.hpp"
@@ -76,8 +75,8 @@ static std::vector<std::string> operators = { ":=", "==", "▶", "≥", "≤", "
 // MARK: - Extensions
 
 namespace std::filesystem {
-    std::string expand_tilde(const std::string& path) {
-        if (!path.empty() && path.starts_with("~")) {
+    std::filesystem::path expand_tilde(const std::filesystem::path& path) {
+        if (!path.empty() && path.string().starts_with("~")) {
 #ifdef _WIN32
             const char* home = std::getenv("USERPROFILE");
 #else
@@ -85,7 +84,7 @@ namespace std::filesystem {
 #endif
             
             if (home) {
-                return std::string(home) + path.substr(1);  // Replace '~' with $HOME
+                return std::filesystem::path(std::string(home) + path.string().substr(1));  // Replace '~' with $HOME
             }
         }
         return path;  // return as-is if no tilde or no HOME
@@ -1330,9 +1329,9 @@ void loadRegexLib(const fs::path path, const bool verbose) {
     infile.close();
 }
 
-void loadRegexLibs(const std::string path, const bool verbose) {
+void loadRegexLibs(const std::filesystem::path& path, const bool verbose) {
     if (path.empty()) return;
-    loadRegexLib(path + "/base.re", verbose);
+    loadRegexLib(path / "base.re", verbose);
     
     try {
         for (const auto& entry : fs::directory_iterator(path)) {
@@ -1346,16 +1345,15 @@ void loadRegexLibs(const std::string path, const bool verbose) {
     }
 }
 
-std::string embedPPLCode(const std::string& filepath) {
+std::string embedPPLCode(const std::filesystem::path& path) {
     std::ifstream is;
     std::string str;
     
-    fs::path path = filepath;
-    is.open(filepath, std::ios::in);
+    is.open(path, std::ios::in);
     if (!is.is_open()) return str;
     
     if (path.extension() == ".prgm") {
-        std::wstring wstr = utf::load(filepath);
+        std::wstring wstr = utf::load(path);
         
         if (!wstr.empty()) {
             str = utf::utf8(wstr);
@@ -1728,8 +1726,7 @@ void help(void) {
 
 // MARK: - Main
 int main(int argc, char **argv) {
-    
-    std::string in_filename, out_filename;
+    fs::path inpath, outpath;
     
     if (argc == 1) {
         error();
@@ -1746,20 +1743,14 @@ int main(int argc, char **argv) {
         args = argv[n];
         
         if (args == "-o") {
-            if ( n + 1 >= argc ) {
+            if ( ++n >= argc ) {
                 error();
-                exit(101);
+                exit(0);
             }
-            if (out_filename == "-") out_filename = "/dev/stdout";
-            if (out_filename == "/dev/stdout") {
-                n++;
-                continue;
-            }
-            out_filename = fs::expand_tilde(argv[n + 1]);
-            n++;
+            outpath = fs::path(argv[n]);
+            outpath = fs::expand_tilde(outpath);
             continue;
         }
-        
     
         if ( args == "--help" ) {
             help();
@@ -1799,62 +1790,53 @@ int main(int argc, char **argv) {
             continue;
         }
         
-        in_filename = fs::expand_tilde(argv[n]);
-        if (fs::path(in_filename).extension().empty()) in_filename += ".prgm+";
-        if (fs::path(in_filename).parent_path().empty()) {
-            in_filename.insert(0, "./");
-        }
+        inpath = fs::path(argv[n]);
+        inpath = fs::expand_tilde(inpath);
+        if (inpath.extension().empty()) inpath.replace_extension("prgm+");
+        if (inpath.parent_path().empty()) inpath = fs::path("./") / inpath;
+       
         std::regex re(R"(.\w*$)");
     }
     
-    if (in_filename.empty()) {
+    if (inpath.empty()) {
         error();
         return 0;
     }
     
-    if (fs::path(in_filename).extension() != ".prgm+") {
-        std::cerr << "❌ Error: " << fs::path(in_filename).extension() << " file are not supported.\n";
+    if (inpath.extension() != ".prgm+") {
+        std::cerr << "❌ Error: " << inpath.extension() << " file are not supported.\n";
         return 0;
     }
     
     
-    if (!fs::exists(in_filename)) {
-        std::cerr << "❓File " << fs::path(in_filename).filename() << " not found at " << fs::path(in_filename).parent_path() << " location.\n";
+    if (!fs::exists(inpath)) {
+        std::cerr << "❓File " << inpath.filename() << " not found at " << inpath.parent_path() << " location.\n";
         return 0;
     }
    
-    if (out_filename.empty()) {
+    if (outpath.empty()) {
         // User did not specify specify an output filename, use the input filename with a .prgm extension.
-        out_filename = in_filename;
-        out_filename = fs::path(out_filename).replace_extension(".prgm");
+        outpath = inpath.replace_extension(".prgm");
     }
     
-    if (out_filename == "/dev/stdout") {
+    if (outpath == "/dev/stdout") {
         Singleton::shared()->aliases.verbose = false;
         preprocessor.verbose = false;
         Singleton::shared()->regexp.verbose = false;
         verbose = false;
     } else {
-        if (fs::is_directory(out_filename)) {
+        if (fs::is_directory(outpath)) {
             /* User did not specify specify an output filename but has specified a path, so append
              with the input filename and subtitute the extension with .prgm
              */
-            out_filename = fs::path(out_filename).append(fs::path(in_filename).stem().string() + ".prgm");
+            outpath = outpath / (inpath.stem().string() + ".prgm");
         }
         
-        
-        if (fs::path(out_filename).extension().empty()) {
-            out_filename += ".prgm"; // Default extension if none given.
-        } else if (fs::path(out_filename).extension() != ".prgm") {
-            out_filename = fs::path(out_filename).replace_extension(".prgm");
-        }
-        
-        if (fs::path(out_filename).parent_path().empty()) {
-            out_filename = fs::path(in_filename).parent_path().string() + "/" + out_filename;
-        }
+        if (outpath.extension().empty() || outpath.extension() != ".prgm") outpath.replace_extension("prgm");
+        if (outpath.parent_path().empty()) outpath = inpath.parent_path() / outpath;
     }
     
-    if (in_filename != "/dev/stdout") info();
+    if (outpath != "/dev/stdout") info();
     
     // Start measuring time
     Timer timer;
@@ -1873,14 +1855,14 @@ int main(int argc, char **argv) {
     str = R"(#define __NUMERIC_BUILD )" + std::to_string(NUMERIC_BUILD);
     preprocessor.parse(str);
     
-    std::string output = translatePPLPlusToPPL(in_filename);
+    std::string output = translatePPLPlusToPPL(inpath);
     
    
-    utf::BOM bom = (out_filename == "/dev/stdout") ? utf::BOMnone : utf::BOMle;
+    utf::BOM bom = (outpath == "/dev/stdout") ? utf::BOMnone : utf::BOMle;
     
     std::wstring wstr = utf::utf16(output);
-    if (!utf::save(out_filename, wstr, bom)) {
-        std::cerr << "❌ Unable to create file " << fs::path(out_filename).filename() << ".\n";
+    if (!utf::save(outpath, wstr, bom)) {
+        std::cerr << "❌ Unable to create file " << outpath.filename() << ".\n";
         return 0;
     }
     
@@ -1898,12 +1880,12 @@ int main(int argc, char **argv) {
         std::cerr << "✅ Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e9 << " seconds\n";
     }
     
-    if (out_filename != "/dev/stdout") {
+    if (outpath != "/dev/stdout") {
         std::cerr << "✅ File ";
         if (showpath)
-            std::cerr << "at \"" << out_filename << "\" succefuly created.\n";
+            std::cerr << "at \"" << outpath << "\" succefuly created.\n";
         else
-            std::cerr << fs::path(out_filename).filename() << " succefuly created.\n";
+            std::cerr << outpath.filename() << " succefuly created.\n";
     }
     return 0;
 }

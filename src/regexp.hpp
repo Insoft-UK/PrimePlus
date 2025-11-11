@@ -26,6 +26,7 @@
 #include <iostream>
 #include <vector>
 #include <regex>
+#include <filesystem>
 
 namespace pplplus {
     class Regexp {
@@ -40,7 +41,7 @@ namespace pplplus {
             std::string compare;
             
             long line;              // line that definition accoured;
-            std::string pathname;   // path and filename that definition accoured
+            std::filesystem::path path;   // path and filename that definition accoured
         } TRegexp;
         
         bool parse(const std::string &str);

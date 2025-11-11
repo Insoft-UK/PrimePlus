@@ -155,11 +155,11 @@ std::wstring utf::read(std::ifstream& is, BOM bom) {
     return wstr;
 }
 
-std::wstring utf::load(const std::string& filepath, BOM bom) {
+std::wstring utf::load(const std::filesystem::path& path, BOM bom) {
     std::wstring wstr;
     std::ifstream is;
     
-    is.open(filepath, std::ios::in | std::ios::binary);
+    is.open(path, std::ios::in | std::ios::binary);
     if(!is.is_open()) return wstr;
 
     wstr = read(is, bom);
@@ -223,10 +223,11 @@ size_t utf::write(std::ofstream& os, const std::wstring& wstr, BOM bom) {
     return size;
 }
 
-bool utf::save(const std::string& filepath, const std::string& str) {
+
+bool utf::save(const std::filesystem::path& path, const std::string& str) {
     std::ofstream os;
     
-    os.open(filepath, std::ios::out | std::ios::binary);
+    os.open(path, std::ios::out | std::ios::binary);
     if(!os.is_open()) return false;
     
     write(os, str);
@@ -235,11 +236,10 @@ bool utf::save(const std::string& filepath, const std::string& str) {
     return true;
 }
 
-
-bool utf::save(const std::string& filepath, const std::wstring& wstr, BOM bom) {
+bool utf::save(const std::filesystem::path& path, const std::wstring& wstr, BOM bom) {
     std::ofstream os;
     
-    os.open(filepath, std::ios::out | std::ios::binary);
+    os.open(path, std::ios::out | std::ios::binary);
     if(!os.is_open()) return false;
     
     write(os, wstr, bom);

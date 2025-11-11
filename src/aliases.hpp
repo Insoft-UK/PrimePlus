@@ -29,6 +29,7 @@
 #include <vector>
 #include <stdint.h>
 #include <fstream>
+#include <filesystem>
 
 namespace pplplus {
     class Aliases {
@@ -42,18 +43,12 @@ namespace pplplus {
             Variable
         };
         
-//        enum class Scope {
-//            Auto   = 0,
-//            Global = 1,
-//            Local  = 2
-//        };
-        
+
         typedef struct TIdentity {
             std::string identifier;
             std::string real;
             std::string parameters; // used by macros
             Type type;
-//            Scope scope;
             int scope;
             long line;              // line that definition accoured;
             std::filesystem::path path;   // path and filename that definition accoured

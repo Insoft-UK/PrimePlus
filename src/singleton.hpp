@@ -26,6 +26,8 @@
 
 #include <iostream>
 #include <vector>
+#include <filesystem>
+
 #include "aliases.hpp"
 #include "auto.hpp"
 #include "common.hpp"

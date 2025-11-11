@@ -31,11 +31,12 @@
 #include <vector>
 #include <ostream>
 #include <fstream>
+#include <filesystem>
 
 #include "singleton.hpp"
 
 
-#define basename(path)  path.substr(path.find_last_of("/") + 1)
+//#define basename(path)  path.string().substr(path.string().find_last_of("/") + 1)
 
 
 

@@ -27,6 +27,19 @@
 
 using pplplus::Regexp;
 
+/*
+ typedef struct TRegexp {
+     std::string pattern;
+     std::string replacement;
+     bool insensitive;
+     size_t scopeLevel;
+     std::string compare;
+     
+     long line;              // line that definition accoured;
+     std::string pathname;   // path and filename that definition accoured
+ } TRegexp;
+ */
+
 bool Regexp::parse(const std::string &str) {
     std::regex re;
     std::smatch match;
@@ -35,11 +48,11 @@ bool Regexp::parse(const std::string &str) {
     if (regex_search(str, match, re)) {
         TRegexp regexp = {
             .pattern = match[2].str(),
-            .insensitive = match[3].matched,
             .replacement = match[4].str(),
+            .insensitive = match[3].matched,
             .scopeLevel = static_cast<size_t>(Singleton::shared()->scopeDepth),
             .line = Singleton::shared()->currentLineNumber(),
-            .pathname = Singleton::shared()->currentSourceFilePath()
+            .path = Singleton::shared()->currentSourceFilePath()
         };
         
         if (match[1].matched) {
@@ -183,7 +196,7 @@ bool Regexp::regularExpressionExists(const std::string &pattern, const std::stri
         if (it->pattern == pattern && it->compare == compare) {
             std::cerr
             << MessageType::Warning
-            << "regular expresion already defined. previous definition at " << basename(it->pathname) << ":" << it->line << "\n";
+            << "regular expresion already defined. previous definition at " << it->path.filename() << ":" << it->line << "\n";
             return true;
         }
     }

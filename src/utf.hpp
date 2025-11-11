@@ -28,6 +28,7 @@
 #include <sstream>
 #include <fstream>
 #include <cstdlib>
+#include <filesystem>
 
 namespace utf {
     enum BOM {
@@ -39,11 +40,11 @@ namespace utf {
     std::string utf8(const std::wstring& wstr);
     std::wstring utf16(const std::string& str);
     std::wstring read(std::ifstream& is, BOM bom = BOMle);
-    std::wstring load(const std::string& filepath, BOM bom = BOMle);
+    std::wstring load(const std::filesystem::path& path, BOM bom = BOMle);
     size_t write(std::ofstream& os, const std::string& str);
     size_t write(std::ofstream& os, const std::wstring& wstr, BOM bom = BOMle);
-    bool save(const std::string& filepath, const std::string& str);
-    bool save(const std::string& filepath, const std::wstring& wstr, BOM bom = BOMle);
+    bool save(const std::filesystem::path& path, const std::string& str);
+    bool save(const std::filesystem::path& path, const std::wstring& wstr, BOM bom = BOMle);
 };
 
 #endif /* utf_hpp */
