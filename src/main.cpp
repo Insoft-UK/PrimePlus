@@ -1706,11 +1706,11 @@ void help(void) {
     << "Copyright (C) 2023-" << YEAR << " Insoft.\n"
     << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << BUNDLE_VERSION << ")\n"
     << "\n"
-    << "Usage: " << COMMAND_NAME << " <input-file> [-o <output-file>] [-v <flags>]\n"
+    << "Usage: " << COMMAND_NAME << " <input-file> [-o <output-file>] [-v=<flags>]\n"
     << "\n"
     << "Options:\n"
     << "  -o <output-file>        Specify the filename for generated PPL code.\n"
-    << "  -v                      Display detailed processing information.\n"
+    << "  -v=<flags>              Display detailed processing information.\n"
     << "\n"
     << "  Verbose Flags:\n"
     << "     a                    Aliases\n"
@@ -1734,7 +1734,6 @@ int main(int argc, char **argv) {
     }
     
     bool verbose = false;
-    bool showpath = false;
     
     
     std::string args(argv[0]);
@@ -1785,17 +1784,11 @@ int main(int argc, char **argv) {
             continue;
         }
         
-        if (args == "--path") {
-            showpath = true;
-            continue;
-        }
         
         inpath = fs::path(argv[n]);
         inpath = fs::expand_tilde(inpath);
         if (inpath.extension().empty()) inpath.replace_extension("prgm+");
         if (inpath.parent_path().empty()) inpath = fs::path("./") / inpath;
-       
-        std::regex re(R"(.\w*$)");
     }
     
     if (inpath.empty()) {
@@ -1857,14 +1850,15 @@ int main(int argc, char **argv) {
     
     std::string output = translatePPLPlusToPPL(inpath);
     
-   
-    utf::BOM bom = (outpath == "/dev/stdout") ? utf::BOMnone : utf::BOMle;
     
-    std::wstring wstr = utf::utf16(output);
-    if (!utf::save(outpath, wstr, bom)) {
+    if (outpath == "/dev/stdout") {
+        std::cout << output;
+    } else if (!utf::save(outpath, utf::utf16(output), utf::BOMle)) {
         std::cerr << "❌ Unable to create file " << outpath.filename() << ".\n";
         return 0;
     }
+    
+    
     
     if (hasErrors() == true) {
         std::cerr << "🛑 ERRORS!" << "\n";
@@ -1875,17 +1869,13 @@ int main(int argc, char **argv) {
     
     // Display elasps time in secononds.
     if (elapsed_time / 1e9 < 1.0) {
-        std::cerr << "✅ Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e6 << " milliseconds\n";
+        std::cerr << "📣 Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e6 << " milliseconds\n";
     } else {
-        std::cerr << "✅ Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e9 << " seconds\n";
+        std::cerr << "📣 Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e9 << " seconds\n";
     }
     
-    if (outpath != "/dev/stdout") {
-        std::cerr << "✅ File ";
-        if (showpath)
-            std::cerr << "at \"" << outpath << "\" succefuly created.\n";
-        else
-            std::cerr << outpath.filename() << " succefuly created.\n";
-    }
+    if (outpath != "/dev/stdout")
+        std::cerr << "✅ File " << outpath.filename() << " succefuly created.\n";
+    
     return 0;
 }
