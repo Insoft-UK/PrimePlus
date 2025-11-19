@@ -258,17 +258,17 @@ utf::BOM utf::bom(std::ifstream& is) {
     
 #ifdef __BIG_ENDIAN__
     if (byte_order_mark == 0xFFFE) {
-        return BOMbe;
+        return BOMle;
     }
     if (byte_order_mark == 0xFEFF) {
-        return BOMle;
+        return BOMbe;
     }
 #else
     if (byte_order_mark == 0xFFFE) {
-        return BOMle;
+        return BOMbe;
     }
     if (byte_order_mark == 0xFEFF) {
-        return BOMbe;
+        return BOMle;
     }
 #endif
     

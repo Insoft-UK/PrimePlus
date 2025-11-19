@@ -1,26 +1,43 @@
-#pragma mode( separator(.,;) integer(h64) assignment(=) indentation(2) operators(▶,*,/,-,+) )
+#pragma mode( separator(.,;) integer(h64) )
 
-START: app::start();
-SETUP: app::setup();
-LOOP: app::loop();
-RESET: app::reset();
+regex >`\bswitch +([a-zA-Z_]\w*)` LOCAL sw__SCOPE__ := $1;CASE
+regex >`\bcase +(\-?\d+) +do *$` IF sw\`__SCOPE__-1` == $1 THEN
 
-app::start()
+function()
 begin
-    app::setup();
-    app::loop();
-    app::reset();
+    switch X
+        case 0 do
+        end;
+    end;
 end;
 
-app::setup()
+
+regex >`\bfor *([^;]+); *([^;]+); *([^;]+) +do\b`i $1; WHILE $2 DO__PUSH__`\t$3;`
+regex >`\bend;`i __POP__END;
+
+function()
 begin
+    for i=0; i<2; i=i+1 do
+        A := A+1;
+    end;
 end;
 
-app::loop()
-begin
-end;
 
-app::reset()
-begin
+regex >`\bauto\b`i v__COUNTER__
+regex =`^ *\bauto *: *([a-z]\w*)` g__COUNTER__:$1
+regex `\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
 
+auto : myGlobal := 1;
+fnc1: My::Function(p1: argumentOne)
+begin
+    var auto: i, a: Alpha;
+    for i=0; i<2; i=i+1 do
+        Alpha := Alpha + 1 * myGlobal * argumentOne;
+    end;
+    
 end;
+auto: anotherGlobal := 2;
+
+My::Function();
+
+

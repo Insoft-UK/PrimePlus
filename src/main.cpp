@@ -1674,31 +1674,12 @@ void version(void) {
     << "For more information, visit: http://www.insoft.uk\n";
 }
 
+
 void error(void) {
     std::cerr << COMMAND_NAME << ": try '" << COMMAND_NAME << " --help' for more information\n";
     exit(0);
 }
 
-void info(void) {
-    using namespace std;
-    std::cerr
-    << "          ***********     \n"
-    << "        ************      \n"
-    << "      ************        \n"
-    << "    ************  **      \n"
-    << "  ************  ******    \n"
-    << "************  **********  \n"
-    << "**********    ************\n"
-    << "************    **********\n"
-    << "  **********  ************\n"
-    << "    ******  ************  \n"
-    << "      **  ************    \n"
-    << "        ************      \n"
-    << "      ************        \n"
-    << "    ************          \n\n"
-    << "Copyright (C) 2023-" << YEAR << " Insoft.\n"
-    << "Insoft " << NAME << "\n\n";
-}
 
 void help(void) {
     using namespace std;
@@ -1723,6 +1704,71 @@ void help(void) {
     << "    --help                 Show this help message.\n";
 }
 
+fs::path resolveAndValidateInputFile(const char *input_file) {
+    fs::path path;
+    
+    path = input_file;
+    path = fs::expand_tilde(path);
+    
+    // • Applies a default extension
+    if (path.extension().empty()) path.replace_extension("prgm+");
+    if (path.parent_path().empty()) path = fs::path("./") / path;
+    
+    // • Validates the extension and encoding (UTF-8 BOM)
+    if (path.extension() != ".prgm+" || utf::bom(path) != utf::BOMnone) {
+        if (utf::bom(path) != utf::BOMnone) {
+            std::cerr << "❌ error: " << path.filename() << " file must be utf8.\n";
+            exit(0);
+        }
+        std::cerr << "❌ error: " << path.filename() << " file not supported.\n";
+        exit(0);
+    }
+    
+    if (!fs::exists(path)) {
+        std::cerr << "❓File " << path.filename() << " not found at " << path.parent_path() << " location.\n";
+        exit(0);
+    }
+    
+    if (path.empty()) {
+        error();
+        exit(0);
+    }
+    
+    return path;
+}
+
+fs::path resolveOutputFile(const char *output_file) {
+    fs::path path;
+    
+    path = output_file;
+    path = fs::expand_tilde(path);
+    
+    return path;
+}
+
+fs::path validateOutputPath(const fs::path& inpath, const fs::path& outpath) {
+    fs::path path = outpath;
+    
+    if (path.empty()) {
+        // User did not specify specify an output filename, use the input filename with a .prgm extension.
+        path = inpath;
+        path.replace_extension(".prgm");
+    }
+    
+    if (path != "/dev/stdout") {
+        if (fs::is_directory(path)) {
+            /* User did not specify specify an output filename but has specified a path, so append
+             with the input filename and subtitute the extension with .prgm
+             */
+            path = path / inpath.filename();
+        }
+        
+        if (path.extension().empty() || path.extension() != ".prgm") path.replace_extension("prgm");
+        if (path.parent_path().empty()) path = inpath.parent_path() / path;
+    }
+    
+    return path;
+}
 
 // MARK: - Main
 int main(int argc, char **argv) {
@@ -1746,8 +1792,7 @@ int main(int argc, char **argv) {
                 error();
                 exit(0);
             }
-            outpath = fs::path(argv[n]);
-            outpath = fs::expand_tilde(outpath);
+            outpath = resolveOutputFile(argv[n]);
             continue;
         }
     
@@ -1784,57 +1829,12 @@ int main(int argc, char **argv) {
             continue;
         }
         
-        
-        inpath = fs::path(argv[n]);
-        inpath = fs::expand_tilde(inpath);
-        if (inpath.extension().empty()) inpath.replace_extension("prgm+");
-        if (inpath.parent_path().empty()) inpath = fs::path("./") / inpath;
+        inpath = resolveAndValidateInputFile(argv[n]);
     }
     
-    if (inpath.empty()) {
-        error();
-        return 0;
-    }
+    outpath = validateOutputPath(inpath, outpath);
+
     
-    if (inpath.extension() != ".prgm+" || utf::bom(inpath) != utf::BOMnone) {
-        std::cerr << "❌ Error: " << inpath.extension() << " file are not supported.\n";
-        return 0;
-    }
-    
-    
-    if (!fs::exists(inpath)) {
-        std::cerr << "❓File " << inpath.filename() << " not found at " << inpath.parent_path() << " location.\n";
-        return 0;
-    }
-    
-   
-    if (outpath.empty()) {
-        // User did not specify specify an output filename, use the input filename with a .prgm extension.
-        outpath = inpath;
-        outpath.replace_extension(".prgm");
-    }
-    
-    if (outpath == "/dev/stdout") {
-        Singleton::shared()->aliases.verbose = false;
-        preprocessor.verbose = false;
-        Singleton::shared()->regexp.verbose = false;
-        verbose = false;
-    } else {
-        if (fs::is_directory(outpath)) {
-            /* User did not specify specify an output filename but has specified a path, so append
-             with the input filename and subtitute the extension with .prgm
-             */
-            outpath = outpath / (inpath.stem().string() + ".prgm");
-        }
-        
-        if (outpath.extension().empty() || outpath.extension() != ".prgm") outpath.replace_extension("prgm");
-        if (outpath.parent_path().empty()) outpath = inpath.parent_path() / outpath;
-    }
-    
-    if (outpath != "/dev/stdout") info();
-    
-    // Start measuring time
-    Timer timer;
     
     std::string str;
     
@@ -1850,8 +1850,10 @@ int main(int argc, char **argv) {
     str = R"(#define __NUMERIC_BUILD )" + std::to_string(NUMERIC_BUILD);
     preprocessor.parse(str);
     
-    std::string output = translatePPLPlusToPPL(inpath);
+    // Start measuring time
+    Timer timer;
     
+    std::string output = translatePPLPlusToPPL(inpath);
     
     if (outpath == "/dev/stdout") {
         std::cout << output;
@@ -1860,10 +1862,8 @@ int main(int argc, char **argv) {
         return 0;
     }
     
-    
-    
     if (hasErrors() == true) {
-        std::cerr << "🛑 ERRORS!" << "\n";
+        std::cerr << "🛑 errors!" << "\n";
     }
     
     // Stop measuring time and calculate the elapsed time.
