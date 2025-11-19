@@ -247,3 +247,42 @@ bool utf::save(const std::filesystem::path& path, const std::wstring& wstr, BOM 
     os.close();
     return true;
 }
+
+utf::BOM utf::bom(std::ifstream& is) {
+    if(!is.is_open()) return BOMnone;
+    
+    uint16_t byte_order_mark;
+    
+    is.read(reinterpret_cast<char*>(&byte_order_mark), sizeof(byte_order_mark));
+    is.seekg(std::ios_base::beg);
+    
+#ifdef __BIG_ENDIAN__
+    if (byte_order_mark == 0xFFFE) {
+        return BOMbe;
+    }
+    if (byte_order_mark == 0xFEFF) {
+        return BOMle;
+    }
+#else
+    if (byte_order_mark == 0xFFFE) {
+        return BOMle;
+    }
+    if (byte_order_mark == 0xFEFF) {
+        return BOMbe;
+    }
+#endif
+    
+    return BOMnone;
+}
+
+utf::BOM utf::bom(const std::filesystem::path& path) {
+    std::ifstream is;
+    
+    is.open(path, std::ios::in | std::ios::binary);
+    if(!is.is_open()) return utf::BOMnone;
+    
+    utf::BOM bom = utf::bom(is);
+    is.close();
+    
+    return bom;
+}

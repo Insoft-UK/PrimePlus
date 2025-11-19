@@ -1796,7 +1796,7 @@ int main(int argc, char **argv) {
         return 0;
     }
     
-    if (inpath.extension() != ".prgm+") {
+    if (inpath.extension() != ".prgm+" || utf::bom(inpath) != utf::BOMnone) {
         std::cerr << "❌ Error: " << inpath.extension() << " file are not supported.\n";
         return 0;
     }
@@ -1806,10 +1806,12 @@ int main(int argc, char **argv) {
         std::cerr << "❓File " << inpath.filename() << " not found at " << inpath.parent_path() << " location.\n";
         return 0;
     }
+    
    
     if (outpath.empty()) {
         // User did not specify specify an output filename, use the input filename with a .prgm extension.
-        outpath = inpath.replace_extension(".prgm");
+        outpath = inpath;
+        outpath.replace_extension(".prgm");
     }
     
     if (outpath == "/dev/stdout") {

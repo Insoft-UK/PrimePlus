@@ -45,6 +45,8 @@ namespace utf {
     size_t write(std::ofstream& os, const std::wstring& wstr, BOM bom = BOMle);
     bool save(const std::filesystem::path& path, const std::string& str);
     bool save(const std::filesystem::path& path, const std::wstring& wstr, BOM bom = BOMle);
+    BOM bom(std::ifstream& is);
+    BOM bom(const std::filesystem::path& path);
 };
 
 #endif /* utf_hpp */
