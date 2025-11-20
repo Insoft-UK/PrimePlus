@@ -1708,11 +1708,13 @@ fs::path resolveAndValidateInputFile(const char *input_file) {
     fs::path path;
     
     path = input_file;
+    if (path == "/dev/stdin") return path;
+    
     path = fs::expand_tilde(path);
+    if (path.parent_path().empty()) path = fs::path("./") / path;
     
     // • Applies a default extension
     if (path.extension().empty()) path.replace_extension("prgm+");
-    if (path.parent_path().empty()) path = fs::path("./") / path;
     
     // • Validates the extension and encoding (UTF-8 BOM)
     if (path.extension() != ".prgm+" || utf::bom(path) != utf::BOMnone) {
@@ -1741,12 +1743,15 @@ fs::path resolveOutputFile(const char *output_file) {
     fs::path path;
     
     path = output_file;
+    if (path == "/dev/stdout") return path;
+    
     path = fs::expand_tilde(path);
+    if (path.parent_path().empty()) path = fs::path("./") / path;
     
     return path;
 }
 
-fs::path validateOutputPath(const fs::path& inpath, const fs::path& outpath) {
+fs::path resolveOutputPath(const fs::path& inpath, const fs::path& outpath) {
     fs::path path = outpath;
     
     if (path.empty()) {
@@ -1832,7 +1837,7 @@ int main(int argc, char **argv) {
         inpath = resolveAndValidateInputFile(argv[n]);
     }
     
-    outpath = validateOutputPath(inpath, outpath);
+    outpath = resolveOutputPath(inpath, outpath);
 
     
     
