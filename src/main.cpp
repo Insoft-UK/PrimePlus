@@ -1717,22 +1717,18 @@ fs::path resolveAndValidateInputFile(const char *input_file) {
     if (path.extension().empty()) path.replace_extension("prgm+");
     
     // • Validates the extension and encoding (UTF-8 BOM)
-    if (path.extension() != ".prgm+" || utf::bom(path) != utf::BOMnone) {
-        if (utf::bom(path) != utf::BOMnone) {
-            std::cerr << "❌ error: " << path.filename() << " file must be utf8.\n";
-            exit(0);
-        }
+    if (utf::bom(path) != utf::BOMnone) {
+        std::cerr << "❌ error: " << path.filename() << " file must be utf8.\n";
+        exit(0);
+    }
+    
+    if (path.extension() != ".prgm+" && path.extension() != ".ppl+") {
         std::cerr << "❌ error: " << path.filename() << " file not supported.\n";
         exit(0);
     }
     
     if (!fs::exists(path)) {
         std::cerr << "❓File " << path.filename() << " not found at " << path.parent_path() << " location.\n";
-        exit(0);
-    }
-    
-    if (path.empty()) {
-        error();
         exit(0);
     }
     
@@ -1746,7 +1742,6 @@ fs::path resolveOutputFile(const char *output_file) {
     if (path == "/dev/stdout") return path;
     
     path = fs::expand_tilde(path);
-    if (path.parent_path().empty()) path = fs::path("./") / path;
     
     return path;
 }
@@ -1754,23 +1749,27 @@ fs::path resolveOutputFile(const char *output_file) {
 fs::path resolveOutputPath(const fs::path& inpath, const fs::path& outpath) {
     fs::path path = outpath;
     
+    if (path == "/dev/stdout") return path;
+    
     if (path.empty()) {
         // User did not specify specify an output filename, use the input filename with a .prgm extension.
         path = inpath;
         path.replace_extension(".prgm");
+        return path;
     }
     
-    if (path != "/dev/stdout") {
-        if (fs::is_directory(path)) {
-            /* User did not specify specify an output filename but has specified a path, so append
-             with the input filename and subtitute the extension with .prgm
-             */
-            path = path / inpath.filename();
-        }
-        
-        if (path.extension().empty() || path.extension() != ".prgm") path.replace_extension("prgm");
-        if (path.parent_path().empty()) path = inpath.parent_path() / path;
+    if (fs::is_directory(path)) {
+        /* User did not specify specify an output filename but has specified a path, so append
+         with the input filename and subtitute the extension with .prgm
+         */
+        path = path / inpath.stem();
+        path.replace_extension("prgm");
+        return path;
     }
+    
+    if (path.extension().empty()) path.replace_extension("prgm");
+    if (path.extension() != ".prgm" && path.extension() != ".ppl") path.replace_extension("prgm");
+    if (path.parent_path().empty()) path = inpath.parent_path() / path;
     
     return path;
 }
