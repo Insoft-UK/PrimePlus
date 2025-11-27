@@ -1,28 +1,32 @@
 #pragma mode( separator(.,;) integer(h64) )
 
-regex >`\bswitch +([a-zA-Z_]\w*)` LOCAL sw__SCOPE__ := $1;CASE
-regex >`\bcase +(\-?\d+) +do *$` IF sw\`__SCOPE__-1` == $1 THEN
+regex >`\bswitch +([a-zA-Z_]\w*)` LOCAL sw__SCOPE__ := $1;\aCASE
+regex >`\bcase +(\-?\d+) +do *$` IF sw__SCOPE__ == $1 THEN
+local check := 1.0e-12;
 
 function()
 begin
+    // Switch-Case
+    
     switch X
         case 0 do
+            switch X
+                case 0 do
+                end;
+            end;
         end;
     end;
 end;
-
-
-regex >`\bfor *([^;]+); *([^;]+); *([^;]+) +do\b`i $1; WHILE $2 DO__PUSH__`\t$3;`
+regex >`\bfor *([^;]+); *([^;]+); *([^;]+) +do\b`i $1;\aWHILE $2 DO__PUSH__`\i$3;\a`
 regex >`\bend;`i __POP__END;
 
 function()
 begin
     for i=0; i<2; i=i+1 do
         A := A+1;
+        B := B - -7;
     end;
 end;
-
-
 regex >`\bauto\b`i v__COUNTER__
 regex =`^ *\bauto *: *([a-z]\w*)` g__COUNTER__:$1
 regex `\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1

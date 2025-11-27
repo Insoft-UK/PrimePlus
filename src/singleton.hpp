@@ -29,7 +29,6 @@
 #include <filesystem>
 
 #include "aliases.hpp"
-#include "auto.hpp"
 #include "common.hpp"
 #include "regexp.hpp"
 #include "code_stack.hpp"
@@ -40,7 +39,6 @@ namespace pplplus {
         
     public:
         Aliases aliases;
-        Auto autoname;
         Regexp regexp;
         CodeStack codeStack;
         
