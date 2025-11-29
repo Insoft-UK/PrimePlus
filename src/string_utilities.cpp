@@ -22,6 +22,7 @@
 
 #include "string_utilities.hpp"
 
+
 bool is_all_whitespace(const std::string& s) {
     auto trimmed = s
         | std::views::filter([](unsigned char c){ return !std::isspace(c); });

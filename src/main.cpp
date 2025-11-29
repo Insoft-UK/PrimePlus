@@ -142,6 +142,313 @@ void (*old_terminate)() = std::set_terminate(terminator);
 // MARK: - Helper Functions
 #include "string_utilities.hpp"
 
+std::pair<size_t, size_t> findBeginEndBlock(const std::string& code, size_t beginPos = 0) {
+    std::regex tokenRegex(R"(\b(?:BEGIN|FOR|IF|WHILE|REPEAT|CASE)\b|END;)");
+    std::smatch match;
+    
+    std::regex pattern(R"(\bBEGIN\b)");
+    // Create iterators for all matches
+    auto begin = std::sregex_iterator(code.begin(), code.end(), pattern);
+    auto end = std::sregex_iterator();
+
+    // Loop through all matches
+    for (auto it = begin; it != end; ++it) {
+        std::smatch match = *it;
+        if (match.position() >= beginPos) {
+            beginPos = match.position() + match.length();
+            break;
+        }
+        if (std::next(it) == end) return {std::string::npos, std::string::npos};
+    }
+    
+    
+    size_t searchPos = beginPos;
+    int depth = 1;
+    
+    while (std::regex_search(code.begin() + searchPos, code.end(), match, tokenRegex))
+    {
+        std::string token = match.str();
+        size_t pos = match.position() + searchPos;
+        
+        if (token == "BEGIN" || token == "FOR" || token == "IF" ||
+            token == "WHILE" || token == "REPEAT" || token == "CASE")
+        {
+            depth++;
+        }
+        else if (token == "END;")
+        {
+            depth--;
+            if (depth == 0)
+            {
+                size_t endPos = pos; // start of matching END;
+                return {beginPos, endPos};
+            }
+        }
+        
+        searchPos = pos + token.length();
+    }
+    
+    return {std::string::npos, std::string::npos};
+}
+
+// Extracts variable names from all LOCAL declarations
+std::vector<std::string> extractLocalVariables(const std::string& code) {
+    std::vector<std::string> variables;
+
+    // Match full LOCAL lines: e.g. LOCAL a, b:=10;
+    std::regex localRegex(R"(\bLOCAL\b([^;:]*);)", std::regex_constants::icase);
+    std::smatch match;
+    std::string::const_iterator searchStart(code.cbegin());
+
+    while (std::regex_search(searchStart, code.cend(), match, localRegex))
+    {
+        std::string locals = match[1]; // everything after LOCAL up to ;
+        
+        // Split by commas
+        std::regex varRegex(R"([A-Za-z_]\w*)");
+        std::smatch varMatch;
+        std::string::const_iterator varSearch(locals.cbegin());
+
+        while (std::regex_search(varSearch, locals.cend(), varMatch, varRegex))
+        {
+            std::string varName = varMatch.str();
+            variables.push_back(varName);
+            varSearch = varMatch.suffix().first;
+        }
+
+        searchStart = match.suffix().first;
+    }
+
+    return variables;
+}
+
+std::string shortenVariableNames(const std::string& code) {
+    auto str = code;
+    auto pos = findBeginEndBlock(str);
+    
+    if (pos.first == std::string::npos && pos.second == std::string::npos) return str;
+   
+    do {
+        auto s = str.substr(pos.first, pos.second - pos.first);
+        
+        int count = 0;
+        auto vars = extractLocalVariables(s);
+        for (const auto& v : vars) {
+            if (v.length() < 3) continue;
+            s = replaceWords(s, {v}, "v" + std::to_string(++count));
+        }
+        str = str.replace(pos.first, pos.second - pos.first, s);
+        pos = findBeginEndBlock(str, pos.first);
+           
+    } while (pos.first != std::string::npos && pos.second != std::string::npos);
+    
+    return str;
+}
+
+std::list<std::string> extractPythonBlocks(const std::string& str) {
+    std::list<std::string> blocks;
+    const std::string startTag = "#PYTHON";
+    const std::string endTag = "#END";
+    
+    size_t pos = 0;
+
+    while (true) {
+        size_t start = str.find(startTag, pos);
+        if (start == std::string::npos)
+            break;
+
+        start += startTag.length();  // move past the #PYTHON tag
+
+        size_t end = str.find(endTag, start);
+        if (end == std::string::npos)
+            break;  // no matching #END, so stop
+
+        blocks.push_back(str.substr(start, end - start));
+        pos = end + endTag.length();  // move past this #END
+    }
+
+    return blocks;
+}
+
+
+std::string blankOutPythonBlocks(const std::string& str) {
+    std::string result;
+    const std::string startTag = "#PYTHON";
+    const std::string endTag = "#END";
+    
+    size_t pos = 0;
+
+    while (pos < str.length()) {
+        size_t start = str.find(startTag, pos);
+
+        if (start == std::string::npos) {
+            result.append(str, pos, str.length() - pos);
+            break;
+        }
+
+        // Append everything before #PYTHON
+        result.append(str, pos, start - pos);
+
+        size_t end = str.find(endTag, start + startTag.length());
+        if (end == std::string::npos) {
+            // No matching #END — treat rest as normal text
+            result.append(str, start, str.length() - start);
+            break;
+        }
+
+        // Keep the #PYTHON and #END markers, but blank out in between
+        result += startTag;
+        result.append(end - (start + startTag.length()), ' ');
+        result += endTag;
+
+        pos = end + endTag.length();
+    }
+
+    return result;
+}
+
+std::string restorePythonBlocks(const std::string& str, std::list<std::string>& blocks) {
+    if (blocks.empty()) return str;
+
+    const std::string startTag = "#PYTHON";
+    const std::string endTag = "#END";
+
+    std::string result;
+    size_t pos = 0;
+
+    while (pos < str.size()) {
+        size_t start = str.find(startTag, pos);
+        if (start == std::string::npos) {
+            result.append(str, pos, str.size() - pos);  // append rest
+            break;
+        }
+
+        // Append text before #PYTHON
+        result.append(str, pos, start - pos);
+
+        size_t end = str.find(endTag, start + startTag.length());
+        if (end == std::string::npos || blocks.empty()) {
+            // No matching #END or no block left — append rest
+            result.append(str, start, str.size() - start);
+            break;
+        }
+
+        // Append #PYTHON
+        result.append(str, start, startTag.length());
+
+        // Append original block content
+        result.append(blocks.front());
+        blocks.pop_front();
+
+        // Append #END
+        result.append(str, end, endTag.length());
+
+        pos = end + endTag.length();
+    }
+
+    return result;
+}
+
+std::string separatePythonMarkers(const std::string& input) {
+    std::istringstream iss(input);
+    std::ostringstream oss;
+    std::string line;
+
+    const std::string markers[] = {"#PYTHON", "#END"};
+
+    while (std::getline(iss, line)) {
+        size_t pos = 0;
+
+        while (pos < line.size()) {
+            bool foundMarker = false;
+            for (const std::string& marker : markers) {
+                size_t markerPos = line.find(marker, pos);
+                if (markerPos != std::string::npos) {
+                    // Add any content before the marker (if any) as a separate line
+                    if (markerPos > pos) {
+                        oss << line.substr(pos, markerPos - pos) << '\n';
+                    }
+                    // Add the marker as its own line
+                    oss << marker << '\n';
+                    pos = markerPos + marker.length();
+                    foundMarker = true;
+                    break;
+                }
+            }
+
+            if (!foundMarker) {
+                // No more markers on this line, output the rest
+                oss << line.substr(pos) << '\n';
+                break;
+            }
+        }
+    }
+
+    return oss.str();
+}
+
+std::string base10ToBase32(unsigned int num) {
+    if (num == 0) {
+        return "0";  // Edge case: if the number is 0, return "0"
+    }
+
+    std::string result;
+    const char digits[] = "0123456789ABCDEFGHIJKLMNabcdefgh";  // Base-32 digits
+    
+    // Keep dividing the number by 32 and store the remainders
+    while (num > 0) {
+        int remainder = num % 32;  // Get the current base-32 digit
+        result += digits[remainder];  // Add the corresponding character
+        num /= 32;  // Reduce the number
+    }
+
+    // The digits are accumulated in reverse order, so reverse the result string
+    std::reverse(result.begin(), result.end());
+
+    return result;
+}
+
+std::string compress(const std::string& s) {
+    std::string str = s;
+    
+    auto python = extractPythonBlocks(str);
+    str = blankOutPythonBlocks(str);
+    
+    auto strings = preserveStrings(str);
+    str = blankOutStrings(str);
+    
+    str = shortenVariableNames(str);
+    str = replaceWords(str, {"FROM"}, ":=");
+    
+    str = cleanWhitespace(str);
+    str = fixUnaryMinus(str);
+    
+    str = restoreStrings(str, strings);
+    str = separatePythonMarkers(str);
+    str = restorePythonBlocks(str, python);
+    
+    str = regex_replace(str, std::regex(R"(^#pragma mode\(([a-z]+\([^()]+\))+\))"), "$0\n");
+    str = regex_replace(str, std::regex(R"(\b(BEGIN|CASE|THEN|REPEAT|DO) )"), "$1\n");
+    
+    std::regex re(R"((?:\b(EXPORT|LOCAL) )?([a-zA-Z]\w*)\([a-zA-Z,]*\)\s*(?=BEGIN\b))");
+    std::sregex_iterator begin(str.begin(), str.end(), re);
+    std::sregex_iterator end;
+    std::string result = str;
+    int fn = 0;
+    
+    for (auto it = begin; it != end; ++it) {
+        std::smatch match = *it;
+
+        if (match[1].str() == "LOCAL") {
+            result = replaceWords(result, {match[2].str()}, "fn" + base10ToBase32(fn++));
+        }
+    }
+    
+    
+    
+    return result;
+}
+
 // MARK: - PPL+ To PPL Translater...
 
 std::string translatePPLPlusLine(const std::string& input) {
@@ -563,7 +870,6 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
             continue;
         }
         
-        
         if (Singleton::shared()->regexp.parse(input)) {
             input = regex_replace(input, std::regex(R"(^ *\bregex +([@<>=≠≤≥~])?`([^`]*)`(i)? *(.*)$)"), "");
             Singleton::shared()->incrementLineNumber();
@@ -612,6 +918,7 @@ void help(void) {
     << "\n"
     << "Options:\n"
     << "  -o <output-file>        Specify the filename for generated PPL code.\n"
+    << "  -c                      Specify if the generated PPL code should be compressed.\n"
     << "  -v=<flags>              Display detailed processing information.\n"
     << "\n"
     << "  Verbose Flags:\n"
@@ -692,6 +999,18 @@ fs::path resolveOutputPath(const fs::path& inpath, const fs::path& outpath) {
     return path;
 }
 
+// Custom facet to use comma as the thousands separator
+struct comma_numpunct : std::numpunct<char> {
+protected:
+    virtual char do_thousands_sep() const override {
+        return ',';  // Define the thousands separator as a comma
+    }
+
+    virtual std::string do_grouping() const override {
+        return "\3";  // Group by 3 digits
+    }
+};
+
 // MARK: - Main
 int main(int argc, char **argv) {
     fs::path inpath, outpath;
@@ -702,7 +1021,7 @@ int main(int argc, char **argv) {
     }
     
     bool verbose = false;
-    
+    bool minifie = false;
     
     std::string args(argv[0]);
     
@@ -715,6 +1034,11 @@ int main(int argc, char **argv) {
                 exit(0);
             }
             outpath = resolveOutputFile(argv[n]);
+            continue;
+        }
+        
+        if ( args == "-c" ) {
+            minifie = true;
             continue;
         }
     
@@ -807,6 +1131,21 @@ int main(int argc, char **argv) {
         
         prgm::buildHPPrgm(outpath, programName, prgmSource);
     } else {
+        if (minifie == true) {
+            // Percentage Reduction = (Original Size - New Size) / Original Size * 100
+            std::ifstream::pos_type original_size = output.length();
+            output = compress(output);
+            std::ifstream::pos_type new_size = output.length();
+            
+            
+            // Create a locale with the custom comma-based numpunct
+            std::locale commaLocale(std::locale::classic(), new comma_numpunct);
+            std::cerr.imbue(commaLocale);
+            
+            std::cerr << "📣 PPL Source Code (deflated " << (original_size - new_size) * 100 / original_size << "%)\n";
+            
+            
+        }
         if (!utf::save(outpath, utf::utf16(output), utf::BOMle)) {
             std::cerr << "❌ Unable to create file " << outpath.filename() << ".\n";
             return 0;

@@ -3,7 +3,7 @@
 dictionary MouseDown := 0, MouseMove := 1, MouseUp := 2, MouseClick := 3, MouseStretch := 5, MouseRotate := 6, MouseLongClick := 7 EventType;
 
 /// Struct
-regex >`\bstruct +([a-z_]+) +([a-z_]\w*) *;`i\
+regex >`\bstruct +([0-9a-z-#,:{}()[\] ]+) +([a-z_]\w*) *;`i\
 alias $2:=s__COUNT__;\
 local s__COUNT__;\a\
 dictionary $1 s__COUNTER__;

@@ -33,7 +33,6 @@
 
 
 bool is_all_whitespace(const std::string& s);
-
 /**
  * @brief Cleans up whitespace in a string while preserving word separation.
  *
