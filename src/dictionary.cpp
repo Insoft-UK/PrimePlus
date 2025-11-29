@@ -29,7 +29,7 @@ bool Dictionary::isDictionaryDefinition(const std::string &str) {
 }
 
 std::string Dictionary::removeDictionaryDefinition(const std::string& str) {
-    return std::regex_replace(str, std::regex(R"(\(?:dict|dictionary) +([\w[\],:=#\- ]+) *@?\b([A-Za-z_]\w*(?:::[A-Za-z_]\w*)*);)"), "");
+    return std::regex_replace(str, std::regex(R"(\b(?:dict|dictionary) +([\w[\],:=#\- ]+) *@?\b([A-Za-z_]\w*(?:::[A-Za-z_]\w*)*);)"), "");
 }
 
 bool Dictionary::proccessDictionaryDefinition(const std::string &str) {
@@ -43,26 +43,35 @@ bool Dictionary::proccessDictionaryDefinition(const std::string &str) {
     identity.scope = Singleton::shared()->scopeDepth;
     identity.type = Aliases::Type::Alias;
     
-    re = R"(\(?:dict|dictionary) +([\w[\],:=#\- ]+) *(@)?\b([A-Za-z_]\w*(?:::[A-Za-z_]\w*)*);)";
-    if (regex_search(code, match, re)) {
+    std::string pattern;
+    
+//    re = R"(\b(?:dict|dictionary) +([\w[\],:=#\- ]+) *(@)?\b([A-Za-z_]\w*(?:::[A-Za-z_]\w*)*);)";
+    pattern = R"(\b(?:dict|dictionary) +([^\r\n\t\f\v@]+) +(@)?\b([a-z_]\w*(?:::[a-z_]\w*)*);)";
+    
+    if (regex_search(code, match, std::regex(pattern, std::regex_constants::icase))) {
         
         identity.scope = match[2].matched ? 0 : Singleton::shared()->scopeDepth;
 
-        re = R"(([a-zA-Z]\w*(?:(?:[a-zA-Z_]\w*)|(?:::)|\.)*)(?:(\[#?[\dA-F]+(?::-?\d{0,2}[bodh])?(?:,#?[\dA-F]+(?::-?\d{0,2}[bodh])?)*\])|(?::=(#?[\dA-F]+(?::-?\d{0,2}[bodh])?)))?)";
         std::string s = match[1].str();
+        
+        pattern = R"(([a-z_]+)([^\r\n\t\f\v ,:=]+)?(?: *:= *([^\r\n\t\f\v ,]+))?)";
+        re = std::regex(pattern, std::regex_constants::icase);
         for (auto it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); it++) {
             identity.identifier = match[3].str() + "." + it->str(1);
+
+            std::string alias = match.str(3), name = it->str(1), sufix = it->str(2), value = it->str(3);
+            identity.real = value;
             
-            if (!it->str(2).empty()) {
+            if (!sufix.empty()) {
                 // List
-                identity.real = match[3].str() + it->str(2);
+                identity.real = alias + sufix;
             }
-            if (!it->str(3).empty()) {
+            if (!value.empty()) {
                 identity.real = it->str(3);
             }
             
-            if (it->str(2).empty() && it->str(3).empty()) {
-                identity.real = match[3].str();
+            if (sufix.empty() && value.empty()) {
+                identity.real = alias;
             }
             
             Singleton::shared()->aliases.append(identity);

@@ -117,7 +117,7 @@ static std::string resolve(const std::string &str) {
     std::string::const_iterator it;
     std::string output = str;
     
-    re = R"(__SCOPE__|__LINE__|__COUNTER__|__RESET__)";
+    re = R"(__SCOPE__|__LINE__|__COUNTER__|__RESET__|__COUNT__)";
     it = output.cbegin();
     while (std::regex_search(it, output.cend(), match, re)) {
 
@@ -130,6 +130,12 @@ static std::string resolve(const std::string &str) {
         if (match.str() == "__COUNTER__") {
             output.replace(match.position(), match.length(), std::to_string(pplplus::Singleton::shared()->count));
             pplplus::Singleton::shared()->advanceCount();
+            it = output.cbegin();
+            continue;
+        }
+        
+        if (match.str() == "__COUNT__") {
+            output.replace(match.position(), match.length(), std::to_string(pplplus::Singleton::shared()->count));
             it = output.cbegin();
             continue;
         }
@@ -153,7 +159,7 @@ static std::string resolve(const std::string &str) {
     return output;
 }
 
-void Regexp::resolveAllRegularExpression(std::string &str, const size_t index) {
+void Regexp::resolveAllRegularExpression(std::string& str, const size_t index) {
     std::smatch match;
     std::regex re;
     

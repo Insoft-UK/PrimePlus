@@ -20,33 +20,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#pragma once
 
-#include "alias.hpp"
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <filesystem>
 
-#include <sstream>
-#include <regex>
-
-using pplplus::Alias;
-
-
-std::string Alias::parse(const std::string &str) {
-    std::string s;
-    std::regex re;
-    std::smatch matches;
-    std::string output = str;
-    
-    re = std::regex(R"(\balias\b *(@)?([a-z_]\w*(?:::[a-z]\w*)*) *:= *([^\r\n\t\f\v ]+) *;)", std::regex_constants::icase);
-    while (regex_search(output, matches, re)) {
-        Aliases::TIdentity identity;
-        identity.identifier = matches.str(2);
-        identity.real = matches.str(3);
-        identity.type = Aliases::Type::Alias;
-        identity.scope = matches[1].matched ? 0 : Singleton::shared()->scopeDepth;
-        
-        Singleton::shared()->aliases.append(identity);
-        output.replace(matches.position(), matches.length(), "");
-    }
-    
-    
-    return output;
+namespace prgm {
+    std::vector<uint8_t> loadPrgm(const std::filesystem::path& prgmPath);
+    void buildHPPrgm(const std::filesystem::path& path, const std::string& name, const std::vector<uint8_t>& prgm);
 }

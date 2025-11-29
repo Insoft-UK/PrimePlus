@@ -32,6 +32,9 @@
 #include <vector>
 #include <iterator>
 #include <cstdlib>
+#include <cctype>
+#include <algorithm>
+#include <string>
 #include <unordered_set>
 
 #include "timer.hpp"
@@ -44,6 +47,7 @@
 #include "base.hpp"
 #include "calc.hpp"
 #include "utf.hpp"
+#include "prgm.hpp"
 
 #include "../version_code.h"
 
@@ -88,6 +92,13 @@ namespace std::filesystem {
         }
         return path;  // return as-is if no tilde or no HOME
     }
+}
+
+std::string extension_lowercased(const std::filesystem::path& path) {
+    std::string ext = path.extension().string();
+    std::transform(ext.begin(), ext.end(), ext.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+    return ext;
 }
 
 #if __cplusplus >= 202302L
@@ -165,6 +176,7 @@ std::string translatePPLPlusLine(const std::string& input) {
     output = removeComment(output);
     
     Singleton::shared()->regexp.resolveAllRegularExpression(output);
+    output = processEscapes(output);
     
     output = replaceOperators(output);
     
@@ -176,7 +188,7 @@ std::string translatePPLPlusLine(const std::string& input) {
     }
     
     output = Singleton::shared()->aliases.resolveAllAliasesInText(output);
-    
+   
     /*
      A code stack provides a convenient way to store code snippets
      that can be retrieved and used later.
@@ -187,7 +199,11 @@ std::string translatePPLPlusLine(const std::string& input) {
     if (Dictionary::isDictionaryDefinition(output)) {
         Dictionary::proccessDictionaryDefinition(output);
         output = Dictionary::removeDictionaryDefinition(output);
+        if (output.empty())
+            return "";
     }
+    
+    
     
     // Keywords
     output = capitalizeWords(output, {
@@ -230,14 +246,15 @@ std::string translatePPLPlusLine(const std::string& input) {
     output = Calc::parse(output);
     output = Base::parse(output);
     
-    output = processEscapes(output);
+    
    
     output = restoreStrings(output, strings);
     
     if (!comment.empty()) output += comment;
     
-    output += '\n';
-    return output;
+    if (output.empty())
+        return "";
+    return output + "\n";
 }
 
 
@@ -557,8 +574,13 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
         iss.str(input);
         std::string str;
         
+
         while(getline(iss, str)) {
-            output += (translatePPLPlusLine(str));
+            std::string s = translatePPLPlusLine(str);
+            if (is_all_whitespace(s)) {
+                continue;
+            }
+            output += s;
         }
         
         Singleton::shared()->incrementLineNumber();
@@ -574,17 +596,6 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
 
 
 // MARK: - Command Line
-void version(void) {
-    using namespace std;
-    std::cerr
-    << "Copyright (C) 2023-" << YEAR << " Insoft.\n"
-    << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << BUNDLE_VERSION << ")\n"
-    << "Built on: " << DATE << "\n"
-    << "Licence: MIT License\n\n"
-    << "For more information, visit: http://www.insoft.uk\n";
-}
-
-
 void error(void) {
     std::cerr << COMMAND_NAME << ": try '" << COMMAND_NAME << " --help' for more information\n";
     exit(0);
@@ -623,8 +634,11 @@ fs::path resolveAndValidateInputFile(const char *input_file) {
     path = fs::expand_tilde(path);
     if (path.parent_path().empty()) path = fs::path("./") / path;
     
-    // • Applies a default extension
-    if (path.extension().empty()) path.replace_extension("prgm+");
+    if (path.has_extension() == false) {
+        // default extension
+        path.replace_extension("prgm+");
+    }
+        
     
     // • Validates the extension and encoding (UTF-8 BOM)
     if (utf::bom(path) != utf::BOMnone) {
@@ -672,8 +686,7 @@ fs::path resolveOutputPath(const fs::path& inpath, const fs::path& outpath) {
         return path;
     }
     
-    if (path.extension().empty()) path.replace_extension("prgm");
-    if (path.extension() != ".prgm" && path.extension() != ".ppl") path.replace_extension("prgm");
+    if (!path.has_extension()) path.replace_extension("prgm");
     if (path.parent_path().empty()) path = inpath.parent_path() / path;
     
     return path;
@@ -710,9 +723,13 @@ int main(int argc, char **argv) {
             return 0;
         }
         
+        if (args == "--version") {
+            std::cout << VERSION_NUMBER << "\n";
+            return 0;
+        }
         
-        if ( strcmp( argv[n], "--version" ) == 0 ) {
-            version();
+        if (args == "--build") {
+            std::cout << NUMERIC_BUILD << "\n";
             return 0;
         }
         
@@ -766,19 +783,7 @@ int main(int argc, char **argv) {
     
     // Start measuring time
     Timer timer;
-    
     std::string output = translatePPLPlusToPPL(inpath);
-    
-    if (outpath == "/dev/stdout") {
-        std::cout << output;
-    } else if (!utf::save(outpath, utf::utf16(output), utf::BOMle)) {
-        std::cerr << "❌ Unable to create file " << outpath.filename() << ".\n";
-        return 0;
-    }
-    
-    if (hasErrors() == true) {
-        std::cerr << "🛑 errors!" << "\n";
-    }
     
     // Stop measuring time and calculate the elapsed time.
     long long elapsed_time = timer.elapsed();
@@ -790,8 +795,31 @@ int main(int argc, char **argv) {
         std::cerr << "📣 Completed in " << std::fixed << std::setprecision(2) << elapsed_time / 1e9 << " seconds\n";
     }
     
+    
+    if (outpath == "/dev/stdout") {
+        std::cout << output;
+    }
+    
+    auto ext = extension_lowercased(outpath);
+    if (ext == ".hpprgm") {
+        auto programName = inpath.stem().string();
+        auto prgmSource = prgm::loadPrgm(inpath);
+        
+        prgm::buildHPPrgm(outpath, programName, prgmSource);
+    } else {
+        if (!utf::save(outpath, utf::utf16(output), utf::BOMle)) {
+            std::cerr << "❌ Unable to create file " << outpath.filename() << ".\n";
+            return 0;
+        }
+    }
+    
+    if (hasErrors() == true) {
+        std::cerr << "🛑 errors!" << "\n";
+    }
+    
     if (outpath != "/dev/stdout")
         std::cerr << "✅ File " << outpath.filename() << " succefuly created.\n";
+    
     
     return 0;
 }

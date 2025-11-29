@@ -22,6 +22,13 @@
 
 #include "string_utilities.hpp"
 
+bool is_all_whitespace(const std::string& s) {
+    auto trimmed = s
+        | std::views::filter([](unsigned char c){ return !std::isspace(c); });
+
+    return trimmed.begin() == trimmed.end();
+}
+
 /**
  * @brief Cleans up whitespace in a string while preserving word separation.
  *

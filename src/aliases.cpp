@@ -302,8 +302,6 @@ std::string Aliases::resolveAllAliasesInText(const std::string &str) {
     
     if (s.empty()) return s;
     
-    
-        
     auto strings = preserveStrings(s);
     s = blankOutStrings(s);
     
