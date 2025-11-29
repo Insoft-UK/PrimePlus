@@ -22,6 +22,8 @@
 
 #include "prgm.hpp"
 
+// MARK: - 📄 File handling
+
 static inline std::vector<uint8_t> readBytes(const std::filesystem::path& path) {
     std::ifstream f(path, std::ios::binary);
     if (!f) throw std::runtime_error("Cannot open file");
@@ -39,42 +41,7 @@ static inline void writeBytes(const std::filesystem::path& path, const std::vect
     f.write((const char*)data.data(), data.size());
 }
 
-static inline std::wstring utf16le(const std::string& s) {
-    std::wstring out;
-    out.reserve(s.size());
-    uint32_t code = 0;
-    int bytes = 0;
-
-    for (unsigned char c : s) {
-        if (c <= 0x7F) {                       // 1-byte
-            out.push_back(c);
-        }
-        else if (c >> 5 == 0x6) {              // 2-byte
-            code = c & 0x1F;
-            bytes = 1;
-        }
-        else if (c >> 4 == 0xE) {              // 3-byte
-            code = c & 0x0F;
-            bytes = 2;
-        }
-        else if (c >> 3 == 0x1E) {             // 4-byte
-            code = c & 0x07;
-            bytes = 3;
-        }
-        else if (bytes) {
-            code = (code << 6) | (c & 0x3F);
-            if (--bytes == 0) {
-                if (code <= 0xFFFF) out.push_back(code);
-                else {
-                    code -= 0x10000;
-                    out.push_back((code >> 10) + 0xD800);
-                    out.push_back((code & 0x3FF) + 0xDC00);
-                }
-            }
-        }
-    }
-    return out;
-}
+// MARK: - 📣 Public API functions
 
 void prgm::buildHPPrgm(const std::filesystem::path& path, const std::string& name, const std::vector<uint8_t>& prgm)
 {

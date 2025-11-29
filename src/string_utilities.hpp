@@ -130,10 +130,6 @@ std::string convertAssignToColonEqual(const std::string& input);
 std::string normalizeOperators(const std::string& input, const std::vector<std::string> operators = { ":=", "==", "▶", "≥", "≤", "≠" });
 
 
-bool isUnaryTarget(char c);
-
-std::string fixUnaryMinus(const std::string& s);
-
 /**
  * @brief Splits a string into a vector of substrings using commas as delimiters.
  *
@@ -233,25 +229,7 @@ std::string toLower(const std::string& s);
  */
 std::string toUpper(const std::string& s);
 
-/**
- * @brief Replaces specified words in a string with a given replacement string.
- *
- * This function scans the input string and replaces all occurrences of words
- * found in the provided list (case-insensitive) with the specified replacement string.
- * Words are defined as sequences of alphabetic characters and underscores (`_`).
- * Non-word characters are preserved as-is.
- *
- * @param input The input string to process.
- * @param words A vector of words to be replaced (case-insensitive).
- * @param replacement The string to replace each matched word with.
- * @return A new string with the specified words replaced.
- *
- * @note Matching is case-insensitive. The function treats underscores as part of words.
- *
- * Example"
- *   replaceWords("Hello world_123", {"world_123"}, "Earth") returns "Hello Earth"
- */
-std::string replaceWords(const std::string& input, const std::vector<std::string>& words, const std::string& replacement);
+
 
 /**
  * @brief Capitalizes specified words in a string by converting them to uppercase.

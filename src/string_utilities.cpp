@@ -269,57 +269,7 @@ std::string normalizeOperators(const std::string& input, const std::vector<std::
 }
 
 
-bool isUnaryTarget(char c) {
-    return std::isdigit((unsigned char)c) ||
-           std::isalpha((unsigned char)c) ||
-           c == '.';
-}
 
-std::string fixUnaryMinus(const std::string& s) {
-    std::string out;
-    out.reserve(s.size());
-
-    size_t i = 0;
-    while (i < s.size()) {
-
-        if ((s[i] == '-' || s[i] == '+' || s[i] == '*' || s[i] == '/') && i + 1 < s.size() && s[i + 1] == '-') {
-            size_t j = i + 2;
-
-            // Skip spaces after the second '-'
-            while (j < s.size() && std::isspace((unsigned char)s[j]))
-                j++;
-
-            if (j < s.size() && isUnaryTarget(s[j])) {
-                out.push_back(s[i]);
-                out.push_back(' ');
-                out.push_back('-');
-                // Continue from character after second '-'
-                i = i + 2;
-                continue;
-            }
-        }
-
-        if (s[i] == '-') {
-            size_t j = i + 1;
-
-            // Skip spaces after '-'
-            while (j < s.size() && std::isspace((unsigned char)s[j]))
-                j++;
-
-            // If minus followed by unary target => remove spaces
-            if (j < s.size() && isUnaryTarget(s[j])) {
-                out.push_back('-');
-                i = j;
-                continue;
-            }
-        }
-
-        // Normal character
-        out.push_back(s[i]);
-        i++;
-    }
-    return out;
-}
 
 /**
  * @brief Splits a string into a vector of substrings using commas as delimiters.
@@ -517,59 +467,7 @@ std::string toUpper(const std::string& s) {
     return result;
 }
 
-/**
- * @brief Replaces specified words in a string with a given replacement string.
- *
- * This function scans the input string and replaces all occurrences of words
- * found in the provided list (case-insensitive) with the specified replacement string.
- * Words are defined as sequences of alphabetic characters and underscores (`_`).
- * Non-word characters are preserved as-is.
- *
- * @param input The input string to process.
- * @param words A vector of words to be replaced (case-insensitive).
- * @param replacement The string to replace each matched word with.
- * @return A new string with the specified words replaced.
- *
- * @note Matching is case-insensitive. The function treats underscores as part of words.
- *
- * Example"
- *   replaceWords("Hello world_123", {"world_123"}, "Earth") returns "Hello Earth"
- */
-std::string replaceWords(const std::string& input, const std::vector<std::string>& words, const std::string& replacement) {
-    // Create lowercase word set
-    std::unordered_set<std::string> wordSet;
-    for (const auto& w : words) {
-        wordSet.insert(toLower(w));
-    }
 
-    std::string result;
-    size_t i = 0;
-    
-    while (i < input.size()) {
-        if (!isalpha(static_cast<unsigned char>(input[i])) && input[i] != '_') {
-            result += input[i];
-            ++i;
-            continue;
-        }
-        size_t start = i;
-        
-        while (i < input.size() && (isalpha(static_cast<unsigned char>(input[i])) || input[i] == '_')) {
-            ++i;
-        }
-        
-        std::string word = input.substr(start, i - start);
-        std::string lowercase = toLower(word);
-        
-        if (wordSet.count(lowercase)) {
-            result += replacement;
-            continue;
-        }
-        
-        result += word;
-    }
-    
-    return result;
-}
 
 /**
  * @brief Capitalizes specified words in a string by converting them to uppercase.

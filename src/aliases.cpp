@@ -37,9 +37,9 @@ static bool compareInterval(Aliases::TIdentity i1, Aliases::TIdentity i2) {
     return (i1.identifier.length() > i2.identifier.length());
 }
 
-static bool compareIntervalString(std::string i1, std::string i2) {
-    return (i1.length() > i2.length());
-}
+//static bool compareIntervalString(std::string i1, std::string i2) {
+//    return (i1.length() > i2.length());
+//}
 
 /**
  * @brief Extracts and preserves all double-quoted substrings from the input string.
