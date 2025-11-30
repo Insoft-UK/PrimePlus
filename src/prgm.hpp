@@ -28,6 +28,5 @@
 #include <filesystem>
 
 namespace prgm {
-    std::vector<uint8_t> loadPrgm(const std::filesystem::path& prgmPath);
-    void buildHPPrgm(const std::filesystem::path& path, const std::string& name, const std::vector<uint8_t>& prgm);
+    void buildHPPrgm(const std::filesystem::path& path, const std::string& name, const std::string& prgm);
 }

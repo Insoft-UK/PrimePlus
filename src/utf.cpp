@@ -115,6 +115,14 @@ static uint16_t convertUTF8ToUTF16(const char* str) {
     return utf16;
 }
 
+std::string utf::read(std::ifstream& is) {
+    if (!is) throw std::runtime_error("Cannot open file");
+
+    std::string str((std::istreambuf_iterator<char>(is)),
+                              std::istreambuf_iterator<char>());
+    
+    return str;
+}
 
 std::wstring utf::read(std::ifstream& is, BOM bom) {
     std::wstring wstr;
@@ -154,6 +162,20 @@ std::wstring utf::read(std::ifstream& is, BOM bom) {
     
     return wstr;
 }
+
+std::string utf::load(const std::filesystem::path& path) {
+    std::string str;
+    std::ifstream is;
+    
+    is.open(path, std::ios::in | std::ios::binary);
+    if(!is.is_open()) return str;
+
+    str = read(is);
+    
+    is.close();
+    return str;
+}
+
 
 std::wstring utf::load(const std::filesystem::path& path, BOM bom) {
     std::wstring wstr;

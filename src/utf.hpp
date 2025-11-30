@@ -39,8 +39,10 @@ namespace utf {
     
     std::string utf8(const std::wstring& wstr);
     std::wstring utf16(const std::string& str);
-    std::wstring read(std::ifstream& is, BOM bom = BOMle);
-    std::wstring load(const std::filesystem::path& path, BOM bom = BOMle);
+    std::string read(std::ifstream& is);
+    std::wstring read(std::ifstream& is, BOM bom);
+    std::string load(const std::filesystem::path& path);
+    std::wstring load(const std::filesystem::path& path, BOM bom);
     size_t write(std::ofstream& os, const std::string& str);
     size_t write(std::ofstream& os, const std::wstring& wstr, BOM bom = BOMle);
     bool save(const std::filesystem::path& path, const std::string& str);

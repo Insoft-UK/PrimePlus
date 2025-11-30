@@ -51,6 +51,7 @@
 #include "prgm.hpp"
 #include "string_utilities.hpp"
 #include "minifier.hpp"
+#include "extensions.hpp"
 
 #include "../version_code.h"
 
@@ -78,8 +79,6 @@ namespace rc = std::regex_constants;
 static Preprocessor preprocessor = Preprocessor();
 static std::string assignment = "=";
 
-// MARK: - Extensions
-#include "extensions.hpp"
 
 // MARK: - Other
 
@@ -88,9 +87,6 @@ void terminator() {
     exit(0);
 }
 void (*old_terminate)() = std::set_terminate(terminator);
-
-// MARK: - Helper Functions
-
 
 
 // MARK: - PPL+ To PPL Translater...
@@ -253,7 +249,7 @@ std::string embedPPLCode(const std::filesystem::path& path) {
     if (!is.is_open()) return str;
     
     if (path.extension() == ".prgm") {
-        std::wstring wstr = utf::load(path);
+        std::wstring wstr = utf::load(path, utf::BOMle);
         
         if (!wstr.empty()) {
             str = utf::utf8(wstr);
@@ -589,11 +585,9 @@ fs::path resolveAndValidateInputFile(const char *input_file) {
         // default extension
         path.replace_extension("prgm+");
     }
-        
     
-    // • Validates the extension and encoding (UTF-8 BOM)
     if (utf::bom(path) != utf::BOMnone) {
-        std::cerr << "❌ error: " << path.filename() << " file must be utf8.\n";
+        std::cerr << "❓File " << path.filename() << " not utf-8 at " << path.parent_path() << " location.\n";
         exit(0);
     }
     
@@ -765,13 +759,20 @@ int main(int argc, char **argv) {
         if (in_ext == extension) {
             std::cerr << "Pre-Processing...\n";
             output = translatePPLPlusToPPL(inpath);
+            if (hasErrors() == true) {
+                std::cerr << "🛑 errors!" << "\n";
+            }
             break;
         }
     }
     if (output.empty()) {
-        utf::BOM bom = utf::bom(inpath);
-        auto prgm = utf::load(inpath, bom);
-        output = utf::utf8(prgm);
+        auto bom = utf::bom(inpath);
+        if (bom != utf::BOMnone) {
+            auto prgm = utf::load(inpath, bom);
+            output = utf::utf8(prgm);
+        } else {
+            output = utf::load(inpath);
+        }
     }
     
     if (outpath == "/dev/stdout") {
@@ -791,24 +792,16 @@ int main(int argc, char **argv) {
         std::cerr << "PPL Code (deflated " << (original_size - new_size) * 100 / original_size << "%)\n";
     }
     
-    
-    
     if (ext == ".hpprgm" || ext == ".hpappprgm") {
         auto programName = inpath.stem().string();
-        auto prgmSource = prgm::loadPrgm(inpath);
-        
-        prgm::buildHPPrgm(outpath, programName, prgmSource);
+        prgm::buildHPPrgm(outpath, programName, output);
     } else {
-        
         if (!utf::save(outpath, utf::utf16(output), utf::BOMle)) {
             std::cerr << "❌ Unable to create file " << outpath.filename() << ".\n";
             return 0;
         }
     }
-    
-    if (hasErrors() == true) {
-        std::cerr << "🛑 errors!" << "\n";
-    }
+
     
     if (outpath != "/dev/stdout")
         std::cerr << "Successfully created " << outpath.filename() << "\n";
