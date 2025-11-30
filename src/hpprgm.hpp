@@ -27,6 +27,7 @@
 #include <vector>
 #include <filesystem>
 
-namespace prgm {
-    void buildHPPrgm(const std::filesystem::path& path, const std::string& name, const std::string& prgm);
+namespace hpprgm {
+    void create(const std::filesystem::path& path, const std::string& name, const std::string& prgm);
+    std::wstring prgm(const std::filesystem::path& path);
 }

@@ -48,7 +48,7 @@
 #include "base.hpp"
 #include "calc.hpp"
 #include "utf.hpp"
-#include "prgm.hpp"
+#include "hpprgm.hpp"
 #include "string_utilities.hpp"
 #include "minifier.hpp"
 #include "extensions.hpp"
@@ -765,6 +765,12 @@ int main(int argc, char **argv) {
             break;
         }
     }
+    
+    if (in_ext == ".hpprgm" || in_ext == ".hpappprgm") {
+        std::wstring prgm = hpprgm::prgm(inpath);
+        output = utf::utf8(prgm);
+    }
+    
     if (output.empty()) {
         auto bom = utf::bom(inpath);
         if (bom != utf::BOMnone) {
@@ -794,7 +800,7 @@ int main(int argc, char **argv) {
     
     if (ext == ".hpprgm" || ext == ".hpappprgm") {
         auto programName = inpath.stem().string();
-        prgm::buildHPPrgm(outpath, programName, output);
+        hpprgm::create(outpath, programName, output);
     } else {
         if (!utf::save(outpath, utf::utf16(output), utf::BOMle)) {
             std::cerr << "❌ Unable to create file " << outpath.filename() << ".\n";
