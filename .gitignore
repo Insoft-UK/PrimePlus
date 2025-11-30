@@ -5,6 +5,7 @@ xcuserdata/
 version.txt
 .DS_Store
 build
+test
 make
 *.pkg
 *.zip

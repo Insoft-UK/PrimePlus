@@ -1,8 +1,0 @@
-#pragma mode( separator(.,;) integer(h64) assignment(=) indentation(2) operators(▶,*,/,-,+) )
-
-alias app::start = START;
-app::start();
-
-app::start()
-begin
-end;
