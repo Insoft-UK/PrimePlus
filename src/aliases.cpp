@@ -256,39 +256,32 @@ void Aliases::removeAllAliasesOfType(const Type type) {
     }
 }
 
-static std::string resolveMacroFunction(const std::string &str, const std::string &parameters, const std::string &identifier, const std::string &real) {
+static std::string resolveMacroFunction(const std::string &str, const std::string &identifier, const std::string &real) {
     std::string result;
     std::regex re;
     std::smatch match;
     std::string pattern;
     
-    re = R"(\b)" + identifier + R"(\(([^()]*)\))";
-    if (std::regex_search(str, match, re)) {
-        result = match[1].str();
+    re = R"(\b)" + identifier + R"( *\(([^()]*)\))";
+    if (!std::regex_search(str, match, re)) {
+        return result;
+    }
+    result = match.str(1);
+    
+    re = R"([^,]+(?=[^,]*))";
+    std::vector<std::string> arguments;
+    for (auto it = std::sregex_iterator(result.begin(), result.end(), re); it != std::sregex_iterator(); ++it) {
+        arguments.push_back(it->str());
+    }
+    
+    result = real;
+    size_t i = 0;
+    for (auto it = arguments.begin(); it != arguments.end(); ++it, ++i) {
+        pattern = "\\$" + std::to_string(i + 1);
+        result = std::regex_replace(result, std::regex(pattern), arguments.at(i));
         
-        re = R"([^,]+(?=[^,]*))";
-        std::vector<std::string> arguments;
-        for (auto it = std::sregex_iterator(result.begin(), result.end(), re); it != std::sregex_iterator(); ++it) {
-            arguments.push_back(it->str());
-        }
-        
-        result = real;
-        size_t i = 0;
-        for (auto it = std::sregex_iterator(parameters.begin(), parameters.end(), re); it != std::sregex_iterator(); ++it, ++i) {
-            if (arguments.empty()) {
-                std::cerr << MessageType::Error << "macro parameters mismatched" << '\n';
-                break;
-            }
-            
-            pattern = "\\b" + it->str() + "\\b";
-            result = std::regex_replace(result, std::regex(pattern), arguments.at(i));
-            
-            pattern = "\\$" + std::to_string(i + 1);
-            result = std::regex_replace(result, std::regex(pattern), arguments.at(i));
-            
-            pattern = "\\$0";
-            result = std::regex_replace(result, std::regex(pattern), identifier);
-        }
+        pattern = "\\$0";
+        result = std::regex_replace(result, std::regex(pattern), identifier);
     }
     
     return result;
@@ -314,16 +307,15 @@ std::string Aliases::resolveAllAliasesInText(const std::string &str) {
         
         re = pattern;
 
-        if (!it->parameters.empty()) {
-            if (namespaces.empty()) {
-                re = R"(\b)" + it->identifier + R"(\([^()]*\))";
+        if (it->type == Type::Macro) {
+            if (!regex_search(s, match, std::regex(R"(\b)" + it->identifier + R"( *\([^()]*\))"))) {
+                if (!regex_search(s, re)) continue;
+                s = regex_replace(s, re, it->real);
+                continue;
             }
-            else {
-                re = R"(\b)" + namespaces + "?" + it->identifier + R"(\([^()]*\))";
-            }
-            while (regex_search(s, match, re)) {
-                if (it->deprecated) std::cerr << MessageType::Deprecated << it->identifier << it->message << "\n";
-                std::string result = resolveMacroFunction(match.str(), it->parameters, it->identifier, it->real);
+                
+            while (regex_search(s, match, std::regex(R"(\b)" + it->identifier + R"( *\([^()]*\))"))) {
+                std::string result = resolveMacroFunction(match.str(), it->identifier, it->real);
                 s.replace(match.position(), match.length(), result);
             }
             continue;
@@ -338,8 +330,7 @@ std::string Aliases::resolveAllAliasesInText(const std::string &str) {
         s = resolveAllAliasesInText(s);
     }
     
-    
-    
+
     return s;
 }
 

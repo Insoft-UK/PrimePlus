@@ -186,12 +186,10 @@ std::string Preprocessor::parse(const std::string& str) {
                 2 a,b,c
                 3 c := a+b
          */
-        re = R"(^ *#define +([A-Za-z_]\w*)(?:\(([A-Za-z_ ,]+)\))? *(.*))";
+        re = R"(^ *#define +([A-Za-z_]\w*) +(.*))";
         if (std::regex_search(str, match, re)) {
-            identity.identifier = match[1].str();
-            identity.parameters = match[2].str();
-            strip(identity.parameters);
-            identity.real = match[3].str();
+            identity.identifier = match.str(1);
+            identity.real = match.str(2);
             
             identity.scope = 0;
             identity.type = Aliases::Type::Macro;
@@ -199,7 +197,6 @@ std::string Preprocessor::parse(const std::string& str) {
             identity.real = _singleton->aliases.resolveAllAliasesInText(identity.real);
             identity.real = Calc::evaluateMathExpression(identity.real);
             
-            if (verbose) std::cerr << MessageType::Verbose << "#define '" << identity.identifier << (identity.real.empty() ? "" : "' as '" + identity.real + "'") << "'\n";
             _singleton->aliases.append(identity);
             return "";
         }
@@ -211,7 +208,6 @@ std::string Preprocessor::parse(const std::string& str) {
          */
         re = R"(^ *#undef +([A-Za-z_][\w]*) *$)";
         if (std::regex_search(str, match, re)) {
-            if (verbose) std::cerr << MessageType::Verbose << "#undef '" << *it << "'\n";
             _singleton->aliases.remove(match[1].str());
             return "";
         }
@@ -226,7 +222,6 @@ std::string Preprocessor::parse(const std::string& str) {
         re = R"(^ *#ifdef +([A-Za-z_]\w*) *$)";
         if (std::regex_search(str, match, re)) {
             identity.identifier = match[1].str();
-            if (verbose) std::cerr << MessageType::Verbose << "#ifdef '" << identity.identifier << "' result was " << (!disregard ? "true" : "false") << '\n';
             disregard = !_singleton->aliases.identifierExists(identity.identifier);
             return "";
         }
@@ -239,8 +234,6 @@ std::string Preprocessor::parse(const std::string& str) {
         re = R"(^\ *#ifndef +([A-Za-z_]\w*) *$)";
         if (std::regex_search(str, match, re)) {
             identity.identifier = match[1].str();
-            
-            if (verbose) std::cerr << MessageType::Verbose << "#ifndef '" << identity.identifier << "' result was " << (!disregard ? "true" : "false") << '\n';
             disregard = _singleton->aliases.identifierExists(identity.identifier);
             return "";
         }
@@ -270,12 +263,12 @@ std::string Preprocessor::parse(const std::string& str) {
         return "";
     }
     
-    if (regex_search(str, std::regex(R"(^ *#end(if)?\b)"))) {
+    if (regex_search(str, std::regex(R"(^ *#(end|endif)\b)"))) {
         disregard = false;
         return "";
     }
     
-    if (regex_search(str, std::regex(R"(^ *# *[a-zA-Z]+\b)"))) {
+    if (regex_search(str, std::regex(R"(^ *#[a-z]+\b)", std::regex_constants::icase))) {
         return "";
     }
 

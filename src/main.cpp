@@ -156,7 +156,8 @@ std::string translatePPLPlusLine(const std::string& input) {
     output = capitalizeWords(output, {
         "begin", "end", "return", "kill", "if", "then", "else", "xor", "or", "and", "not",
         "case", "default", "iferr", "ifte", "for", "from", "step", "downto", "to", "do",
-        "while", "repeat", "until", "break", "continue", "export", "const", "local", "key"
+        "while", "repeat", "until", "break", "continue", "export", "const", "local", "key",
+        "eval", "freeze", "view"
     });
     
     output = capitalizeWords(output, {"log", "cos", "sin", "tan", "ln", "min", "max"});
@@ -554,12 +555,12 @@ void help(void) {
     << "Copyright (C) 2023-" << YEAR << " Insoft.\n"
     << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << BUNDLE_VERSION << ")\n"
     << "\n"
-    << "Usage: " << COMMAND_NAME << " <input-file> [-o <output-file>] [-v=<flags>]\n"
+    << "Usage: " << COMMAND_NAME << " <input-file> [-o <output-file>] [-v <flags>]\n"
     << "\n"
     << "Options:\n"
     << "  -o <output-file>        Specify the filename for generated PPL code.\n"
     << "  -c                      Specify if the PPL code should be compressed.\n"
-    << "  -v=<flags>              Display detailed processing information.\n"
+    << "  -v <flags>              Display detailed processing information.\n"
     << "\n"
     << "  Verbose Flags:\n"
     << "     a                    Aliases\n"
@@ -675,7 +676,7 @@ int main(int argc, char **argv) {
             continue;
         }
         
-        if ( args == "-c" ) {
+        if ( args == "-c" || args == "--compress" ) {
             minify = true;
             continue;
         }
@@ -695,11 +696,11 @@ int main(int argc, char **argv) {
             return 0;
         }
         
-        if (args.starts_with("-v=")) {
-            if (args.find("a") != std::string::npos) Singleton::shared()->aliases.verbose = true;
-            if (args.find("p") != std::string::npos) preprocessor.verbose = true;
-            if (args.find("r") != std::string::npos) Singleton::shared()->regexp.verbose = true;
-            if (args.find("l") != std::string::npos) verbose = true;
+        if (args == "-v" || args == "--verbose") {
+            Singleton::shared()->aliases.verbose = true;
+            preprocessor.verbose = true;
+            Singleton::shared()->regexp.verbose = true;
+            verbose = true;
             
             continue;
         }
@@ -729,7 +730,7 @@ int main(int argc, char **argv) {
     }
     
     
-    auto ext = std::lowercased(outpath.extension().string());
+    auto out_ext = std::lowercased(outpath.extension().string());
     
     std::string str;
     
@@ -798,7 +799,7 @@ int main(int argc, char **argv) {
         std::cerr << "PPL Code (deflated " << (original_size - new_size) * 100 / original_size << "%)\n";
     }
     
-    if (ext == ".hpprgm" || ext == ".hpappprgm") {
+    if (out_ext == ".hpprgm" || out_ext == ".hpappprgm") {
         auto programName = inpath.stem().string();
         hpprgm::create(outpath, programName, output);
     } else {

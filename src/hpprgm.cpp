@@ -188,7 +188,7 @@ static std::vector<uint16_t> extractData(const std::vector<uint16_t>& hpprgm)
 void hpprgm::create(const std::filesystem::path& path, const std::string& name, const std::string& prgm)
 {
     std::vector<uint8_t> header = {
-        0x0C, 0, 0, 0, 0x7F, 0x01, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+        0x0C, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
     };
     
     auto sourceCode = utf16le(prgm);
