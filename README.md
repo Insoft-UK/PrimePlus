@@ -7,15 +7,40 @@
 <b>PPL+</b> is a preprocessor command line tool designed to improve code maintainability and readability in the HP Prime Programming Language (PPL). PPL+ also allows one to define regular expressions to assist in the preprocessing workflow. The final output is a compact, optimized PPL program file tailored to the HP Prime’s limited storage capacity.
 <br/><br/>
 
-|Left-Parameter|Left-Description|
-|:-|:-|
-|-o <output-file>|Specify the filename for generated code|
-|-c or --compress|Specify if the PPL code should be compressed|
-|-v or --verbose|Display detailed processing information|
-|**Additional Commands**||
-|--version|Displays the version information|
-|--build|Displays the build information|
-|-h or --help|Show this help message|
+<table>
+  <thead>
+    <tr align="left">
+      <th>Options</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>-o <output-file></td><td>Specify the filename for generated code</td>
+    </tr>
+    <tr>
+      <td>-c or --compress</td><td>Specify if the PPL code should be compressed</td>
+    </tr>
+    <tr>
+      <td>-v or --verbose</td>Display detailed processing information<td></td>
+    </tr>
+    <tr>
+      <td></td><td></td>
+    </tr>
+    <tr>
+      <td colspan="2"><b>Additional Commands</b></td>
+    </tr>
+    <tr>
+      <td>--version</td>Displays the version information<td></td>
+    </tr>
+    <tr>
+      <td>--build</td>Displays the build information<td></td>
+    </tr>
+    <tr>
+      <td>--help</td><td>Show this help message</td>
+    </tr>
+  </tbody>
+</table>
 
 ### Regular Expressions
 **Example: Extending PPL with Switch-Case Functionality Using Regex**
