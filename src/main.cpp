@@ -558,14 +558,9 @@ void help(void) {
     << "Usage: " << COMMAND_NAME << " <input-file> [-o <output-file>] [-v <flags>]\n"
     << "\n"
     << "Options:\n"
-    << "  -o <output-file>        Specify the filename for generated PPL code.\n"
-    << "  -c                      Specify if the PPL code should be compressed.\n"
-    << "  -v <flags>              Display detailed processing information.\n"
-    << "\n"
-    << "  Verbose Flags:\n"
-    << "     a                    Aliases\n"
-    << "     p                    Preprocessor\n"
-    << "     r                    Regular Expression\n"
+    << "  -o <output-file>        Specify the filename for generated code.\n"
+    << "  -c or --compress        Specify if the PPL code should be compressed.\n"
+    << "  -v                      Display detailed processing information.\n"
     << "\n"
     << "Additional Commands:\n"
     << "  " << COMMAND_NAME << " {--version | --help }\n"
@@ -681,7 +676,7 @@ int main(int argc, char **argv) {
             continue;
         }
         
-        if ( args == "--help" ) {
+        if ( args == "-h" or args == "--help" ) {
             help();
             return 0;
         }
