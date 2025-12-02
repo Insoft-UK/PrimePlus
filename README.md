@@ -47,9 +47,8 @@
 This example demonstrates how to use **regex** (regular expressions) to add **switch-case** control flow to the PPL language, similar to the switch statements found in other programming languages.
 
 ```
-regex `\bswitch +([a-zA-Z_]\w*)` LOCAL sw__SCOPE__ := $1;CASE
-regex `\bcase +(\-?\d+) +do *$` IF sw\`__SCOPE__-1` == $1 THEN
-
+regex >`\bswitch +([a-z_.:]+)`i LOCAL sw__SCOPE__ := $1;\aCASE
+regex >`\bcase +([^ ]+) +do\b`i IF sw\`__SCOPE__-1` == $1 THEN
 switch X
     case 0 do
     end;
@@ -74,9 +73,8 @@ A code stack provides a convenient way to store code snippets that can be retrie
 **Example: how code stack can be used for a regular expresion to bring a bit of C style to PPL**
 
 ```
-regex >`\bfor *([^;]+); *([^;]+); *([^;]+) +do\b`i $1; WHILE $2 DO__PUSH__`\t$3;`
+regex >`\bfor *([^;]+); *([^;]+); *([^;]+) +do\b`i $1;\aWHILE $2 DO__PUSH__`\i$3;\a`
 regex >`\bend;`i __POP__END;
-
 function()
 begin
     for i=0; i<2; i=i+1 do
