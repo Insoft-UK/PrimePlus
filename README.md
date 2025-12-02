@@ -14,6 +14,7 @@
 |-v or --verbose|Display detailed processing information|
 |**Additional Commands**||
 |--version|Displays the version information|
+|--build|Displays the build information|
 |-h or --help|Show this help message|
 
 ### Regular Expressions
