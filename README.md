@@ -24,16 +24,16 @@
       <td>-c or --compress</td><td>Specify if the PPL code should be compressed</td>
     </tr>
     <tr>
-      <td>-v or --verbose</td>Display detailed processing information<td></td>
+      <td>-v or --verbose</td><td>Display detailed processing information</td>
     </tr>
     <tr>
       <td colspan="2"><b>Additional Commands</b></td>
     </tr>
     <tr>
-      <td>--version</td>Displays the version information<td></td>
+      <td>--version</td><td>Displays the version information</td>
     </tr>
     <tr>
-      <td>--build</td>Displays the build information<td></td>
+      <td>--build</td><td>Displays the build information</td>
     </tr>
     <tr>
       <td>--help</td><td>Show this help message</td>
