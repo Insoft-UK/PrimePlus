@@ -7,6 +7,8 @@
 <b>PPL+</b> is a preprocessor command line tool designed to improve code maintainability and readability in the HP Prime Programming Language (PPL). PPL+ also allows one to define regular expressions to assist in the preprocessing workflow. The final output is a compact, optimized PPL program file tailored to the HP Prime’s limited storage capacity.
 <br/><br/>
 
+`Usage: ppl+ <input-file> [-o <output-file>] [-v <flags>]`
+
 <table>
   <thead>
     <tr align="left">
