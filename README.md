@@ -12,7 +12,8 @@
 |-o <output-file>|Specify the filename for generated code|
 |-c or --compress|Specify if the PPL code should be compressed|
 |-v or --verbose|Display detailed processing information|
-|Additional Commands||
+|**Additional Commands**||
+|---|---|
 |--version|Displays the version information|
 |-h or --help|Show this help message|
 
