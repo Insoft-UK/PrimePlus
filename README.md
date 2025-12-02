@@ -25,9 +25,6 @@
       <td>-v or --verbose</td>Display detailed processing information<td></td>
     </tr>
     <tr>
-      <td></td><td></td>
-    </tr>
-    <tr>
       <td colspan="2"><b>Additional Commands</b></td>
     </tr>
     <tr>
