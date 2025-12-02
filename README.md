@@ -7,15 +7,48 @@
 <b>PPL+</b> is a preprocessor command line tool designed to improve code maintainability and readability in the HP Prime Programming Language (PPL). PPL+ also allows one to define regular expressions to assist in the preprocessing workflow. The final output is a compact, optimized PPL program file tailored to the HP Prime’s limited storage capacity.
 <br/><br/>
 
+`Usage: ppl+ <input-file> [-o <output-file>] [-v <flags>]`
+
+<table>
+  <thead>
+    <tr align="left">
+      <th>Options</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>-o <output-file></td><td>Specify the filename for generated code</td>
+    </tr>
+    <tr>
+      <td>-c or --compress</td><td>Specify if the PPL code should be compressed</td>
+    </tr>
+    <tr>
+      <td>-v or --verbose</td><td>Display detailed processing information</td>
+    </tr>
+    <tr>
+      <td colspan="2"><b>Additional Commands</b></td>
+    </tr>
+    <tr>
+      <td>--version</td><td>Displays the version information</td>
+    </tr>
+    <tr>
+      <td>--build</td><td>Displays the build information</td>
+    </tr>
+    <tr>
+      <td>--help</td><td>Show this help message</td>
+    </tr>
+  </tbody>
+</table>
+
 ### Regular Expressions
 **Example: Extending PPL with Switch-Case Functionality Using Regex**
 
 This example demonstrates how to use **regex** (regular expressions) to add **switch-case** control flow to the PPL language, similar to the switch statements found in other programming languages.
 
 ```
-regex `\bswitch +([a-zA-Z_]\w*)` LOCAL sw__SCOPE__ := $1;CASE
-regex `\bcase +(\-?\d+) +do *$` IF sw\`__SCOPE__-1` == $1 THEN
-
+regex >`\bswitch +([a-z_.:]+)`i LOCAL sw__SCOPE__ := $1;\aCASE
+regex >`\bcase +([^ ]+) +do\b`i IF sw\`__SCOPE__-1` == $1 THEN
 switch X
     case 0 do
     end;
@@ -40,9 +73,8 @@ A code stack provides a convenient way to store code snippets that can be retrie
 **Example: how code stack can be used for a regular expresion to bring a bit of C style to PPL**
 
 ```
-regex >`\bfor *([^;]+); *([^;]+); *([^;]+) +do\b`i $1; WHILE $2 DO__PUSH__`\t$3;`
+regex >`\bfor *([^;]+); *([^;]+); *([^;]+) +do\b`i $1;\aWHILE $2 DO__PUSH__`\i$3;\a`
 regex >`\bend;`i __POP__END;
-
 function()
 begin
     for i=0; i<2; i=i+1 do
