@@ -184,7 +184,7 @@ static std::string cleanWhitespace(const std::string& input) {
         current = input[i];
 
         // by Jozef Dekoninck: && current != '\n' to exclude the deletion of the LF character.
-        if (std::isspace(static_cast<unsigned char>(current))&& current != '\n') {
+        if (std::isspace(static_cast<unsigned char>(current))) {
             continue;
         }
 

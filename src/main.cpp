@@ -475,40 +475,40 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
         if (preprocessor.isQuotedInclude(input)) {
             Singleton::shared()->incrementLineNumber();
             
-            std::filesystem::path path = preprocessor.extractIncludePath(input);
-            if (path.parent_path().empty() && fs::exists(path) == false) {
-                path = singleton.getMainSourceDir() / path.filename();
+            std::filesystem::path filePath = preprocessor.extractIncludePath(input);
+            if (filePath.parent_path().empty() && fs::exists(filePath) == false) {
+                filePath = path.parent_path() / filePath.filename();
             }
-            auto ext = std::lowercased(path.extension().string());
+            auto ext = std::lowercased(filePath.extension().string());
             if (ext == ".prgm") {
-                output += embedPPLCode(path.string());
+                output += embedPPLCode(filePath);
                 continue;
             }
-            if (!(fs::exists(path))) {
-                std::cerr << MessageType::Verbose << path.filename() << " file not found\n";
+            if (!(fs::exists(filePath))) {
+                std::cerr << MessageType::Verbose << filePath.filename() << " file not found\n";
             } else {
-                output += translatePPLPlusToPPL(path.string());
+                output += translatePPLPlusToPPL(filePath);
             }
             continue;
         }
         
         if (preprocessor.isAngleInclude(input)) {
             Singleton::shared()->incrementLineNumber();
-            std::filesystem::path path = preprocessor.extractIncludePath(input);
-            if (path.extension().empty()) {
-                path.replace_extension(".prgm+");
+            std::filesystem::path filePath = preprocessor.extractIncludePath(input);
+            
+            if (filePath.extension().empty()) {
+                filePath.replace_extension(".prgm+");
             }
             for (fs::path systemIncludePath : preprocessor.systemIncludePath) {
-                path = systemIncludePath / path.filename();
-                if (fs::exists(path)) break;
-                
-                path = singleton.getMainSourceDir() / path.filename();
-                if (fs::exists(path)) break;
+                filePath = systemIncludePath / filePath.filename();
+                if (fs::exists(filePath)) break;
             }
-            if (!(fs::exists(path))) {
-                std::cerr << MessageType::Verbose << path.filename() << " file not found\n";
+            if (filePath.parent_path().empty()) filePath = path.parent_path() / filePath;
+            
+            if (!(fs::exists(filePath))) {
+                std::cerr << MessageType::Verbose << filePath.filename() << " file not found\n";
             } else {
-                output += translatePPLPlusToPPL(path.string());
+                output += translatePPLPlusToPPL(filePath);
             }
             continue;
         }
@@ -767,20 +767,16 @@ int main(int argc, char **argv) {
     if (in_ext == ".hpprgm" || in_ext == ".hpappprgm") {
         std::wstring prgm = hpprgm::prgm(inpath);
         output = utf::utf8(prgm);
-    }
-    
-    if (output.empty()) {
-        auto bom = utf::bom(inpath);
-        if (bom != utf::BOMnone) {
-            auto prgm = utf::load(inpath, bom);
-            output = utf::utf8(prgm);
-        } else {
-            output = utf::load(inpath);
+    } else {
+        if (output.empty()) {
+            auto bom = utf::bom(inpath);
+            if (bom != utf::BOMnone) {
+                auto prgm = utf::load(inpath, bom);
+                output = utf::utf8(prgm);
+            } else {
+                output = utf::load(inpath);
+            }
         }
-    }
-    
-    if (outpath == "/dev/stdout") {
-        std::cout << output;
     }
     
     if (minify == true) {
@@ -796,19 +792,21 @@ int main(int argc, char **argv) {
         std::cerr << "PPL Code (deflated " << (original_size - new_size) * 100 / original_size << "%)\n";
     }
     
-    if (out_ext == ".hpprgm" || out_ext == ".hpappprgm") {
-        auto programName = inpath.stem().string();
-        hpprgm::create(outpath, programName, output);
+    if (outpath == "/dev/stdout") {
+        std::cout << output;
     } else {
-        if (!utf::save(outpath, utf::utf16(output), utf::BOMle)) {
-            std::cerr << "❌ Unable to create file " << outpath.filename() << ".\n";
-            return 0;
+        if (out_ext == ".hpprgm" || out_ext == ".hpappprgm") {
+            auto programName = inpath.stem().string();
+            hpprgm::create(outpath, programName, output);
+        } else {
+            if (!utf::save(outpath, utf::utf16(output), utf::BOMle)) {
+                std::cerr << "❌ Unable to create file " << outpath.filename() << ".\n";
+                return 0;
+            }
         }
-    }
-
     
-    if (outpath != "/dev/stdout")
         std::cerr << "Successfully created " << outpath.filename() << "\n";
+    }
     
     // Stop measuring time and calculate the elapsed time.
     long long elapsed_time = timer.elapsed();
