@@ -1,0 +1,2 @@
+#define MY_NAME "PPL+"
+local thisMacro = MY_NAME;

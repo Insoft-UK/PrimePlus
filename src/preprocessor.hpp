@@ -48,10 +48,6 @@ namespace pplplus {
         std::filesystem::path extractIncludePath(const std::string& str);
         std::string parse(const std::string& str);
         
-        Preprocessor() {
-            systemIncludePath.push_front(std::filesystem::path("/Applications/HP/PrimeSDK/include"));
-        }
-        
     };
     
 }

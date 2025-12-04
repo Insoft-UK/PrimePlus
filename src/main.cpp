@@ -394,7 +394,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
     if (!infile.is_open()) {
         return output;
     }
-    
+   
     while (getline(infile, input)) {
         /*
          Handle any escape lines `\` by continuing to read line joining them all up as one long line.
@@ -477,9 +477,10 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
             
             std::filesystem::path path = preprocessor.extractIncludePath(input);
             if (path.parent_path().empty() && fs::exists(path) == false) {
-                path = singleton.getMainSourceDir().string() + "/" + path.filename().string();
+                path = singleton.getMainSourceDir() / path.filename();
             }
-            if (path.extension() == ".prgm") {
+            auto ext = std::lowercased(path.extension().string());
+            if (ext == ".prgm") {
                 output += embedPPLCode(path.string());
                 continue;
             }
@@ -498,10 +499,11 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
                 path.replace_extension(".prgm+");
             }
             for (fs::path systemIncludePath : preprocessor.systemIncludePath) {
-                if (fs::exists(systemIncludePath.string() + "/" + path.filename().string())) {
-                    path = systemIncludePath.string() + "/" + path.filename().string();
-                    break;
-                }
+                path = systemIncludePath / path.filename();
+                if (fs::exists(path)) break;
+                
+                path = singleton.getMainSourceDir() / path.filename();
+                if (fs::exists(path)) break;
             }
             if (!(fs::exists(path))) {
                 std::cerr << MessageType::Verbose << path.filename() << " file not found\n";
@@ -535,7 +537,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
     
     
     
-    infile.close();
+//    infile.close();
     singleton.popPath();
     
     return output;
@@ -555,7 +557,7 @@ void help(void) {
     << "Copyright (C) 2023-" << YEAR << " Insoft.\n"
     << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << BUNDLE_VERSION << ")\n"
     << "\n"
-    << "Usage: " << COMMAND_NAME << " <input-file> [-o <output-file>] [-v <flags>]\n"
+    << "Usage: " << COMMAND_NAME << " <input-file> [-o <output-file>] [-v]\n"
     << "\n"
     << "Options:\n"
     << "  -o <output-file>        Specify the filename for generated code.\n"
