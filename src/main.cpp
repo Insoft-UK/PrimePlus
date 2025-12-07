@@ -794,6 +794,7 @@ int main(int argc, char **argv) {
     
     if (outpath == "/dev/stdout") {
         std::cout << output;
+        std::cerr << '\n';
     } else {
         if (out_ext == ".hpprgm" || out_ext == ".hpappprgm") {
             auto programName = inpath.stem().string();

@@ -184,7 +184,7 @@ static std::string cleanWhitespace(const std::string& input) {
         current = input[i];
 
         // by Jozef Dekoninck: && current != '\n' to exclude the deletion of the LF character.
-        if (std::isspace(static_cast<unsigned char>(current))) {
+        if (std::isspace(static_cast<unsigned char>(current)) && current != '\n') {
             continue;
         }
 
@@ -598,7 +598,8 @@ std::string minifier::minify(const std::string& code) {
     str = restorePythonBlocks(str, python);
     
     str = regex_replace(str, std::regex(R"(^#pragma mode\(([a-z]+\([^()]+\))+\))"), "$0\n");
-    str = regex_replace(str, std::regex(R"(\b(BEGIN|CASE|THEN|REPEAT|DO) )"), "$1\n");
+    str = regex_replace(str, std::regex(R"(\n{2,})"), "\n");
+    str = regex_replace(str, std::regex(R"(;\s*)"), ";");
     
     std::regex re(R"((?:\b(EXPORT|LOCAL) )?([a-zA-Z]\w*)\([a-zA-Z,]*\)\s*(?=BEGIN\b))");
     std::sregex_iterator begin(str.begin(), str.end(), re);

@@ -181,8 +181,6 @@ static std::vector<uint16_t> extractData(const std::vector<uint16_t>& hpprgm)
 }
 
 
-
-
 // MARK: - 📣 Public API functions
 
 void hpprgm::create(const std::filesystem::path& path, const std::string& name, const std::string& prgm)
