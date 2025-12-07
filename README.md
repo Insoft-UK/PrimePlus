@@ -3,6 +3,7 @@
 
 ## PPL+ for HP Prime Programming Language
 **Command Line Tool**
+
 **PPL+** is a pre-processor that improves readability and maintainability of HP PPL code. It supports custom regex rules, can extract PPL source from **.hpprgm** and **.hpappprgm** files, and can also **compress** PPL source into a compact, optimized form for the HP Prime.
 
 `Usage: ppl+ <input-file> [-o <output-file>] [-v]`
