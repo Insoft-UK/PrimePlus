@@ -150,47 +150,54 @@ static std::string replaceWords(const std::string& input, const std::vector<std:
     return result;
 }
 
-/**
- * @brief Cleans up whitespace in a string while preserving word separation.
- *
- * This function removes all unnecessary whitespace characters (spaces, tabs, newlines, etc.)
- * from the input string. It ensures that only a single space is inserted between consecutive
- * word characters (letters, digits, or underscores) when needed to maintain logical separation.
- *
- * Non-word characters (such as punctuation) are not separated by spaces, and leading/trailing
- * whitespace is removed.
- *
- * @param input The input string to be cleaned.
- * @return A new string with cleaned and normalized whitespace.
- *
- * @note This is useful for normalizing input for parsers, code formatters, or text display
- *       where compact and readable word separation is desired.
- */
 
 static std::string cleanWhitespace(const std::string& input) {
     std::string output;
-    char current = '\0';
-    
-    auto iswordc = [](char c) {
+    bool lastWasWordChar = false;
+    bool pendingSpace = false;
+
+    auto isWordChar = [](char c) {
         return std::isalnum(static_cast<unsigned char>(c)) || c == '_';
     };
-    
-    for (size_t i = 0; i < input.length(); i++) {
-        if (std::isspace(static_cast<unsigned char>(current))) {
-            if(iswordc(input[i]) && !output.empty() && iswordc(output.back())) {
+
+    for (char ch : input) {
+        if (ch == '\n') {
+            if (pendingSpace) {
+                pendingSpace = false; // discard pending space before newline
+            }
+            output += '\n';
+            lastWasWordChar = false;
+        } else if (std::isspace(static_cast<unsigned char>(ch))) {
+            if (lastWasWordChar) {
+                pendingSpace = true;
+            }
+        } else {
+            if (pendingSpace && lastWasWordChar && isWordChar(ch)) {
                 output += ' ';
             }
+            output += ch;
+            lastWasWordChar = isWordChar(ch);
+            pendingSpace = false;
         }
-        current = input[i];
-
-        // by Jozef Dekoninck: && current != '\n' to exclude the deletion of the LF character.
-        if (std::isspace(static_cast<unsigned char>(current)) && current != '\n') {
-            continue;
-        }
-
-        output += current;
     }
-    
+
+    return output;
+}
+
+static std::string removeNewlinesAfterDelimiters(const std::string& input, const std::vector<char>& delimiters) {
+    std::string output;
+    output.reserve(input.size()); // optional optimization
+    size_t len = input.length();
+
+    for (size_t i = 0; i < len; ++i) {
+        if (input[i] == '\n' && i > 0) {
+            // Check if the previous character is in the delimiters list
+            if (std::find(delimiters.begin(), delimiters.end(), input[i - 1]) != delimiters.end()) {
+                continue; // skip the newline
+            }
+        }
+        output += input[i];
+    }
 
     return output;
 }
@@ -575,6 +582,33 @@ static std::string separatePythonMarkers(const std::string& input) {
     return oss.str();
 }
 
+std::string removeComments(const std::string& str) {
+    std::string output;
+    output.reserve(str.size());
+
+    size_t i = 0;
+    while (i < str.size()) {
+        // Detect start of comment
+        if (i + 1 < str.size() && str[i] == '/' && str[i + 1] == '/') {
+            // Skip until the next newline
+            i += 2;
+            while (i < str.size() && str[i] != '\n') {
+                i++;
+            }
+            // If newline exists, keep the newline
+            if (i < str.size()) {
+                output += '\n';
+                i++;
+            }
+        } else {
+            // Normal character: keep it
+            output += str[i++];
+        }
+    }
+
+    return output;
+}
+
 
 // MARK: - 📣 Public API functions
 
@@ -583,6 +617,8 @@ std::string minifier::minify(const std::string& code) {
     
     auto python = extractPythonBlocks(str);
     str = blankOutPythonBlocks(str);
+    
+    str = removeComments(str);
     
     auto strings = preserveStrings(str);
     str = blankOutStrings(str);
@@ -596,10 +632,11 @@ std::string minifier::minify(const std::string& code) {
     str = restoreStrings(str, strings);
     str = separatePythonMarkers(str);
     str = restorePythonBlocks(str, python);
+    str = removeNewlinesAfterDelimiters(str, {';', ',', '{', '}'});
     
     str = regex_replace(str, std::regex(R"(^#pragma mode\(([a-z]+\([^()]+\))+\))"), "$0\n");
     str = regex_replace(str, std::regex(R"(\n{2,})"), "\n");
-    str = regex_replace(str, std::regex(R"(;\s*)"), ";");
+    str = regex_replace(str, std::regex(R"(#0+)"), "#");
     
     std::regex re(R"((?:\b(EXPORT|LOCAL) )?([a-zA-Z]\w*)\([a-zA-Z,]*\)\s*(?=BEGIN\b))");
     std::sregex_iterator begin(str.begin(), str.end(), re);
