@@ -157,7 +157,12 @@ static std::string cleanWhitespace(const std::string& input) {
     bool pendingSpace = false;
 
     auto isWordChar = [](char c) {
-        return std::isalnum(static_cast<unsigned char>(c)) || c == '_';
+        /*
+         by Jozef Dekoninck || c == '('
+         Fixes an issue when parentheses after UNTIL, compression removes
+         the space after UNTIL what gives an error in compression.
+         */
+        return std::isalnum(static_cast<unsigned char>(c)) || c == '_' || c == '(';
     };
 
     for (char ch : input) {
@@ -691,8 +696,7 @@ std::string minifier::minify(const std::string& code) {
     str = regex_replace(str, std::regex(R"(^#pragma mode\(([a-z]+\([^()]+\))+\))"), "$0\n");
     str = regex_replace(str, std::regex(R"(\n{2,})"), "\n");
     str = regex_replace(str, std::regex(R"(#0+)"), "#");
-    str = regex_replace(str, std::regex(R"(\b(UNTIL|THEN|DO)\()"), "$1 (");
-    
+
     std::regex re(R"((?:\b(EXPORT|LOCAL) )?([a-zA-Z]\w*)\([a-zA-Z,]*\)\s*(?=BEGIN\b))");
     std::sregex_iterator begin(str.begin(), str.end(), re);
     std::sregex_iterator end;

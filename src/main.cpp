@@ -810,7 +810,7 @@ int main(int argc, char **argv) {
     } else {
         if (out_ext == ".hpprgm" || out_ext == ".hpappprgm") {
             auto programName = inpath.stem().string();
-            hpprgm::create(outpath, programName, output);
+            hpprgm::create(outpath, output);
         } else {
             if (!utf::save(outpath, utf::utf16(output), utf::BOMle)) {
                 std::cerr << "❌ Unable to create file " << outpath.filename() << ".\n";

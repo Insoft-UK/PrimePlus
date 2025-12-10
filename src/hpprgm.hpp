@@ -28,6 +28,6 @@
 #include <filesystem>
 
 namespace hpprgm {
-    void create(const std::filesystem::path& path, const std::string& name, const std::string& prgm);
+    void create(const std::filesystem::path& path, const std::string& prgm, const std::string& name = "");
     std::wstring prgm(const std::filesystem::path& path);
 }
