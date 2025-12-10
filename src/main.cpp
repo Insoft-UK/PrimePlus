@@ -584,10 +584,22 @@ fs::path resolveAndValidateInputFile(const char *input_file) {
         path.replace_extension("prgm+");
     }
     
-    if (utf::bom(path) != utf::BOMnone) {
-        std::cerr << "❓File " << path.filename() << " not utf-8 at " << path.parent_path() << " location.\n";
-        exit(0);
+    std::string in_ext = std::lowercased(path.extension().string());
+    std::array<std::string, 3> extensions = {
+        ".prgm+",
+        ".ppl+",
+        ".pp"
+    };
+    auto bom = utf::bom(path);
+    for (auto extension : extensions) {
+        if (in_ext == extension) {
+            if (bom != utf::BOMnone) {
+                std::cerr << "❓File " << path.filename() << " not utf-8 at " << path.parent_path() << " location.\n";
+                exit(0);
+            }
+        }
     }
+    
     
     if (!fs::exists(path)) {
         std::cerr << "❓File " << path.filename() << " not found at " << path.parent_path() << " location.\n";

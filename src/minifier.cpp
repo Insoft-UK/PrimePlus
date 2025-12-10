@@ -167,18 +167,22 @@ static std::string cleanWhitespace(const std::string& input) {
             }
             output += '\n';
             lastWasWordChar = false;
-        } else if (std::isspace(static_cast<unsigned char>(ch))) {
+            continue;
+        }
+        
+        if (std::isspace(static_cast<unsigned char>(ch))) {
             if (lastWasWordChar) {
                 pendingSpace = true;
             }
-        } else {
-            if (pendingSpace && lastWasWordChar && isWordChar(ch)) {
-                output += ' ';
-            }
-            output += ch;
-            lastWasWordChar = isWordChar(ch);
-            pendingSpace = false;
+            continue;
         }
+        
+        if (pendingSpace && lastWasWordChar && isWordChar(ch)) {
+            output += ' ';
+        }
+        output += ch;
+        lastWasWordChar = isWordChar(ch);
+        pendingSpace = false;
     }
 
     return output;
@@ -310,6 +314,55 @@ static std::string blankOutStrings(const std::string& str) {
     }
 
     return result;
+}
+
+/**
+ * @brief Replaces common two-character operators with their symbolic Unicode equivalents.
+ *
+ * This function scans the input string and replaces specific two-character operator
+ * sequences with their corresponding Unicode symbols:
+ *
+ * - `>=` becomes `≥`
+ * - `<=` becomes `≤`
+ * - `<>` becomes `≠`
+ *
+ * All other characters are copied as-is.
+ *
+ * @param input The input string potentially containing ASCII operator sequences.
+ * @return A new string with supported operators replaced by Unicode symbols.
+ *
+ * @note Useful for rendering more readable mathematical or logical expressions in UI output,
+ *       documents, or educational tools.
+ */
+static std::string replaceOperators(const std::string& input) {
+    std::string output;
+    output.reserve(input.size());  // Reserve space to reduce reallocations
+
+    for (std::size_t i = 0; i < input.size(); ++i) {
+        if (i + 1 < input.size()) {
+            // Lookahead for 2-character operators
+            if (input[i] == '>' && input[i + 1] == '=') {
+                output += "≥";
+                ++i;
+                continue;
+            }
+            if (input[i] == '<' && input[i + 1] == '=') {
+                output += "≤";
+                ++i;
+                continue;
+            }
+            if (input[i] == '<' && input[i + 1] == '>') {
+                output += "≠";
+                ++i;
+                continue;
+            }
+        }
+
+        // Default: copy character
+        output += input[i];
+    }
+
+    return output;
 }
 
 // MARK: - ● BEGIN/END block parsing
@@ -623,6 +676,7 @@ std::string minifier::minify(const std::string& code) {
     auto strings = preserveStrings(str);
     str = blankOutStrings(str);
     
+    str = replaceOperators(str);
     str = shortenVariableNames(str);
     str = replaceWords(str, {"FROM"}, ":=");
     
@@ -637,6 +691,7 @@ std::string minifier::minify(const std::string& code) {
     str = regex_replace(str, std::regex(R"(^#pragma mode\(([a-z]+\([^()]+\))+\))"), "$0\n");
     str = regex_replace(str, std::regex(R"(\n{2,})"), "\n");
     str = regex_replace(str, std::regex(R"(#0+)"), "#");
+    str = regex_replace(str, std::regex(R"(\b(UNTIL|THEN|DO)\()"), "$1 (");
     
     std::regex re(R"((?:\b(EXPORT|LOCAL) )?([a-zA-Z]\w*)\([a-zA-Z,]*\)\s*(?=BEGIN\b))");
     std::sregex_iterator begin(str.begin(), str.end(), re);
