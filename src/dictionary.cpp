@@ -54,7 +54,7 @@ bool Dictionary::proccessDictionaryDefinition(const std::string &str) {
 
         std::string s = match[1].str();
         
-        pattern = R"(([a-z_]+)([^\r\n\t\f\v ,:=]+)?(?: *:= *([^\r\n\t\f\v ,]+))?)";
+        pattern = R"(([a-z_]\w*)([^\r\n\t\f\v ,:=]+)?(?: *:= *([^\r\n\t\f\v ,]+))?)";
         re = std::regex(pattern, std::regex_constants::icase);
         for (auto it = std::sregex_iterator(s.begin(), s.end(), re); it != std::sregex_iterator(); it++) {
             identity.identifier = match[3].str() + "." + it->str(1);
