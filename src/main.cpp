@@ -36,11 +36,12 @@
 #include <cctype>
 #include <algorithm>
 #include <string>
+#include <ranges>
 #include <unordered_set>
 
 #include "timer.hpp"
 #include "singleton.hpp"
-#include "common.hpp"
+//#include "common.hpp"
 
 #include "preprocessor.hpp"
 #include "dictionary.hpp"
@@ -49,7 +50,9 @@
 #include "calc.hpp"
 #include "utf.hpp"
 #include "hpprgm.hpp"
-#include "string_utilities.hpp"
+#include "strings.hpp"
+#include "ppl.hpp"
+#include "unary.hpp"
 #include "minifier.hpp"
 #include "reformat.hpp"
 #include "extensions.hpp"
@@ -88,6 +91,7 @@ void terminator() {
     exit(0);
 }
 void (*old_terminate)() = std::set_terminate(terminator);
+
 
 
 // MARK: - PPL+ To PPL Translater...
@@ -379,6 +383,13 @@ std::string processPythonBlock(std::ifstream& infile, const std::string& input) 
     return output;
 }
 
+static bool is_all_whitespace(const std::string& s) {
+    auto trimmed = s
+        | std::views::filter([](unsigned char c){ return !std::isspace(c); });
+
+    return trimmed.begin() == trimmed.end();
+}
+
 std::string translatePPLPlusToPPL(const fs::path& path) {
     Singleton& singleton = *Singleton::shared();
     std::ifstream infile;
@@ -563,6 +574,7 @@ void help(void) {
     << "Options:\n"
     << "  -o <output-file>        Specify the filename for generated code.\n"
     << "  -c or --compress        Specify if the PPL code should be compressed.\n"
+    << "  -r or --reformat        Specify if the PPL code should be reformated.\n"
     << "  -v                      Display detailed processing information.\n"
     << "\n"
     << "Additional Commands:\n"

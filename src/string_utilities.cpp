@@ -58,7 +58,7 @@ std::string cleanWhitespace(const std::string& input) {
          Fixes an issue when parentheses after UNTIL, compression removes
          the space after UNTIL what gives an error in compression.
          */
-        return std::isalnum(static_cast<unsigned char>(c)) || c == '_' || c == '(';
+        return std::isalnum(static_cast<unsigned char>(c)) || c == '_' || c == '(' || c == ')';
     };
 
     for (char ch : input) {
@@ -233,56 +233,7 @@ std::string convertAssignToColonEqual(const std::string& input) {
     return output;
 }
 
-/**
- * @brief Normalizes spacing around operators in a string.
- *
- * This function ensures that operators from a predefined list are properly spaced
- * within the input string. It scans the string, identifies any known operators,
- * and inserts spaces before and after them if needed to ensure consistent formatting.
- *
- * After operator normalization, the function also removes any extra or redundant
- * whitespace, ensuring clean and readable output.
- *
- * @param input The input string that may contain operators with inconsistent spacing.
- * @param operators The list of `operators`.
- * @return A new string with operators consistently spaced and extraneous whitespace removed.
- */
 
-std::string normalizeOperators(const std::string& input, const std::vector<std::string> operators) {
-    // List of all operators to normalize
-        
-        std::string result;
-        size_t i = 0;
-
-        while (i < input.size()) {
-            bool matched = false;
-
-            for (const std::string& op : operators) {
-                if (input.compare(i, op.size(), op) == 0) {
-                    if (!result.empty() && result.back() != ' ') result += ' ';
-                    result += op;
-                    i += op.size();
-                    if (i < input.size() && input[i] != ' ') result += ' ';
-                    matched = true;
-                    break;
-                }
-            }
-
-            if (!matched) {
-                result += input[i++];
-            }
-        }
-
-        // Final cleanup: collapse multiple spaces
-        std::istringstream iss(result);
-        std::string word, cleaned;
-        while (iss >> word) {
-            if (!cleaned.empty()) cleaned += ' ';
-            cleaned += word;
-        }
-
-        return cleaned;
-}
 
 
 
