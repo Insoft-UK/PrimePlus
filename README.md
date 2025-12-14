@@ -23,6 +23,9 @@
       <td>-c or --compress</td><td>Specify if the PPL code should be compressed</td>
     </tr>
     <tr>
+      <td>-r or --reformat</td><td>Specify if the PPL code should be reformated</td>
+    </tr>
+    <tr>
       <td>-v or --verbose</td><td>Display detailed processing information</td>
     </tr>
     <tr>
