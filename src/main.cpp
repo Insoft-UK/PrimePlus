@@ -51,6 +51,7 @@
 #include "hpprgm.hpp"
 #include "string_utilities.hpp"
 #include "minifier.hpp"
+#include "reformat.hpp"
 #include "extensions.hpp"
 
 #include "../version_code.h"
@@ -670,6 +671,7 @@ int main(int argc, char **argv) {
     
     bool verbose = false;
     bool minify = false;
+    bool reformat = false;
     
     std::string args(argv[0]);
     
@@ -687,6 +689,13 @@ int main(int argc, char **argv) {
         
         if ( args == "-c" || args == "--compress" ) {
             minify = true;
+            reformat = false;
+            continue;
+        }
+        
+        if ( args == "-r" || args == "--reformat" ) {
+            reformat = true;
+            minify = false;
             continue;
         }
         
@@ -739,6 +748,7 @@ int main(int argc, char **argv) {
     }
     
     
+    auto in_ext = std::lowercased(inpath.extension().string());
     auto out_ext = std::lowercased(outpath.extension().string());
     
     std::string str;
@@ -759,7 +769,8 @@ int main(int argc, char **argv) {
     Timer timer;
     
     std::string output;
-    std::string in_ext = std::lowercased(inpath.extension().string());
+    
+    
     std::array<std::string, 3> extensions = {
         ".prgm+",
         ".ppl+",
@@ -789,6 +800,11 @@ int main(int argc, char **argv) {
                 output = utf::load(inpath);
             }
         }
+    
+    }
+    
+    if (reformat == true) {
+        output = reformat::prgm(output);
     }
     
     if (minify == true) {
@@ -803,6 +819,7 @@ int main(int argc, char **argv) {
         
         std::cerr << "PPL Code (deflated " << (original_size - new_size) * 100 / original_size << "%)\n";
     }
+    
     
     if (outpath == "/dev/stdout") {
         std::cout << output;

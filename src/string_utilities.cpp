@@ -49,26 +49,42 @@ bool is_all_whitespace(const std::string& s) {
 
 std::string cleanWhitespace(const std::string& input) {
     std::string output;
-    char current = '\0';
-    
-    auto iswordc = [](char c) {
-        return std::isalnum(static_cast<unsigned char>(c)) || c == '_';
-    };
-    
-    for (size_t i = 0; i < input.length(); i++) {
-        if (std::isspace(static_cast<unsigned char>(current))) {
-            if(iswordc(input[i]) && !output.empty() && iswordc(output.back())) {
-                output += ' ';
-            }
-        }
-        current = input[i];
+    bool lastWasWordChar = false;
+    bool pendingSpace = false;
 
-        if (std::isspace(static_cast<unsigned char>(current))) {
+    auto isWordChar = [](char c) {
+        /*
+         by Jozef Dekoninck || c == '('
+         Fixes an issue when parentheses after UNTIL, compression removes
+         the space after UNTIL what gives an error in compression.
+         */
+        return std::isalnum(static_cast<unsigned char>(c)) || c == '_' || c == '(';
+    };
+
+    for (char ch : input) {
+        if (ch == '\n') {
+            if (pendingSpace) {
+                pendingSpace = false; // discard pending space before newline
+            }
+            output += '\n';
+            lastWasWordChar = false;
             continue;
         }
-        output += current;
+        
+        if (std::isspace(static_cast<unsigned char>(ch))) {
+            if (lastWasWordChar) {
+                pendingSpace = true;
+            }
+            continue;
+        }
+        
+        if (pendingSpace && lastWasWordChar && isWordChar(ch)) {
+            output += ' ';
+        }
+        output += ch;
+        lastWasWordChar = isWordChar(ch);
+        pendingSpace = false;
     }
-    
 
     return output;
 }
