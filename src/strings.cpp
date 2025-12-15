@@ -267,3 +267,15 @@ std::vector<std::string> splitCommas(const std::string& input) {
 
     return result;
 }
+
+int countLeadingCharacters(const std::string &str, const char character) {
+    int count = 0;
+    for (const char ch : str) {  // Declare 'ch' as const
+        if (ch == character) {
+            count++;
+        } else {
+            break;
+        }
+    }
+    return count;
+}

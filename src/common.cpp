@@ -107,38 +107,3 @@ std::string strip_copy(const std::string &str) {
 
 
 
-
-int countLeadingCharacters(const std::string &str, const char character) {
-    int count = 0;
-    for (const char ch : str) {  // Declare 'ch' as const
-        if (ch == character) {
-            count++;
-        } else {
-            break;
-        }
-    }
-    return count;
-}
-
-
-
-std::string normalizeWhitespace(const std::string& input) {
-    std::string output;
-    output.reserve(input.size());  // Optimize memory allocation
-
-    bool in_whitespace = false;
-
-    for (char ch : input) {
-        if (std::isspace(static_cast<unsigned char>(ch))) {
-            if (!in_whitespace) {
-                output += ' ';
-                in_whitespace = true;
-            }
-        } else {
-            output += ch;
-            in_whitespace = false;
-        }
-    }
-
-    return output;
-}

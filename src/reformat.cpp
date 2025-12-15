@@ -53,8 +53,6 @@ static bool isOnlyWhitespaceUntilNewline(const std::string& s, size_t pos)
     return true;
 }
 
-
-
 static std::string insertNewlineAfterSemicolon(const std::string& input)
 {
     std::string output;

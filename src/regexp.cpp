@@ -100,13 +100,16 @@ void Regexp::removeAllOutOfScopeRegexps() {
  * Custom parser macros:
  *
  *  __COUNTER__  – Substituted with the current running counter value.
- *                The counter increments each time this token is processed.
+ *                 The counter increments each time this token is processed.
  *
- *  __LINE__   – Replaced with the current line number being parsed.
- *                Useful for debugging or generated code tracking.
+ *  __COUNT__    – Same as __COUNTER__ except the counter will not be
+                   incremented each time this token is processed.
  *
- *  __RESET__  – Resets the internal counter to zero and removes itself
- *                from the output (produces a blank value).
+ *  __LINE__     – Replaced with the current line number being parsed.
+ *                 Useful for debugging or generated code tracking.
+ *
+ *  __RESET__    – Resets the internal counter to zero and removes itself
+ *                 from the output (produces a blank value).
  *
  * These macros are handled by the parser during preprocessing and are not
  * part of standard C++ preprocessor behavior.
@@ -200,9 +203,12 @@ void Regexp::resolveAllRegularExpression(std::string& str, const size_t index) {
 bool Regexp::regularExpressionExists(const std::string &pattern, const std::string &compare) {
     for (auto it = _regexps.begin(); it != _regexps.end(); ++it) {
         if (it->pattern == pattern && it->compare == compare) {
-            std::cerr
-            << MessageType::Warning
-            << "regular expresion already defined. previous definition at " << it->path.filename() << ":" << it->line << "\n";
+            std::cerr << MessageType::Warning;
+            if (it->path.filename().empty()) {
+                std::cerr << "regular expresion already defined.\n";
+            } else {
+                std::cerr << "regular expresion already defined. previous definition at " << it->path.filename() << ":" << it->line << "\n";
+            }
             return true;
         }
     }

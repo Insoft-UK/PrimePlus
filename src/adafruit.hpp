@@ -20,49 +20,11 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+#pragma once
 
-
-#ifndef common_hpp
-#define common_hpp
-
-#include <stdint.h>
-#include <stdio.h>
 #include <iostream>
-#include <vector>
-#include <ostream>
-#include <fstream>
 #include <filesystem>
 
-#include "singleton.hpp"
-
-
-//#define basename(path)  path.string().substr(path.string().find_last_of("/") + 1)
-
-
-
-enum class MessageType {
-    Warning,
-    Error,
-    CriticalError,
-    Verbose,
-    Deprecated,
-    Tip
-};
-
-
-bool hasErrors(void);
-std::ostream &operator<<(std::ostream &os, MessageType type);
-
-std::string &ltrim(std::string &str);
-std::string &rtrim(std::string &str);
-std::string &trim(std::string &str);
-
-std::string trim_copy(const std::string &str);
-
-std::string &strip(std::string &str);
-std::string strip_copy(const std::string &str);
-
-
-
-
-#endif /* common_hpp */
+namespace adafruit {
+    std::string convertAdafruitFontToPPL(std::filesystem::path &inpath);
+}

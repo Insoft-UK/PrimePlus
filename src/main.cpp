@@ -41,7 +41,6 @@
 
 #include "timer.hpp"
 #include "singleton.hpp"
-//#include "common.hpp"
 
 #include "preprocessor.hpp"
 #include "dictionary.hpp"
@@ -55,6 +54,7 @@
 #include "unary.hpp"
 #include "minifier.hpp"
 #include "reformat.hpp"
+#include "adafruit.hpp"
 #include "extensions.hpp"
 
 #include "../version_code.h"
@@ -131,6 +131,7 @@ std::string translatePPLPlusLine(const std::string& input) {
     output = processEscapes(output);
     
     output = replaceOperators(output);
+    output = fixUnaryMinus(output);
     
     // PPL by default uses := instead of C's = for assignment. Converting all = to PPL style :=
     if (assignment == "=") {
@@ -802,6 +803,8 @@ int main(int argc, char **argv) {
     if (in_ext == ".hpprgm" || in_ext == ".hpappprgm") {
         std::wstring prgm = hpprgm::prgm(inpath);
         output = utf::utf8(prgm);
+    } else if (in_ext == ".h" || in_ext == ".hpp") {
+        output = adafruit::convertAdafruitFontToPPL(inpath);
     } else {
         if (output.empty()) {
             auto bom = utf::bom(inpath);

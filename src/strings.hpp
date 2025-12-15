@@ -117,3 +117,5 @@ std::string capitalizeWords(const std::string& input, const std::unordered_set<s
  * splitCommas("one,,three") returns {"one", "", "three"}
  */
 std::vector<std::string> splitCommas(const std::string& input);
+
+int countLeadingCharacters(const std::string &str, const char character);
