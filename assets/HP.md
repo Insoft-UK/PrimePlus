@@ -15,6 +15,11 @@ e.g.
 ### Little-Endian
 `#00081C7E7F7F7F36:64h`
 #### Glyphs
+|-|Y Positiond|X Positiond|X Advance|Height|Width|Offset Address|
+|-|---|---|---|---|---|---|
+|#00:8h|#00:8h|#00:8h|#00:8h|#00:8h|#00:8h|#0000:16h|
+
+
 `#--YYXXAAHHWWOOOO:64h = #--:8h #00:8h #00:8h #00:8h #00:8h #00:8h #0000:16h`
 
 HP.prgm
