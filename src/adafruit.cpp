@@ -88,28 +88,6 @@ typedef struct {
     #error "C++11 or newer is required"
 #endif
 
-static std::string loadUTF8File(const std::string &filename)
-{
-    std::ifstream infile;
-    std::string str;
-    
-    // Open the file in text mode
-    infile.open(filename, std::ios::in);
-    
-    // Check if the file is successfully opened
-    if (!infile.is_open()) {
-        return str;
-    }
-    
-    std::stringstream buffer;
-    buffer << infile.rdbuf();
-    str = buffer.str();
-
-    infile.close();
-    
-    return str;
-}
-
 
 static int parseNumber(const std::string &str)
 {
@@ -126,16 +104,16 @@ static int parseNumber(const std::string &str)
     return 0;
 }
 
-static bool parseHAdafruitFont(const std::string &filename, TAdafruitFont &font)
+static bool parseHAdafruitFont(const std::filesystem::path& path, TAdafruitFont &font)
 {
     std::ifstream infile;
     std::string utf8;
     
-    utf8 = loadUTF8File(filename);
+    utf8 = utf::load(path);
     
     // Check if the file is successfully opened
     if (utf8.empty()) {
-        std::cerr << "Error opening file: " << filename << std::endl;
+        std::cerr << "Error opening file: " << path.filename().string() << std::endl;
         return false;
     }
     
@@ -264,7 +242,7 @@ static std::string createPPLAdafruitFont(TAdafruitFont &adafruitFont, const std:
     return os.str();
 }
 
-std::string adafruit::convertAdafruitFontToPPL(std::filesystem::path &inpath)
+std::string adafruit::convertAdafruitFontToPPL(std::filesystem::path& inpath)
 {
     TAdafruitFont adafruitFont;
     std::string str;
