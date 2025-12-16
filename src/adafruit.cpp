@@ -242,7 +242,7 @@ static std::string createPPLAdafruitFont(TAdafruitFont &adafruitFont, const std:
     return os.str();
 }
 
-std::string adafruit::convertAdafruitFontToPPL(std::filesystem::path& inpath)
+std::string adafruit::convertAdafruitFontToPPL(const std::filesystem::path& inpath)
 {
     TAdafruitFont adafruitFont;
     std::string str;

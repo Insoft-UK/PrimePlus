@@ -92,7 +92,7 @@ void terminator() {
 }
 void (*old_terminate)() = std::set_terminate(terminator);
 
-
+std::string translatePPLPlusToPPL(const fs::path& path);
 
 // MARK: - PPL+ To PPL Translater...
 
@@ -248,31 +248,43 @@ void loadRegexLibs(const std::filesystem::path& path, const bool verbose) {
     }
 }
 
-std::string embedPPLCode(const std::filesystem::path& path) {
-    std::ifstream is;
-    std::string str;
+std::string include(const std::filesystem::path& path) {
+    std::string output;
+    auto ext = std::lowercased(path.extension().string());
     
-    is.open(path, std::ios::in);
-    if (!is.is_open()) return str;
+    if (!fs::exists(path)) {
+        std::cerr << MessageType::Verbose << path.filename() << " file not found\n";
+        return output;
+    }
     
-    if (path.extension() == ".prgm") {
-        std::wstring wstr = utf::load(path, utf::BOMle);
-        
-        if (!wstr.empty()) {
-            str = utf::utf8(wstr);
-            str = regex_replace(str, std::regex(R"(^ *#pragma mode *\(.+\) *\n+)"), "");
-            is.close();
-            return str;
+    if (ext == ".prgm" || ext == ".ppl") {
+        utf::BOM bom = utf::bom(path);
+        if (bom == utf::BOMnone) {
+            output = utf::load(path);
+        } else {
+            auto utf16 = utf::load(path, bom);
+            output = utf::utf8(utf16);
         }
     }
     
-    std::string line;
-    while (getline(is, line)) {
-        line += '\n';
-        str += line;
+    if (ext == ".prgm+") {
+        output = translatePPLPlusToPPL(path);
     }
-    is.close();
-    return str;
+    
+    if (ext == ".hpprgm" || ext == ".hpappprgm") {
+        std::wstring prgm = hpprgm::prgm(path);
+        output = utf::utf8(prgm);
+    }
+    
+    if (ext == ".h" || ext == ".hpp") {
+        output = adafruit::convertAdafruitFontToPPL(path);
+    }
+    
+    if (!output.empty()) {
+        output = regex_replace(output, std::regex(R"(^ *#pragma mode *\(.+\) *\n+)"), "");
+    }
+    
+    return output + '\n';
 }
 
 bool verbose(void) {
@@ -492,17 +504,8 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
             if (filePath.parent_path().empty() && fs::exists(filePath) == false) {
                 filePath = path.parent_path() / filePath;
             }
-            auto ext = std::lowercased(filePath.extension().string());
-           
-            if (!(fs::exists(filePath))) {
-                std::cerr << MessageType::Verbose << filePath.filename() << " file not found\n";
-            } else {
-                if (ext == ".prgm") {
-                    output += embedPPLCode(filePath);
-                } else {
-                    output += translatePPLPlusToPPL(filePath);
-                }
-            }
+            
+            output += include(filePath);
             continue;
         }
         
@@ -520,17 +523,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
             }
             if (filePath.parent_path().empty()) filePath = path.parent_path() / filePath;
             
-            auto ext = std::lowercased(filePath.extension().string());
-            
-            if (!(fs::exists(filePath))) {
-                std::cerr << MessageType::Verbose << filePath.filename() << " file not found\n";
-            } else {
-                if (ext == ".prgm") {
-                    output += embedPPLCode(filePath);
-                } else {
-                    output += translatePPLPlusToPPL(filePath);
-                }
-            }
+            output += include(filePath);
             continue;
         }
         

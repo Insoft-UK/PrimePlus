@@ -26,5 +26,5 @@
 #include <filesystem>
 
 namespace adafruit {
-    std::string convertAdafruitFontToPPL(std::filesystem::path& inpath);
+    std::string convertAdafruitFontToPPL(const std::filesystem::path& inpath);
 }
