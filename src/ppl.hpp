@@ -26,6 +26,10 @@
 #include <sstream>
 #include <vector>
 #include <list>
+#include <unordered_set>
+
+std::string ensureSpaceAfterKeywords(const std::string& input, const std::vector<std::string>& keywords);
+std::string ensureSpaceAfterKeywordsCaseInsensitive(const std::string& input, const std::vector<std::string>& keywords) ;
 
 /**
  * @brief Replaces common two-character operators with their symbolic Unicode equivalents.
@@ -59,6 +63,9 @@ std::string replaceOperators(const std::string& input);
  */
 std::string extractComment(const std::string &str);
 
+std::vector<std::string> extractComments(const std::string& str);
+std::string restoreComments(const std::string& str, const std::vector<std::string>& comments);
+
 std::string removeComment(const std::string& str);
 
 /**
@@ -73,6 +80,8 @@ std::string removeComment(const std::string& str);
  *
  */
 std::string removeComments(const std::string& str);
+
+std::string blankOutComments(const std::string& str);
 
 /**
  * @brief Processes escape sequences in a string and replaces them with corresponding characters.

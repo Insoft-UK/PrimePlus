@@ -184,9 +184,6 @@ static std::string reformatLine(const std::string& str) {
     static int depth = 0;
     std::string output = str;
     
-    auto comment = extractComment(output);
-    output = removeComment(str);
-    
     std::regex tokenRegex(R"(\b(?:BEGIN|FOR|IF|WHILE|REPEAT|CASE|UNTIL|ELSE)\b|END;)");
     std::smatch match;
     if (std::regex_search(output, match, tokenRegex)) {
@@ -202,7 +199,9 @@ static std::string reformatLine(const std::string& str) {
         if (token == "END;" || token == "UNTIL")
         {
             depth--;
-            output.insert(0, std::string(depth * INDENT_WIDTH, ' '));
+            if (depth > -1) {
+                output.insert(0, std::string(depth * INDENT_WIDTH, ' '));
+            }
         }
         
         if (token == "ELSE")
@@ -212,7 +211,6 @@ static std::string reformatLine(const std::string& str) {
     } else {
         output.insert(0, std::string(depth * INDENT_WIDTH, ' '));
     }
-    output += comment;
     return output + '\n';
 }
 
@@ -230,46 +228,51 @@ static std::string reformatAllLines(std::istringstream& iss)
 
 std::string reformat::prgm(const std::string& s)
 {
-    std::string str = s;
+    std::string output = s;
     std::regex re;
 
+    
+    auto comments = extractComments(output);
+    output = blankOutComments(output);
+    
+    auto python = extractPythonBlocks(output) ;
+    output = blankOutPythonBlocks(output);
+    
+    auto strings = preserveStrings(output);
+    output = blankOutStrings(output);
+    
+    output = insertNewlineAfterWords(output, {"THEN", "DO", "REPEAT", "ELSE", "DEFAULT", "CASE"});
+    output = insertNewlineBeforeWords(output, {"EXPORT", "LOCAL", "CONST", "IF", "CASE", "REPEAT", "FOR", "WHILE", "DEFAULT", "UNTIL", "ELSE", "IFERR", "END;"});
+
+    
     // Keywords
-    str = capitalizeWords(str, {
+    output = capitalizeWords(output, {
         "begin", "end", "return", "kill", "if", "then", "else", "xor", "or", "and", "not",
         "case", "default", "iferr", "ifte", "for", "from", "step", "downto", "to", "do",
         "while", "repeat", "until", "break", "continue", "export", "const", "local", "key",
         "eval", "freeze", "view"
     });
     
-
-    
-    str = insertNewlineAfterWords(str, {"THEN", "DO", "REPEAT", "ELSE", "DEFAULT", "CASE"});
-    str = insertNewlineBeforeWords(str, {"EXPORT", "LOCAL", "CONST", "IF", "CASE", "REPEAT", "FOR", "WHILE", "DEFAULT", "UNTIL", "ELSE", "IFERR", "END"});
-//    str = insertNewlineAfterSemicolon(str);
-    
-    auto python = extractPythonBlocks(str) ;
-    str = blankOutPythonBlocks(str);
-    auto strings = preserveStrings(str);
-    str = blankOutStrings(str);
-    str = cleanWhitespace(str);
-    str = insertSpaceAfterComma(str);
-    str = fixUnaryMinus(str);
-    str = replaceOperators(str);
+    output = cleanWhitespace(output);
+    output = insertSpaceAfterComma(output);
+    output = fixUnaryMinus(output);
+    output = replaceOperators(output);
     
     std::istringstream iss;
-    iss.str(str);
-    str = reformatAllLines(iss);
-    str = restoreStrings(str, strings);
-    str = separatePythonMarkers(str);
-    str = restorePythonBlocks(str, python);
+    iss.str(output);
+    output = reformatAllLines(iss);
     
+    output = ensureSpaceAfterKeywordsCaseInsensitive(output, {
+        "begin", "return", "kill", "if", "then", "else", "xor", "or", "and", "not",
+        "case", "default", "iferr", "ifte", "for", "from", "step", "downto", "to", "do",
+        "while", "repeat", "until", "break", "continue", "export", "const", "local", "key",
+        "eval", "freeze", "view"
+    });
     
-    return str;
+    output = separatePythonMarkers(output);
+    output = restorePythonBlocks(output, python);
+    output = restoreStrings(output, strings);
+    output = restoreComments(output, comments);
+    
+    return output;
 }
-
-
-
-
-
-
-

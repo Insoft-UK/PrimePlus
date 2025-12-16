@@ -22,6 +22,89 @@
 
 #include "ppl.hpp"
 
+static bool isWordChar(char c) {
+    return std::isalnum(static_cast<unsigned char>(c)) || c == '_';
+}
+
+std::string ensureSpaceAfterKeywords(const std::string& input, const std::vector<std::string>& keywords) {
+    std::unordered_set<std::string> keywordSet(
+        keywords.begin(), keywords.end()
+    );
+
+    std::string output;
+    size_t i = 0;
+
+    while (i < input.size()) {
+        // Try to read a word
+        if (isWordChar(input[i])) {
+            size_t start = i;
+            while (i < input.size() && isWordChar(input[i])) {
+                i++;
+            }
+
+            std::string word = input.substr(start, i - start);
+            output += word;
+
+            // Word boundary on both sides + keyword match
+            if (keywordSet.count(word)) {
+                // If next character exists and is NOT whitespace
+                if (i < input.size() && !std::isspace(static_cast<unsigned char>(input[i]))) {
+                    output += ' ';
+                }
+            }
+        } else {
+            output += input[i];
+            i++;
+        }
+    }
+
+    return output;
+}
+
+static std::string toLower(std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+    return s;
+}
+
+std::string ensureSpaceAfterKeywordsCaseInsensitive(const std::string& input, const std::vector<std::string>& keywords) {
+    // Store keywords lowercased
+    std::unordered_set<std::string> keywordSet;
+    for (const auto& k : keywords) {
+        keywordSet.insert(toLower(k));
+    }
+
+    std::string output;
+    size_t i = 0;
+
+    while (i < input.size()) {
+        if (isWordChar(input[i])) {
+            size_t start = i;
+            while (i < input.size() && isWordChar(input[i])) {
+                i++;
+            }
+
+            std::string word = input.substr(start, i - start);
+            output += word;
+
+            // Case-insensitive check
+            if (keywordSet.count(toLower(word))) {
+                // Insert space if next char exists and is NOT whitespace
+                if (i < input.size() &&
+                    !std::isspace(static_cast<unsigned char>(input[i])))
+                {
+                    output += ' ';
+                }
+            }
+        } else {
+            output += input[i];
+            i++;
+        }
+    }
+
+    return output;
+}
+
 std::string replaceOperators(const std::string& input) {
     std::string output;
     output.reserve(input.size());  // Reserve space to reduce reallocations
@@ -63,6 +146,66 @@ std::string extractComment(const std::string &str) {
     return output;
 }
 
+std::vector<std::string> extractComments(const std::string& str) {
+    std::string comment;
+    std::vector<std::string> comments;
+
+    size_t i = 0;
+    while (i < str.size()) {
+        // Detect start of comment
+        if (i + 1 < str.size() && str[i] == '/' && str[i + 1] == '/') {
+            comment = "";
+            // Skip until the next newline
+            i += 2;
+            while (i < str.size() && str[i] != '\n') {
+                comment += str[i];
+                i++;
+            }
+            comments.push_back(comment);
+        } else {
+            i++;
+        }
+    }
+
+    return comments;
+}
+
+std::string restoreComments(const std::string& str, const std::vector<std::string>& comments) {
+    std::string output;
+    size_t commentIndex = 0;
+
+    size_t i = 0;
+    while (i < str.size()) {
+        // Detect "//" with nothing after it on the line
+        if (i + 1 < str.size() &&
+            str[i] == '/' &&
+            str[i + 1] == '/' &&
+            commentIndex < comments.size())
+        {
+            // Copy "//"
+            output += "//";
+            i += 2;
+
+            // If immediately end-of-line or whitespace then newline,
+            // restore the original comment text
+            if (i >= str.size() || str[i] == '\n') {
+                output += comments[commentIndex++];
+            } else {
+                // Skip anything up to newline (defensive)
+                while (i < str.size() && str[i] != '\n') {
+                    i++;
+                }
+                output += comments[commentIndex++];
+            }
+        } else {
+            output += str[i];
+            i++;
+        }
+    }
+
+    return output;
+}
+
 std::string removeComment(const std::string& str) {
     std::string output = str;
     size_t pos = str.find("//");
@@ -90,6 +233,33 @@ std::string removeComments(const std::string& str) {
             // If newline exists, keep the newline
             if (i < str.size()) {
                 output += '\n';
+                i++;
+            }
+        } else {
+            // Normal character: keep it
+            output += str[i++];
+        }
+    }
+
+    return output;
+}
+
+std::string blankOutComments(const std::string& str) {
+    std::string output;
+    output.reserve(str.size());
+
+    size_t i = 0;
+    while (i < str.size()) {
+        // Detect start of comment
+        if (i + 1 < str.size() && str[i] == '/' && str[i + 1] == '/') {
+            // Skip until the next newline
+            i += 2;
+            while (i < str.size() && str[i] != '\n') {
+                i++;
+            }
+            // If newline exists, keep the newline
+            if (i < str.size()) {
+                output += "//\n";
                 i++;
             }
         } else {
