@@ -490,17 +490,18 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
             
             std::filesystem::path filePath = preprocessor.extractIncludePath(input);
             if (filePath.parent_path().empty() && fs::exists(filePath) == false) {
-                filePath = path.parent_path() / filePath.filename();
+                filePath = path.parent_path() / filePath;
             }
             auto ext = std::lowercased(filePath.extension().string());
-            if (ext == ".prgm") {
-                output += embedPPLCode(filePath);
-                continue;
-            }
+           
             if (!(fs::exists(filePath))) {
                 std::cerr << MessageType::Verbose << filePath.filename() << " file not found\n";
             } else {
-                output += translatePPLPlusToPPL(filePath);
+                if (ext == ".prgm") {
+                    output += embedPPLCode(filePath);
+                } else {
+                    output += translatePPLPlusToPPL(filePath);
+                }
             }
             continue;
         }
@@ -512,16 +513,23 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
             if (filePath.extension().empty()) {
                 filePath.replace_extension(".prgm+");
             }
+            
             for (fs::path systemIncludePath : preprocessor.systemIncludePath) {
-                filePath = systemIncludePath / filePath.filename();
+                filePath = systemIncludePath / filePath;
                 if (fs::exists(filePath)) break;
             }
             if (filePath.parent_path().empty()) filePath = path.parent_path() / filePath;
             
+            auto ext = std::lowercased(filePath.extension().string());
+            
             if (!(fs::exists(filePath))) {
                 std::cerr << MessageType::Verbose << filePath.filename() << " file not found\n";
             } else {
-                output += translatePPLPlusToPPL(filePath);
+                if (ext == ".prgm") {
+                    output += embedPPLCode(filePath);
+                } else {
+                    output += translatePPLPlusToPPL(filePath);
+                }
             }
             continue;
         }
