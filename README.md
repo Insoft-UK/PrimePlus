@@ -110,7 +110,7 @@ regex `\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
 auto : myGlobal := 1;
 fnc1: My::Function(p1: argumentOne)
 begin
-    var auto: i, a: Alpha;
+    local auto: i, a: Alpha;
     for i=0; i<2; i=i+1 do
         Alpha := Alpha + 1 * myGlobal * argumentOne;
     end;
@@ -126,7 +126,7 @@ My::Function();
 g0 := 1;
 fnc1(p1)
 BEGIN
-  var v0, a;
+  LOCAL v0, a;
   v0 := 0; WHILE v0<2 DO
     a := a + 1 * g0 * p1;
   v0 := v0 + 1; END;
