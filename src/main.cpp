@@ -257,17 +257,7 @@ std::string include(const std::filesystem::path& path) {
         return output;
     }
     
-    if (ext == ".prgm" || ext == ".ppl") {
-        utf::BOM bom = utf::bom(path);
-        if (bom == utf::BOMnone) {
-            output = utf::load(path);
-        } else {
-            auto utf16 = utf::load(path, bom);
-            output = utf::utf8(utf16);
-        }
-    }
-    
-    if (ext == ".prgm+") {
+    if (ext == ".prgm+" || ext == ".ppl+") {
         output = translatePPLPlusToPPL(path);
     }
     
@@ -278,6 +268,16 @@ std::string include(const std::filesystem::path& path) {
     
     if (ext == ".h" || ext == ".hpp") {
         output = adafruit::convertAdafruitFontToPPL(path);
+    }
+    
+    if (output.empty()) {
+        utf::BOM bom = utf::bom(path);
+        if (bom == utf::BOMnone) {
+            output = utf::load(path);
+        } else {
+            auto utf16 = utf::load(path, bom);
+            output = utf::utf8(utf16);
+        }
     }
     
     if (!output.empty()) {
