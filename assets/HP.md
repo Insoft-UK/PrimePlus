@@ -1,19 +1,20 @@
 The HP Prime stores its glyph data as a list of 64-bit unsigned integers. The bitmap, however, is stored in a specific bit order (little-endian) and where each byte of the 64-bit value is mirror-flipped.
-
-e.g.
+e.g
 ```
-01101100 #6Ch to 00110110 #36h
-11111110 #FEh to 01111111 #7Fh
-11111110 #FEh to 01111111 #7Fh
-11111110 #FEh to 01111111 #7Fh
-01111110 #7Eh to 01111110 #7Eh
-00111000 #38h to 00011100 #1Ch
-00010000 #10h to 00001000 #08h
-00000000 #00h to 00000000 #00h := #00081C7E7F7F7F36:64h
+01101100,11111110,11111110,11111110,01111100,00111000,00010000,00000000
+#6CFEFEFE7C381000:64h Big Endian
 ```
+### Big-Endian
+#6CFEFEFE7C381000:64h
 
+Each byte is mirrored flipped like so.
+```
+00110110,01111111,01111111,01111111,00111110,00011100,00001000,00000000
+```
 ### Little-Endian
-`#00081C7E7F7F7F36:64h`
+#00081C3E7F7F7F36:64h
+
+
 #### Glyphs
 |-|Y Positiond|X Positiond|X Advance|Height|Width|Offset Address|
 |-|---|---|---|---|---|---|
