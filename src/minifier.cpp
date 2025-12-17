@@ -68,7 +68,7 @@ static std::string base10ToBase32(unsigned int num) {
 }
 
 static std::pair<size_t, size_t> findBeginEndBlock(const std::string& code, size_t beginPos = 0) {
-    std::regex tokenRegex(R"(\b(?:BEGIN|FOR|IF|WHILE|REPEAT|CASE)\b|END;)");
+    std::regex tokenRegex(R"(\b(?:BEGIN|FOR|IF|WHILE|REPEAT|CASE|UNTIL)\b|END;)");
     std::smatch match;
     
     std::regex pattern(R"(\bBEGIN\b)");
@@ -100,7 +100,7 @@ static std::pair<size_t, size_t> findBeginEndBlock(const std::string& code, size
         {
             depth++;
         }
-        else if (token == "END;")
+        else if (token == "END;" || token == "UNTIL")
         {
             depth--;
             if (depth == 0)
@@ -185,6 +185,13 @@ std::string minifier::minify(const std::string& code) {
     str = blankOutStrings(str);
     
     str = replaceOperators(str);
+    
+    str = capitalizeWords(str, {
+        "begin", "end", "return", "kill", "if", "then", "else", "xor", "or", "and", "not",
+        "case", "default", "iferr", "ifte", "for", "from", "step", "downto", "to", "do",
+        "while", "repeat", "until", "break", "continue", "export", "const", "local", "key"
+    });
+    
     str = shortenVariableNames(str);
     str = replaceWords(str, {"FROM"}, ":=");
     
