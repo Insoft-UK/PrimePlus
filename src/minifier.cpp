@@ -121,7 +121,7 @@ static std::vector<std::string> extractLocalVariables(const std::string& code) {
     std::vector<std::string> variables;
 
     // Match full LOCAL lines: e.g. LOCAL a, b:=10;
-    std::regex localRegex(R"(\bLOCAL\b([^;:]*);)", std::regex_constants::icase);
+    std::regex localRegex(R"(\bLOCAL +([^;]*);)", std::regex_constants::icase);
     std::smatch match;
     std::string::const_iterator searchStart(code.cbegin());
 
@@ -130,13 +130,13 @@ static std::vector<std::string> extractLocalVariables(const std::string& code) {
         std::string locals = match[1]; // everything after LOCAL up to ;
         
         // Split by commas
-        std::regex varRegex(R"([A-Za-z_]\w*)");
+        std::regex varRegex(R"(([a-z]\w*)(?: *:= *.*)?)");
         std::smatch varMatch;
         std::string::const_iterator varSearch(locals.cbegin());
 
         while (std::regex_search(varSearch, locals.cend(), varMatch, varRegex))
         {
-            std::string varName = varMatch.str();
+            std::string varName = varMatch.str(1);
             variables.push_back(varName);
             varSearch = varMatch.suffix().first;
         }
