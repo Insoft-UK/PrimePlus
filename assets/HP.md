@@ -2,7 +2,6 @@ The HP Prime stores its glyph data as a list of 64-bit unsigned integers. The bi
 e.g
 ```
 01101100,11111110,11111110,11111110,01111100,00111000,00010000,00000000
-#6CFEFEFE7C381000:64h Big Endian
 ```
 ### Big-Endian
 #6CFEFEFE7C381000:64h
