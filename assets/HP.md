@@ -24,9 +24,9 @@ e.g.
 
 HP.prgm
 ```
-LOCAL Glyph(trgtG, ascii, x, y, fnt, color, sizeX, sizeY)
+LOCAL GLYPH(G, ascii, x, y, font, color, sizeX, sizeY)
 BEGIN
- LOCAL g := fnt[2, ascii];
+ LOCAL g := font[2, ascii];
  LOCAL xAdvance := BITAND(BITSR(g,32), 255) * sizeX;
  
   IF BITAND(g,#FFFFFFFF)==0 THEN
@@ -34,7 +34,7 @@ BEGIN
   END;
   
   LOCAL w, h, dX, dY, xx;
-  LOCAL yAdvance := fnt[5];
+  LOCAL yAdvance := font[5];
 
   w := BITAND(BITSR(g, 16), 255);
   h := BITAND(BITSR(g, 24), 255);
@@ -45,7 +45,7 @@ BEGIN
   x := x + dX * sizeX;
   y := y + yAdvance + dY;
   
-  LOCAL bitmap := fnt[1];
+  LOCAL bitmap := font[1];
 
   LOCAL offset := BITAND(g, 65535);
   LOCAL bitPosition := BITAND(offset, 7) * 8;
@@ -62,9 +62,9 @@ BEGIN
      
       IF BITAND(bits, 1) == 1 THEN
         IF sizeX == 1 AND sizeY == 1 THEN
-          PIXON_P(trgtG, x + xx,y, color);
+          PIXON_P(G, x + xx,y, color);
         ELSE
-          RECT_P(trgtG, x + xx * sizeX, y, x + xx * sizeX + sizeX - 1, y + sizeY - 1, color);
+          RECT_P(G, x + xx * sizeX, y, x + xx * sizeX + sizeX - 1, y + sizeY - 1, color);
         END;
       END;
       
@@ -79,7 +79,7 @@ BEGIN
   RETURN xAdvance;
 END;
 
-EXPORT Text(trgt, text, x, y, fnt, color, sizeX, sizeY)
+EXPORT TEXT(G, text, x, y, font, color, sizeX, sizeY)
 BEGIN
   LOCAL i, l := ASC(text);
  
@@ -87,10 +87,20 @@ BEGIN
     IF x >= 320 THEN
       BREAK;
     END;
-    IF l[i] < fnt[3] OR l[i] > fnt[4] THEN
+    IF l[i] < font[3] OR l[i] > font[4] THEN
       CONTINUE;
     END;
-    x := x + Glyph(trgt, l[i] - fnt[3] + 1, x, y, fnt, color, sizeX, sizeY);
+    x := x + GLYPH(G, l[i] - font[3] + 1, x, y, font, color, sizeX, sizeY);
   END;
+END;
+
+EXPORT TEXT(text, x, y, font, color)
+BEGIN
+  TEXT(G0, text, x, y, font, color, 1, 1);
+END;
+
+EXPORT TEXT(text, x, y, font)
+BEGIN
+  TEXT(G0, text, x, y, font, 0, 1, 1);
 END;
 ```
