@@ -186,7 +186,7 @@ std::string Preprocessor::parse(const std::string& str) {
                 2 a,b,c
                 3 c := a+b
          */
-        re = R"(^ *#define +([A-Za-z_]\w*) +(.*))";
+        re = R"(^ *#define +([A-Za-z_]\w*)\b(.*))";
         if (std::regex_search(str, match, re)) {
             identity.identifier = match.str(1);
             identity.real = match.str(2);

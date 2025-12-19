@@ -487,8 +487,11 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
                     indentation = atoi(it->str(2).c_str());
                     continue;
                 }
-               
-                input.append(it->str() + " ");
+                
+                if (it->str(1) == "separator" || it->str(1) == "integer") {
+                    input.append(it->str() + " ");
+                    continue;
+                }
             }
             input.append(")");
             output += input + '\n';
