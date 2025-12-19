@@ -13,7 +13,6 @@ fi
 pkgbuild --root package-root \
          --identifier uk.insoft.$PROJECT_NAME \
          --version 1.5 --install-location / \
-         --scripts scripts \
          $PROJECT_NAME.pkg
          
 productsign --sign "Developer ID Installer: $YOUR_NAME ($TEAM_ID)" $PROJECT_NAME.pkg $PROJECT_NAME-signed.pkg
