@@ -56,6 +56,7 @@
 #include "reformat.hpp"
 #include "adafruit.hpp"
 #include "extensions.hpp"
+#include "tool.hpp"
 
 #include "../version_code.h"
 
@@ -269,6 +270,15 @@ std::string include(const std::filesystem::path& path) {
     if (ext == ".h" || ext == ".hpp") {
         output = adafruit::convertAdafruitFontToPPL(path);
     }
+    
+#if __APPLE__
+    if (ext == ".bmp" || ext == ".png" || ext == ".pbm") {
+        auto result = tool::runTool("grob", {path, "-o", "/dev/stdout"});
+        if (result.exitCode == 0) {
+            output = result.out;
+        }
+    }
+#endif // __APPLE__
     
     if (output.empty()) {
         utf::BOM bom = utf::bom(path);
