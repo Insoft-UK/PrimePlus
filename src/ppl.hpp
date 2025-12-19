@@ -26,6 +26,7 @@
 #include <sstream>
 #include <vector>
 #include <list>
+#include <regex>
 #include <unordered_set>
 
 std::string ensureSpaceAfterKeywords(const std::string& input, const std::vector<std::string>& keywords);
