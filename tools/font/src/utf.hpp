@@ -2,7 +2,7 @@
 //
 // Copyright (c) 2024-2025 Insoft.
 //
-// Created: 2025-12-19
+// Created: 2025-05-27
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,17 +22,33 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#pragma once
+#ifndef utf_hpp
+#define utf_hpp
 
-#include <string>
-#include <vector>
+#include <sstream>
+#include <fstream>
+#include <cstdlib>
+#include <filesystem>
 
-namespace tool {
-    struct result_t {
-        int exitCode;
-        std::string out;
-        std::string err;
+namespace utf {
+    enum BOM {
+        BOMle,
+        BOMbe,
+        BOMnone
     };
     
-    result_t runTool(const std::string& command, const std::vector<std::string>& arguments);
-}
+    std::string utf8(const std::wstring& wstr);
+    std::wstring utf16(const std::string& str);
+    std::string read(std::ifstream& is);
+    std::wstring read(std::ifstream& is, BOM bom);
+    std::string load(const std::filesystem::path& path);
+    std::wstring load(const std::filesystem::path& path, BOM bom);
+    size_t write(std::ofstream& os, const std::string& str);
+    size_t write(std::ofstream& os, const std::wstring& wstr, BOM bom = BOMle);
+    bool save(const std::filesystem::path& path, const std::string& str);
+    bool save(const std::filesystem::path& path, const std::wstring& wstr, BOM bom = BOMle);
+    BOM bom(std::ifstream& is);
+    BOM bom(const std::filesystem::path& path);
+};
+
+#endif /* utf_hpp */

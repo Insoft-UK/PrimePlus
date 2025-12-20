@@ -54,7 +54,6 @@
 #include "unary.hpp"
 #include "minifier.hpp"
 #include "reformat.hpp"
-#include "adafruit.hpp"
 #include "extensions.hpp"
 #include "tool.hpp"
 
@@ -266,19 +265,20 @@ std::string include(const std::filesystem::path& path) {
         std::wstring prgm = hpprgm::prgm(path);
         output = utf::utf8(prgm);
     }
-    
+
     if (ext == ".h" || ext == ".hpp") {
-        output = adafruit::convertAdafruitFontToPPL(path);
-    }
-    
-#if __APPLE__
-    if (ext == ".bmp" || ext == ".png" || ext == ".pbm") {
-        auto result = tool::runTool("grob", {path, "-o", "/dev/stdout"});
+        auto result = tool::runTool("font", {path.string(), "-o", "/dev/stdout"});
         if (result.exitCode == 0) {
             output = result.out;
         }
     }
-#endif // __APPLE__
+    
+    if (ext == ".bmp" || ext == ".png" || ext == ".pbm") {
+        auto result = tool::runTool("grob", {path.string(), "-o", "/dev/stdout"});
+        if (result.exitCode == 0) {
+            output = result.out;
+        }
+    }
     
     if (output.empty()) {
         utf::BOM bom = utf::bom(path);
@@ -818,7 +818,10 @@ int main(int argc, char **argv) {
         std::wstring prgm = hpprgm::prgm(inpath);
         output = utf::utf8(prgm);
     } else if (in_ext == ".h" || in_ext == ".hpp") {
-        output = adafruit::convertAdafruitFontToPPL(inpath);
+        auto result = tool::runTool("font", {inpath.string(), "-o", "/dev/stdout"});
+        if (result.exitCode == 0) {
+            output = result.out;
+        }
     } else {
         if (output.empty()) {
             auto bom = utf::bom(inpath);
