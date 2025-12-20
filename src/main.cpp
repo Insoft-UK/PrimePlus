@@ -83,6 +83,21 @@ namespace rc = std::regex_constants;
 static Preprocessor preprocessor = Preprocessor();
 static std::string assignment = "=";
 
+typedef struct {
+    std::string command;
+    std::string extension;
+} addon_t;
+
+static std::vector<addon_t> addons = {
+    {.command = "font", .extension = ".h"},
+    {.command = "font", .extension = ".hpp"},
+    {.command = "grob", .extension = ".bmp"},
+    {.command = "grob", .extension = ".pbm"}
+#if defined(__APPLE__)
+    ,{.command = "grob", .extension = ".png"}
+#endif
+};
+
 
 // MARK: - Other
 
@@ -265,18 +280,15 @@ std::string include(const std::filesystem::path& path) {
         std::wstring prgm = hpprgm::prgm(path);
         output = utf::utf8(prgm);
     }
-
-    if (ext == ".h" || ext == ".hpp") {
-        auto result = tool::runTool("font", {path.string(), "-o", "/dev/stdout"});
-        if (result.exitCode == 0) {
-            output = result.out;
-        }
-    }
     
-    if (ext == ".bmp" || ext == ".png" || ext == ".pbm") {
-        auto result = tool::runTool("grob", {path.string(), "-o", "/dev/stdout"});
-        if (result.exitCode == 0) {
-            output = result.out;
+    if (!addons.empty()) {
+        for (const addon_t &addon : addons) {
+            if (ext != addon.extension) continue;
+            auto result = tool::runTool(addon.command, {path.string(), "-o", "/dev/stdout"});
+            if (result.exitCode == 0) {
+                output = result.out;
+            }
+            break;
         }
     }
     
@@ -419,7 +431,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
     std::regex re;
     std::string input;
     std::string output;
-    std::smatch match;
+//    std::smatch match;
 
     bool pragma = false;
     
@@ -501,6 +513,17 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
                 if (it->str(1) == "separator" || it->str(1) == "integer") {
                     input.append(it->str() + " ");
                     continue;
+                }
+                
+                if (it->str(1) == "addon") {
+                    // addon(command.h)
+                    std::smatch match;
+                    if (std::regex_search(s, match, std::regex(R"(([A-Za-z0-9 _.-]+)(\.[A-Za-z0-9]{1,10}))"))) {
+                        addons.push_back({
+                            .command = match.str(1),
+                            .extension = match.str(2)
+                        });
+                    }
                 }
             }
             input.append(")");
@@ -814,25 +837,32 @@ int main(int argc, char **argv) {
         }
     }
     
-    if (in_ext == ".hpprgm" || in_ext == ".hpappprgm") {
-        std::wstring prgm = hpprgm::prgm(inpath);
-        output = utf::utf8(prgm);
-    } else if (in_ext == ".h" || in_ext == ".hpp") {
-        auto result = tool::runTool("font", {inpath.string(), "-o", "/dev/stdout"});
-        if (result.exitCode == 0) {
-            output = result.out;
+    if (output.empty()) {
+        if (in_ext == ".hpprgm" || in_ext == ".hpappprgm") {
+            std::wstring prgm = hpprgm::prgm(inpath);
+            output = utf::utf8(prgm);
         }
-    } else {
-        if (output.empty()) {
-            auto bom = utf::bom(inpath);
-            if (bom != utf::BOMnone) {
-                auto prgm = utf::load(inpath, bom);
-                output = utf::utf8(prgm);
-            } else {
-                output = utf::load(inpath);
-            }
-        }
+    }
     
+    if (output.empty()) {
+        auto bom = utf::bom(inpath);
+        if (bom != utf::BOMnone) {
+            auto prgm = utf::load(inpath, bom);
+            output = utf::utf8(prgm);
+        } else {
+            output = utf::load(inpath);
+        }
+    }
+    
+    if (output.empty()) {
+        for (const addon_t &addon : addons) {
+            if (in_ext != addon.extension) continue;
+            auto result = tool::runTool(addon.command, {inpath.string(), "-o", "/dev/stdout"});
+            if (result.exitCode == 0) {
+                output = result.out;
+            }
+            break;
+        }
     }
     
     if (reformat == true) {
@@ -882,3 +912,4 @@ int main(int argc, char **argv) {
     
     return 0;
 }
+
