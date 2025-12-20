@@ -3,6 +3,49 @@
 ## GROB
 **Command Line Tool**
 
+`Usage: grob <input-file> [-o <output-file>] [-c <columns>] [-n <name>] [-g<1-9>] [-ppl]`
+
+<table>
+  <thead>
+    <tr align="left">
+      <th>Options</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>-o <output-file></td><td>Specify the filename for generated code</td>
+    </tr>
+    <tr>
+      <td>-c or --columns</td><td>Number of columns</td>
+    </tr>
+    <tr>
+      <td>-n or --name</td><td>Custom name</td>
+    </tr>
+    <tr>
+      <td>-G<1-9></td><td>Graphic object G1-G9 to use if file is an image</td>
+    </tr>
+    <tr>
+      <td>--pragma></td><td>Include \"#pragma mode( separator(.,;) integer(h64) )\" line</td>
+    </tr>
+    <tr>
+      <td>--endian <le|be>></td><td>Endianes le(default)</td>
+    </tr>
+    <tr>
+      <td colspan="2"><b>Additional Commands</b></td>
+    </tr>
+    <tr>
+      <td>--version</td><td>Displays the version information</td>
+    </tr>
+    <tr>
+      <td>--build</td><td>Displays the build information</td>
+    </tr>
+    <tr>
+      <td>--help</td><td>Show this help message</td>
+    </tr>
+  </tbody>
+</table>
+
 A utility for generating PPL code from an image file for use with the BLIT and BLIT_P functions on the HP Prime.
 
 <img width="64" height="64" src="https://github.com/Insoft-UK/PrimeSDK/blob/main/assets/spectrum-8bit.png" >
