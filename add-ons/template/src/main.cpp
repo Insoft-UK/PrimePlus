@@ -88,6 +88,15 @@ int main(int argc, const char * argv[]) {
     for( int n = 1; n < argc; n++ ) {
         std::string args = argv[n];
         
+        if (args == "-o") {
+            if ( ++n >= argc ) {
+                error();
+                exit(0);
+            }
+            // /dev/stdout regardless!
+            continue;
+        }
+        
         if (args == "--help") {
             help();
             exit(0);
