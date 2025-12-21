@@ -431,10 +431,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
     std::regex re;
     std::string input;
     std::string output;
-//    std::smatch match;
 
-    bool pragma = false;
-    
     singleton.pushPath(path);
     
     infile.open(path,std::ios::in);
@@ -488,14 +485,9 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
         
         // Handle `#pragma mode` for PPL+
         if (input.find("#pragma mode") != std::string::npos) {
-            if (pragma) {
-                Singleton::shared()->incrementLineNumber();
-                continue;
-            }
-            pragma = true;
             re = R"(([a-zA-Z]\w*)\(([^()]*)\))";
             std::string s = input;
-            input = "#pragma mode( ";
+            input = "";
             for(auto it = sregex_iterator(s.begin(), s.end(), re); it != sregex_iterator(); ++it) {
                 if (it->str(1) == "assignment") {
                     if (it->str(2) != ":=" && it->str(2) != "=") {
@@ -526,8 +518,9 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
                     }
                 }
             }
-            input.append(")");
-            output += input + '\n';
+            if (input.size()) {
+                output += "#pragma mode( " + input + ")\n";
+            }
             Singleton::shared()->incrementLineNumber();
             continue;
         }
@@ -585,9 +578,6 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
         Singleton::shared()->incrementLineNumber();
     }
     
-    
-    
-//    infile.close();
     singleton.popPath();
     
     return output;
