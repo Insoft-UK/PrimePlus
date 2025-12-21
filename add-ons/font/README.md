@@ -5,6 +5,7 @@
 
 This is a handy utility that goes well with the original [fontconvert](https://github.com/adafruit/Adafruit-GFX-Library/tree/master/fontconvert) tool provided by [Adafruit](https://www.adafruit.com/) for converting Adafruit_GFX `.h` to Adafruit_GFX `.hpprgm` format.
 
+
 ### Structure of PPL Adafruit Font
 The HP Prime stores its glyph data as a list of 64-bit unsigned integers. The bitmap, however, is stored in a specific bit order (little-endian) and where each byte of the 64-bit value is mirror-flipped.
 
