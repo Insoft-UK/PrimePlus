@@ -4,7 +4,8 @@
 ## PPL+ for HP Prime Programming Language
 **Command Line Tool**
 
-**PPL+** is a pre-processor that improves readability and maintainability of HP PPL code. It supports custom regex rules, can extract PPL source from **.hpprgm** and **.hpappprgm** files, and can also **compress** PPL source into a compact, optimized form for the HP Prime. PPL+ supports add-ons that allows it to convert **<a href="https://github.com/Insoft-UK/PrimePlus/blob/main/assets/HP.md">Adafruit Font</a>** to PPL, converting Adafruit_GFX **.h** to **PPL**, not only Adafruit font but also image files by the **GROB** add-on.
+**PPL+** is a pre-processor that improves readability and maintainability of HP PPL code. It supports custom regex rules, can extract PPL source from **.hpprgm** and **.hpappprgm** files, and can also **compress** PPL source into a compact, optimized form for the HP Prime. PPL+ supports add-ons that enable conversion of Adafruit resources into PPL.
+Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/main/assets/HP.md">Adafruit</a>** fonts and Adafruit_GFX **.h** files can be converted to PPL. In addition, the **GROB** add-on allows image files to be imported and converted as well.
 
 **Compression** of your code results in it taking up less space, making it use less storage of your HP Prime's storage memory giving you more space for more programs.
 
