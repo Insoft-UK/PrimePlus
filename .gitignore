@@ -7,5 +7,6 @@ version.txt
 build
 test
 make
+*.psd
 *.pkg
 *.zip
