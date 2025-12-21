@@ -5,20 +5,21 @@
 
 This is a handy utility that goes well with the original [fontconvert](https://github.com/adafruit/Adafruit-GFX-Library/tree/master/fontconvert) tool provided by [Adafruit](https://www.adafruit.com/) for converting Adafruit_GFX `.h` to Adafruit_GFX `.hpprgm` format.
 
+### Structure of PPL Adafruit Font
 The HP Prime stores its glyph data as a list of 64-bit unsigned integers. The bitmap, however, is stored in a specific bit order (little-endian) and where each byte of the 64-bit value is mirror-flipped.
 
 e.g 8x8 Hart
 ```
 01101100,11111110,11111110,11111110,01111100,00111000,00010000,00000000
 ```
-### Big-Endian
+#### Big-Endian
 #6CFEFEFE7C381000:64h
 
 Each byte is mirrored flipped like so.
 ```
 00110110,01111111,01111111,01111111,00111110,00011100,00001000,00000000
 ```
-### Little-Endian
+#### Little-Endian
 #00081C3E7F7F7F36:64h
 
 
@@ -32,10 +33,10 @@ Each byte is mirrored flipped like so.
 
 HP.prgm
 ```
-LOCAL GLYPH(G, ascii, x, y, font, color, sizeX, sizeY)
+LOCAL GLYPH(G, ascii, x, y, font, color)
 BEGIN
  LOCAL g := font[2, ascii];
- LOCAL xAdvance := BITAND(BITSR(g,32), 255) * sizeX;
+ LOCAL xAdvance := BITAND(BITSR(g,32), 255);
  
   IF BITAND(g,#FFFFFFFF)==0 THEN
     RETURN xAdvance;
@@ -50,7 +51,7 @@ BEGIN
   dX := BITAND(BITSR(g, 40), 255);
   dY := BITAND(BITSR(g, 48), 255) - 256;
  
-  x := x + dX * sizeX;
+  x := x + dX;
   y := y + yAdvance + dY;
   
   LOCAL bitmap := font[1];
@@ -69,18 +70,14 @@ BEGIN
       END;
      
       IF BITAND(bits, 1) == 1 THEN
-        IF sizeX == 1 AND sizeY == 1 THEN
-          PIXON_P(G, x + xx,y, color);
-        ELSE
-          RECT_P(G, x + xx * sizeX, y, x + xx * sizeX + sizeX - 1, y + sizeY - 1, color);
-        END;
+        PIXON_P(G, x + xx,y, color);
       END;
       
       bitPosition := bitPosition + 1;
       bits := BITSR(bits, 1);
     END;
    
-    y + sizeY ▶ y;
+    y + 1 ▶ y;
     h - 1 ▶ h;
   UNTIL h == 0;
   
@@ -104,12 +101,12 @@ END;
 
 EXPORT TEXT(text, x, y, font, color)
 BEGIN
-  TEXT(G0, text, x, y, font, color, 1, 1);
+  TEXT(G0, text, x, y, font, color);
 END;
 
 EXPORT TEXT(text, x, y, font)
 BEGIN
-  TEXT(G0, text, x, y, font, 0, 1, 1);
+  TEXT(G0, text, x, y, font, 0);
 END;
 ```
 
