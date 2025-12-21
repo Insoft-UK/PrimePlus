@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/Insoft-UK/PrimeSDK/main/assets/Nightly%20Build.png" style="width: 128px" />
+<img src="https://github.com/Insoft-UK/PrimePlus/blob/main/add-ons/font/assets/Icon.png" style="width: 128px" />
 
 ## Adafruit GFX Font Converter
 **Command Line Tool**
