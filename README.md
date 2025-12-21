@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/Insoft-UK/PrimePlus/main/assets/PPL+.png" style="width: 128px" />
+<img src="https://github.com/Insoft-UK/PrimePlus/blob/main/assets/PPL+.png" style="width: 128px" />
 
 
 ## PPL+ for HP Prime Programming Language
