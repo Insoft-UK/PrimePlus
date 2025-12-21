@@ -1,4 +1,4 @@
-<img src="https://raw.github.com/Insoft-UK/PrimePlus/blob/main/assets/HP.png" style="width: 128px" />
+<img src="https://github.com/Insoft-UK/PrimePlus/blob/main/add-ons/brob/assets/Icon.png" style="width: 128px" />
 
 ## GROB
 **Command Line Tool**
