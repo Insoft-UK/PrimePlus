@@ -1,10 +1,11 @@
-<img src="https://raw.githubusercontent.com/Insoft-UK/PrimeSDK/main/assets/Nightly%20Build.png" style="width: 128px" />
+<img src="https://github.com/Insoft-UK/PrimePlus/blob/main/assets/PPL+.png" style="width: 128px" />
 
 
 ## PPL+ for HP Prime Programming Language
 **Command Line Tool**
 
-**PPL+** is a pre-processor that improves readability and maintainability of HP PPL code. It supports custom regex rules, can extract PPL source from **.hpprgm** and **.hpappprgm** files, and can also **compress** PPL source into a compact, optimized form for the HP Prime. **<a href="https://github.com/Insoft-UK/PrimePlus/blob/main/assets/HP.md">Adafruit Font</a>** to PPL, converting Adafruit_GFX **.h** to **PPL**.
+**PPL+** is a pre-processor that improves readability and maintainability of HP PPL code. It supports custom regex rules, can extract PPL source from **.hpprgm** and **.hpappprgm** files, and can also **compress** PPL source into a compact, optimized form for the HP Prime. PPL+ supports add-ons that enable conversion of Adafruit resources into PPL.
+Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/main/assets/HP.md">Adafruit</a>** fonts and Adafruit_GFX **.h** files can be converted to PPL. In addition, the **GROB** add-on allows image files to be imported and converted as well.
 
 **Compression** of your code results in it taking up less space, making it use less storage of your HP Prime's storage memory giving you more space for more programs.
 
@@ -142,7 +143,9 @@ In <b>PPL+</b>, the = operator is treated as := (assignment) by default, whereas
 
 ```#pragma mode( assignment(:=) )```
 
-This allows you to use = as equality.
+This will inform PPL+ that PPL assignment is to be used only, allowing you to use = as equality.
+
+When = is used for assignment, the PPL := operator is still supported; however, using := is strongly recommended.
 
 >[!IMPORTANT]
 In PPL+ by default `=` is treated as `:=` were in PPL `=` is treated as `==`
