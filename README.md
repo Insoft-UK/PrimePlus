@@ -143,7 +143,9 @@ In <b>PPL+</b>, the = operator is treated as := (assignment) by default, whereas
 
 ```#pragma mode( assignment(:=) )```
 
-This allows you to use = as equality.
+This will inform PPL+ that PPL assignment is to be used only, allowing you to use = as equality.
+
+When = is used for assignment, the PPL := operator is still supported; however, using := is strongly recommended.
 
 >[!IMPORTANT]
 In PPL+ by default `=` is treated as `:=` were in PPL `=` is treated as `==`
