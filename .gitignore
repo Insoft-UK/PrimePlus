@@ -1,7 +1,5 @@
 *.xcworkspace/xcuserdata/
 xcuserdata/
-*.xcodeproj
-*.entitlements
 version.txt
 .DS_Store
 build
