@@ -118,7 +118,7 @@ int main(int argc, const char * argv[]) {
     // Start measuring time
     Timer timer;
     
-    std::ifstream inputFile(inpath.string()); // replace with your filename
+    std::ifstream inputFile(inpath.string());
     
     std::string content((std::istreambuf_iterator<char>(inputFile)),
                         std::istreambuf_iterator<char>());
