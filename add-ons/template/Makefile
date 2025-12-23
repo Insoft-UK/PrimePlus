@@ -9,8 +9,8 @@ clean:
 	rm -rf $(BUILD)/*
 
 install:
-	cp $(BUILD)/$(ARCH)/$(PROJECT_NAME) /usr/local/bin/$(PROJECT_NAME)
+	cp $(BUILD)/$(PROJECT_NAME) /Applications/HP/Xprime.app/Contents/Resources/Developer/usr/bin/$(PROJECT_NAME)
 	
 uninstall:
-	rm /usr/local/bin/$(PROJECT_NAME)
+	rm /Applications/HP/Xprime.app/Contents/Resources/Developer/usr/bin/$(PROJECT_NAME)
 

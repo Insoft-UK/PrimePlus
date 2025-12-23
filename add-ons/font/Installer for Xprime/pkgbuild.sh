@@ -9,7 +9,10 @@ if [ -z "$PROJECT_NAME" ]; then
     PROJECT_NAME=package
 fi
 
-# Xprime
+# Executable
+cp ../build/* package-root/Applications/HP/Xprime.app/Contents/Resources/Developer/usr/bin/
+
+# Package
 pkgbuild --root package-root \
          --identifier uk.insoft.$PROJECT_NAME \
          --version 1.5 --install-location / \

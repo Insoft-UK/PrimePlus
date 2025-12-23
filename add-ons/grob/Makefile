@@ -3,7 +3,7 @@ PROJECT_NAME ?= project
 SRC := src
 ARCH := $(shell arch)
 
-all: arm64 x86_64
+all: arm64 x86_64 universal
  
 arm64:
 	mkdir -p build/arm64
