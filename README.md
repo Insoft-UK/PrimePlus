@@ -8,8 +8,8 @@
 Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/main/assets/HP.md">Adafruit</a>** fonts and Adafruit_GFX **.h** files can be converted to PPL. In addition, the **GROB** add-on allows image files to be imported and converted as well.
 
 **Downloads for PC & macOS**
-<a href="http://insoft.uk/action/?method=downlink&path=pc&file=PrimePlus_x86_64.zip">PC</a>
-<a href="http://insoft.uk/action/?method=downlink&path=macos&file=PrimePlus_macOS.zip">macOS</a>
+<a href="https://insoft.uk/action/?method=downlink&path=pc&file=PrimePlus_x86_64.zip">PC</a>
+<a href="https://insoft.uk/action/?method=downlink&path=macos&file=PrimePlus_macOS.zip">macOS</a>
 
 **Compression** of your code results in it taking up less space, making it use less storage of your HP Prime's storage memory giving you more space for more programs.
 
