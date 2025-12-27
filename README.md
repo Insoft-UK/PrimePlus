@@ -7,13 +7,16 @@
 **PPL+** is a pre-processor that improves readability and maintainability of HP PPL code. It supports custom regex rules, can extract PPL source from **.hpprgm** and **.hpappprgm** files, and can also **compress** PPL source into a compact, optimized form for the HP Prime. PPL+ supports add-ons that enable conversion of Adafruit resources into PPL.
 Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/main/assets/HP.md">Adafruit</a>** fonts and Adafruit_GFX **.h** files can be converted to PPL. In addition, the **GROB** add-on allows image files to be imported and converted as well.
 
-**Downloads for PC & macOS**
-<a href="https://insoft.uk/action/?method=downlink&path=pc&file=PrimePlus_x86_64.zip">PC</a>
-<a href="https://insoft.uk/action/?method=downlink&path=macos&file=PrimePlus_macOS.zip">macOS</a>
-
 **Compression** of your code results in it taking up less space, making it use less storage of your HP Prime's storage memory giving you more space for more programs.
 
 **Reformating** your code enforce a consistent coding style throughout your project, making it easier for multiple developers to work on the same codebase. It helps maintain a uniform look and feel, which can enhance code readability. Readability: Well-formatted code is easier to read and understand.
+
+**Downloads for PC & macOS**
+
+<a href="https://insoft.uk/action/?method=downlink&path=pc&file=PrimePlus_x86_64.zip">PC</a>
+
+<a href="https://insoft.uk/action/?method=downlink&path=macos&file=PrimePlus_macOS.zip">macOS</a>
+
 
 `Usage: ppl+ <input-file> [-o <output-file>] [-v]`
 
