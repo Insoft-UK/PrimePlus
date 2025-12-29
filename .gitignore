@@ -5,6 +5,8 @@ version.txt
 build
 test
 make
+src/*/src
+src/*/Makefile
 *.psd
 *.pkg
 *.zip
