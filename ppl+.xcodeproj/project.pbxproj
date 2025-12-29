@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1308E8F62AC48F20001EEC82 /* singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1308E8F42AC48F20001EEC82 /* singleton.cpp */; };
-		134623202EECFD290045F3FC /* reformat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1346231F2EECFD290045F3FC /* reformat.cpp */; };
 		134623252EEF52BA0045F3FC /* strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 134623242EEF52BA0045F3FC /* strings.cpp */; };
 		134623282EEF54670045F3FC /* unary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 134623272EEF54670045F3FC /* unary.cpp */; };
 		1346232B2EEF56A00045F3FC /* ppl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1346232A2EEF56A00045F3FC /* ppl.cpp */; };
@@ -22,8 +21,6 @@
 		13C21F9D2A783D8D0067CE22 /* common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13C21F9B2A783D8D0067CE22 /* common.cpp */; };
 		13C21FB42A7892540067CE22 /* alias.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13C21FB22A7892540067CE22 /* alias.cpp */; };
 		13CD08252D60D9880005D2EA /* code_stack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13CD08242D60D9880005D2EA /* code_stack.cpp */; };
-		13E409262EDA0DDE00AED5C4 /* hpprgm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13E409252EDA0DDE00AED5C4 /* hpprgm.cpp */; };
-		13E409352EDB558E00AED5C4 /* minifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13E409342EDB558E00AED5C4 /* minifier.cpp */; };
 		13EE0F2B2DF888AC004F3D7E /* base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13EE0F2A2DF888AC004F3D7E /* base.cpp */; };
 		13F1D8832AB6185400EF623A /* aliases.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13F1D8812AB6185400EF623A /* aliases.cpp */; };
 /* End PBXBuildFile section */
@@ -43,8 +40,6 @@
 /* Begin PBXFileReference section */
 		1308E8F42AC48F20001EEC82 /* singleton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = singleton.cpp; sourceTree = "<group>"; };
 		1308E8F52AC48F20001EEC82 /* singleton.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = singleton.hpp; sourceTree = "<group>"; };
-		1346231E2EECFD290045F3FC /* reformat.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = reformat.hpp; sourceTree = "<group>"; };
-		1346231F2EECFD290045F3FC /* reformat.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = reformat.cpp; sourceTree = "<group>"; };
 		134623232EEF52BA0045F3FC /* strings.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = strings.hpp; sourceTree = "<group>"; };
 		134623242EEF52BA0045F3FC /* strings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = strings.cpp; sourceTree = "<group>"; };
 		134623262EEF54670045F3FC /* unary.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = unary.hpp; sourceTree = "<group>"; };
@@ -77,10 +72,6 @@
 		13C68D772EA086C100DE3846 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		13CD08232D60D9880005D2EA /* code_stack.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = code_stack.hpp; sourceTree = "<group>"; };
 		13CD08242D60D9880005D2EA /* code_stack.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = code_stack.cpp; sourceTree = "<group>"; };
-		13E409242EDA0DDE00AED5C4 /* hpprgm.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = hpprgm.hpp; sourceTree = "<group>"; };
-		13E409252EDA0DDE00AED5C4 /* hpprgm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = hpprgm.cpp; sourceTree = "<group>"; };
-		13E409332EDB558E00AED5C4 /* minifier.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = minifier.hpp; sourceTree = "<group>"; };
-		13E409342EDB558E00AED5C4 /* minifier.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = minifier.cpp; sourceTree = "<group>"; };
 		13E409382EDB652100AED5C4 /* extensions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = extensions.hpp; sourceTree = "<group>"; };
 		13EE0F292DF888AC004F3D7E /* base.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = base.hpp; sourceTree = "<group>"; };
 		13EE0F2A2DF888AC004F3D7E /* base.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = base.cpp; sourceTree = "<group>"; };
@@ -88,8 +79,37 @@
 		13F1D8822AB6185400EF623A /* aliases.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = aliases.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		13DC3BD32F032B0900E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Makefile,
+				src/reformat.cpp,
+			);
+			target = 137FB2842A03B06500AEFDF2 /* ppl+ */;
+		};
+		13DC3BD42F032B1900E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Makefile,
+				src/minifier.cpp,
+			);
+			target = 137FB2842A03B06500AEFDF2 /* ppl+ */;
+		};
+		13DC3BD52F032B2500E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Makefile,
+			);
+			target = 137FB2842A03B06500AEFDF2 /* ppl+ */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		13B07BDB2ECD5D1C00B81E80 /* test */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = test; sourceTree = "<group>"; };
+		13DC3BB92F032AF600E131FC /* libhpprgm */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3BD52F032B2500E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libhpprgm; sourceTree = "<group>"; };
+		13DC3BC12F032AF600E131FC /* libmin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3BD42F032B1900E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libmin; sourceTree = "<group>"; };
+		13DC3BC92F032AF600E131FC /* librfmt */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3BD32F032B0900E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = librfmt; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -136,8 +156,6 @@
 				13C21F9B2A783D8D0067CE22 /* common.cpp */,
 				134779A32DE5F117009EB2C8 /* utf.hpp */,
 				134779A42DE5F117009EB2C8 /* utf.cpp */,
-				13E409242EDA0DDE00AED5C4 /* hpprgm.hpp */,
-				13E409252EDA0DDE00AED5C4 /* hpprgm.cpp */,
 				1308E8F52AC48F20001EEC82 /* singleton.hpp */,
 				1308E8F42AC48F20001EEC82 /* singleton.cpp */,
 				13E409382EDB652100AED5C4 /* extensions.hpp */,
@@ -148,10 +166,6 @@
 				134623272EEF54670045F3FC /* unary.cpp */,
 				134623292EEF56A00045F3FC /* ppl.hpp */,
 				1346232A2EEF56A00045F3FC /* ppl.cpp */,
-				1346231E2EECFD290045F3FC /* reformat.hpp */,
-				1346231F2EECFD290045F3FC /* reformat.cpp */,
-				13E409332EDB558E00AED5C4 /* minifier.hpp */,
-				13E409342EDB558E00AED5C4 /* minifier.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -159,6 +173,9 @@
 		13C21F9E2A783E820067CE22 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				13DC3BB92F032AF600E131FC /* libhpprgm */,
+				13DC3BC12F032AF600E131FC /* libmin */,
+				13DC3BC92F032AF600E131FC /* librfmt */,
 				13C21F9F2A783EA20067CE22 /* include */,
 				1351CC512BF530CE0073FEDF /* calc.cpp */,
 				13C21F982A7829C80067CE22 /* preprocessor.cpp */,
@@ -201,6 +218,11 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				13DC3BB92F032AF600E131FC /* libhpprgm */,
+				13DC3BC12F032AF600E131FC /* libmin */,
+				13DC3BC92F032AF600E131FC /* librfmt */,
 			);
 			name = "ppl+";
 			productName = "ppl+";
@@ -246,19 +268,16 @@
 			files = (
 				13C21F9A2A7829C80067CE22 /* preprocessor.cpp in Sources */,
 				136E645B2D3964A90054E0CC /* dictionary.cpp in Sources */,
-				13E409262EDA0DDE00AED5C4 /* hpprgm.cpp in Sources */,
 				136A44FA2EF5EF500017E5AF /* tool.cpp in Sources */,
 				13EE0F2B2DF888AC004F3D7E /* base.cpp in Sources */,
 				134779A52DE5F117009EB2C8 /* utf.cpp in Sources */,
 				137FB2892A03B06500AEFDF2 /* main.cpp in Sources */,
 				13C21F9D2A783D8D0067CE22 /* common.cpp in Sources */,
 				13CD08252D60D9880005D2EA /* code_stack.cpp in Sources */,
-				13E409352EDB558E00AED5C4 /* minifier.cpp in Sources */,
 				136E64542D35B0980054E0CC /* regexp.cpp in Sources */,
 				13C21FB42A7892540067CE22 /* alias.cpp in Sources */,
 				1351CC532BF530CE0073FEDF /* calc.cpp in Sources */,
 				1346232B2EEF56A00045F3FC /* ppl.cpp in Sources */,
-				134623202EECFD290045F3FC /* reformat.cpp in Sources */,
 				134623252EEF52BA0045F3FC /* strings.cpp in Sources */,
 				134623282EEF54670045F3FC /* unary.cpp in Sources */,
 				13F1D8832AB6185400EF623A /* aliases.cpp in Sources */,
@@ -397,7 +416,17 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = "";
 				GCC_C_LANGUAGE_STANDARD = gnu23;
+				HEADER_SEARCH_PATHS = "";
+				INCLUDED_SOURCE_FILE_NAMES = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/librfmt/lib",
+					"$(PROJECT_DIR)/src/libmin/lib",
+					"$(PROJECT_DIR)/src/libhpprgm/lib",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = "";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Debug;
 		};
@@ -415,8 +444,18 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				ENABLE_USER_SELECTED_FILES = "";
 				GCC_C_LANGUAGE_STANDARD = gnu23;
+				HEADER_SEARCH_PATHS = "";
+				INCLUDED_SOURCE_FILE_NAMES = "";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/src/librfmt/lib",
+					"$(PROJECT_DIR)/src/libmin/lib",
+					"$(PROJECT_DIR)/src/libhpprgm/lib",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
+				SYSTEM_FRAMEWORK_SEARCH_PATHS = "";
+				USER_HEADER_SEARCH_PATHS = "";
 			};
 			name = Release;
 		};
