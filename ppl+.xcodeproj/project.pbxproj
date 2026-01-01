@@ -74,6 +74,7 @@
 		13DC3D4C2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				lib/arm64/libhpprgm.a,
 				lib/libhpprgm.a,
 				lib/win_x86_64/libhpprgm.a,
 				lib/x86_64/libhpprgm.a,
@@ -83,6 +84,7 @@
 		13DC3D4D2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				lib/arm64/libmin.a,
 				lib/libmin.a,
 				lib/win_x86_64/libmin.a,
 				lib/x86_64/libmin.a,
@@ -92,16 +94,19 @@
 		13DC3D4E2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				lib/arm64/librfmt.a,
 				lib/librfmt.a,
 				lib/win_x86_64/librfmt.a,
 				lib/x86_64/librfmt.a,
 			);
 			target = 137FB2842A03B06500AEFDF2 /* ppl+ */;
 		};
-		13DC3E6E2F0714B000E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		13DC3EC62F073DEB00E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				lib/arm64/libppl.a,
+				src/ppl.cpp,
+				src/strings.cpp,
+				src/unary.cpp,
 			);
 			target = 137FB2842A03B06500AEFDF2 /* ppl+ */;
 		};
@@ -112,7 +117,7 @@
 		13DC3BB92F032AF600E131FC /* libhpprgm */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3D4C2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libhpprgm; sourceTree = "<group>"; };
 		13DC3BC12F032AF600E131FC /* libmin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3D4D2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libmin; sourceTree = "<group>"; };
 		13DC3BC92F032AF600E131FC /* librfmt */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3D4E2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = librfmt; sourceTree = "<group>"; };
-		13DC3E6C2F0714A400E131FC /* libppl */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3E6E2F0714B000E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libppl; sourceTree = "<group>"; };
+		13DC3E6C2F0714A400E131FC /* libppl */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3EC62F073DEB00E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libppl; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
