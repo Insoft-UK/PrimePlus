@@ -7,6 +7,7 @@ arm64:
 	mkdir -p build/arm64
 	clang++ -arch arm64 -std=c++23 \
 	-Isrc src/*.cpp \
+	-Isrc/libppl/include src/libppl/lib/arm64/libppl.a \
 	-Isrc/librfmt/include src/librfmt/lib/arm64/librfmt.a \
 	-Isrc/libmin/include src/libmin/lib/arm64/libmin.a \
 	-Isrc/libhpprgm/include src/libhpprgm/lib/arm64/libhpprgm.a \
@@ -17,6 +18,7 @@ x86_64:
 	mkdir -p build/x86_64
 	clang++ -arch x86_64 -std=c++23 \
 	-Isrc src/*.cpp \
+	-Isrc/libppl/include src/libppl/lib/x86_64/libppl.a \
 	-Isrc/librfmt/include src/librfmt/lib/x86_64/librfmt.a \
 	-Isrc/libmin/include src/libmin/lib/x86_64/libmin.a \
 	-Isrc/libhpprgm/include src/libhpprgm/lib/x86_64/libhpprgm.a \
@@ -27,6 +29,7 @@ win_x86_64:
 	x86_64-w64-mingw32-g++ \
 	-std=c++23 \
 	-Isrc src/*.cpp \
+	-Isrc/libppl/include src/libppl/lib/win_x86_64/libppl.a \
 	-Isrc/libhpprgm/include src/libhpprgm/lib/win_x86_64/libhpprgm.a \
 	-Isrc/librfmt/include src/librfmt/lib/win_x86_64/librfmt.a \
 	-Isrc/libmin/include src/libmin/lib/win_x86_64/libmin.a \

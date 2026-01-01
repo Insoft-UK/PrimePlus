@@ -71,22 +71,9 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		13DC3D4B2F05FD1E00E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				src/ppl.cpp,
-				src/strings.cpp,
-				src/unary.cpp,
-			);
-			target = 137FB2842A03B06500AEFDF2 /* ppl+ */;
-		};
 		13DC3D4C2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				build/arm64/hpprgm.o,
-				build/win_x86_64/hpprgm.o,
-				build/win/hpprgm.o,
-				build/x86_64/hpprgm.o,
 				lib/libhpprgm.a,
 				lib/win_x86_64/libhpprgm.a,
 				lib/x86_64/libhpprgm.a,
@@ -96,18 +83,6 @@
 		13DC3D4D2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				build/arm64/minifier.o,
-				build/arm64/ppl.o,
-				build/arm64/strings.o,
-				build/arm64/unary.o,
-				build/win_x86_64/minifier.o,
-				build/win_x86_64/ppl.o,
-				build/win_x86_64/strings.o,
-				build/win_x86_64/unary.o,
-				build/x86_64/minifier.o,
-				build/x86_64/ppl.o,
-				build/x86_64/strings.o,
-				build/x86_64/unary.o,
 				lib/libmin.a,
 				lib/win_x86_64/libmin.a,
 				lib/x86_64/libmin.a,
@@ -117,21 +92,16 @@
 		13DC3D4E2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				build/arm64/ppl.o,
-				build/arm64/reformat.o,
-				build/arm64/strings.o,
-				build/arm64/unary.o,
-				build/win_x86_64/ppl.o,
-				build/win_x86_64/reformat.o,
-				build/win_x86_64/strings.o,
-				build/win_x86_64/unary.o,
-				build/x86_64/ppl.o,
-				build/x86_64/reformat.o,
-				build/x86_64/strings.o,
-				build/x86_64/unary.o,
 				lib/librfmt.a,
 				lib/win_x86_64/librfmt.a,
 				lib/x86_64/librfmt.a,
+			);
+			target = 137FB2842A03B06500AEFDF2 /* ppl+ */;
+		};
+		13DC3E6E2F0714B000E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				lib/arm64/libppl.a,
 			);
 			target = 137FB2842A03B06500AEFDF2 /* ppl+ */;
 		};
@@ -142,7 +112,7 @@
 		13DC3BB92F032AF600E131FC /* libhpprgm */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3D4C2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libhpprgm; sourceTree = "<group>"; };
 		13DC3BC12F032AF600E131FC /* libmin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3D4D2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libmin; sourceTree = "<group>"; };
 		13DC3BC92F032AF600E131FC /* librfmt */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3D4E2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = librfmt; sourceTree = "<group>"; };
-		13DC3D472F05FCEB00E131FC /* common */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3D4B2F05FD1E00E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = common; sourceTree = "<group>"; };
+		13DC3E6C2F0714A400E131FC /* libppl */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3E6E2F0714B000E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libppl; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -183,7 +153,7 @@
 			isa = PBXGroup;
 			children = (
 				137FB2882A03B06500AEFDF2 /* main.cpp */,
-				13DC3D472F05FCEB00E131FC /* common */,
+				13DC3E6C2F0714A400E131FC /* libppl */,
 				13DC3BB92F032AF600E131FC /* libhpprgm */,
 				13DC3BC12F032AF600E131FC /* libmin */,
 				13DC3BC92F032AF600E131FC /* librfmt */,
@@ -259,7 +229,6 @@
 				13DC3BB92F032AF600E131FC /* libhpprgm */,
 				13DC3BC12F032AF600E131FC /* libmin */,
 				13DC3BC92F032AF600E131FC /* librfmt */,
-				13DC3D472F05FCEB00E131FC /* common */,
 			);
 			name = "ppl+";
 			productName = "ppl+";
@@ -466,6 +435,7 @@
 					"$(PROJECT_DIR)/src/librfmt/lib/arm64",
 					"$(PROJECT_DIR)/src/librfmt/lib/win_x86_64",
 					"$(PROJECT_DIR)/src/librfmt/lib/x86_64",
+					"$(PROJECT_DIR)/src/libppl/lib/arm64",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SYSTEM_FRAMEWORK_SEARCH_PATHS = "";
@@ -503,6 +473,7 @@
 					"$(PROJECT_DIR)/src/librfmt/lib/arm64",
 					"$(PROJECT_DIR)/src/librfmt/lib/win_x86_64",
 					"$(PROJECT_DIR)/src/librfmt/lib/x86_64",
+					"$(PROJECT_DIR)/src/libppl/lib/arm64",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
