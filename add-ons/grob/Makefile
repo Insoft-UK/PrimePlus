@@ -1,7 +1,7 @@
-PROJECT_NAME ?= project
+PROJECT_NAME := $(shell basename $(PWD))
 ARCH := $(shell arch)
 
-all: arm64 x86_64 universal
+all: arm64 x86_64 universal win_x86_64
  
 arm64:
 	mkdir -p build/arm64
@@ -24,6 +24,16 @@ x86_64:
 universal:
 	# Combine into a universal binary
 	lipo -create -output build/$(PROJECT_NAME) build/arm64/$(PROJECT_NAME) build/x86_64/$(PROJECT_NAME)
+	
+win_x86_64:
+	x86_64-w64-mingw32-g++ \
+	src/*.cpp \
+	-I../../src/libhpprgm/include ../../src/libhpprgm/lib/win_x86_64/libhpprgm.a \
+	-o build/$(PROJECT_NAME).exe \
+	-std=c++23 \
+	-static \
+	-O2 \
+	-s
 
 clean:
 	rm -rf build/*
