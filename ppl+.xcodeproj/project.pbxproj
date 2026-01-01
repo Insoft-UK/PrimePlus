@@ -8,9 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1308E8F62AC48F20001EEC82 /* singleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1308E8F42AC48F20001EEC82 /* singleton.cpp */; };
-		134623252EEF52BA0045F3FC /* strings.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 134623242EEF52BA0045F3FC /* strings.cpp */; };
-		134623282EEF54670045F3FC /* unary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 134623272EEF54670045F3FC /* unary.cpp */; };
-		1346232B2EEF56A00045F3FC /* ppl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1346232A2EEF56A00045F3FC /* ppl.cpp */; };
 		134779A52DE5F117009EB2C8 /* utf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 134779A42DE5F117009EB2C8 /* utf.cpp */; };
 		1351CC532BF530CE0073FEDF /* calc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1351CC512BF530CE0073FEDF /* calc.cpp */; };
 		136A44FA2EF5EF500017E5AF /* tool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 136A44F92EF5EF500017E5AF /* tool.cpp */; };
@@ -40,12 +37,6 @@
 /* Begin PBXFileReference section */
 		1308E8F42AC48F20001EEC82 /* singleton.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = singleton.cpp; sourceTree = "<group>"; };
 		1308E8F52AC48F20001EEC82 /* singleton.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = singleton.hpp; sourceTree = "<group>"; };
-		134623232EEF52BA0045F3FC /* strings.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = strings.hpp; sourceTree = "<group>"; };
-		134623242EEF52BA0045F3FC /* strings.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = strings.cpp; sourceTree = "<group>"; };
-		134623262EEF54670045F3FC /* unary.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = unary.hpp; sourceTree = "<group>"; };
-		134623272EEF54670045F3FC /* unary.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = unary.cpp; sourceTree = "<group>"; };
-		134623292EEF56A00045F3FC /* ppl.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ppl.hpp; sourceTree = "<group>"; };
-		1346232A2EEF56A00045F3FC /* ppl.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ppl.cpp; sourceTree = "<group>"; };
 		134779A32DE5F117009EB2C8 /* utf.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = utf.hpp; sourceTree = "<group>"; };
 		134779A42DE5F117009EB2C8 /* utf.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utf.cpp; sourceTree = "<group>"; };
 		1351CC512BF530CE0073FEDF /* calc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = calc.cpp; sourceTree = "<group>"; };
@@ -80,26 +71,67 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		13DC3BD32F032B0900E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		13DC3D4B2F05FD1E00E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Makefile,
-				src/reformat.cpp,
+				src/ppl.cpp,
+				src/strings.cpp,
+				src/unary.cpp,
 			);
 			target = 137FB2842A03B06500AEFDF2 /* ppl+ */;
 		};
-		13DC3BD42F032B1900E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		13DC3D4C2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Makefile,
-				src/minifier.cpp,
+				build/arm64/hpprgm.o,
+				build/win_x86_64/hpprgm.o,
+				build/win/hpprgm.o,
+				build/x86_64/hpprgm.o,
+				lib/libhpprgm.a,
+				lib/win_x86_64/libhpprgm.a,
+				lib/x86_64/libhpprgm.a,
 			);
 			target = 137FB2842A03B06500AEFDF2 /* ppl+ */;
 		};
-		13DC3BD52F032B2500E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+		13DC3D4D2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Makefile,
+				build/arm64/minifier.o,
+				build/arm64/ppl.o,
+				build/arm64/strings.o,
+				build/arm64/unary.o,
+				build/win_x86_64/minifier.o,
+				build/win_x86_64/ppl.o,
+				build/win_x86_64/strings.o,
+				build/win_x86_64/unary.o,
+				build/x86_64/minifier.o,
+				build/x86_64/ppl.o,
+				build/x86_64/strings.o,
+				build/x86_64/unary.o,
+				lib/libmin.a,
+				lib/win_x86_64/libmin.a,
+				lib/x86_64/libmin.a,
+			);
+			target = 137FB2842A03B06500AEFDF2 /* ppl+ */;
+		};
+		13DC3D4E2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				build/arm64/ppl.o,
+				build/arm64/reformat.o,
+				build/arm64/strings.o,
+				build/arm64/unary.o,
+				build/win_x86_64/ppl.o,
+				build/win_x86_64/reformat.o,
+				build/win_x86_64/strings.o,
+				build/win_x86_64/unary.o,
+				build/x86_64/ppl.o,
+				build/x86_64/reformat.o,
+				build/x86_64/strings.o,
+				build/x86_64/unary.o,
+				lib/librfmt.a,
+				lib/win_x86_64/librfmt.a,
+				lib/x86_64/librfmt.a,
 			);
 			target = 137FB2842A03B06500AEFDF2 /* ppl+ */;
 		};
@@ -107,9 +139,10 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		13B07BDB2ECD5D1C00B81E80 /* test */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = test; sourceTree = "<group>"; };
-		13DC3BB92F032AF600E131FC /* libhpprgm */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3BD52F032B2500E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libhpprgm; sourceTree = "<group>"; };
-		13DC3BC12F032AF600E131FC /* libmin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3BD42F032B1900E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libmin; sourceTree = "<group>"; };
-		13DC3BC92F032AF600E131FC /* librfmt */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3BD32F032B0900E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = librfmt; sourceTree = "<group>"; };
+		13DC3BB92F032AF600E131FC /* libhpprgm */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3D4C2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libhpprgm; sourceTree = "<group>"; };
+		13DC3BC12F032AF600E131FC /* libmin */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3D4D2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = libmin; sourceTree = "<group>"; };
+		13DC3BC92F032AF600E131FC /* librfmt */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3D4E2F05FD8300E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = librfmt; sourceTree = "<group>"; };
+		13DC3D472F05FCEB00E131FC /* common */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (13DC3D4B2F05FD1E00E131FC /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = common; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +166,7 @@
 				137FB2942A046E8E00AEFDF2 /* ppl+.entitlements */,
 				13B07BDB2ECD5D1C00B81E80 /* test */,
 				137FB2872A03B06500AEFDF2 /* src */,
+				13DC3D4F2F05FD9300E131FC /* Frameworks */,
 				137FB2862A03B06500AEFDF2 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -149,6 +183,10 @@
 			isa = PBXGroup;
 			children = (
 				137FB2882A03B06500AEFDF2 /* main.cpp */,
+				13DC3D472F05FCEB00E131FC /* common */,
+				13DC3BB92F032AF600E131FC /* libhpprgm */,
+				13DC3BC12F032AF600E131FC /* libmin */,
+				13DC3BC92F032AF600E131FC /* librfmt */,
 				13C21F9E2A783E820067CE22 /* Classes */,
 				136A44F82EF5EF500017E5AF /* tool.hpp */,
 				136A44F92EF5EF500017E5AF /* tool.cpp */,
@@ -160,12 +198,6 @@
 				1308E8F42AC48F20001EEC82 /* singleton.cpp */,
 				13E409382EDB652100AED5C4 /* extensions.hpp */,
 				1389CFEA2CA73BA6008FDBEB /* timer.hpp */,
-				134623232EEF52BA0045F3FC /* strings.hpp */,
-				134623242EEF52BA0045F3FC /* strings.cpp */,
-				134623262EEF54670045F3FC /* unary.hpp */,
-				134623272EEF54670045F3FC /* unary.cpp */,
-				134623292EEF56A00045F3FC /* ppl.hpp */,
-				1346232A2EEF56A00045F3FC /* ppl.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -173,9 +205,6 @@
 		13C21F9E2A783E820067CE22 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				13DC3BB92F032AF600E131FC /* libhpprgm */,
-				13DC3BC12F032AF600E131FC /* libmin */,
-				13DC3BC92F032AF600E131FC /* librfmt */,
 				13C21F9F2A783EA20067CE22 /* include */,
 				1351CC512BF530CE0073FEDF /* calc.cpp */,
 				13C21F982A7829C80067CE22 /* preprocessor.cpp */,
@@ -204,6 +233,13 @@
 			name = include;
 			sourceTree = "<group>";
 		};
+		13DC3D4F2F05FD9300E131FC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -223,6 +259,7 @@
 				13DC3BB92F032AF600E131FC /* libhpprgm */,
 				13DC3BC12F032AF600E131FC /* libmin */,
 				13DC3BC92F032AF600E131FC /* librfmt */,
+				13DC3D472F05FCEB00E131FC /* common */,
 			);
 			name = "ppl+";
 			productName = "ppl+";
@@ -277,9 +314,6 @@
 				136E64542D35B0980054E0CC /* regexp.cpp in Sources */,
 				13C21FB42A7892540067CE22 /* alias.cpp in Sources */,
 				1351CC532BF530CE0073FEDF /* calc.cpp in Sources */,
-				1346232B2EEF56A00045F3FC /* ppl.cpp in Sources */,
-				134623252EEF52BA0045F3FC /* strings.cpp in Sources */,
-				134623282EEF54670045F3FC /* unary.cpp in Sources */,
 				13F1D8832AB6185400EF623A /* aliases.cpp in Sources */,
 				1308E8F62AC48F20001EEC82 /* singleton.cpp in Sources */,
 			);
@@ -423,6 +457,15 @@
 					"$(PROJECT_DIR)/src/librfmt/lib",
 					"$(PROJECT_DIR)/src/libmin/lib",
 					"$(PROJECT_DIR)/src/libhpprgm/lib",
+					"$(PROJECT_DIR)/src/libhpprgm/lib/arm64",
+					"$(PROJECT_DIR)/src/libhpprgm/lib/win_x86_64",
+					"$(PROJECT_DIR)/src/libhpprgm/lib/x86_64",
+					"$(PROJECT_DIR)/src/libmin/lib/arm64",
+					"$(PROJECT_DIR)/src/libmin/lib/win_x86_64",
+					"$(PROJECT_DIR)/src/libmin/lib/x86_64",
+					"$(PROJECT_DIR)/src/librfmt/lib/arm64",
+					"$(PROJECT_DIR)/src/librfmt/lib/win_x86_64",
+					"$(PROJECT_DIR)/src/librfmt/lib/x86_64",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SYSTEM_FRAMEWORK_SEARCH_PATHS = "";
@@ -451,6 +494,15 @@
 					"$(PROJECT_DIR)/src/librfmt/lib",
 					"$(PROJECT_DIR)/src/libmin/lib",
 					"$(PROJECT_DIR)/src/libhpprgm/lib",
+					"$(PROJECT_DIR)/src/libhpprgm/lib/arm64",
+					"$(PROJECT_DIR)/src/libhpprgm/lib/win_x86_64",
+					"$(PROJECT_DIR)/src/libhpprgm/lib/x86_64",
+					"$(PROJECT_DIR)/src/libmin/lib/arm64",
+					"$(PROJECT_DIR)/src/libmin/lib/win_x86_64",
+					"$(PROJECT_DIR)/src/libmin/lib/x86_64",
+					"$(PROJECT_DIR)/src/librfmt/lib/arm64",
+					"$(PROJECT_DIR)/src/librfmt/lib/win_x86_64",
+					"$(PROJECT_DIR)/src/librfmt/lib/x86_64",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
