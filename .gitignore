@@ -5,11 +5,6 @@ version.txt
 build
 test
 make
-src/*/src
-src/*/Makefile
-src/hpprgm.*
-src/minifier.*
-src/reformat.*
 *.psd
 *.pkg
 *.zip
