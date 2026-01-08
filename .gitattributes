@@ -13,6 +13,8 @@
 *.hpappprgm  linguist-language=PPL
 *.ppl+       linguist-language=PPL+
 *.prgm+      linguist-language=PPL+
+*.hpp        linguist-language=C++
+*.cpp        linguist-language=C++
 
 # Generated files
 /assets/**   linguist-generated=true
