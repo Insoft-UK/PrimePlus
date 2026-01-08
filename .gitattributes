@@ -23,3 +23,4 @@ Makefile     linguist-generated=true
 *.storyboard linguist-generated=true
 *.png        linguist-generated=true
 *.bmp        linguist-generated=true
+*.yml        linguist-generated=true
