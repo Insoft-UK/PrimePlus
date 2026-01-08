@@ -17,9 +17,6 @@ Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/
 
 <a href="https://insoft.uk/action/?method=downlink&path=macos&file=PrimePlus_macOS.zip">macOS Version 4.0.6</a>
 
->[!IMPORTANT]
->Windows will not receive any future updates for the foreseeable future.
-
 `Usage: ppl+ <input-file> [-o <output-file>] [-v]`
 
 <table>
