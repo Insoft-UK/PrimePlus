@@ -13,7 +13,7 @@
 *.hpappprgm  linguist-language=PPL
 *.ppl+       linguist-language=PPL+
 *.prgm+      linguist-language=PPL+
-*.hpp        linguist-language=C++
+*.h          linguist-language=C++
 *.cpp        linguist-language=C++
 
 # Generated files
