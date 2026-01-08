@@ -13,8 +13,6 @@
 *.hpappprgm  linguist-language=PPL
 *.ppl+       linguist-language=PPL+
 *.prgm+      linguist-language=PPL+
-*.h          linguist-language=C++
-*.cpp        linguist-language=C++
 
 # Generated files
 /assets/**   linguist-generated=true
@@ -28,6 +26,7 @@ Makefile     linguist-generated=true
 *.png        linguist-generated=true
 *.pdf        linguist-generated=true
 *.bmp        linguist-generated=true
+*.h          linguist-generated=true
 *.storyboard linguist-generated=true
 *.plist      linguist-generated=true
 *.metal      linguist-generated=true
