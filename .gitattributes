@@ -1,18 +1,22 @@
 # Normalize line endings
 * text=auto
 
-# Ignore everything by default
-* linguist-ignore
+.gitattributes linguist-generated=true
+.gitignore     linguist-generated=true
+.editorconfig  linguist-generated=true
+.clang-format  linguist-generated=true
 
-# PPL files (count & highlight)
-*.ppl        linguist-ignore=false linguist-language=PPL
-*.prgm       linguist-ignore=false linguist-language=PPL
-*.hpprgm     linguist-ignore=false linguist-language=PPL
-*.hpappprgm  linguist-ignore=false linguist-language=PPL
-*.ppl+       linguist-ignore=false linguist-language=PPL+
-*.prgm+      linguist-ignore=false linguist-language=PPL+
+# PPL files
+*.ppl        linguist-language=PPL
+*.prgm       linguist-language=PPL
+*.hpprgm     linguist-language=PPL
+*.hpappprgm  linguist-language=PPL
+*.ppl+       linguist-language=PPL+
+*.prgm+      linguist-language=PPL+
 
-assets/**    linguist-generated=true
+# Generated files
+/assets/**   linguist-generated=true
+/tests/**    linguist-generated=true
 Makefile     linguist-generated=true
 *.sh         linguist-generated=true
 *.txt        linguist-generated=true
@@ -20,7 +24,14 @@ Makefile     linguist-generated=true
 *.xml        linguist-generated=true
 *.json       linguist-generated=true
 *.png        linguist-generated=true
-*.storyboard linguist-generated=true
-*.png        linguist-generated=true
+*.pdf        linguist-generated=true
 *.bmp        linguist-generated=true
+*.storyboard linguist-generated=true
+*.plist      linguist-generated=true
+*.metal      linguist-generated=true
+*.entitlements linguist-generated=true
 *.yml        linguist-generated=true
+
+# Vendored / external
+/Installer for Xprime/**      linguist-vendored=true
+/ppl+.xcodeproj/**            linguist-vendored=true
