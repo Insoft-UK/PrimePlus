@@ -18,7 +18,7 @@
 /assets/**   linguist-generated=true
 /tests/**    linguist-generated=true
 /examples/**  linguist-generated=true
-/add-ons/fonts/examples/**  linguist-generated=true
+*.h          linguist-generated=true
 Makefile     linguist-generated=true
 *.sh         linguist-generated=true
 *.txt        linguist-generated=true
