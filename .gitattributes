@@ -15,7 +15,7 @@
 *.prgm+      linguist-language=PPL+
 
 # Generated files
-/assets/**   linguist-generated=true
+assets/**   linguist-generated=true
 /tests/**    linguist-generated=true
 examples/**  linguist-generated=true
 Makefile     linguist-generated=true
