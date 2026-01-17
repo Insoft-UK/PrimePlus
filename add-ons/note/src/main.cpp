@@ -203,6 +203,7 @@ int main(int argc, const char * argv[]) {
     } else {
         if (!utf::save(outpath, content, out_extension == ".hpnote" ? utf::BOMnone : utf::BOMle)) {
             std::cerr << "❌ Unable to create file " << outpath.filename() << ".\n";
+            return -1;
         }
     }
 
