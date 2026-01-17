@@ -245,9 +245,6 @@ size_t utf::write(std::ofstream& os, const std::wstring& wstr, BOM bom) {
         }
     }
     
-    os.put('\0');
-    os.put('\0');
-    
     return size;
 }
 

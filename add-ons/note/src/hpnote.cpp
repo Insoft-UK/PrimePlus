@@ -232,7 +232,7 @@ static std::wstring parseAllLines(std::istringstream& iss) {
     return wstr;
 }
 
-std::wstring hpnote::convertToHpNote(std::filesystem::path& path) {
+std::wstring hpnote::convertToHpNote(std::filesystem::path& path, bool minify) {
     std::string input;
     std::wstring wstr;
     std::vector<uint8_t> bytes;
@@ -240,10 +240,12 @@ std::wstring hpnote::convertToHpNote(std::filesystem::path& path) {
     
     input = utf::load(path);
 
-    auto tokens = md::parseMarkdown(input);
-    for (const auto& t : tokens) {
-        if (!wstr.empty()) wstr.append(1, L'\n');
-        wstr.append(utf::utf16(t.text));
+    if (!minify) {
+        auto tokens = md::parseMarkdown(input);
+        for (const auto& t : tokens) {
+            if (!wstr.empty()) wstr.append(1, L'\n');
+            wstr.append(utf::utf16(t.text));
+        }
     }
     
     wstr.append(1, L'\0');

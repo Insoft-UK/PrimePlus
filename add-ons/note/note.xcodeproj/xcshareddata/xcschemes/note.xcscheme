@@ -54,10 +54,26 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "$(PROJECT_DIR)/test/readme.md"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-o Note.hpappnote"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "$(PROJECT_DIR)/test/Note.hpappnote"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-o /dev/stdout"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--compress"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "--verbose"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument

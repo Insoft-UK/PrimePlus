@@ -32,30 +32,8 @@
 #include <sstream>
 #include <iomanip>
 
-
 namespace hpnote {
-    enum class StyleType : uint16_t {
-        None        = 0b00000001, 
-        Bold        = 0b00000101,
-        Italic      = 0b00001001,
-        Underline   = 0b00010001,
-        Strikethrow = 0b01000001
-    };
-    
-    /*
-       0011 0000
-     ● 0011 0001
-     ○ 0011 0010
-     ‣ 0011 0011
-     */
-    enum class BulletType : uint8_t {
-        None        = 0b00110000, // no bullet
-        MainBullet  = 0b00110001, // level 1
-        SubBullet1  = 0b00110010, // level 2
-        SubBullet2  = 0b00110011 // level 3
-    };
-    
-    std::wstring convertToHpNote(std::filesystem::path& path);
+    std::wstring convertToHpNote(std::filesystem::path& path, bool minify);
 }
 
 

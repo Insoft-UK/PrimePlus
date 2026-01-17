@@ -47,6 +47,7 @@ void help(void)
     << "Insoft "<< NAME << " version, " << VERSION_NUMBER << " (BUILD " << BUNDLE_VERSION << ")\n"
     << "\n"
     << "Usage: " << COMMAND_NAME << " <input-file>\n"
+    << "  -c or --compress        Specify if the note file should be compressed.\n"
     << "\n"
     << "Additional Commands:\n"
     << "  " << COMMAND_NAME << " {--version | --help}\n"
@@ -96,7 +97,7 @@ fs::path resolveOutputExtension(const fs::path& inpath, const fs::path& outpath)
         return path;
     }
     
-    path.replace_extension("node");
+    path.replace_extension("note");
     return path;
 }
 
@@ -134,6 +135,8 @@ fs::path resolveOutputPath(const fs::path& inpath, const fs::path& outpath) {
 int main(int argc, const char * argv[]) {
     std::string prefix, sufix, name;
     fs::path inpath, outpath;
+    bool verbose = false;
+    bool minify = false;
 
     if ( argc == 1 )
     {
@@ -153,6 +156,11 @@ int main(int argc, const char * argv[]) {
             continue;
         }
         
+        if ( args == "-c" || args == "--compress" ) {
+            minify = true;
+            continue;
+        }
+        
         if (args == "--help") {
             help();
             exit(0);
@@ -166,6 +174,11 @@ int main(int argc, const char * argv[]) {
         if (args == "--build") {
             std::cout << NUMERIC_BUILD << "\n";
             return 0;
+        }
+        
+        if (args == "-v" || args == "--verbose") {
+            verbose = true;
+            continue;
         }
         
         inpath = resolveAndValidateInputFile(argv[n]);
@@ -183,7 +196,7 @@ int main(int argc, const char * argv[]) {
     auto out_extension = std::lowercased(outpath.extension().string());
  
     if (in_extension == ".md") {
-        content = hpnote::convertToHpNote(inpath);
+        content = hpnote::convertToHpNote(inpath, minify);
     }
     
     if (in_extension == ".txt") {
@@ -194,14 +207,15 @@ int main(int argc, const char * argv[]) {
         content = utf::load(inpath, utf::BOMle);
     }
     
-    if (in_extension == ".hpnote") {
+    if (in_extension == ".hpnote" || in_extension == ".hpappnote") {
         content = utf::load(inpath, utf::BOMnone);
+        content += L'\0';
     }
 
     if (outpath == "/dev/stdout") {
         std::cout << utf::utf8(content);
     } else {
-        if (!utf::save(outpath, content, out_extension == ".hpnote" ? utf::BOMnone : utf::BOMle)) {
+        if (!utf::save(outpath, content, (out_extension == ".hpnote" || out_extension == ".hpappnote") ? utf::BOMnone : utf::BOMle)) {
             std::cerr << "❌ Unable to create file " << outpath.filename() << ".\n";
             return -1;
         }
