@@ -17,9 +17,6 @@ Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/
 
 <a href="https://insoft.uk/action/?method=downlink&path=macos&file=PrimePlus_macOS.zip">macOS Version 4.0.6</a>
 
->[!IMPORTANT]
->Windows will not receive any future updates for the foreseeable future.
-
 `Usage: ppl+ <input-file> [-o <output-file>] [-v]`
 
 <table>
@@ -56,6 +53,9 @@ Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/
     </tr>
   </tbody>
 </table>
+
+>[!WARNING]
+PPL+ 26 (v5.x) will transition to using ICU. As a result, prebuilt Windows 11 binaries will no longer be provided. Users running Windows 11 who wish to use PPL+ v5.x will need to install ICU for Windows and compile the command line tool from source.
 
 ### Regular Expressions
 **Example: Extending PPL with Switch-Case Functionality Using Regex**
