@@ -192,10 +192,19 @@ void hpprgm::create(const std::filesystem::path& path, const std::string& prgm, 
     auto sourceCode = utf16le(prgm);
     auto prgmSize = sourceCode.size();
     
-    header.push_back(prgmSize & 0xFF);
-    header.push_back((prgmSize >> 8) & 0xFF);
-    header.push_back((prgmSize >> 16) & 0xFF);
-    header.push_back(prgmSize >> 24);
+//    if (name.empty()) {
+        header.push_back(prgmSize & 0xFF);
+        header.push_back((prgmSize >> 8) & 0xFF);
+        header.push_back((prgmSize >> 16) & 0xFF);
+        header.push_back(prgmSize >> 24);
+//    } else {
+//        header[8] = 1;
+//        auto programName = utf16le(name);
+//        header.push_back(0x31);
+//        header.insert(header.end(), programName.begin(), programName.end());
+//    }
+    
+    
     
     std::vector<uint8_t> out;
     out.reserve((uint32_t)(header.size() + sourceCode.size()));

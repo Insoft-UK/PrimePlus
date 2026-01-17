@@ -7,13 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		134B4A032F14685F00B7F659 /* utf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 134B4A022F14685F00B7F659 /* utf.cpp */; };
+		134B4A062F15BE6600B7F659 /* md.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 134B4A052F15BE6600B7F659 /* md.cpp */; };
+		134B4B752F17356400B7F659 /* hpnote.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 134B4B742F17356400B7F659 /* hpnote.cpp */; };
 		1352EDF62B4786BD003130E4 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1352EDF42B4786BC003130E4 /* main.cpp */; };
-		136A44932EF5CD1B0017E5AF /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 136A448F2EF5CCE60017E5AF /* libz.a */; };
-		136A44972EF5CD280017E5AF /* libpng.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 136A44962EF5CD280017E5AF /* libpng.a */; };
-		136A44A12EF5CE230017E5AF /* pbm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 136A449C2EF5CE230017E5AF /* pbm.cpp */; };
-		136A44A22EF5CE230017E5AF /* png.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 136A449E2EF5CE230017E5AF /* png.cpp */; };
-		136A45572EF5FDEF0017E5AF /* bmp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 136A449A2EF5CE230017E5AF /* bmp.cpp */; };
-		13EE54302EC1730A00A8F770 /* utf.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 13EE542F2EC1730A00A8F770 /* utf.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -28,63 +25,26 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		134B4A012F14685F00B7F659 /* utf.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = utf.hpp; sourceTree = "<group>"; };
+		134B4A022F14685F00B7F659 /* utf.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utf.cpp; sourceTree = "<group>"; };
+		134B4A042F15BE6600B7F659 /* md.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = md.hpp; sourceTree = "<group>"; };
+		134B4A052F15BE6600B7F659 /* md.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = md.cpp; sourceTree = "<group>"; };
+		134B4B732F17356400B7F659 /* hpnote.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = hpnote.hpp; sourceTree = "<group>"; };
+		134B4B742F17356400B7F659 /* hpnote.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = hpnote.cpp; sourceTree = "<group>"; };
 		1352EDF42B4786BC003130E4 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		136A448D2EF5CB7A0017E5AF /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
-		136A448F2EF5CCE60017E5AF /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = src/libz/lib/arm64/libz.a; sourceTree = "<group>"; };
-		136A44912EF5CCF70017E5AF /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = src/libpng/lib/x86_64/libpng.a; sourceTree = "<group>"; };
-		136A44942EF5CD1F0017E5AF /* libz.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libz.a; path = src/libz/lib/x86_64/libz.a; sourceTree = "<group>"; };
-		136A44962EF5CD280017E5AF /* libpng.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpng.a; path = src/libpng/lib/arm64/libpng.a; sourceTree = "<group>"; };
-		136A44992EF5CE230017E5AF /* bmp.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bmp.hpp; sourceTree = "<group>"; };
-		136A449A2EF5CE230017E5AF /* bmp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = bmp.cpp; sourceTree = "<group>"; };
-		136A449B2EF5CE230017E5AF /* pbm.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = pbm.hpp; sourceTree = "<group>"; };
-		136A449C2EF5CE230017E5AF /* pbm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = pbm.cpp; sourceTree = "<group>"; };
-		136A449D2EF5CE230017E5AF /* png.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = png.hpp; sourceTree = "<group>"; };
-		136A449E2EF5CE230017E5AF /* png.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = png.cpp; sourceTree = "<group>"; };
-		136A44B62EF5E0CE0017E5AF /* image.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = image.hpp; sourceTree = "<group>"; };
 		136E64442D262CE90054E0CC /* version.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = version.txt; sourceTree = "<group>"; };
 		138F54D42C977703009357F9 /* LICENSE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LICENSE.md; sourceTree = "<group>"; };
 		138F54D52C977708009357F9 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		13E40E602EE122A100AED5C4 /* timer.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = timer.hpp; sourceTree = "<group>"; };
 		13E40F602EE50FF400AED5C4 /* extensions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = extensions.hpp; sourceTree = "<group>"; };
-		13EBE2F32B22249100302F26 /* grob */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = grob; sourceTree = BUILT_PRODUCTS_DIR; };
-		13EE542E2EC1730A00A8F770 /* utf.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = utf.hpp; sourceTree = "<group>"; };
-		13EE542F2EC1730A00A8F770 /* utf.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = utf.cpp; sourceTree = "<group>"; };
+		13EBE2F32B22249100302F26 /* note */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = note; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		134B49FE2F14652000B7F659 /* Exceptions for "libhpprgm" folder in "grob" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				lib/libhpprgm.a,
-				lib/win_x86_64/libhpprgm.a,
-				lib/x86_64/libhpprgm.a,
-			);
-			target = 13EBE2F22B22249000302F26 /* grob */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		134778ED2DE0E494009EB2C8 /* examples */ = {
+		134B4A682F15C33B00B7F659 /* test */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = examples;
-			sourceTree = "<group>";
-		};
-		134B49F72F1464F900B7F659 /* libhpprgm */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				134B49FE2F14652000B7F659 /* Exceptions for "libhpprgm" folder in "grob" target */,
-			);
-			path = libhpprgm;
-			sourceTree = "<group>";
-		};
-		136A44AC2EF5CEB90017E5AF /* libpng */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = libpng;
-			sourceTree = "<group>";
-		};
-		136A44B52EF5CEB90017E5AF /* libz */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = libz;
+			path = test;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -93,8 +53,6 @@
 		13EBE2F02B22249000302F26 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
-				136A44932EF5CD1B0017E5AF /* libz.a in Frameworks */,
-				136A44972EF5CD280017E5AF /* libpng.a in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -103,19 +61,13 @@
 		1352EDEC2B4786BC003130E4 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				134B49F72F1464F900B7F659 /* libhpprgm */,
-				136A44AC2EF5CEB90017E5AF /* libpng */,
-				136A44B52EF5CEB90017E5AF /* libz */,
 				1352EDF42B4786BC003130E4 /* main.cpp */,
-				136A44B62EF5E0CE0017E5AF /* image.hpp */,
-				136A44992EF5CE230017E5AF /* bmp.hpp */,
-				136A449A2EF5CE230017E5AF /* bmp.cpp */,
-				136A449B2EF5CE230017E5AF /* pbm.hpp */,
-				136A449C2EF5CE230017E5AF /* pbm.cpp */,
-				136A449D2EF5CE230017E5AF /* png.hpp */,
-				136A449E2EF5CE230017E5AF /* png.cpp */,
-				13EE542E2EC1730A00A8F770 /* utf.hpp */,
-				13EE542F2EC1730A00A8F770 /* utf.cpp */,
+				134B4B732F17356400B7F659 /* hpnote.hpp */,
+				134B4B742F17356400B7F659 /* hpnote.cpp */,
+				134B4A042F15BE6600B7F659 /* md.hpp */,
+				134B4A052F15BE6600B7F659 /* md.cpp */,
+				134B4A012F14685F00B7F659 /* utf.hpp */,
+				134B4A022F14685F00B7F659 /* utf.cpp */,
 				13E40E602EE122A100AED5C4 /* timer.hpp */,
 				13E40F602EE50FF400AED5C4 /* extensions.hpp */,
 			);
@@ -125,10 +77,6 @@
 		136A448E2EF5CCE60017E5AF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				136A44962EF5CD280017E5AF /* libpng.a */,
-				136A44942EF5CD1F0017E5AF /* libz.a */,
-				136A44912EF5CCF70017E5AF /* libpng.a */,
-				136A448F2EF5CCE60017E5AF /* libz.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -140,7 +88,7 @@
 				138F54D42C977703009357F9 /* LICENSE.md */,
 				138F54D52C977708009357F9 /* README.md */,
 				136A448D2EF5CB7A0017E5AF /* Makefile */,
-				134778ED2DE0E494009EB2C8 /* examples */,
+				134B4A682F15C33B00B7F659 /* test */,
 				1352EDEC2B4786BC003130E4 /* src */,
 				136A448E2EF5CCE60017E5AF /* Frameworks */,
 				137FB2862A03B06500AEFDF2 /* Products */,
@@ -150,7 +98,7 @@
 		137FB2862A03B06500AEFDF2 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13EBE2F32B22249100302F26 /* grob */,
+				13EBE2F32B22249100302F26 /* note */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -158,9 +106,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		13EBE2F22B22249000302F26 /* grob */ = {
+		13EBE2F22B22249000302F26 /* note */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 13EBE2F72B22249100302F26 /* Build configuration list for PBXNativeTarget "grob" */;
+			buildConfigurationList = 13EBE2F72B22249100302F26 /* Build configuration list for PBXNativeTarget "note" */;
 			buildPhases = (
 				13EBE2EF2B22249000302F26 /* Sources */,
 				13EBE2F02B22249000302F26 /* Frameworks */,
@@ -168,12 +116,9 @@
 			);
 			buildRules = (
 			);
-			fileSystemSynchronizedGroups = (
-				134B49F72F1464F900B7F659 /* libhpprgm */,
-			);
-			name = grob;
+			name = note;
 			productName = grob;
-			productReference = 13EBE2F32B22249100302F26 /* grob */;
+			productReference = 13EBE2F32B22249100302F26 /* note */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -190,7 +135,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 137FB2802A03B06500AEFDF2 /* Build configuration list for PBXProject "grob" */;
+			buildConfigurationList = 137FB2802A03B06500AEFDF2 /* Build configuration list for PBXProject "note" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -203,7 +148,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				13EBE2F22B22249000302F26 /* grob */,
+				13EBE2F22B22249000302F26 /* note */,
 			);
 		};
 /* End PBXProject section */
@@ -212,17 +157,16 @@
 		13EBE2EF2B22249000302F26 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			files = (
-				13EE54302EC1730A00A8F770 /* utf.cpp in Sources */,
-				136A44A12EF5CE230017E5AF /* pbm.cpp in Sources */,
-				136A44A22EF5CE230017E5AF /* png.cpp in Sources */,
-				136A45572EF5FDEF0017E5AF /* bmp.cpp in Sources */,
 				1352EDF62B4786BD003130E4 /* main.cpp in Sources */,
+				134B4B752F17356400B7F659 /* hpnote.cpp in Sources */,
+				134B4A062F15BE6600B7F659 /* md.cpp in Sources */,
+				134B4A032F14685F00B7F659 /* utf.cpp in Sources */,
 			);
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		137FB28A2A03B06500AEFDF2 /* Debug configuration for PBXProject "grob" */ = {
+		137FB28A2A03B06500AEFDF2 /* Debug configuration for PBXProject "note" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -284,7 +228,7 @@
 			};
 			name = Debug;
 		};
-		137FB28B2A03B06500AEFDF2 /* Release configuration for PBXProject "grob" */ = {
+		137FB28B2A03B06500AEFDF2 /* Release configuration for PBXProject "note" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -339,7 +283,7 @@
 			};
 			name = Release;
 		};
-		13EBE2F82B22249100302F26 /* Debug configuration for PBXNativeTarget "grob" */ = {
+		13EBE2F82B22249100302F26 /* Debug configuration for PBXNativeTarget "note" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++23";
@@ -356,10 +300,6 @@
 					"$(PROJECT_DIR)/src/libpng/lib/x86_64",
 					"$(PROJECT_DIR)/src/libz/lib/x86_64",
 					"$(PROJECT_DIR)/src/libpng/lib/arm64",
-					"$(PROJECT_DIR)/src/libhpprgm/lib/x86_64",
-					"$(PROJECT_DIR)/src/libhpprgm/lib",
-					"$(PROJECT_DIR)/src/libhpprgm/lib/win_x86_64",
-					"$(PROJECT_DIR)/src/libhpprgm/lib/arm64",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -367,7 +307,7 @@
 			};
 			name = Debug;
 		};
-		13EBE2F92B22249100302F26 /* Release configuration for PBXNativeTarget "grob" */ = {
+		13EBE2F92B22249100302F26 /* Release configuration for PBXNativeTarget "note" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++23";
@@ -384,10 +324,6 @@
 					"$(PROJECT_DIR)/src/libpng/lib/x86_64",
 					"$(PROJECT_DIR)/src/libz/lib/x86_64",
 					"$(PROJECT_DIR)/src/libpng/lib/arm64",
-					"$(PROJECT_DIR)/src/libhpprgm/lib/x86_64",
-					"$(PROJECT_DIR)/src/libhpprgm/lib",
-					"$(PROJECT_DIR)/src/libhpprgm/lib/win_x86_64",
-					"$(PROJECT_DIR)/src/libhpprgm/lib/arm64",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -398,19 +334,19 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		137FB2802A03B06500AEFDF2 /* Build configuration list for PBXProject "grob" */ = {
+		137FB2802A03B06500AEFDF2 /* Build configuration list for PBXProject "note" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				137FB28A2A03B06500AEFDF2 /* Debug configuration for PBXProject "grob" */,
-				137FB28B2A03B06500AEFDF2 /* Release configuration for PBXProject "grob" */,
+				137FB28A2A03B06500AEFDF2 /* Debug configuration for PBXProject "note" */,
+				137FB28B2A03B06500AEFDF2 /* Release configuration for PBXProject "note" */,
 			);
 			defaultConfigurationName = Release;
 		};
-		13EBE2F72B22249100302F26 /* Build configuration list for PBXNativeTarget "grob" */ = {
+		13EBE2F72B22249100302F26 /* Build configuration list for PBXNativeTarget "note" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				13EBE2F82B22249100302F26 /* Debug configuration for PBXNativeTarget "grob" */,
-				13EBE2F92B22249100302F26 /* Release configuration for PBXNativeTarget "grob" */,
+				13EBE2F82B22249100302F26 /* Debug configuration for PBXNativeTarget "note" */,
+				13EBE2F92B22249100302F26 /* Release configuration for PBXNativeTarget "note" */,
 			);
 			defaultConfigurationName = Release;
 		};
