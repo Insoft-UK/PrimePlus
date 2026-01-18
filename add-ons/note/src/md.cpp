@@ -49,7 +49,6 @@ static Attributes parseAttributes(const std::string& s) {
 
         if (key == "foreground") a.foreground = value;
         else if (key == "background") a.background = value;
-//        else if (key == "size") a.fontSize = std::stoi(value);
 //        else if (key == "align") {
 //            if (value == "left") a.align = Alignment::Left;
 //            else if (value == "center") a.align = Alignment::Center;
@@ -63,8 +62,6 @@ static Attributes merge(const Attributes& parent, const Attributes& child) {
     Attributes r = parent;
     if (!child.foreground.empty()) r.foreground = child.foreground;
     if (!child.background.empty()) r.background = child.background;
-//    if (child.fontSize != 0) r.fontSize = child.fontSize;
-//    r.align = child.align; // override alignment if specified
     return r;
 }
 
@@ -98,7 +95,7 @@ std::vector<Token> md::parseMarkdown(const std::string& input) {
                 ++i;
             }
             
-            // Heading detection (#, ##, ###)
+            // Heading detection (#, ##, ###, ####)
             size_t hashCount = 0;
             size_t j = i;
             while (j < input.size() && input[j] == '#') {
@@ -106,7 +103,7 @@ std::vector<Token> md::parseMarkdown(const std::string& input) {
                 ++j;
             }
 
-            if (hashCount >= 1 && hashCount <= 3 &&
+            if (hashCount >= 1 && hashCount <= 4 &&
                 j < input.size() && input[j] == ' ') {
 
                 // Flush any previous text
@@ -117,17 +114,16 @@ std::vector<Token> md::parseMarkdown(const std::string& input) {
 
                 if (hashCount == 1) {
                     s = Style::Heading1;
-//                    a.fontSize = 28;
                 } else if (hashCount == 2) {
                     s = Style::Heading2;
-//                    a.fontSize = 22;
                 } else if (hashCount == 3) {
                     s = Style::Heading3;
-//                    a.fontSize = 18;
+                } else if (hashCount == 4) {
+                    s = Style::Heading3;
                 }
 
                 stack.push_back({s, a, ""});
-                i = j + 1; // skip "# " / "## " / "### "
+                i = j + 1; // skip "# " / "## " / "### " / "#### "
                 continue;
             }
             
@@ -178,13 +174,51 @@ std::vector<Token> md::parseMarkdown(const std::string& input) {
             }
         }
 
+        size_t count;
+        
         // Star emphasis
-        size_t count = 0;
+        count = 0;
         while (i + count < input.size() && input[i + count] == '*') ++count;
         if (count >= 1 && count <= 3) {
             Style style = (count == 1) ? Style::Italic :
                           (count == 2) ? Style::Bold :
                                          Style::BoldItalic;
+
+            if (stack.back().style == style) {
+                Frame finished = stack.back();
+                stack.pop_back();
+                flushFrame(finished, !bulletAssigned);
+                if (!stack.empty())
+                    stack.back().buffer += finished.buffer;
+            } else {
+                stack.push_back({style, stack.back().attr, ""});
+            }
+            i += count;
+            continue;
+        }
+        
+        count = 0;
+        while (i + count < input.size() && input[i + count] == '~') ++count;
+        if (count == 2) {
+            Style style = Style::Strikethrough;
+
+            if (stack.back().style == style) {
+                Frame finished = stack.back();
+                stack.pop_back();
+                flushFrame(finished, !bulletAssigned);
+                if (!stack.empty())
+                    stack.back().buffer += finished.buffer;
+            } else {
+                stack.push_back({style, stack.back().attr, ""});
+            }
+            i += count;
+            continue;
+        }
+        
+        count = 0;
+        while (i + count < input.size() && input[i + count] == '=') ++count;
+        if (count == 2) {
+            Style style = Style::Highlight;
 
             if (stack.back().style == style) {
                 Frame finished = stack.back();
@@ -226,6 +260,9 @@ void md::printTokens(const std::vector<Token>& tokens) {
                       (t.style == Style::Heading1) ? "Heading1" :
                       (t.style == Style::Heading2) ? "Heading2" :
                       (t.style == Style::Heading3) ? "Heading3" :
+                      (t.style == Style::Heading3) ? "Heading4" :
+                      (t.style == Style::Italic) ? "Highlight" :
+                      (t.style == Style::Italic) ? "Strikethrough" :
                       (t.style == Style::Normal) ? "Normal" :
                       (t.style == Style::Italic) ? "Italic" :
                       (t.style == Style::Bold) ? "Bold" : "BoldItalic"

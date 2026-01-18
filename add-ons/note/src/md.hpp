@@ -36,9 +36,12 @@ namespace md {
         Italic,
         Bold,
         BoldItalic,
+        Strikethrough,
         Heading1,
         Heading2,
-        Heading3
+        Heading3,
+        Heading4,
+        Highlight
     };
 
 //    enum class Alignment {

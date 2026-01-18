@@ -132,27 +132,33 @@ static std::wstring parseLine(const std::string& str) {
 #endif
     
     for (const auto& t : tokens) {
-//        std::vector<std::string> content = splitPreservingSpaces(t.text);
-//        for (const auto& s : content) {
-            wstr += LR"(\0\m\0\0\0\0\n)";
-        
+        wstr += LR"(\0\m\0\0\0\0\n)";
+
         wstr.at(5) = 48 + t.bulletLevel;
-            
             {
                 std::wstring ws;
                 ws = LR"(\oǿῠ\0\0ā\1\0\0 \)";
-                
                 uint32_t n = 0x1FE001FF;
                 
                 // MARK: - Bold & Italic
                 
                 switch (t.style) {
+                    case md::Style::Highlight:
+                        ws.at(7) = L'Ϡ';
+                        ws.at(10) = L'0';
+                        ws.erase(6, 1);
+                        break;
+                        
                     case md::Style::Bold:
                         n |= 1 << 10;
                         break;
                         
                     case md::Style::Italic:
                         n |= 1 << 11;
+                        break;
+                        
+                    case md::Style::Strikethrough:
+                        n |= 1 << 14;
                         break;
                         
                     case md::Style::BoldItalic:
@@ -173,6 +179,12 @@ static std::wstring parseLine(const std::string& str) {
                         
                     case md::Style::Heading3:
                         n |= 1 << 10;
+                        n |= 5 << 15;
+                        ws.at(8) = L'Ā';
+                        break;
+                        
+                    case md::Style::Heading4:
+                        n |= 1 << 10;
                         n |= 4 << 15;
                         ws.at(8) = L'Ā';
                         break;
@@ -182,7 +194,6 @@ static std::wstring parseLine(const std::string& str) {
                         break;
                 }
                 
-//                n |= 7 << 15;
                 
                 ws.at(2) = n & 0xFFFF;
                 ws.at(3) = n >> 16;
@@ -190,7 +201,6 @@ static std::wstring parseLine(const std::string& str) {
                 wstr += ws;
             }
         
-//            wstr += LR"(\0\0ā\1\0\0x\)"; // ā Ā
             if (t.text.length() > 9) {
                 wstr.append(1, static_cast<wchar_t>(87 + t.text.length()));
             } else {
@@ -198,10 +208,8 @@ static std::wstring parseLine(const std::string& str) {
             }
             wstr += LR"(\0)";
         
-        
             wstr += utf::utf16(t.text);
             wstr += LR"(\0)";
-//        }
     }
     
     
