@@ -55,7 +55,7 @@ Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/
 </table>
 
 >[!WARNING]
-PPL+ 26 (v5.x) will transition to using ICU. As a result, prebuilt Windows 11 binaries will no longer be provided. Users running Windows 11 who wish to use PPL+ v5.x will need to install ICU for Windows and compile the command line tool from source.
+PPL+ 26 (v5.x) will transition to using ICU. As a result, prebuilt Windows 11 binaries will no longer be provided. Users running Windows 11 who wish to use PPL+ 26 (v5.x) will need to install ICU for Windows and compile the command line tool from source.
 
 ### Regular Expressions
 **Example: Extending PPL with Switch-Case Functionality Using Regex**
