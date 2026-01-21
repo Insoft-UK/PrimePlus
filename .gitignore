@@ -1,5 +1,6 @@
 *.xcworkspace/xcuserdata/
 xcuserdata/
+*.xcodeproj
 version.txt
 .DS_Store
 build
@@ -10,5 +11,4 @@ make
 *.zip
 src/lib*/src
 src/lib*/Makefile
-ppl+.xcodeproj
 Installer\ for\ Xprime
