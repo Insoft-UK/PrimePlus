@@ -9,6 +9,7 @@ make
 *.psd
 *.pkg
 *.zip
+ignore
 src/lib*/src
 src/lib*/Makefile
 Installer\ for\ Xprime
