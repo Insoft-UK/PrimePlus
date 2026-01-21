@@ -8,13 +8,7 @@ make
 *.psd
 *.pkg
 *.zip
-src/libhpprgm/src
-src/libhpprgm/Makefile
-src/libmin/src
-src/libmin/Makefile
-src/libppl/src
-src/libppl/Makefile
-src/libfmt/src
-src/libfmt/Makefile
+src/lib*/src
+src/lib*/Makefile
 ppl+.xcodeproj
 Installer\ for\ Xprime
