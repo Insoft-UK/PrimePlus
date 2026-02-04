@@ -48,7 +48,7 @@
 
 A utility for generating PPL code from an image file for use with the BLIT and BLIT_P functions on the HP Prime.
 
-<img width="64" height="64" src="https://github.com/Insoft-UK/PrimeSDK/blob/main/assets/spectrum-8bit.png" >
+<img width="64" height="64" src="https://github.com/Insoft-UK/PrimePlus/blob/main/add-ons/grob/assets/spectrum-8bit.png" >
 
 ```
 grob spectrum-8bit.bmp -G1
