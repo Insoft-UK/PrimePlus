@@ -26,10 +26,10 @@
       <td>-G<1-9></td><td>Graphic object G1-G9 to use if file is an image</td>
     </tr>
     <tr>
-      <td>--pragma></td><td>Include \"#pragma mode( separator(.,;) integer(h64) )\" line</td>
+      <td>--pragma</td><td>Include \"#pragma mode( separator(.,;) integer(h64) )\" line</td>
     </tr>
     <tr>
-      <td>--endian <le|be>></td><td>Endianes le(default)</td>
+      <td>--endian <le|be></td><td>Endianes le(default)</td>
     </tr>
     <tr>
       <td colspan="2"><b>Additional Commands</b></td>
