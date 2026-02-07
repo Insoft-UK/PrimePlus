@@ -2,6 +2,9 @@
 
 ## GROB
 **Command Line Tool**
+A utility for generating PPL code from an image file for use with the BLIT and BLIT_P functions on the HP Prime.
+
+Download links: <a href="http://insoft.uk/action/?method=downlink&path=macos&file=grob_macOS.zip">macOS</a> | <a href="http://insoft.uk/action/?method=downlink&path=pc&file=grob_win_x86_64.zip">Windows</a> | <a href="http://insoft.uk/action/?method=downlink&path=linux&file=grob_linux_x86_64.zip">Linux</a>
 
 `Usage: grob <input-file> [-o <output-file>] [-c <columns>] [-n <name>] [-g<1-9>] [-ppl]`
 
@@ -45,8 +48,6 @@
     </tr>
   </tbody>
 </table>
-
-A utility for generating PPL code from an image file for use with the BLIT and BLIT_P functions on the HP Prime.
 
 <img width="64" height="64" src="https://github.com/Insoft-UK/PrimePlus/blob/main/add-ons/grob/assets/spectrum-8bit.png" >
 
