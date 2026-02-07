@@ -11,11 +11,7 @@ Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/
 
 **Reformating** your code enforce a consistent coding style throughout your project, making it easier for multiple developers to work on the same codebase. It helps maintain a uniform look and feel, which can enhance code readability. Readability: Well-formatted code is easier to read and understand.
 
-**Downloads for PC & macOS**
-
-<a href="https://insoft.uk/action/?method=downlink&path=pc&file=PrimePlus_x86_64.zip">PC Version 4.0.6</a>
-
-<a href="https://insoft.uk/action/?method=downlink&path=macos&file=PrimePlus_macOS.zip">macOS Version 4.0.6</a>
+Download links: <a href="https://insoft.uk/action/?method=downlink&path=macos&file=PrimePlus_macOS.zip">macOS</a> | <a href="https://insoft.uk/action/?method=downlink&path=pc&file=PrimePlus_x86_64.zip">Windows</a> | <a href="https://insoft.uk/action/?method=downlink&path=linux&file=ppl+_linux_macOS.zip">Linux</a>
 
 `Usage: ppl+ <input-file> [-o <output-file>] [-v]`
 
@@ -55,7 +51,7 @@ Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/
 </table>
 
 >[!WARNING]
-PPL+ 26 (v5.x) will transition to using ICU. As a result, prebuilt Windows 11 binaries will no longer be provided. Users running Windows 11 who wish to use PPL+ 26 (v5.x) will need to install ICU for Windows and compile the command line tool from source.
+PPL+ 26 (v5.x) will transition to using <a href="https://unicode-org.github.io/icu/userguide/strings/regexp.html">ICU</a>. As a result, prebuilt Windows 11 binaries will no longer be provided. Users running Windows 11 who wish to use PPL+ 26 (v5.x) will need to install ICU for Windows and compile the command line tool from source.
 
 ### Regular Expressions
 **Example: Extending PPL with Switch-Case Functionality Using Regex**
