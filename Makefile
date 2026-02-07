@@ -26,6 +26,7 @@ x86_64:
 	-o build/x86_64/$(PROJECT_NAME) -Os -fno-ident -fno-asynchronous-unwind-tables -Wl,-dead_strip -Wl,-x
 	
 win_x86_64:
+	mkdir -p build/win_x86_64
 	x86_64-w64-mingw32-g++ \
 	-std=c++23 \
 	-Isrc src/*.cpp \
@@ -34,7 +35,19 @@ win_x86_64:
 	-Isrc/librfmt/include src/librfmt/lib/win_x86_64/librfmt.a \
 	-Isrc/libmin/include src/libmin/lib/win_x86_64/libmin.a \
 	-Isrc/common/include \
-	-o build/ppl+.exe -static -O2 -s
+	-o build/win_x86_64/ppl+.exe -static -O2 -s
+	
+linux_x86_64:
+	mkdir -p build/linux_x86_64
+	x86_64-linux-musl-g++ \
+	-std=c++23 \
+	-Isrc src/*.cpp \
+	-Isrc/libppl/include src/libppl/lib/linux_x86_64/libppl.a \
+	-Isrc/libhpprgm/include src/libhpprgm/lib/linux_x86_64/libhpprgm.a \
+	-Isrc/librfmt/include src/librfmt/lib/linux_x86_64/librfmt.a \
+	-Isrc/libmin/include src/libmin/lib/linux_x86_64/libmin.a \
+	-Isrc/common/include \
+	-static -o build/linux_x86_64/$(PROJECT_NAME) -Os -fno-ident -fno-asynchronous-unwind-tables -Wl,-x
 
 universal:
 	# Combine into a universal binary

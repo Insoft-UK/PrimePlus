@@ -282,7 +282,7 @@ int main(int argc, const char **argv)
             }
             
             if (args == "--version") {
-                std::cout << VERSION_NUMBER << "\n";
+                std::cout << VERSION_NUMBER << "." << BUNDLE_VERSION << "\n";
                 return 0;
             }
             

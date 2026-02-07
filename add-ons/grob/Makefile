@@ -5,7 +5,7 @@ all: arm64 x86_64 universal win_x86_64
  
 arm64:
 	mkdir -p build/arm64
-	g++ -arch arm64 -std=c++20 \
+	g++ -arch arm64 -std=c++23 \
 	-I../../src/libhpprgm/include ../../src/libhpprgm/lib/arm64/libhpprgm.a \
 	-Isrc/libpng/include \
 	-Isrc/libz/include \
@@ -14,7 +14,7 @@ arm64:
 	
 x86_64:
 	mkdir -p build/x86_64
-	g++ -arch x86_64 -std=c++20 \
+	g++ -arch x86_64 -std=c++23 \
 	-I../../src/libhpprgm/include ../../src/libhpprgm/lib/x86_64/libhpprgm.a \
 	-Isrc/libpng/include \
 	-Isrc/libz/include \
@@ -26,14 +26,22 @@ universal:
 	lipo -create -output build/$(PROJECT_NAME) build/arm64/$(PROJECT_NAME) build/x86_64/$(PROJECT_NAME)
 	
 win_x86_64:
+	mkdir -p build/win_x86_64
 	x86_64-w64-mingw32-g++ \
+	-std=c++23 \
 	src/*.cpp \
 	-I../../src/libhpprgm/include ../../src/libhpprgm/lib/win_x86_64/libhpprgm.a \
-	-o build/$(PROJECT_NAME).exe \
+	-o build/win_x86_64/$(PROJECT_NAME).exe \
+	-static -O2 -s
+	
+linux_x86_64:
+	mkdir -p build/linux_x86_64
+	x86_64-linux-musl-g++ \
 	-std=c++23 \
-	-static \
-	-O2 \
-	-s
+	src/*.cpp \
+	-I../../src/libhpprgm/include ../../src/libhpprgm/lib/linux_x86_64/libhpprgm.a \
+	-o build/linux_x86_64/$(PROJECT_NAME) \
+	-static -Os -fno-ident -fno-asynchronous-unwind-tables -Wl,-x
 
 clean:
 	rm -rf build/*

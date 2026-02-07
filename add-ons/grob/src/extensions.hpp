@@ -26,6 +26,7 @@
 #include <cstdlib>
 #include <filesystem>
 #include <algorithm>
+#include <climits>
 
 // MARK: - Extensions
 

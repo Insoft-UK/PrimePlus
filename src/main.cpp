@@ -38,6 +38,7 @@
 #include <string>
 #include <ranges>
 #include <unordered_set>
+//#include <unicode/uregex.h>
 
 #include "timer.hpp"
 #include "singleton.hpp"
@@ -745,7 +746,7 @@ int main(int argc, char **argv) {
         }
         
         if (args == "--version") {
-            std::cout << VERSION_NUMBER << "\n";
+            std::cout << VERSION_NUMBER << "." << BUNDLE_VERSION << "\n";
             return 0;
         }
         

@@ -45,7 +45,6 @@ namespace fs = std::filesystem;
 
 // MARK: - Functions
 
-
 // A list is limited to 10,000 elements. Attempting to create a longer list will result in error 38 (Insufficient memory) being thrown.
 static std::string ppl(const void *data, const size_t lengthInBytes, const int columns, bool le = true) {
     std::ostringstream os;
@@ -248,7 +247,7 @@ int main(int argc, const char * argv[]) {
         }
         
         if (args == "--version") {
-            std::cout << VERSION_NUMBER << "\n";
+            std::cout << VERSION_NUMBER << "." << BUNDLE_VERSION << "\n";
             return 0;
         }
         

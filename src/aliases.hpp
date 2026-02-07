@@ -47,7 +47,6 @@ namespace pplplus {
         typedef struct TIdentity {
             std::string identifier;
             std::string real;
-//            std::string parameters; // used by macros
             Type type;
             int scope;
             long line;              // line that definition accoured;

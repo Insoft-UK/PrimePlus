@@ -26,6 +26,7 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
+#include <climits>
 
 using namespace image;
 
@@ -57,21 +58,35 @@ typedef struct __attribute__((__packed__)) {
     uint32_t  biClImportant;      // *Number of important colours in the image
 } BIPHeader;
 
-template <typename T> static T swap_endian(T u) {
-    static_assert (CHAR_BIT == 8, "CHAR_BIT != 8");
-
-    union {
-        T u;
-        unsigned char u8[sizeof(T)];
-    } source, dest;
-
-    source.u = u;
-
-    for (size_t k = 0; k < sizeof(T); k++)
-        dest.u8[k] = source.u8[sizeof(T) - k - 1];
-
-    return dest.u;
-}
+#if __cplusplus >= 202302L
+    #include <bit>
+    using std::byteswap;
+#elif __cplusplus >= 201103L
+    #include <cstdint>
+    namespace std {
+        template <typename T>
+        T byteswap(T u)
+        {
+            
+            static_assert (CHAR_BIT == 8, "CHAR_BIT != 8");
+            
+            union
+            {
+                T u;
+                unsigned char u8[sizeof(T)];
+            } source, dest;
+            
+            source.u = u;
+            
+            for (size_t k = 0; k < sizeof(T); k++)
+                dest.u8[k] = source.u8[sizeof(T) - k - 1];
+            
+            return dest.u;
+        }
+    }
+#else
+    #error "C++11 or newer is required"
+#endif
 
 static void flipBitmapImageVertically(const TImage &image)
 {
@@ -139,7 +154,7 @@ TImage bmp::load(const std::filesystem::path& path)
         infile.read(reinterpret_cast<char*>(&color), sizeof(color));
 
 #ifdef __LITTLE_ENDIAN__
-        color = swap_endian(color);
+        color = byteswap(color);
 #endif
         image.palette.push_back(color | 0xFF);
     }
