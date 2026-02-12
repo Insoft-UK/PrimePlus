@@ -11,7 +11,7 @@ Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/
 
 **Reformating** your code enforce a consistent coding style throughout your project, making it easier for multiple developers to work on the same codebase. It helps maintain a uniform look and feel, which can enhance code readability. Readability: Well-formatted code is easier to read and understand.
 
-Download links: <a href="https://insoft.uk/action/?method=downlink&path=macos&file=PrimePlus_macOS.zip">macOS</a> | <a href="https://insoft.uk/action/?method=downlink&path=pc&file=PrimePlus_x86_64.zip">Windows</a> | <a href="https://insoft.uk/action/?method=downlink&path=linux&file=ppl+_linux_macOS.zip">Linux</a>
+Download links: <a href="https://insoft.uk/action/?method=downlink&path=macos&file=ppl+_macOS.zip">macOS</a> | <a href="https://insoft.uk/action/?method=downlink&path=pc&file=ppl+_x86_64.zip">Windows</a> | <a href="https://insoft.uk/action/?method=downlink&path=linux&file=ppl+_linux_macOS.zip">Linux</a>
 
 `Usage: ppl+ <input-file> [-o <output-file>] [-v]`
 
