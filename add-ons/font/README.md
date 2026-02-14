@@ -5,7 +5,7 @@
 
 This is a handy utility that goes well with the original [fontconvert](https://github.com/adafruit/Adafruit-GFX-Library/tree/master/fontconvert) tool provided by [Adafruit](https://www.adafruit.com/) for converting Adafruit_GFX `.h` to Adafruit_GFX `.hpprgm` format.
 
-Download links: <a href="http://insoft.uk/action/?method=downlink&path=macos&file=font_macOS.zip">macOS</a> | <a href="http://insoft.uk/action/?method=downlink&path=pc&file=font_win_x86_64.zip">Windows</a> | <a href="http://insoft.uk/action/?method=downlink&path=linux&file=font_linux_x86_64.zip">Linux</a>
+Download links: <a href="http://insoft.uk/action/?method=downlink&path=macos&file=font_universal_mac.zip">macOS</a> | <a href="http://insoft.uk/action/?method=downlink&path=pc&file=font_x86_64_win.zip">Windows</a> | <a href="http://insoft.uk/action/?method=downlink&path=linux&file=font_x86_64_linux.zip">Linux</a>
 
 
 ### Structure of PPL Adafruit Font
