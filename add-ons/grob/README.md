@@ -4,7 +4,7 @@
 **Command Line Tool**
 A utility for generating PPL code from an image file for use with the BLIT and BLIT_P functions on the HP Prime.
 
-Download links: <a href="http://insoft.uk/action/?method=downlink&path=macos&file=grob_macOS.zip">macOS</a> | <a href="http://insoft.uk/action/?method=downlink&path=pc&file=grob_win_x86_64.zip">Windows</a> | <a href="http://insoft.uk/action/?method=downlink&path=linux&file=grob_linux_x86_64.zip">Linux</a>
+Download links: <a href="http://insoft.uk/action/?method=downlink&path=macos&file=grob_universal_mac.zip">macOS</a> | <a href="http://insoft.uk/action/?method=downlink&path=pc&file=grob_x86_64_win.zip">Windows</a> | <a href="http://insoft.uk/action/?method=downlink&path=linux&file=grob_x86_64_win.zip">Linux</a>
 
 `Usage: grob <input-file> [-o <output-file>] [-c <columns>] [-n <name>] [-g<1-9>] [-ppl]`
 
