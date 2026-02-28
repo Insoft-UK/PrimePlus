@@ -154,6 +154,7 @@ void Regexp::resolveAllRegularExpression(std::string& str, const size_t index) {
     std::smatch match;
     std::regex re;
     
+    
     // index is used to prevent the function from entering a recursive loop.
     
     for (auto it = _regexps.begin(); it != _regexps.end(); ++it) {

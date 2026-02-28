@@ -12,7 +12,7 @@ arm64:
 	-Isrc/libmin/include src/libmin/lib/arm64/libmin.a \
 	-Isrc/libhpprgm/include src/libhpprgm/lib/arm64/libhpprgm.a \
 	-Isrc/common/include \
-	-o build/arm64/$(PROJECT_NAME) -Os -fno-ident -fno-asynchronous-unwind-tables -Wl,-dead_strip -Wl,-x
+	-o build/arm64/$(PROJECT_NAME) -licucore -Os -fno-ident -fno-asynchronous-unwind-tables -Wl,-dead_strip -Wl,-x
 
 x86_64:
 	mkdir -p build/x86_64
@@ -23,7 +23,7 @@ x86_64:
 	-Isrc/libmin/include src/libmin/lib/x86_64/libmin.a \
 	-Isrc/libhpprgm/include src/libhpprgm/lib/x86_64/libhpprgm.a \
 	-Isrc/common/include \
-	-o build/x86_64/$(PROJECT_NAME) -Os -fno-ident -fno-asynchronous-unwind-tables -Wl,-dead_strip -Wl,-x
+	-o build/x86_64/$(PROJECT_NAME) -licucore -Os -fno-ident -fno-asynchronous-unwind-tables -Wl,-dead_strip -Wl,-x
 	
 win_x86_64:
 	mkdir -p build/win_x86_64

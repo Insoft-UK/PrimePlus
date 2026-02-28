@@ -173,6 +173,13 @@ std::string translatePPLPlusLine(const std::string& input) {
     }
     
     
+    // Pascal to PPL
+    if (Singleton::shared()->scopeDepth > 0) {
+        output = replaceWords(output, {"begin"}, "");
+        output = replaceWords(output, {"var"}, "LOCAL");
+    }
+    
+    output = regex_replace(output, std::regex(R"(: *(integer|real|char|string|boolean|arrays))"), "");
     
     // Keywords
     output = capitalizeWords(output, {
@@ -562,7 +569,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
             Singleton::shared()->incrementLineNumber();
             continue;
         }
-        
+       
         std::istringstream iss;
         iss.str(input);
         std::string str;
@@ -580,6 +587,9 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
     }
     
     singleton.popPath();
+    
+    // Removes `uses`
+    output = regex_replace(output, std::regex(R"(\buses\s+([^;]+);)"), "\n");
     
     return output;
 }
