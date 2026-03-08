@@ -112,8 +112,8 @@ END;
 
 ### Implimenting Variable Aliases and Auto
 ```
-regex >`\bauto\b`i v__COUNTER__
-regex =`^ *\bauto *: *([a-z]\w*)` g__COUNTER__:$1
+regex >`\bauto\b`i v{$I %COUNTER%}
+regex =`^ *\bauto *: *([a-z]\w*)` g{$I %COUNTER%}:$1
 regex `\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
 
 auto : myGlobal := 1;
