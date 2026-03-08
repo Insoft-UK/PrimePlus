@@ -62,8 +62,8 @@ PPL+ 26 (v5.x) will transition to using <a href="https://unicode-org.github.io/i
 This example demonstrates how to use **regex** (regular expressions) to add **switch-case** control flow to the PPL language, similar to the switch statements found in other programming languages.
 
 ```
-regex >`\bswitch +([a-z_.:]+)`i LOCAL sw__SCOPE__ := $1;\aCASE
-regex >`\bcase +([^ ]+) +do\b`i IF sw\`__SCOPE__-1` == $1 THEN
+regex >`\bswitch +([a-z_.:]+)`i LOCAL sw{$I %SCOPE%} := $1;\aCASE
+regex >`\bcase +([^ ]+) +do\b`i IF sw\`{$I %SCOPE%}-1` == $1 THEN
 switch X
     case 0 do
     end;
