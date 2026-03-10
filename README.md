@@ -11,7 +11,14 @@ Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/
 
 **Reformating** your code enforce a consistent coding style throughout your project, making it easier for multiple developers to work on the same codebase. It helps maintain a uniform look and feel, which can enhance code readability. Readability: Well-formatted code is easier to read and understand.
 
-Download links: <a href="https://insoft.uk/action/?method=downlink&path=macos&file=pplplus-mac-universal.zip">macOS</a> | <a href="https://insoft.uk/action/?method=downlink&path=pc&file=pplplus-win-x86_64.zip">Windows</a> | <a href="https://insoft.uk/action/?method=downlink&path=linux&file=pplplus-linux-x86_64.zip">Linux</a>
+>Support for Pascal syntax is also included. If your code contains or is written in Pascal, it will be automatically converted to PPL syntax, since PPL itself is a dialect of Pascal.
+
+>[!IMPORTANT]
+>PPL+ discontinued support for #include. It's been replaced by the Pascal-style include directives: {$I file} or {$include file}.
+
+Download links: <a href="https://insoft.uk/action/?method=downlink&path=macos&file=pplplus-universal.pkg">macOS</a> | <a href="https://insoft.uk/action/?method=downlink&path=pc&file=pplplus-win-x86_64.zip">Windows</a> | <a href="https://insoft.uk/action/?method=downlink&path=linux&file=pplplus-linux-x86_64.zip">Linux</a>
+
+>PPL+ for macOS is installed in /usr/local/bin. To uninstall it, run: `sudo rm /usr/local/bin/ppl+`
 
 `Usage: ppl+ <input-file> [-o <output-file>] [-v]`
 
@@ -59,8 +66,8 @@ PPL+ 26 (v5.x) will transition to using <a href="https://unicode-org.github.io/i
 This example demonstrates how to use **regex** (regular expressions) to add **switch-case** control flow to the PPL language, similar to the switch statements found in other programming languages.
 
 ```
-regex >`\bswitch +([a-z_.:]+)`i LOCAL sw__SCOPE__ := $1;\aCASE
-regex >`\bcase +([^ ]+) +do\b`i IF sw\`__SCOPE__-1` == $1 THEN
+regex >`\bswitch +([a-z_.:]+)`i LOCAL sw{$I %SCOPE%} := $1;\aCASE
+regex >`\bcase +([^ ]+) +do\b`i IF sw\`{$I %SCOPE%}-1` == $1 THEN
 switch X
     case 0 do
     end;
@@ -104,42 +111,6 @@ BEGIN
     A := A + 1;
   i := i + 1; END;
 END;
-```
-
-
-### Implimenting Variable Aliases and Auto
-```
-regex >`\bauto\b`i v__COUNTER__
-regex =`^ *\bauto *: *([a-z]\w*)` g__COUNTER__:$1
-regex `\b([a-zA-Z_]\w*) *\: *([a-zA-Z]\w*(?:::[a-zA-Z]\w*)*)` alias $2:=$1;$1
-
-auto : myGlobal := 1;
-fnc1: My::Function(p1: argumentOne)
-begin
-    local auto: i, a: Alpha;
-    for i=0; i<2; i=i+1 do
-        Alpha := Alpha + 1 * myGlobal * argumentOne;
-    end;
-    
-end;
-auto: anotherGlobal := 2;
-
-My::Function();
-```
-
-**PPL+ Preprocessor: PPL Converstion**
-```
-g0 := 1;
-fnc1(p1)
-BEGIN
-  LOCAL v0, a;
-  v0 := 0; WHILE v0<2 DO
-    a := a + 1 * g0 * p1;
-  v0 := v0 + 1; END;
-END;
-
-g1 := 2;
-fnc1();
 ```
 
 ### Assignment Style
