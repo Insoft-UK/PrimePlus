@@ -16,6 +16,8 @@ Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/
 
 Download links: <a href="https://insoft.uk/action/?method=downlink&path=macos&file=pplplus-universal.pkg">macOS</a> | <a href="https://insoft.uk/action/?method=downlink&path=pc&file=pplplus-win-x86_64.zip">Windows</a> | <a href="https://insoft.uk/action/?method=downlink&path=linux&file=pplplus-linux-x86_64.zip">Linux</a>
 
+>PPL+ for macOS is installed in /usr/local/bin. To uninstall it, run: `sudo rm /usr/local/bin/ppl+`
+
 `Usage: ppl+ <input-file> [-o <output-file>] [-v]`
 
 <table>
