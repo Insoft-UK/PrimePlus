@@ -1,18 +1,18 @@
 // The MIT License (MIT)
-// 
-// Copyright (c) 2023 Insoft. All rights reserved.
-// 
+//
+// Copyright (c) 2023-2025 Insoft.
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the Software), to deal
+// of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
-// THE SOFTWARE IS PROVIDED AS IS, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 // AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -20,10 +20,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-#define VERSION_NUMBER        "4.0.8"
-#define VERSION_CODE          "D0I06-26C9"
-#define NUMERIC_BUILD          40806
-#define BUNDLE_VERSION        "20260310"
-#define INTERNAL_BUILD_CODE   "D0I06"
-#define DATE                  "2026 March 10"
-#define YEAR                  "2026"
+#pragma once
+
+#include "aliases.hpp"
+#include "singleton.hpp"
+
+namespace pplplus::pascal {
+    std::string convertPascalSyntax(const std::string &code);
+}
+
+

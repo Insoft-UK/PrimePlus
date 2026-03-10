@@ -67,7 +67,7 @@ static std::string ppl(const void *data, const size_t lengthInBytes, const int c
          must convert between big-endian and little-endian.
          */
         if (le) n = std::byteswap(n);
-#endif
+#endif // __BIG_ENDIAN__
 
         if (count) os << ", ";
         if (count % columns == 0) {

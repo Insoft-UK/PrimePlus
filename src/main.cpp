@@ -38,7 +38,6 @@
 #include <string>
 #include <ranges>
 #include <unordered_set>
-//#include <unicode/uregex.h>
 
 #include "timer.hpp"
 #include "singleton.hpp"
@@ -57,6 +56,7 @@
 #include "reformat.hpp"
 #include "extensions.hpp"
 #include "tool.hpp"
+#include "pascal.hpp"
 
 #include "../version_code.h"
 
@@ -110,6 +110,266 @@ void (*old_terminate)() = std::set_terminate(terminator);
 
 std::string translatePPLPlusToPPL(const fs::path& path);
 
+// MARK: - Pascal To PPL Converting Functions...
+
+//static std::string trim(const std::string& s)
+//{
+//    size_t a = s.find_first_not_of(" \t\r\n");
+//    size_t b = s.find_last_not_of(" \t\r\n");
+//    if (a == std::string::npos) return "";
+//    return s.substr(a, b - a + 1);
+//}
+//
+//static std::vector<std::string> split(const std::string& s, char c)
+//{
+//    std::vector<std::string> r;
+//    std::stringstream ss(s);
+//    std::string item;
+//
+//    while (std::getline(ss, item, c))
+//        r.push_back(trim(item));
+//
+//    return r;
+//}
+//
+//std::vector<std::string> getInterfaceRoutines(const std::string& source)
+//{
+//    std::vector<std::string> result;
+//
+//    std::regex interfaceRe(R"(\binterface\b([\s\S]*?)\bimplementation\b)", std::regex::icase);
+//    std::smatch interfaceMatch;
+//
+//    if (!std::regex_search(source, interfaceMatch, interfaceRe))
+//        return result;
+//
+//    std::string interfaceBlock = interfaceMatch[1].str();
+//
+//    std::regex routineRe(R"(\b(?:procedure|function)\s+([A-Za-z_][A-Za-z0-9_]*)\b)", std::regex::icase);
+//
+//    auto it = std::sregex_iterator(interfaceBlock.begin(), interfaceBlock.end(), routineRe);
+//    auto end = std::sregex_iterator();
+//
+//    for (; it != end; ++it)
+//        result.push_back((*it)[1].str());
+//
+//    return result;
+//}
+//
+//std::string addExportToImplementation(
+//    const std::string& source,
+//    const std::vector<std::string>& routines)
+//{
+//    std::string result = source;
+//
+//    // find implementation section
+//    std::regex implRe(R"(\bimplementation\b([\s\S]*))", std::regex::icase);
+//    std::smatch implMatch;
+//
+//    if (!std::regex_search(result, implMatch, implRe))
+//        return result;
+//
+//    std::string implBlock = implMatch[1].str();
+//    size_t implPos = implMatch.position(1);
+//
+//    for (const auto& name : routines)
+//    {
+//        std::regex routineRe(
+//            "\\b(procedure|function)\\s+" + name + "\\b",
+//            std::regex::icase);
+//
+//        implBlock = std::regex_replace(
+//            implBlock,
+//            routineRe,
+//            "EXPORT $1 " + name);
+//    }
+//
+//    result.replace(implPos, implMatch.length(1), implBlock);
+//
+//    return result;
+//}
+//
+//static bool startsWithWord(const std::string& s, size_t pos, const std::string& word)
+//{
+//    if (pos + word.size() > s.size())
+//        return false;
+//
+//    for (size_t i = 0; i < word.size(); i++)
+//        if (tolower(s[pos + i]) != tolower(word[i]))
+//            return false;
+//
+//    if (pos > 0 && std::isalnum((unsigned char)s[pos - 1]))
+//        return false;
+//
+//    if (pos + word.size() < s.size() && std::isalnum((unsigned char)s[pos + word.size()]))
+//        return false;
+//
+//    return true;
+//}
+//
+//static bool isDecl(const std::string& s, size_t pos)
+//{
+//    static const char* words[] = { "label","const","type","var","threadvar" };
+//
+//    for (auto w : words)
+//        if (startsWithWord(s, pos, w))
+//            return true;
+//
+//    return false;
+//}
+//
+//std::string moveBeginBeforeDeclarations(const std::string& src)
+//{
+//    size_t beginPos = std::string::npos;
+//
+//    for (size_t i = 0; i < src.size(); i++)
+//        if (startsWithWord(src, i, "begin"))
+//        {
+//            beginPos = i;
+//            break;
+//        }
+//
+//    if (beginPos == std::string::npos)
+//        return src;
+//
+//    size_t declStart = std::string::npos;
+//
+//    for (size_t i = 0; i < beginPos; i++)
+//        if (isDecl(src, i))
+//        {
+//            declStart = i;
+//            break;
+//        }
+//
+//    if (declStart == std::string::npos)
+//        return src;
+//
+//    std::string beforeDecl = src.substr(0, declStart);
+//    std::string declBlock = src.substr(declStart, beginPos - declStart);
+//    std::string afterBegin = src.substr(beginPos + 5);
+//
+//    std::string result;
+//    result += beforeDecl;
+//    result += "begin\n";
+//    result += declBlock;
+//    result += afterBegin;
+//
+//    return result;
+//}
+//
+//std::string convertPascalCase(const std::string& src)
+//{
+//    std::stringstream in(src);
+//    std::stringstream out;
+//
+//    std::string line;
+//    std::string expr;
+//    bool inCase = false;
+//
+//    while (getline(in, line))
+//    {
+//        std::string t = trim(line);
+//
+//        if (!inCase)
+//        {
+//            size_t p = t.find("case ");
+//            if (p != std::string::npos && t.find(" of") != std::string::npos)
+//            {
+//                expr = trim(t.substr(5, t.find("of") - 5));
+//                out << "CASE\n";
+//                inCase = true;
+//            }
+//            else
+//                out << line << "\n";
+//
+//            continue;
+//        }
+//
+//        if (t == "end;" || t == "end")
+//        {
+//            out << "END;\n";
+//            inCase = false;
+//            continue;
+//        }
+//
+//        if (t.rfind("else",0)==0)
+//        {
+//            std::string stmt = trim(t.substr(4));
+//
+//            out << "DEFAULT\n";
+//            if (!stmt.empty())
+//                out << stmt << "\n";
+//
+//            continue;
+//        }
+//
+//        size_t colon = t.find(':');
+//        if (colon == std::string::npos)
+//            continue;
+//
+//        std::string selector = trim(t.substr(0, colon));
+//        std::string statement = trim(t.substr(colon+1));
+//
+//        std::string cond;
+//
+//        if (selector.find("..") != std::string::npos)
+//        {
+//            auto parts = split(selector,'.');
+//            cond = expr + " >= " + parts[0] + " AND " +
+//                   expr + " <= " + parts[2];
+//        }
+//        else if (selector.find(',') != std::string::npos)
+//        {
+//            auto vals = split(selector,',');
+//
+//            for (size_t i=0;i<vals.size();i++)
+//            {
+//                if (i) cond += " OR ";
+//                cond += expr + " == " + vals[i];
+//            }
+//        }
+//        else
+//        {
+//            cond = expr + " == " + selector;
+//        }
+//
+//        out << "IF " << cond << " THEN\n";
+//        out << statement << "\n";
+//        out << "END;\n";
+//    }
+//
+//    return out.str();
+//}
+//
+//
+//std::string removePascalTypes(const std::string& input)
+//{
+//    std::regex re(R"(:\s*[^;]+;)");
+//    return std::regex_replace(input, re, ";");
+//}
+//
+//std::string convertPascalToPPL(const std::string& input)
+//{
+//    std::string result = input;
+//
+//    // function NAME(params): Type;
+//    std::regex funcRegex(
+//        R"(\bfunction\s+([A-Za-z_][A-Za-z0-9_]*)\s*(\([^)]*\))?\s*:\s*[A-Za-z0-9_]+\s*;)",
+//        std::regex::icase
+//    );
+//
+//    // procedure NAME(params);
+//    std::regex procRegex(
+//        R"(\bprocedure\s+([A-Za-z_][A-Za-z0-9_]*)\s*(\([^)]*\))?\s*;)",
+//        std::regex::icase
+//    );
+//
+//    result = std::regex_replace(result, funcRegex, "$1()");
+//    result = std::regex_replace(result, procRegex, "$1()");
+//
+//    return result;
+//}
+
+
 // MARK: - PPL+ To PPL Translater...
 
 std::string translatePPLPlusLine(const std::string& input) {
@@ -143,6 +403,7 @@ std::string translatePPLPlusLine(const std::string& input) {
     std::string comment = extractComment(output);
     output = removeComment(output);
     
+    // Resolve all regular expressions
     Singleton::shared()->regexp.resolveAllRegularExpression(output);
     output = processEscapes(output);
     
@@ -176,8 +437,8 @@ std::string translatePPLPlusLine(const std::string& input) {
     // Pascal to PPL
     if (Singleton::shared()->scopeDepth > 0) {
         output = replaceWords(output, {"begin"}, "");
-        output = replaceWords(output, {"var"}, "LOCAL");
     }
+    output = replaceWords(output, {"var"}, "LOCAL");
     
     output = regex_replace(output, std::regex(R"(: *(integer|real|char|string|boolean|arrays))"), "");
     
@@ -337,13 +598,13 @@ bool isPPLBlock(const std::string& str) {
     return str.find("#PPL") != std::string::npos;
 }
 
-std::string processPPLBlock(std::ifstream& infile) {
+std::string processPPLBlock(std::istringstream& iss) {
     std::string str;
     std::string output;
     
     Singleton::shared()->incrementLineNumber();
     
-    while(getline(infile, str)) {
+    while(getline(iss, str)) {
         if (str.find("#END") != std::string::npos) {
             Singleton::shared()->incrementLineNumber();
             return output;
@@ -355,7 +616,7 @@ std::string processPPLBlock(std::ifstream& infile) {
     return str;
 }
 
-std::string processPythonBlock(std::ifstream& infile, const std::string& input) {
+std::string processPythonBlock(std::istringstream& iss, const std::string& input) {
     std::regex re;
     std::string str;
     std::string output;
@@ -397,7 +658,7 @@ std::string processPythonBlock(std::ifstream& infile, const std::string& input) 
         output = "#PYTHON\n";
     }
 
-    while(getline(infile, str)) {
+    while(getline(iss, str)) {
         if (str.find("#END") != std::string::npos) {
             output += "#END\n";
             Singleton::shared()->incrementLineNumber();
@@ -433,21 +694,73 @@ static bool is_all_whitespace(const std::string& s) {
     return trimmed.begin() == trimmed.end();
 }
 
+std::string processInclude(const std::string& input, const fs::path& current_path)
+{
+    std::string output;
+    std::string_view s = input;
+
+    size_t pos = s.find("{$");
+
+    if (pos == std::string_view::npos)
+        return input;
+
+    output.append(s.substr(0, pos));
+    s.remove_prefix(pos + 2);
+
+    if (s.starts_with("I"))
+        s.remove_prefix(1);
+    else if (s.starts_with("include") || s.starts_with("INCLUDE"))
+        s.remove_prefix(7);
+    else
+        return input;
+
+    while (!s.empty() && (s.front() == ' ' || s.front() == '\t'))
+        s.remove_prefix(1);
+
+    char quote = 0;
+
+    if (s.front() == '"' || s.front() == '\'') {
+        quote = s.front();
+        s.remove_prefix(1);
+    }
+
+    size_t end = quote ? s.find(quote) : s.find('}');
+
+    if (end == std::string_view::npos)
+        return input;
+
+    fs::path file_path = std::string(s.substr(0, end));
+
+    if (file_path.parent_path().empty() && !fs::exists(file_path))
+        file_path = current_path.parent_path() / file_path;
+
+    output += include(file_path);
+
+    size_t close = s.find('}');
+    if (close != std::string_view::npos)
+        s.remove_prefix(close + 1);
+
+    output.append(s);
+
+    return output;
+}
+
 std::string translatePPLPlusToPPL(const fs::path& path) {
     Singleton& singleton = *Singleton::shared();
-    std::ifstream infile;
+    std::istringstream iss;
     std::regex re;
     std::string input;
     std::string output;
+    std::string code;
 
     singleton.pushPath(path);
+    code = utf::load(path);
     
-    infile.open(path,std::ios::in);
-    if (!infile.is_open()) {
-        return output;
-    }
-   
-    while (getline(infile, input)) {
+    code = pplplus::pascal::convertPascalSyntax(code);
+    
+    
+    iss.str(code);
+    while (getline(iss, input)) {
         /*
          Handle any escape lines `\` by continuing to read line joining them all up as one long line.
          */
@@ -456,7 +769,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
             while (input.at(input.length() - 1) == '\\' && !input.empty()) {
                 input.resize(input.length() - 1);
                 std::string s;
-                getline(infile, s);
+                getline(iss, s);
                 input.append(s);
                 Singleton::shared()->incrementLineNumber();
                 if (s.empty()) break;
@@ -478,18 +791,19 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
         while (preprocessor.disregard == true) {
             input = preprocessor.parse(input);
             Singleton::shared()->incrementLineNumber();
-            getline(infile, input);
+            getline(iss, input);
         }
         
         if (isPythonBlock(input)) {
-            output += processPythonBlock(infile, input);
+            output += processPythonBlock(iss, input);
             continue;
         }
         
         if (isPPLBlock(input)) {
-            output += processPPLBlock(infile);
+            output += processPPLBlock(iss);
             continue;
         }
+        
         
         // Handle `#pragma mode` for PPL+
         if (input.find("#pragma mode") != std::string::npos) {
@@ -533,18 +847,7 @@ std::string translatePPLPlusToPPL(const fs::path& path) {
             continue;
         }
         
-        
-        if (preprocessor.isQuotedInclude(input)) {
-            Singleton::shared()->incrementLineNumber();
-            
-            std::filesystem::path filePath = preprocessor.extractIncludePath(input);
-            if (filePath.parent_path().empty() && fs::exists(filePath) == false) {
-                filePath = path.parent_path() / filePath;
-            }
-            
-            output += include(filePath);
-            continue;
-        }
+        input = processInclude(input, path);
         
         if (preprocessor.isAngleInclude(input)) {
             Singleton::shared()->incrementLineNumber();

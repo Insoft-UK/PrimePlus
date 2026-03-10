@@ -103,42 +103,42 @@ void Regexp::removeAllOutOfScopeRegexps() {
  * part of standard C++ preprocessor behavior.
  */
 static std::string resolve(const std::string &str) {
-    std::regex re;
     std::smatch match;
     std::string::const_iterator it;
     std::string output = str;
     
-    re = R"(__SCOPE__|__LINE__|__COUNTER__|__RESET__|__COUNT__)";
+    static const std::regex re(
+        R"(\{\$(?:include|I|INCLUDE)\s+\%(SCOPE|LINE|COUNTER|RESET|COUNT)\%\})"
+    );
+    
     it = output.cbegin();
     while (std::regex_search(it, output.cend(), match, re)) {
-
-        if (match.str() == "__SCOPE__") {
+        if (match.str(1) == "SCOPE") {
             output.replace(match.position(), match.length(), std::to_string(pplplus::Singleton::shared()->scopeDepth));
             it = output.cbegin();
             continue;
         }
         
-        if (match.str() == "__COUNTER__") {
+        if (match.str(1) == "COUNTER") {
             output.replace(match.position(), match.length(), std::to_string(pplplus::Singleton::shared()->count));
             pplplus::Singleton::shared()->advanceCount();
             it = output.cbegin();
             continue;
         }
         
-        if (match.str() == "__COUNT__") {
+        if (match.str(1) == "COUNT") {
             output.replace(match.position(), match.length(), std::to_string(pplplus::Singleton::shared()->count));
             it = output.cbegin();
             continue;
         }
         
-        if (match.str() == "__LINE__") {
+        if (match.str(1) == "LINE") {
             output.replace(match.position(), match.length(), std::to_string(pplplus::Singleton::shared()->currentLineNumber()));
             it = output.cbegin();
             continue;
         }
         
-        
-        if (match.str() == "__RESET__") {
+        if (match.str(1) == "RESET") {
             pplplus::Singleton::shared()->resetCount();
         }
         

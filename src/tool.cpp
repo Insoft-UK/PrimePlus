@@ -50,6 +50,9 @@ using namespace tool;
 
 static std::string executableDir()
 {
+#ifdef DEBUG
+    return "/usr/local/bin";
+#endif
 #if defined(_WIN32)
 
     char path[MAX_PATH];

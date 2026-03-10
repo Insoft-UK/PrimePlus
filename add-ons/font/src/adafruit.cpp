@@ -228,8 +228,6 @@ static std::string createPPLAdafruitFont(TAdafruitFont &adafruitFont, const std:
         *it = mirrorByte(*it);
     }
     
-    os << "LOCAL ";
-    
     os << name << " := {\n"
        << " {\n" << createPPLList(adafruitFont.data.data(), adafruitFont.data.size(), 16) << "\n"
        << " },{\n"
