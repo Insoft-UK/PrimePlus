@@ -14,7 +14,7 @@ Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/
 >[!IMPORTANT]
 >PPL+ will discontinue support for #include. It will be replaced by the Pascal-style include directives: {$I file} or {$include file}.
 
-Download links: <a href="https://insoft.uk/action/?method=downlink&path=macos&file=pplplus-mac-universal.zip">macOS</a> | <a href="https://insoft.uk/action/?method=downlink&path=pc&file=pplplus-win-x86_64.zip">Windows</a> | <a href="https://insoft.uk/action/?method=downlink&path=linux&file=pplplus-linux-x86_64.zip">Linux</a>
+Download links: <a href="https://insoft.uk/action/?method=downlink&path=macos&file=pplplus-universal.pkg">macOS</a> | <a href="https://insoft.uk/action/?method=downlink&path=pc&file=pplplus-win-x86_64.zip">Windows</a> | <a href="https://insoft.uk/action/?method=downlink&path=linux&file=pplplus-linux-x86_64.zip">Linux</a>
 
 `Usage: ppl+ <input-file> [-o <output-file>] [-v]`
 
