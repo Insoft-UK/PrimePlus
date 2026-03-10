@@ -11,7 +11,7 @@ Using these **add-ons**, **<a href="https://github.com/Insoft-UK/PrimePlus/blob/
 
 **Reformating** your code enforce a consistent coding style throughout your project, making it easier for multiple developers to work on the same codebase. It helps maintain a uniform look and feel, which can enhance code readability. Readability: Well-formatted code is easier to read and understand.
 
-**Pascal** support for Pascal syntax is also included. If your code contains or is written in Pascal, it will be automatically converted to PPL syntax, since PPL itself is a dialect of Pascal.
+>Support for Pascal syntax is also included. If your code contains or is written in Pascal, it will be automatically converted to PPL syntax, since PPL itself is a dialect of Pascal.
 
 >[!IMPORTANT]
 >PPL+ will discontinue support for #include. It will be replaced by the Pascal-style include directives: {$I file} or {$include file}.
